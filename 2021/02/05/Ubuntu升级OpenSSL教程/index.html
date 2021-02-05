@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Ubuntu升级OpenSSL教程 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="因为腾讯云的服务器提示了漏洞，就顺便修复了一下。 OpenSSL 拒绝服务漏洞(CVE-2020-1971)披露时间 2020-12-09 00:00:00CVE编号 CVE-2020-1971">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu升级OpenSSL教程">
+<meta property="og:url" content="http://i007it.com/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="因为腾讯云的服务器提示了漏洞，就顺便修复了一下。 OpenSSL 拒绝服务漏洞(CVE-2020-1971)披露时间 2020-12-09 00:00:00CVE编号 CVE-2020-1971">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-05T13:23:00.000Z">
+<meta property="article:modified_time" content="2021-02-05T13:42:41.588Z">
+<meta property="article:author" content="TAMI hduzn@vip.qq.com">
+<meta property="article:tag" content="Ubuntu">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" href="http://i007it.com/"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2021</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Ubuntu升级OpenSSL教程" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" class="article-date">
+  <time datetime="2021-02-05T13:23:00.000Z" itemprop="datePublished">2021-02-05</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Ubuntu/">Ubuntu</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Ubuntu升级OpenSSL教程
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%90%E4%BF%AE%E5%A4%8D%E8%BF%87%E7%A8%8B%E3%80%91"><span class="toc-text">【修复过程】</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0-OpenSSL"><span class="toc-text">1.下载最新 OpenSSL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A7%A3%E5%8E%8B-openssl-1-1-1i"><span class="toc-text">2.解压 openssl-1.1.1i</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BF%9B%E5%85%A5-OpenSSL-%E8%A7%A3%E5%8E%8B%E5%90%8E%E7%9A%84-openssl-1-1-1i-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AE%89%E8%A3%85-OpenSSL"><span class="toc-text">4.安装 OpenSSL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88-OpenSSL"><span class="toc-text">5.使用新版 OpenSSL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9B%B4%E6%96%B0%E9%85%8D%E7%BD%AE"><span class="toc-text">6.更新配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%A3%80%E6%9F%A5OpenSSL-%E7%89%88%E6%9C%AC"><span class="toc-text">7.检查OpenSSL 版本</span></a></li></ol></li></ol>
+          </div>
+        
+        <p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
+<p><strong>OpenSSL 拒绝服务漏洞(CVE-2020-1971)</strong><br>披露时间 2020-12-09 00:00:00CVE编号 CVE-2020-1971</p>
+<a id="more"></a>
+<blockquote>
+<p>漏洞描述：<br>2020年12月08日，OpenSSL官方发布安全公告，披露CVE-2020-1971 OpenSSL GENERAL_NAME_cmp 拒绝服务漏洞。当两个GENERAL_NAME都包含同一个EDIPARTYNAME时，由于GENERAL_NAME_cmp函数未能正确处理，从而导致空指针引用，并可能导致拒绝服务。<br>漏洞类型：系统组件漏洞<br>威胁等级：中危</p>
+</blockquote>
+<p>修复方案：将 OpenSSL 升级至最新版本。</p>
+<p>升级方法可以参考如下：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7">https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7</a></p>
+<p>温馨提示：升级OpenSSL前务必先做好快照备份，以免操作失误导致系统崩溃。<br>漏洞详细说明 <a target="_blank" rel="noopener" href="https://s.tencent.com/research/bsafe/1193.html">https://s.tencent.com/research/bsafe/1193.html</a><br>检测到服务器存在漏洞风险，<strong>建议立即对相关主机进行快照备份</strong>，避免遭受损失。</p>
+<p>以上内容是腾讯云后台提示的。</p>
+<hr>
+<h2 id="【修复过程】"><a href="#【修复过程】" class="headerlink" title="【修复过程】"></a>【修复过程】</h2><p>没有快照，先创建快照。</p>
+<h3 id="1-下载最新-OpenSSL"><a href="#1-下载最新-OpenSSL" class="headerlink" title="1.下载最新 OpenSSL"></a>1.下载最新 OpenSSL</h3><p>比如我这现在最新的是：openssl-1.1.1i</p>
+<p>官网：<a target="_blank" rel="noopener" href="https://www.openssl.org/source/openssl-1.1.1i.tar.gz">https://www.openssl.org/source/openssl-1.1.1i.tar.gz</a></p>
+<p>官网访问的速度再慢了，在国内还是用腾讯的镜像好了。</p>
+<p>腾讯镜像：<a target="_blank" rel="noopener" href="https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz">https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://mirrors.cloud.tencent.com/openssl/<span class="built_in">source</span>/openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-解压-openssl-1-1-1i"><a href="#2-解压-openssl-1-1-1i" class="headerlink" title="2.解压 openssl-1.1.1i"></a>2.解压 openssl-1.1.1i</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xzvf openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>xzvf 释义<br>x 解压<br>z gzip压缩格式<br>v 显示详细信息<br>f file</p>
+</blockquote>
+<p>解压后得到 openssl-1.1.1i 文件夹。</p>
+<h3 id="3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹"><a href="#3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹" class="headerlink" title="3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹"></a>3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> openssl-1.1.1i</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-安装-OpenSSL"><a href="#4-安装-OpenSSL" class="headerlink" title="4.安装 OpenSSL"></a>4.安装 OpenSSL</h3><p><strong>1).配置</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./config</span><br></pre></td></tr></table></figure>
+<p>运行成功后有提示：OpenSSL has been successfully configured</p>
+<p><strong>2).make</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make（如果失败，就运行 sudo apt install make gcc 命令先）</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<h3 id="5-使用新版-OpenSSL"><a href="#5-使用新版-OpenSSL" class="headerlink" title="5.使用新版 OpenSSL"></a>5.使用新版 OpenSSL</h3><p><strong>1).找到新旧版本 openssl</strong></p>
+<p>通过 <code>find / -name &quot;openssl&quot; -print</code> 命令可以查到，</p>
+<p>新版openssl 默认在：/usr/local/bin/openssl<br>老版本的openssl 在 /usr/bin/openssl</p>
+<p><strong>2).备份老版本openssl</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv /usr/bin/openssl ~/tmp</span><br></pre></td></tr></table></figure>
+<p>也可以在sudo make install之前就把老版本的先备份移走。</p>
+<p><strong>3).给新版本的openssl创建软件链接</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/openssl /usr/bin/openssl</span><br></pre></td></tr></table></figure>
+<h3 id="6-更新配置"><a href="#6-更新配置" class="headerlink" title="6.更新配置"></a>6.更新配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update symlinks and rebuild the library cache</span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
+<h3 id="7-检查OpenSSL-版本"><a href="#7-检查OpenSSL-版本" class="headerlink" title="7.检查OpenSSL 版本"></a>7.检查OpenSSL 版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<p>我这的运行结果是：<br>OpenSSL 1.1.1i  8 Dec 2020</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li></ul>
+
+        <a data-url="http://i007it.com/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" data-id="ckksc9e0300020gepeqas69po" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Hexo 主题添加 Valine 评论系统</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/">Ubuntu升级OpenSSL教程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/">Hexo 主题添加 Valine 评论系统</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/2021start/">2021年，重新开始咯</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 TAMI hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
