@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>SQLite 清空表数据并将自增量归0 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。 比如要清空test表中的所有记录数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLite 清空表数据并将自增量归0">
+<meta property="og:url" content="http://i007it.com/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。 比如要清空test表中的所有记录数据。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-07T12:57:00.000Z">
+<meta property="article:modified_time" content="2021-02-07T13:00:15.293Z">
+<meta property="article:author" content="TAMI hduzn@vip.qq.com">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="SQLite">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" href="http://i007it.com/"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2021</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-SQLite清空表数据并将自增量归0" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/" class="article-date">
+  <time datetime="2021-02-07T12:57:00.000Z" itemprop="datePublished">2021-02-07</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SQLite 清空表数据并将自增量归0
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE"><span class="toc-text">1、清空表数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920"><span class="toc-text">2、自增量归0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81python%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">3、python代码实现</span></a></li></ol>
+          </div>
+        
+        <p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
+<p>比如要<strong>清空test表中的所有记录数据</strong>。</p>
+<a id="more"></a>
+<p>test表中数据如下（其中id是自动增加的）：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>code</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>213122</td>
+<td>张三</td>
+</tr>
+<tr>
+<td>2</td>
+<td>213124</td>
+<td>李四</td>
+</tr>
+<tr>
+<td>3</td>
+<td>213125</td>
+<td>王五</td>
+</tr>
+</tbody></table>
+<h3 id="1、清空表数据"><a href="#1、清空表数据" class="headerlink" title="1、清空表数据"></a>1、清空表数据</h3><p>清空test表的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test</span><br></pre></td></tr></table></figure>
+<h3 id="2、自增量归0"><a href="#2、自增量归0" class="headerlink" title="2、自增量归0"></a>2、自增量归0</h3><p>当SQLite数据库中 表中包含自动增加类型的字段后，会自动建立一个名为 sqlite_sequence 的表。这个表包含两个字段：name 和 seq。</p>
+<ul>
+<li>name：表示记录自增的表名（即 tablename）；</li>
+<li>seq：记录当前的序号（下一条记录就是当前序号+1）</li>
+</ul>
+<p>所以，当清空表中记录后，如果没有把这个自增的序号归0，添加下一条记录的时候，序号会从之前的数+1。</p>
+<p>自增量归0的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> sqlite_sequence <span class="keyword">set</span> seq <span class="operator">=</span> <span class="number">0</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;test&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3、python代码实现"><a href="#3、python代码实现" class="headerlink" title="3、python代码实现"></a>3、python代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">sql1 = <span class="string">&#x27;delete from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql1)</span><br><span class="line">sql2 = <span class="string">&#x27;update sqlite_sequence set seq = 0 where name = &#x27;</span> + <span class="string">&quot;&#x27;&quot;</span> + table_name + <span class="string">&quot;&#x27;&quot;</span></span><br><span class="line">cursor.execute(sql2)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a></li></ul>
+
+        <a data-url="http://i007it.com/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/" data-id="ckkv5mtlm0006goep8ldr7coj" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Python 数据库（SQLite）教程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/">SQLite 清空表数据并将自增量归0</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/">Python 数据库（SQLite）教程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/">Ubuntu升级OpenSSL教程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/">Hexo 主题添加 Valine 评论功能</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/2021start/">2021年，重新开始咯</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 TAMI hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
