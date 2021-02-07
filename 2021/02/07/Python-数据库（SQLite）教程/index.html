@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Python 数据库（SQLite）教程 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。 Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 数据库（SQLite）教程">
+<meta property="og:url" content="http://i007it.com/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。 Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-07T12:20:00.000Z">
+<meta property="article:modified_time" content="2021-02-07T12:29:57.166Z">
+<meta property="article:author" content="TAMI hduzn@vip.qq.com">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" href="http://i007it.com/"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2021</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Python-数据库（SQLite）教程" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/" class="article-date">
+  <time datetime="2021-02-07T12:20:00.000Z" itemprop="datePublished">2021-02-07</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Python 数据库（SQLite）教程
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%89%E6%8B%A9SQLite%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">选择SQLite的原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E7%AE%80%E4%BB%8B"><span class="toc-text">数据库相关概念简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Python-SQLite"><span class="toc-text">Python SQLite</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81SQLite%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E6%8F%8F%E8%BF%B0"><span class="toc-text">一、SQLite使用过程描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BE%E4%BE%8B"><span class="toc-text">二、操作数据库举例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%81%E8%A1%A8"><span class="toc-text">1.创建数据库、表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A2%9E%EF%BC%9A%E8%A1%A8%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%B8%80%E6%9D%A1%E6%95%B0%E6%8D%AE"><span class="toc-text">2.增：表中添加一条数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%88%A0%EF%BC%9A%E5%88%A0%E9%99%A4%E4%B8%80%E6%9D%A1%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE"><span class="toc-text">3.删：删除一条指定数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%94%B9%EF%BC%9A%E4%BF%AE%E6%94%B9%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95"><span class="toc-text">4.改：修改一条记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9F%A5%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AE%B0%E5%BD%95"><span class="toc-text">5.查：查询记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%B0%8F%E7%BB%93"><span class="toc-text">6.小结</span></a></li></ol></li></ol></li></ol></li></ol>
+          </div>
+        
+        <p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
+<p>Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。</p>
+<a id="more"></a>
+
+<h1 id="选择SQLite的原因"><a href="#选择SQLite的原因" class="headerlink" title="选择SQLite的原因"></a>选择SQLite的原因</h1><p>自己的小东西，轻量极感觉用SQLite3也可以了，省得装MySQL这些了。然后再装个 DB Browser for SQLite的软件，开源的免费可视化工具，用来操作SQLite数据库文件溜溜的、贼方便了~</p>
+<p>所以自己选择SQLite的2个主要原因是：</p>
+<ol>
+<li>Python内置了SQLite3，不需要再装任何东西；</li>
+<li>有DB Browser for SQLite这样开源免费的软件工具，操作又方便，建库、建表、修改表之类都很方便，保存成一个.db文件也方便。</li>
+</ol>
+<p>当然，这是看自己需求选择的原因。</p>
+<h1 id="数据库相关概念简介"><a href="#数据库相关概念简介" class="headerlink" title="数据库相关概念简介"></a>数据库相关概念简介</h1><p>一个数据库对应保存成一个 .db文件；<br>一个数据库里面可以有很多表（Table）；</p>
+<p>比如有一个学校的数据库，一般就会有：</p>
+<ul>
+<li>教职工表（里面有教师姓名之类的信息）</li>
+<li>班级表（里面有班级名称、人数等信息）</li>
+<li>全体学生表（里面有学生姓名、班级等信息）</li>
+</ul>
+<p>关于数据库知识，随便搜几篇文章看一下，自己去了解一下SQL，这里就不介绍了。<br>数据库的使用，自己设计几个表，就懂了点基础了，平常自己用用够用就行了（表的设计靠实践）。</p>
+<h1 id="Python-SQLite"><a href="#Python-SQLite" class="headerlink" title="Python SQLite"></a>Python SQLite</h1><h3 id="一、SQLite使用过程描述"><a href="#一、SQLite使用过程描述" class="headerlink" title="一、SQLite使用过程描述"></a>一、SQLite使用过程描述</h3><p>1.要操作关系数据库，首先要连接到数据库，一个数据库连接称为connection。</p>
+<p>2.连接到数据库之后，需要打开游标（Cursor），通过Cursor执行SQL语句，然后获得执行的结果。</p>
+<p>3.最后关闭数据库连接。</p>
+<h3 id="二、操作数据库举例"><a href="#二、操作数据库举例" class="headerlink" title="二、操作数据库举例"></a>二、操作数据库举例</h3><p>数据库的操作，概括一下主要就是【增 删 改 查】，这4个会了，基础就差不多可以上了。</p>
+<ul>
+<li>增：insert into 语句</li>
+<li>删：delete from 语句</li>
+<li>改：update 语句</li>
+<li>查：select 语句</li>
+</ul>
+<h4 id="1-创建数据库、表"><a href="#1-创建数据库、表" class="headerlink" title="1.创建数据库、表"></a>1.创建数据库、表</h4><p>创建一个test的表，表里面有 id、code、name 3个字段。</p>
+<p><strong>字段的类型</strong> 有：<br>INTEGER(int数值)、TEXT(string字符串)、REAL(float符点数)，主要这3种。</p>
+<p><strong>字段的属性</strong> 有：</p>
+<ul>
+<li>NOT NULL：非空，表示字段不能是空的；</li>
+<li>PRIMARY KEY：主键；</li>
+<li>AUTOINCREMENT：自动增加（这一项是自动增加的，一般用于id）；</li>
+<li>UNIQUE：唯一，表示在这个表里这个字段是唯一的。</li>
+<li>DEFAULT ‘ ‘：表示默认值为 ‘ ‘</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="comment"># 数据库文件是 test.db，如果文件不存在，会自动创建</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">sql = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    CREATE TABLE &quot;test&quot; (</span></span><br><span class="line"><span class="string">    &quot;id&quot;    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;code&quot;  TEXT NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;name&quot;  TEXT DEFAULT &#x27; &#x27;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">cursor.execute(sql)</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="2-增：表中添加一条数据"><a href="#2-增：表中添加一条数据" class="headerlink" title="2.增：表中添加一条数据"></a>2.增：表中添加一条数据</h4><p>sql语句中可以用参数的形式，execute执行sql的时候把参数传进去就可以了。</p>
+<p>对应是Tuple（元组的数据类型），Python里List列表用的比较多，可以通过tuple()函数转成Tuple，当然，也可以直接定义成Tuple类型。</p>
+<p>因为一般别的地方获取的数据List类型比较多，所以这里举例用了List。</p>
+<p>添加一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test (code, name) <span class="keyword">values</span> (<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;insert into &#x27;</span> + table_name + <span class="string">&#x27; (code, name) values (?,?)&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加一条数据</span></span><br><span class="line">list1 = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>]    </span><br><span class="line">cursor.execute(sql, <span class="built_in">tuple</span>(list1))</span><br><span class="line"><span class="comment"># 添加多条数据</span></span><br><span class="line">list2 = [[<span class="string">&#x27;213124&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>], [<span class="string">&#x27;213125&#x27;</span>, <span class="string">&#x27;王五&#x27;</span>]]</span><br><span class="line"><span class="keyword">for</span> one <span class="keyword">in</span> list2:</span><br><span class="line">    cursor.execute(sql, <span class="built_in">tuple</span>(one))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p>sql的语句用参数的好处就是可以在for循环中直接使用，不用每一条固定一条sql语句。</p>
+<h4 id="3-删：删除一条指定数据"><a href="#3-删：删除一条指定数据" class="headerlink" title="3.删：删除一条指定数据"></a>3.删：删除一条指定数据</h4><p>删除一条的SQL语句是 ：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213123&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除多条数据</span></span><br><span class="line">code_list = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;213124&#x27;</span>]</span><br><span class="line">sql = <span class="string">&#x27;delete from &#x27;</span> +  table_name + <span class="string">&#x27; where code = ?&#x27;</span></span><br><span class="line"><span class="keyword">for</span> code <span class="keyword">in</span> code_list:</span><br><span class="line">    cursor.execute(sql, (code,))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="4-改：修改一条记录"><a href="#4-改：修改一条记录" class="headerlink" title="4.改：修改一条记录"></a>4.改：修改一条记录</h4><p>修改一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> test <span class="keyword">set</span> code <span class="operator">=</span> <span class="string">&#x27;213122&#x27;</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">new_code = <span class="string">&#x27;213122&#x27;</span></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;update &#x27;</span> +  table_name + <span class="string">&#x27; set code = ? where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql, (new_code,name))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="5-查：查询记录"><a href="#5-查：查询记录" class="headerlink" title="5.查：查询记录"></a>5.查：查询记录</h4><p>查属于最常用的部分了，因为存储在数据库的数据，通常都用select语句去查询。</p>
+<p>查询的SQL语句有：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span> <span class="keyword">and</span> name <span class="operator">=</span> <span class="string">&#x27;李四&#x27;</span></span><br><span class="line"><span class="keyword">select</span> code,name <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>查询可以查询全部字段，也可以查询部分需要的字段；<br>查询后面的where条件可以是 UNIQUE 字段，那查询结果就是唯一的，如果不是 UNIQUE字段，查询结果可能会有多条。</p>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql1 = <span class="string">&#x27;select * from &#x27;</span> + table_name + <span class="string">&#x27; where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql1, (name,))</span><br><span class="line">values1 = cursor.fetchall()</span><br><span class="line">print(values1) <span class="comment"># [(1, &#x27;213122&#x27;, &#x27;张三&#x27;)]</span></span><br><span class="line">sql2 = <span class="string">&#x27;select code,name from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql2)</span><br><span class="line">values2 = cursor.fetchall()</span><br><span class="line">print(values2) <span class="comment"># [(&#x27;213122&#x27;, &#x27;张三&#x27;), (&#x27;213124&#x27;, &#x27;李四&#x27;), (&#x27;213125&#x27;, &#x27;王五&#x27;)]</span></span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="6-小结"><a href="#6-小结" class="headerlink" title="6.小结"></a>6.小结</h4><p><strong>使用Cursor对象执行insert，update，delete语句时，执行结果由rowcount返回影响的行数，就可以拿到执行结果。</strong></p>
+<p><strong>使用Cursor对象执行select语句时，通过fetchall()可以拿到结果集。结果集是一个list，每个元素都是一个tuple，对应一行记录。</strong></p>
+<p>像上面查询中的第4条sql语句，查询结果只需要 code,name 两个字段，那查询的结果会是一个List，每一个元素是一个tuple元组。<br>比如查询到的结果是：</p>
+<p>[(‘213124’, ‘李四’), (‘213125’, ‘王五’)]</p>
+<p>对于这样的List，Python里可以直接转换成 Dictionary（字典）类型，那用起来就更方便了。</p>
+<p>最后，记得用完 关闭connection和Cursor对象。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+
+        <a data-url="http://i007it.com/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/" data-id="ckkv4jye7000c4wepf6ic5oc2" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Ubuntu升级OpenSSL教程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/">Python 数据库（SQLite）教程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/">Ubuntu升级OpenSSL教程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/">Hexo 主题添加 Valine 评论功能</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/05/2021start/">2021年，重新开始咯</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 TAMI hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
