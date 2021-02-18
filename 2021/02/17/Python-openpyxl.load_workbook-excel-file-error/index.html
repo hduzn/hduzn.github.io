@@ -5,17 +5,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   
-  <title>SyntaxError EOL while scanning string literal | 何妨吟啸且徐行</title>
+  <title>Python openpyxl.load_workbook excel file error | 何妨吟啸且徐行</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="错误提示python中字符串的最后一个字符是斜杠会导致出错：SyntaxError: EOL while scanning string literal">
+  <meta name="description" content="这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。 windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SyntaxError EOL while scanning string literal">
-<meta property="og:url" content="http://i007it.com/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/index.html">
+<meta property="og:title" content="Python openpyxl.load_workbook excel file error">
+<meta property="og:url" content="http://i007it.com/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/index.html">
 <meta property="og:site_name" content="何妨吟啸且徐行">
-<meta property="og:description" content="错误提示python中字符串的最后一个字符是斜杠会导致出错：SyntaxError: EOL while scanning string literal">
+<meta property="og:description" content="这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。 windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-13T07:05:00.000Z">
-<meta property="article:modified_time" content="2021-02-13T13:01:01.003Z">
+<meta property="article:published_time" content="2021-02-17T13:05:00.000Z">
+<meta property="article:modified_time" content="2021-02-17T13:32:28.218Z">
 <meta property="article:author" content="TAMI hduzn@vip.qq.com">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -33,7 +33,7 @@
   
   
 
-</head>
+<meta name="generator" content="Hexo 5.3.0"></head>
 
 <body>
 <div id="container">
@@ -82,10 +82,10 @@
 </header>
 
     <div class="outer">
-      <section id="main"><article id="post-SyntaxError-EOL-while-scanning-string-literal" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-Python-openpyxl.load_workbook-excel-file-error" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <h3 href="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/" class="article-date">
-  <time datetime="2021-02-13T07:05:00.000Z" itemprop="datePublished">2021-02-13</time>
+    <h3 href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/" class="article-date">
+  <time datetime="2021-02-17T13:05:00.000Z" itemprop="datePublished">2021-02-17</time>
 </h3>
     
   <div class="article-category">
@@ -102,7 +102,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      SyntaxError EOL while scanning string literal
+      Python openpyxl.load_workbook excel file error
     </h1>
   
 
@@ -116,14 +116,24 @@
             <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA"><span class="toc-text">错误提示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-text">解决方法</span></a></li></ol>
           </div>
         
-        <h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+        <p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
 <a id="more"></a>
 
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line">print(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
 
       
     </div>
@@ -132,11 +142,11 @@
         
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
 
-        <a data-url="http://i007it.com/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/" data-id="cklakand2000cqgeph9fn9a6c" class="article-share-link">分享到</a>
+        <a data-url="http://i007it.com/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/" data-id="cklakancy0007qgep4madflx6" class="article-share-link">分享到</a>
         
         
-          <a href="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/#comments" class="article-comment-link">
-            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/" itemprop="commentCount"></span>
+          <a href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/" itemprop="commentCount"></span>
             文章评论
           </a>
         
@@ -149,19 +159,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          Python openpyxl.load_workbook excel file error
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">Ubuntu 定时执行 python脚本</div>
+      <div class="article-nav-title">SyntaxError EOL while scanning string literal</div>
     </a>
   
 </nav>
