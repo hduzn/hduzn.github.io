@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Navicat连接MySQL数据库不成功 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题： 1130 - Host ‘***‘ is not allowed to connect to this MySQL server">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Navicat连接MySQL数据库不成功">
+<meta property="og:url" content="http://i007it.com/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题： 1130 - Host ‘***‘ is not allowed to connect to this MySQL server">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/hduzn/Picbed_PicGo/raw/master/Navicat_connect_mysql_1.png">
+<meta property="og:image" content="https://gitee.com/hduzn/Picbed_PicGo/raw/master/Navicat_connect_mysql_2.png">
+<meta property="article:published_time" content="2022-04-05T12:22:00.000Z">
+<meta property="article:modified_time" content="2022-04-07T14:11:13.121Z">
+<meta property="article:author" content="TAMI hduzn@vip.qq.com">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="Navicat">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/hduzn/Picbed_PicGo/raw/master/Navicat_connect_mysql_1.png">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" href="http://i007it.com/"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2022</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Navicat连接MySQL数据库不成功" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/" class="article-date">
+  <time datetime="2022-04-05T12:22:00.000Z" itemprop="datePublished">2022-04-05</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Navicat连接MySQL数据库不成功
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E8%BF%9C%E7%A8%8B%E8%81%94%E6%8E%A5%E5%88%B0MySQL%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">1、远程联接到MySQL服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-text">1).进入容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%9B%E5%85%A5MySQL"><span class="toc-text">2).进入MySQL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%9F%A5%E8%AF%A2%E5%85%81%E8%AE%B8%E8%BF%9E%E6%8E%A5%E7%9A%84%E4%B8%BB%E6%9C%BA%E5%8F%8A%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-text">2、查询允许连接的主机及用户信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-text">3、解决方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8SQL%E8%AF%AD%E5%8F%A5%E5%B0%86-1%E6%94%B9%E4%B8%BA-%EF%BC%9A"><span class="toc-text">1).使用SQL语句将 ::1改为%：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E4%B8%8B%E9%9D%A2%E7%9A%84SQL%EF%BC%8C%E4%BD%BF%E4%B8%8A%E9%9D%A2%E7%9A%84%E6%94%B9%E5%8A%A8%E7%94%9F%E6%95%88%EF%BC%8C%E5%90%A6%E5%88%99%E4%BB%8D%E7%84%B6%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A"><span class="toc-text">2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E8%A1%A5%E5%85%85"><span class="toc-text">4、补充</span></a></li></ol>
+          </div>
+        
+        <p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
+<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
+<p><img src="https://gitee.com/hduzn/Picbed_PicGo/raw/master/Navicat_connect_mysql_1.png"></p>
+<a id="more"></a>
+
+<p>解决方法：</p>
+<h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>输入密码：123MYSQL456</p>
+<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/hduzn/Picbed_PicGo/raw/master/Navicat_connect_mysql_2.png"></p>
+<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
+<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
+<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<blockquote>
+<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+</blockquote>
+<p>然后再查询user表，结果就如上所示。</p>
+<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
+<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+<p>再用Navicat连接MySQL服务器，提示成功！</p>
+<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a></li></ul>
+
+        <a data-url="http://i007it.com/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/" data-id="cl1p2vh43000cnkep3nh26kle" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Docker EwoMail修改MySQL密码</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/">Navicat连接MySQL数据库不成功</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/">Docker EwoMail修改MySQL密码</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/">Docker 搭建开源邮件服务器 EwoMail</a>
+          </li>
+        
+          <li>
+            <a href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">Python 对图片进行文字识别</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/20/Python-%E5%A4%87%E4%BB%BD-%E8%B1%86%E7%93%A3-%E8%AF%BB%E8%BF%87%E7%9A%84%E4%B9%A6%E7%9A%84%E8%AE%B0%E5%BD%95/">Python 备份 豆瓣 读过的书的记录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">15</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 TAMI hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
