@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Docker 搭建开源邮件服务器 EwoMail | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1、下载（pull）镜像 1).搜索镜像 1docker search ewomail 2).pull ewomail 镜像 1docker pull bestwu&#x2F;ewomail">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 搭建开源邮件服务器 EwoMail">
+<meta property="og:url" content="http://i007it.com/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="1、下载（pull）镜像 1).搜索镜像 1docker search ewomail 2).pull ewomail 镜像 1docker pull bestwu&#x2F;ewomail">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-05T12:00:00.000Z">
+<meta property="article:modified_time" content="2022-04-07T13:21:06.673Z">
+<meta property="article:author" content="TAMI hduzn@vip.qq.com">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" href="http://i007it.com/"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2022</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Docker搭建开源邮件服务器 EwoMail" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/" class="article-date">
+  <time datetime="2022-04-05T12:00:00.000Z" itemprop="datePublished">2022-04-05</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker 搭建开源邮件服务器 EwoMail
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD%EF%BC%88pull%EF%BC%89%E9%95%9C%E5%83%8F"><span class="toc-text">1、下载（pull）镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2%E3%80%81%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2、构建容器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%B9%E5%99%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">1).容器配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2).构建容器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3%E3%80%81%E5%85%B3%E9%97%AD10024%E7%AB%AF%E5%8F%A3"><span class="toc-text">3、关闭10024端口</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-text">1).进入容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9-main-cf-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="toc-text">2).修改 main.cf 配置文件：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4%E3%80%81%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="toc-text">4、域名解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%AE%BE%E7%BD%AEDNS%E7%B1%BB%E5%9E%8B"><span class="toc-text">1).设置DNS类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AEDKIM"><span class="toc-text">2).设置DKIM</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5%E3%80%81%E9%85%8D%E7%BD%AE%E5%AE%89%E5%85%A8%E7%BB%84"><span class="toc-text">5、配置安全组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6%E3%80%81%E5%AE%8C%E6%88%90"><span class="toc-text">6、完成</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%81%E4%B9%A6"><span class="toc-text">7、自定义证书</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8%E3%80%81%E5%AE%B9%E5%99%A8%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="toc-text">8、容器相关命令</span></a></li></ol>
+          </div>
+        
+        <h1 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h1><ul>
+<li><p>1).搜索镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
+<li><p>2).pull ewomail 镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+</li>
+</ul>
+<h1 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h1><h2 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h2><p>创建 <em>docker-compose.yml</em></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=ewomailMYSQL&quot;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
+</blockquote>
+<h2 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h1><h2 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
+<p>注释以下行：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
+<h1 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h1><h2 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>mail</td>
+<td>127.0.0.1</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>@</td>
+<td>v=spf1 127.0.0.1 -all</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>imap</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>smtp</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop3</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>@</td>
+<td>mail.stephen520.cn | 10</td>
+</tr>
+</tbody></table>
+<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<h2 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h2><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
+<p><strong>获取DKIM KEY</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
+
+
+<p>复制输出的信息，打开 <a target="_blank" rel="noopener" href="http://www.ewomail.com/list-20.html">http://www.ewomail.com/list-20.html</a> ，整理DKIM，得到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TXT</td>
+<td>dkim._domainkey</td>
+<td>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</td>
+</tr>
+</tbody></table>
+<h1 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h1><ul>
+<li>1).在云服务器控制台配置腾讯云<a target="_blank" rel="noopener" href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1">安全组</a>，打开以上容器监听的端口，并关闭防火墙。</li>
+<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
+</ul>
+<h1 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h1><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<p><strong>邮箱管理后台</strong>：<br><a target="_blank" rel="noopener" href="http://127.0.0.1:8080/">http://127.0.0.1:8080/</a><br>默认账号：admin/ewomail123</p>
+<p><strong>Rainloop 管理端</strong>：<br><a target="_blank" rel="noopener" href="http://127.0.0.1/?admin">http://127.0.0.1/?admin</a><br>默认账号：admin/12345</p>
+<p><strong>Rainloop用户端（前端）</strong>：<br><a target="_blank" rel="noopener" href="http://127.0.0.1/">http://127.0.0.1/</a></p>
+<h1 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h1><p><strong>映射路径</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h1><p>查看docker容器是否启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>进入容器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+        <a data-url="http://i007it.com/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/" data-id="cl1p12r450006m4ep0mnx2m9r" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Python 对图片进行文字识别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/">Docker 搭建开源邮件服务器 EwoMail</a>
+          </li>
+        
+          <li>
+            <a href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">Python 对图片进行文字识别</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/20/Python-%E5%A4%87%E4%BB%BD-%E8%B1%86%E7%93%A3-%E8%AF%BB%E8%BF%87%E7%9A%84%E4%B9%A6%E7%9A%84%E8%AE%B0%E5%BD%95/">Python 备份 豆瓣 读过的书的记录</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/19/Python-selenium-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/">Python selenium 切换到新的窗口方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/">Python openpyxl.load_workbook excel file error</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">15</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 TAMI hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
