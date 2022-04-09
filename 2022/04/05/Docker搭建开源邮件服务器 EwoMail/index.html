@@ -7,15 +7,15 @@
   
   <title>Docker 搭建开源邮件服务器 EwoMail | 何妨吟啸且徐行</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1、下载（pull）镜像 1).搜索镜像 1docker search ewomail 2).pull ewomail 镜像 1docker pull bestwu&#x2F;ewomail">
+  <meta name="description" content="为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。 然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。 于是，索性直接选个带 Docker的Ce">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker 搭建开源邮件服务器 EwoMail">
 <meta property="og:url" content="http://i007it.com/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/index.html">
 <meta property="og:site_name" content="何妨吟啸且徐行">
-<meta property="og:description" content="1、下载（pull）镜像 1).搜索镜像 1docker search ewomail 2).pull ewomail 镜像 1docker pull bestwu&#x2F;ewomail">
+<meta property="og:description" content="为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。 然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。 于是，索性直接选个带 Docker的Ce">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-05T12:00:00.000Z">
-<meta property="article:modified_time" content="2022-04-07T14:07:11.417Z">
+<meta property="article:modified_time" content="2022-04-09T13:30:36.579Z">
 <meta property="article:author" content="HDUZN hduzn@vip.qq.com">
 <meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
@@ -116,17 +116,19 @@
             <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD%EF%BC%88pull%EF%BC%89%E9%95%9C%E5%83%8F"><span class="toc-text">1、下载（pull）镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2、构建容器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%B9%E5%99%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">1).容器配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="toc-text">2).构建容器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E5%85%B3%E9%97%AD10024%E7%AB%AF%E5%8F%A3"><span class="toc-text">3、关闭10024端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-text">1).进入容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9-main-cf-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="toc-text">2).修改 main.cf 配置文件：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="toc-text">4、域名解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%BE%E7%BD%AEDNS%E7%B1%BB%E5%9E%8B"><span class="toc-text">1).设置DNS类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AEDKIM"><span class="toc-text">2).设置DKIM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E9%85%8D%E7%BD%AE%E5%AE%89%E5%85%A8%E7%BB%84"><span class="toc-text">5、配置安全组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E5%AE%8C%E6%88%90"><span class="toc-text">6、完成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%81%E4%B9%A6"><span class="toc-text">7、自定义证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8%E3%80%81%E5%AE%B9%E5%99%A8%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="toc-text">8、容器相关命令</span></a></li></ol>
           </div>
         
-        <h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
+        <p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
+<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
+<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
+ <a id="more"></a>
+
+<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
 <li><p>1).搜索镜像</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
 <li><p>2).pull ewomail 镜像</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-</li>
+<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
 </ul>
-<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2><h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
+<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
@@ -190,8 +192,6 @@
 <h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
 <p><strong>获取DKIM KEY</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
-
-
 <p>复制输出的信息，打开 <a target="_blank" rel="noopener" href="http://www.ewomail.com/list-20.html">http://www.ewomail.com/list-20.html</a> ，整理DKIM，得到：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
 <table>
@@ -233,7 +233,7 @@
         
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
 
-        <a data-url="http://i007it.com/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/" data-id="cl1rlu3c20007ygep6e0b1jxc" class="article-share-link">分享到</a>
+        <a data-url="http://i007it.com/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/" data-id="cl1s1480b00012oepb04a55zu" class="article-share-link">分享到</a>
         
         
           <a href="/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/#comments" class="article-comment-link">
@@ -287,23 +287,23 @@
       <ul>
         
           <li>
+            <a href="/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/">iphone进入DFU模式方法</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/u%E7%9B%98%E5%90%AF%E5%8A%A8%E8%BF%9B%E5%85%A5PE%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/">U盘启动进入PE系统 快捷键</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">you-get 使用教程</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">youtube-dl 使用教程</a>
+          </li>
+        
+          <li>
             <a href="/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/">Github Pages绑定个人域名</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/">【小白教程】免费建立静态博客网站（Github+Hexo）</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/">Typora+PicGo无法显示Github图床图片问题</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/">Navicat连接MySQL数据库不成功</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/">Docker EwoMail修改MySQL密码</a>
           </li>
         
       </ul>
@@ -315,7 +315,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PicGo/" rel="tag">PicGo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Typora/" rel="tag">Typora</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PicGo/" rel="tag">PicGo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software/" rel="tag">Software</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Typora/" rel="tag">Typora</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iphone/" rel="tag">iphone</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -324,7 +324,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">15</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">16</span></li></ul>
     </div>
   </div>
 

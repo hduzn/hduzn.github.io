@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Linux 修改文件权限 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 修改文件权限">
+<meta property="og:url" content="http://i007it.com/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-08T13:10:00.000Z">
+<meta property="article:modified_time" content="2022-04-09T15:42:49.078Z">
+<meta property="article:author" content="HDUZN hduzn@vip.qq.com">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" target="_blank" rel="noopener" href="https://github.com/hduzn"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2022</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Linux 修改文件权限" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" class="article-date">
+  <time datetime="2021-02-08T13:10:00.000Z" itemprop="datePublished">2021-02-08</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 修改文件权限
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%8B%E5%AF%B9%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90"><span class="toc-text">Linux下对于文件的权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E6%96%B9%E6%B3%95"><span class="toc-text">修改文件权限方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E6%99%AE%E9%80%9A%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90-%E6%A8%A1%E5%BC%8F"><span class="toc-text">1、普通修改文件权限(模式)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E4%B8%93%E4%B8%9A%E6%96%B9%E6%B3%95"><span class="toc-text">2、专业方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E8%80%85"><span class="toc-text">3、修改文件所有者</span></a></li></ol></li></ol></li></ol>
+          </div>
+        
+        <p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
+<a id="more"></a>
+
+<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
+<ul>
+<li>read</li>
+<li>write</li>
+<li>execute</li>
+<li>none</li>
+</ul>
+<p>例如：运行命令 <code>ls -l</code> 后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
+<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
+<ul>
+<li>r 代表read，可读</li>
+<li>w 代表write，可写入</li>
+<li>x 代表execute，可执行</li>
+<li>-代表none</li>
+</ul>
+<p>这里就代表什么样的人对文件有什么样的权限。</p>
+<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
+<ul>
+<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
+<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
+<li>最后3位(r–)表示：其它人，只读</li>
+</ul>
+<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
+<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
+<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
+<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
+<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
+<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
+</ul>
+<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
+<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
+<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
+<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
+<p>Readme.txt文件的所有者就变为testuser</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+
+        <a data-url="http://i007it.com/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" data-id="cl1s1481s000c2oep6bvoheir" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Ubuntu 定时执行 python脚本
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Linux vim/vi 命令简单使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/">iphone进入DFU模式方法</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/u%E7%9B%98%E5%90%AF%E5%8A%A8%E8%BF%9B%E5%85%A5PE%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/">U盘启动进入PE系统 快捷键</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">you-get 使用教程</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">youtube-dl 使用教程</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/">Github Pages绑定个人域名</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PicGo/" rel="tag">PicGo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software/" rel="tag">Software</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Typora/" rel="tag">Typora</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iphone/" rel="tag">iphone</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 HDUZN hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>
