@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法 | 何妨吟啸且徐行</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据库里，用到float类型的时候，会有精度损失。 比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法">
+<meta property="og:url" content="http://i007it.com/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="何妨吟啸且徐行">
+<meta property="og:description" content="数据库里，用到float类型的时候，会有精度损失。 比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-10T11:05:00.000Z">
+<meta property="article:modified_time" content="2022-04-10T11:55:02.902Z">
+<meta property="article:author" content="HDUZN hduzn@vip.qq.com">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Flask">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternative" href="/atom.xml" title="何妨吟啸且徐行" type="application/atom+xml">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+  
+
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <nav id="upper-nav" class="inner">
+      <a id="main-nav-toggle" class="nav-icon"></a>
+      <div class="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        
+          <a id="nav-github" class="nav-icon" target="_blank" rel="noopener" href="https://github.com/hduzn"></a>
+        
+      </div>
+    </nav>
+    <div id="header-title">
+      
+        <h1 id="blog-title-wrap">
+          <a href="/" id="blog-title">一 蓑 烟 雨 任 平 生</a>
+        </h1>
+      
+    </div>
+    <div id="contenedor">
+      <ul class="cube">
+        <li class="cara">2022</li>
+        <li class="cara">烟</li>
+        <li class="cara">雨</li>
+        <li class="cara">平</li>
+        <li class="cara">生</li>
+        <li class="cara">柒</li>
+      </ul>
+    </div>
+    <nav id="main-nav">
+      
+        <a class="main-nav-link" href="/">首页</a>
+      
+        <a class="main-nav-link" href="/archives">归档</a>
+      
+        <a class="main-nav-link" href="/books">推荐阅读</a>
+      
+    </nav>
+  </div>
+</header>
+
+    <div class="outer">
+      <section id="main"><article id="post-Flask-SQLAlchemy浮点数类型Float丢失精度解决方法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <h3 href="/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="article-date">
+  <time datetime="2022-04-10T11:05:00.000Z" itemprop="datePublished">2022-04-10</time>
+</h3>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+  <div class="curve-down">
+  <div class="fill-content">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div id="toc" class="toc-article">
+            <strong class="toc-title">文章目录</strong>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%E8%BF%87%E7%A8%8B"><span class="toc-text">解决方法过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%8A%8A%E5%AD%97%E6%AE%B5%E7%9A%84%E5%AE%9A%E4%B9%89%E7%94%B1%E5%8E%9F%E6%9D%A5%E7%9A%84%EF%BC%9A"><span class="toc-text">1、把字段的定义由原来的：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E8%AE%BE%E5%AE%9A%E5%B0%8F%E6%95%B0%E7%82%B9%E4%BD%8D%E6%95%B0"><span class="toc-text">2、设定小数点位数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-text">3、总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQLAlchemy-%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="toc-text">SQLAlchemy 常用的字段类型</span></a></li></ol>
+          </div>
+        
+        <p>数据库里，用到float类型的时候，会有精度损失。</p>
+<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
+<a id="more"></a>
+
+<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
+<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
+<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
+<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
+<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
+<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
+<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
+<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>成功了！！！</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
+<thead>
+<tr>
+<th>类型名</th>
+<th align="left">python中类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Integer</td>
+<td align="left">int</td>
+<td>普通整数，一般是32位</td>
+</tr>
+<tr>
+<td>SmallInteger</td>
+<td align="left">int</td>
+<td>取值范围小的整数,—般是16位</td>
+</tr>
+<tr>
+<td>BigInteger</td>
+<td align="left">int或long</td>
+<td>不限制精度的整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td align="left">float</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>Numeric</td>
+<td align="left">decimal.Decimal</td>
+<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
+</tr>
+<tr>
+<td>String</td>
+<td align="left">str</td>
+<td>变长字符串</td>
+</tr>
+<tr>
+<td>Text</td>
+<td align="left">str</td>
+<td>变长字符串，对较长或不限长度的字符串做了优化</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td align="left">bool</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>Date</td>
+<td align="left">datetime.date</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td align="left">datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>LargeBinary</td>
+<td align="left">str</td>
+<td>二进制文件</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <div class="article-footer-content">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/" rel="tag">Flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+
+        <a data-url="http://i007it.com/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" data-id="cl1t8bgl9000654epctii630g" class="article-share-link">分享到</a>
+        
+        
+          <a href="/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/#comments" class="article-comment-link">
+            <span class="post-comments-count valine-comment-count" data-xid="/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" itemprop="commentCount"></span>
+            文章评论
+          </a>
+        
+      </div>
+    </footer>
+  </div>
+  </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">iphone进入DFU模式方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  
+    <section id="comments" class="vcomment">
+  
+    </section>
+  
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/">iphone进入DFU模式方法</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/u%E7%9B%98%E5%90%AF%E5%8A%A8%E8%BF%9B%E5%85%A5PE%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/">U盘启动进入PE系统 快捷键</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">you-get 使用教程</a>
+          </li>
+        
+          <li>
+            <a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">youtube-dl 使用教程</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chrome/" rel="tag">Chrome</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flask/" rel="tag">Flask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Navicat/" rel="tag">Navicat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PicGo/" rel="tag">PicGo</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQLite/" rel="tag">SQLite</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Selenium/" rel="tag">Selenium</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software/" rel="tag">Software</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Typora/" rel="tag">Typora</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iphone/" rel="tag">iphone</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 HDUZN hduzn@vip.qq.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/sun11/hexo-theme-paperbox" target="_blank">Paperbox</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/books" class="mobile-nav-link">推荐阅读</a>
+  
+  <a href="#search" class="mobile-nav-link st-search-show-outputs">搜索</a>
+</nav>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    menuSettings: {
+      zoom: "None"
+    },
+    showMathMenu: false,
+    jax: ["input/TeX","output/CommonHTML"],
+    extensions: ["tex2jax.js"],
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js"],
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+  });
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
+
+
+<!-- totop start -->
+<div id="totop">
+	<a title="返回顶部"></a>
+</div>
+<!-- totop end -->
+
+<!-- swiftype search start -->
+
+<!-- swiftype search end -->
+
+
+
+<!-- valine start -->
+
+    
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+  <script>
+      var GUEST_INFO = ['nick','mail','link'];
+      var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+      });
+      var notify = 'false' == true;
+      var verify = 'false' == true;
+      new Valine({
+          el: '.vcomment',
+          notify: notify,
+          verify: verify,
+          appId: "UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz",
+          appKey: "y98dsYB3ugs25U2vgNWTb3m7",
+          placeholder: "请在此输入您的留言",
+          pageSize:'10',
+          avatar:'mm',
+          lang:'zh-cn'
+      });
+  </script>
+  
+
+<!-- valine end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lrsjng.jquery-qrcode/0.12.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+</div>
+</body>
+</html>

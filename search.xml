@@ -49,34 +49,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a href="http://www.i007it.com/">www.i007it.com</a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_1.png"><br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_2.png"></li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_3.png"></p>
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a href="http://www.i007it.com/">www.i007it.com</a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_4.png"></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_5.png"></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -197,6 +169,134 @@
       </tags>
   </entry>
   <entry>
+    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
+    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
+<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
+<a id="more"></a>
+
+<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
+<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
+<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
+<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
+<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
+<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
+<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
+<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>成功了！！！</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
+<thead>
+<tr>
+<th>类型名</th>
+<th align="left">python中类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Integer</td>
+<td align="left">int</td>
+<td>普通整数，一般是32位</td>
+</tr>
+<tr>
+<td>SmallInteger</td>
+<td align="left">int</td>
+<td>取值范围小的整数,—般是16位</td>
+</tr>
+<tr>
+<td>BigInteger</td>
+<td align="left">int或long</td>
+<td>不限制精度的整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td align="left">float</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>Numeric</td>
+<td align="left">decimal.Decimal</td>
+<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
+</tr>
+<tr>
+<td>String</td>
+<td align="left">str</td>
+<td>变长字符串</td>
+</tr>
+<tr>
+<td>Text</td>
+<td align="left">str</td>
+<td>变长字符串，对较长或不限长度的字符串做了优化</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td align="left">bool</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>Date</td>
+<td align="left">datetime.date</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td align="left">datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>LargeBinary</td>
+<td align="left">str</td>
+<td>二进制文件</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Flask</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a href="http://www.i007it.com/">www.i007it.com</a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_1.png"><br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_2.png"></li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_3.png"></p>
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a href="http://www.i007it.com/">www.i007it.com</a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_4.png"></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Github_Pages_domain_name_5.png"></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -297,6 +397,55 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux 修改文件权限</title>
+    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
+    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
+<a id="more"></a>
+
+<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
+<ul>
+<li>read</li>
+<li>write</li>
+<li>execute</li>
+<li>none</li>
+</ul>
+<p>例如：运行命令 <code>ls -l</code> 后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
+<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
+<ul>
+<li>r 代表read，可读</li>
+<li>w 代表write，可写入</li>
+<li>x 代表execute，可执行</li>
+<li>-代表none</li>
+</ul>
+<p>这里就代表什么样的人对文件有什么样的权限。</p>
+<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
+<ul>
+<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
+<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
+<li>最后3位(r–)表示：其它人，只读</li>
+</ul>
+<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
+<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
+<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
+<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
+<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
+<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
+</ul>
+<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
+<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
+<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
+<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
+<p>Readme.txt文件的所有者就变为testuser</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux vim/vi 命令简单使用</title>
     <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
@@ -367,55 +516,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 修改文件权限</title>
-    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
-    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
-<a id="more"></a>
-
-<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
-<ul>
-<li>read</li>
-<li>write</li>
-<li>execute</li>
-<li>none</li>
-</ul>
-<p>例如：运行命令 <code>ls -l</code> 后</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
-<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
-<ul>
-<li>r 代表read，可读</li>
-<li>w 代表write，可写入</li>
-<li>x 代表execute，可执行</li>
-<li>-代表none</li>
-</ul>
-<p>这里就代表什么样的人对文件有什么样的权限。</p>
-<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
-<ul>
-<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
-<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
-<li>最后3位(r–)表示：其它人，只读</li>
-</ul>
-<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
-<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
-<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
-<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
-<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
-<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
-</ul>
-<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
-<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
-<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
-<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
-<p>Readme.txt文件的所有者就变为testuser</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Navicat连接MySQL数据库不成功</title>
     <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
     <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
@@ -458,35 +558,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python selenium 切换到新的窗口方法</title>
     <url>/2021/02/19/Python-selenium-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Python 用selenium 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
@@ -522,35 +593,27 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
 <a id="more"></a>
 
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index">https://console.bce.baidu.com/ai/#/ai/ocr/overview/index</a></p>
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
 <ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
 </ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a href="https://github.com/Baidu-AIP/python-sdk">https://github.com/Baidu-AIP/python-sdk</a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk">https://ai.baidu.com/ai-doc/OCR/wkibizyjk</a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -636,6 +699,43 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index">https://console.bce.baidu.com/ai/#/ai/ocr/overview/index</a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a href="https://github.com/Baidu-AIP/python-sdk">https://github.com/Baidu-AIP/python-sdk</a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk">https://ai.baidu.com/ai-doc/OCR/wkibizyjk</a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -794,31 +894,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
-<a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 安装Selenium自动化测试</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
@@ -854,6 +929,64 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/ubuntu_cpu_1.png"></p>
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/ubuntu_cpu_2.png"></p>
+<ul>
+<li>上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。</li>
+<li>上方右侧：全部进程(Task)数为：33。</li>
+<li>下方一样的是全部进程的情况。</li>
+</ul>
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -960,40 +1093,7 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Python</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/ubuntu_cpu_1.png"></p>
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/ubuntu_cpu_2.png"></p>
-<ul>
-<li>上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。</li>
-<li>上方右侧：全部进程(Task)数为：33。</li>
-<li>下方一样的是全部进程的情况。</li>
-</ul>
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
@@ -1447,7 +1547,7 @@
 <li>2).选择SSH Keys</li>
 <li>3).粘贴密钥，添加即可<br><img src="https://raw.githubusercontent.com/hduzn/Picbed_PicGo/master/Hexo_Github_blog_2.png"></li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#x6d;">&#103;&#x69;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#x6d;</a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a href="mailto:&#103;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#109;">&#103;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#109;</a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
