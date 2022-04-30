@@ -21,117 +21,25 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Docker 搭建开源邮件服务器 EwoMail</title>
-    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
-    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
-<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
-<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
- <a id="more"></a>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 
-<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
-<li><p>1).搜索镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
-<li><p>2).pull ewomail 镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
-<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
-</ul>
-<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
-</blockquote>
-<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
 
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
 
-<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
-<p>注释以下行：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
-<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
-<thead>
-<tr>
-<th align="left">类型</th>
-<th>主机</th>
-<th>记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">A</td>
-<td>mail</td>
-<td>127.0.0.1</td>
-</tr>
-<tr>
-<td align="left">TXT</td>
-<td>@</td>
-<td>v=spf1 127.0.0.1 -all</td>
-</tr>
-<tr>
-<td align="left">CNAME</td>
-<td>imap</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td align="left">CNAME</td>
-<td>smtp</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td align="left">CNAME</td>
-<td>pop</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td align="left">CNAME</td>
-<td>pop3</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td align="left">MX</td>
-<td>@</td>
-<td>mail.stephen520.cn | 10</td>
-</tr>
-</tbody></table>
-<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
-<p><strong>获取DKIM KEY</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
-<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th align="left">类型</th>
-<th>主机</th>
-<th>记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">TXT</td>
-<td>dkim._domainkey</td>
-<td>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</td>
-</tr>
-</tbody></table>
-<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
-<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
-<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
-</ul>
-<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
-<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
-<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
-
-<p>进入容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -238,34 +146,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Flask</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -473,47 +353,123 @@
       </tags>
   </entry>
   <entry>
-    <title>Navicat连接MySQL数据库不成功</title>
-    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
-    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
-<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
-<a id="more"></a>
+    <title>Docker 搭建开源邮件服务器 EwoMail</title>
+    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
+    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
+<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
+<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
+ <a id="more"></a>
 
-<img src="/img/Navicat_connect_mysql_1.png"/>
-
-<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>输入密码：123MYSQL456</p>
-<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
-<img src="/img/Navicat_connect_mysql_2.png"/>
-
-<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
-<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
-<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
+<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
+<li><p>1).搜索镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
+<li><p>2).pull ewomail 镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
+<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
+</ul>
+<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
 </blockquote>
-<p>然后再查询user表，结果就如上所示。</p>
-<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
-<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
-<p>再用Navicat连接MySQL服务器，提示成功！</p>
-<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
 
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+
+<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
+<p>注释以下行：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
+<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">A</td>
+<td>mail</td>
+<td>127.0.0.1</td>
+</tr>
+<tr>
+<td align="left">TXT</td>
+<td>@</td>
+<td>v=spf1 127.0.0.1 -all</td>
+</tr>
+<tr>
+<td align="left">CNAME</td>
+<td>imap</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td align="left">CNAME</td>
+<td>smtp</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td align="left">CNAME</td>
+<td>pop</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td align="left">CNAME</td>
+<td>pop3</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td align="left">MX</td>
+<td>@</td>
+<td>mail.stephen520.cn | 10</td>
+</tr>
+</tbody></table>
+<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
+<p><strong>获取DKIM KEY</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
+<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">TXT</td>
+<td>dkim._domainkey</td>
+<td>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</td>
+</tr>
+</tbody></table>
+<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
+<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
+<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
+</ul>
+<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
+<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
+<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>进入容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-        <category>MySQL</category>
+        <category>Docker</category>
       </categories>
       <tags>
-        <tag>MySQL</tag>
-        <tag>Navicat</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -563,6 +519,85 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Navicat连接MySQL数据库不成功</title>
+    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
+    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
+<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
+<a id="more"></a>
+
+<img src="/img/Navicat_connect_mysql_1.png"/>
+
+<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>输入密码：123MYSQL456</p>
+<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
+<img src="/img/Navicat_connect_mysql_2.png"/>
+
+<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
+<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
+<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<blockquote>
+<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+</blockquote>
+<p>然后再查询user表，结果就如上所示。</p>
+<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
+<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+<p>再用Navicat连接MySQL服务器，提示成功！</p>
+<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Navicat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python selenium 切换到新的窗口方法</title>
+    <url>/2021/02/19/Python-selenium-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>Python 用selenium 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
+<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+<a id="more"></a>
+
+<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line">print(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
+<p>运行后的结果是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
+<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
+<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+</ul>
+<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line">print(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
+<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -675,41 +710,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python selenium 切换到新的窗口方法</title>
-    <url>/2021/02/19/Python-selenium-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>Python 用selenium 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
-<a id="more"></a>
-
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line">print(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
-</ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line">print(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line">print(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 对图片进行文字识别</title>
     <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
     <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
@@ -739,6 +739,25 @@
 <h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
 <h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line">print(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -798,133 +817,6 @@
       </tags>
   </entry>
   <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line">print(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 定时执行 python脚本</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
-<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
-<a id="more"></a>
-<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p>以上是缩写，全拼是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p><strong>含义</strong>：</p>
-<ul>
-<li>m: 每个小时的第几分钟执行，0-59</li>
-<li>h: 第天的第几个小时执行，0-23</li>
-<li>dom: 每月的第几天执行，1-31</li>
-<li>mon: 每年的第几个月执行，1-12</li>
-<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
-<li>command: 定时执行的命令</li>
-</ul>
-<p><strong>其它</strong>：</p>
-<ul>
-<li>*： 表示任何时间</li>
-<li>*/2: 表示每隔2分钟</li>
-<li>-：表示区间，比如1-3</li>
-<li>,：表示区间不连续，比如1,3,6</li>
-</ul>
-<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>含义</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>*  * * * * ifconfig</td>
-<td>每天第一分钟都在执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>1 * * * * ifconfig</td>
-<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
-<td>01:01, 02:01, 03:01, 04:01……</td>
-</tr>
-<tr>
-<td>0 9 * * * ifconfig</td>
-<td>每天 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 10 * * ifconfig</td>
-<td>每个月的10号 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 * * 1,2 ifconfig</td>
-<td>每周一、周二 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-</tbody></table>
-<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
-<ol>
-<li>/bin/nano</li>
-<li>/usr/bin/vim.basic</li>
-<li>/usr/bin/vim.tiny</li>
-<li>/bin/ed</li>
-</ol>
-<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
-<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
-<blockquote>
-<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
-</blockquote>
-<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
-<p>最后一行是命令格式：</p>
-<blockquote>
-<p># m h dom mon dow command</p>
-</blockquote>
-<p>在最下面添加自己的任务就可以了。</p>
-<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
-<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
-<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
-<p>得到结果比如是：<code>usr/bin/python3</code></p>
-<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
-<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
-<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
-<p>所以，最终添加的这条定时任务记录是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
-<p>1.设计好自己想要执行的 python任务</p>
-<p>比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>2.打开定时任务编辑，添加任务记录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>3.重启 cron服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Typora+PicGo无法显示Github图床图片问题</title>
     <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a class="link"   href="http://i007it.com/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" >PicGo+Github图床的用法教程<i class="fas fa-external-link-alt"></i></a></p>
@@ -952,6 +844,31 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Chrome</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1083,74 +1000,111 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+    <title>Ubuntu 定时执行 python脚本</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
+<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
 <a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
+<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p>以上是缩写，全拼是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>m: 每个小时的第几分钟执行，0-59</li>
+<li>h: 第天的第几个小时执行，0-23</li>
+<li>dom: 每月的第几天执行，1-31</li>
+<li>mon: 每年的第几个月执行，1-12</li>
+<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
+<li>command: 定时执行的命令</li>
+</ul>
+<p><strong>其它</strong>：</p>
+<ul>
+<li>*： 表示任何时间</li>
+<li>*/2: 表示每隔2分钟</li>
+<li>-：表示区间，比如1-3</li>
+<li>,：表示区间不连续，比如1,3,6</li>
+</ul>
+<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*  * * * * ifconfig</td>
+<td>每天第一分钟都在执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 * * * * ifconfig</td>
+<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
+<td>01:01, 02:01, 03:01, 04:01……</td>
+</tr>
+<tr>
+<td>0 9 * * * ifconfig</td>
+<td>每天 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 10 * * ifconfig</td>
+<td>每个月的10号 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 * * 1,2 ifconfig</td>
+<td>每周一、周二 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
+<ol>
+<li>/bin/nano</li>
+<li>/usr/bin/vim.basic</li>
+<li>/usr/bin/vim.tiny</li>
+<li>/bin/ed</li>
+</ol>
+<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
+<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
+<blockquote>
+<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
+</blockquote>
+<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
+<p>最后一行是命令格式：</p>
+<blockquote>
+<p># m h dom mon dow command</p>
+</blockquote>
+<p>在最下面添加自己的任务就可以了。</p>
+<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
+<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
+<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
+<p>得到结果比如是：<code>usr/bin/python3</code></p>
+<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
+<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
+<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
+<p>所以，最终添加的这条定时任务记录是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
+<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
+<p>1.设计好自己想要执行的 python任务</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>2.打开定时任务编辑，添加任务记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>3.重启 cron服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
       </tags>
   </entry>
   <entry>
@@ -1417,6 +1371,52 @@
       </tags>
   </entry>
   <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>you-get 使用教程</title>
     <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
@@ -1448,106 +1448,6 @@
       </categories>
       <tags>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
-    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
-    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
-<a id="more"></a>
-
-<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>为什么要使用Github Pages？</p>
-<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
-<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
-<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
-<p>（怕有问题，直接搜索安装教程照着来就行）</p>
-<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
-<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
-<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
-<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
-<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
-<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
-<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
-<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Githu-Pages项目"><a href="#2-创建Githu-Pages项目" class="headerlink" title="2.创建Githu Pages项目"></a>2.创建Githu Pages项目</h3><p>点击New repository</p>
-<img src="/img/Hexo_Github_blog_1.png"/>
-
-<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
-<p>操作如下：</p>
-<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
-<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
-<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/you/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/you/.ssh/github_rsa</p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入完成之后，屏幕会显示如下信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
-<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>1).登陆GitHub，进入你的Account Settings</li>
-<li>2).选择SSH Keys</li>
-<li>3).粘贴密钥，添加即可<img src="/img/Hexo_Github_blog_2.png"/>
-
-</li>
-</ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#109;" >&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果是下面的反馈：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
-<p>不要紧张，输入yes就好，然后会看到：<br><img src="/img/Hexo_Github_blog_3.png"/></p>
-<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
-<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
-<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img src="/img/Hexo_Github_blog_4.png"/>
-
-<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img src="/img/Hexo_Github_blog_5.png"/>
-
-<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img src="/img/Hexo_Github_blog_6.png"/>
-
-<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img src="/img/Hexo_Github_blog_7.png"/></p>
-<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>或者直接执行 <code>hexo g -d</code></p>
-<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
-<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
-<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
-<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
-<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
-<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
-<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
-<p>2).部署到Github上</p>
-<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
-<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
-<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
-<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a class="link"   href="http://i007it.com/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" >Github 图床使用教程<i class="fas fa-external-link-alt"></i></a>）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
@@ -1609,6 +1509,106 @@
       </categories>
       <tags>
         <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
+    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
+    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
+<a id="more"></a>
+
+<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>为什么要使用Github Pages？</p>
+<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
+<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
+<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
+<p>（怕有问题，直接搜索安装教程照着来就行）</p>
+<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
+<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
+<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
+<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
+<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
+<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
+<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
+<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Githu-Pages项目"><a href="#2-创建Githu-Pages项目" class="headerlink" title="2.创建Githu Pages项目"></a>2.创建Githu Pages项目</h3><p>点击New repository</p>
+<img src="/img/Hexo_Github_blog_1.png"/>
+
+<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
+<p>操作如下：</p>
+<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
+<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
+<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/you/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/you/.ssh/github_rsa</p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入完成之后，屏幕会显示如下信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
+<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1).登陆GitHub，进入你的Account Settings</li>
+<li>2).选择SSH Keys</li>
+<li>3).粘贴密钥，添加即可<img src="/img/Hexo_Github_blog_2.png"/>
+
+</li>
+</ul>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果是下面的反馈：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
+<p>不要紧张，输入yes就好，然后会看到：<br><img src="/img/Hexo_Github_blog_3.png"/></p>
+<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
+<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
+<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img src="/img/Hexo_Github_blog_4.png"/>
+
+<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img src="/img/Hexo_Github_blog_5.png"/>
+
+<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img src="/img/Hexo_Github_blog_6.png"/>
+
+<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img src="/img/Hexo_Github_blog_7.png"/></p>
+<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>或者直接执行 <code>hexo g -d</code></p>
+<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
+<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
+<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
+<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
+<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
+<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
+<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
+<p>2).部署到Github上</p>
+<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
+<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
+<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
+<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a class="link"   href="http://i007it.com/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" >Github 图床使用教程<i class="fas fa-external-link-alt"></i></a>）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
