@@ -49,126 +49,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker 搭建开源邮件服务器 EwoMail</title>
-    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
-    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
-<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
-<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
- <a id="more"></a>
-
-<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
-<li><p>1).搜索镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
-<li><p>2).pull ewomail 镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
-<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
-</ul>
-<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
-</blockquote>
-<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
-<p>注释以下行：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
-<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th>记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>A</td>
-<td>mail</td>
-<td>127.0.0.1</td>
-</tr>
-<tr>
-<td>TXT</td>
-<td>@</td>
-<td>v=spf1 127.0.0.1 -all</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>imap</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>smtp</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop3</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>MX</td>
-<td>@</td>
-<td>mail.stephen520.cn | 10</td>
-</tr>
-</tbody></table>
-<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
-<p><strong>获取DKIM KEY</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
-<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th align="left">记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>TXT</td>
-<td>dkim._domainkey</td>
-<td align="left"><code>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</code></td>
-</tr>
-</tbody></table>
-<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
-<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
-<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
-</ul>
-<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
-<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
-<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
-
-<p>进入容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
     <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
@@ -370,15 +250,20 @@
 <p>输入密码完成之后，屏幕会显示如下信息：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/yourusername/.ssh/hexo_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/yourusername/.ssh/hexo_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:GI************************U your_email@example.com</span><br></pre></td></tr></table></figure>
 <p>可以看到在目录：C:\Users\yourusername.ssh 中已经有hexo_rsa 和 hexo_rsa.pub 文件了。<br>如果没有自定义名字，则会在当前目录下生成 id_rsa.pub(公钥)和 id_rsa(私钥)文件。</p>
-<h2 id="第三步、在服务器上添加公钥"><a href="#第三步、在服务器上添加公钥" class="headerlink" title="第三步、在服务器上添加公钥"></a>第三步、在服务器上添加公钥</h2><h3 id="1-创建-ssh-目录"><a href="#1-创建-ssh-目录" class="headerlink" title="1.创建~/.ssh 目录"></a>1.创建~/.ssh 目录</h3><p>如果Hexo博客是部署在服务器上的，比如我这是Ubuntu的服务器。</p>
-<p>在服务器中创建ssh，并将本地的 id_rsa.pub 中的文件内容全部复制到 authorized_keys 中。<br>即在 ~/.ssh/authorized_keys 中添加。</p>
-<p>1).创建<del>/.ssh 目录<br>如果提示</del>/.ssh目录已经存在，就不需要mkdir了，直接执行 chmod修改.ssh目录的权限。</p>
+<h2 id="第三步、在服务器上添加公钥"><a href="#第三步、在服务器上添加公钥" class="headerlink" title="第三步、在服务器上添加公钥"></a>第三步、在服务器上添加公钥</h2><h3 id="1-新建一个git用户"><a href="#1-新建一个git用户" class="headerlink" title="1.新建一个git用户"></a>1.新建一个git用户</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo useradd -m git</span><br><span class="line">sudo passwd git</span><br></pre></td></tr></table></figure>
+<p>ubuntu加上<code>-m</code>参数，会在 /home 目录中建出对应的用户目录。</p>
+<h3 id="2-把Git仓库和Nginx托管文件目录权限都给git用户"><a href="#2-把Git仓库和Nginx托管文件目录权限都给git用户" class="headerlink" title="2.把Git仓库和Nginx托管文件目录权限都给git用户"></a>2.把Git仓库和Nginx托管文件目录权限都给git用户</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R git:git /var/repo/</span><br><span class="line">sudo chown -R git:git /var/www/hexo</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3-创建-ssh-目录（git用户"><a href="#3-创建-ssh-目录（git用户" class="headerlink" title="3.创建~/.ssh 目录（git用户)"></a>3.创建~/.ssh 目录（git用户)</h3><p>在服务器中创建ssh，并将本地的 id_rsa.pub 中的文件内容全部复制到 authorized_keys 中。<br>即在 ~/.ssh/authorized_keys 中添加。</p>
+<p>1).服务器上切换到 git用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">su git</span><br></pre></td></tr></table></figure>
+<p>输入密码后登录。</p>
+<p>2).创建~/.ssh 目录<br>创建.ssh目录，并用 chmod修改.ssh目录的权限。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">mkdir .ssh</span><br><span class="line">chmod 700 .ssh</span><br></pre></td></tr></table></figure>
-<h3 id="2-在-ssh目录下创建authorized-keys文件"><a href="#2-在-ssh目录下创建authorized-keys文件" class="headerlink" title="2.在.ssh目录下创建authorized_keys文件"></a>2.在.ssh目录下创建authorized_keys文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> .ssh</span><br><span class="line">touch authorized_keys</span><br><span class="line">chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
-<h3 id="3-编辑authorized-keys文件"><a href="#3-编辑authorized-keys文件" class="headerlink" title="3.编辑authorized_keys文件"></a>3.编辑authorized_keys文件</h3><p>把 id_rsa.pub 文件中的内容添加到authorized_keys末尾。</p>
+<h3 id="4-在-ssh目录下创建authorized-keys文件"><a href="#4-在-ssh目录下创建authorized-keys文件" class="headerlink" title="4.在.ssh目录下创建authorized_keys文件"></a>4.在.ssh目录下创建authorized_keys文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> .ssh</span><br><span class="line">touch authorized_keys</span><br><span class="line">chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
+<h3 id="5-把-hexo-rsa-pub-公钥文件中的内容添加authorized-keys文件"><a href="#5-把-hexo-rsa-pub-公钥文件中的内容添加authorized-keys文件" class="headerlink" title="5.把 hexo_rsa.pub 公钥文件中的内容添加authorized_keys文件"></a>5.把 hexo_rsa.pub 公钥文件中的内容添加authorized_keys文件</h3><p>把 hexo_rsa.pub 文件中的内容添加到authorized_keys末尾。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim authorized_keys</span><br></pre></td></tr></table></figure>
 
-<h2 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h2><h3 id="1-云服务器测试"><a href="#1-云服务器测试" class="headerlink" title="1.云服务器测试"></a>1.云服务器测试</h3><h3 id="2-Github测试"><a href="#2-Github测试" class="headerlink" title="2.Github测试"></a>2.Github测试</h3><p>在本地输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h2 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h2><h3 id="1-云服务器测试"><a href="#1-云服务器测试" class="headerlink" title="1.云服务器测试"></a>1.云服务器测试</h3><h3 id="2-Github测试"><a href="#2-Github测试" class="headerlink" title="2.Github测试"></a>2.Github测试</h3><p>在本地输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is GI************************U.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -395,58 +280,123 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 主题添加 Valine 评论功能</title>
-    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
-    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
-<ul>
-<li>快速、安全</li>
-<li>Emoji</li>
-<li>无后端实现<a id="more"></a></li>
-<li>MarkDown 全语法支持</li>
-<li>轻量易用(~15kb gzipped)</li>
-<li>文章阅读量统计 v1.2.0+</li>
+    <title>Docker 搭建开源邮件服务器 EwoMail</title>
+    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
+    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
+<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
+<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
+ <a id="more"></a>
+
+<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
+<li><p>1).搜索镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
+<li><p>2).pull ewomail 镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
+<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
 </ul>
-<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
-<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
-<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
+<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
+<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
 </blockquote>
-<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
-<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
-<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
-<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
-<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
-<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
-<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
-<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
-<p>有两个部分有添加，都在文件的最后面。</p>
-<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
-<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
-<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    &lt;% <span class="keyword">if</span> (page.permalink)&#123; %&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
-<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
+<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
+<p>注释以下行：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
+<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>mail</td>
+<td>127.0.0.1</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>@</td>
+<td>v=spf1 127.0.0.1 -all</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>imap</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>smtp</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop3</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>@</td>
+<td>mail.stephen520.cn | 10</td>
+</tr>
+</tbody></table>
+<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
+<p><strong>获取DKIM KEY</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
+<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th align="left">记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TXT</td>
+<td>dkim._domainkey</td>
+<td align="left"><code>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</code></td>
+</tr>
+</tbody></table>
+<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
+<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
+<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
+</ul>
+<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
+<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
+<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>进入容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Hexo</category>
+        <category>Docker</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -473,24 +423,6 @@
 <h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
 <p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
 <figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：使用 `&lt;!–swig￼0–&gt;</p>
-]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -736,32 +668,21 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
 <a id="more"></a>
 
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+<p><strong>方法二</strong>：使用 `&lt;!–swig￼0–&gt;</p>
 ]]></content>
       <categories>
-        <category>Python</category>
+        <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Python</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -797,6 +718,35 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -987,36 +937,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Typora+PicGo无法显示Github图床图片问题</title>
-    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
-<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
-<a id="more"></a>
-
-<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
-<p>如下图：</p>
-<img src="/img/Typora_PicGo_Github_pic_1.png"/>
-
-<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
-<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
-<p>hosts文件在Windows系统中的路径：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
-<p>添加以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启下 Typora，果然可以了！</p>
-<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>Typora</tag>
-        <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 升级OpenSSL教程</title>
     <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
@@ -1073,6 +993,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Typora+PicGo无法显示Github图床图片问题</title>
+    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
+<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+<a id="more"></a>
+
+<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
+<p>如下图：</p>
+<img src="/img/Typora_PicGo_Github_pic_1.png"/>
+
+<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
+<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
+<p>hosts文件在Windows系统中的路径：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
+<p>添加以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启下 Typora，果然可以了！</p>
+<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>Typora</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 命令行安装Chrome浏览器</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
@@ -1095,6 +1045,61 @@
         <tag>Ubuntu</tag>
         <tag>Linux</tag>
         <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo 主题添加 Valine 评论功能</title>
+    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
+    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
+<ul>
+<li>快速、安全</li>
+<li>Emoji</li>
+<li>无后端实现<a id="more"></a></li>
+<li>MarkDown 全语法支持</li>
+<li>轻量易用(~15kb gzipped)</li>
+<li>文章阅读量统计 v1.2.0+</li>
+</ul>
+<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
+<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
+<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
+<blockquote>
+<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
+<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
+<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
+<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
+<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
+<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
+<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
+<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
+<p>有两个部分有添加，都在文件的最后面。</p>
+<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
+<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
+<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    &lt;% <span class="keyword">if</span> (page.permalink)&#123; %&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
+<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1135,6 +1140,21 @@
         <tag>Ubuntu</tag>
         <tag>Selenium</tag>
       </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2022/04/30/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2Hexo%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p><a class="link"   href="https://www.yangyanxing.com/article/hexo-deployment-in-ubuntu.html" >https://www.yangyanxing.com/article/hexo-deployment-in-ubuntu.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://cloud.tencent.com/developer/article/1620879?from=15425" >https://cloud.tencent.com/developer/article/1620879?from=15425<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://www.jianshu.com/p/16b89f4f7136" >https://www.jianshu.com/p/16b89f4f7136<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://www.yisu.com/zixun/556831.html" >https://www.yisu.com/zixun/556831.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://www.jianshu.com/p/451218449f54" >https://www.jianshu.com/p/451218449f54<i class="fas fa-external-link-alt"></i></a></p>
+<p>腾讯云 Hexo ssh密钥用法</p>
+<p><a class="link"   href="https://cloud.tencent.com/developer/article/1632020" >https://cloud.tencent.com/developer/article/1632020<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://www.drflower.top/posts/963961c3/#%E4%BF%AE%E6%94%B9sudoers%E6%96%87%E4%BB%B6" >https://www.drflower.top/posts/963961c3/#%E4%BF%AE%E6%94%B9sudoers%E6%96%87%E4%BB%B6<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://mingfang310.github.io/2021/07/14/jiang-hexo-bo-ke-bu-shu-dao-teng-xun-yun/" >https://mingfang310.github.io/2021/07/14/jiang-hexo-bo-ke-bu-shu-dao-teng-xun-yun/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://server.51cto.com/article/697683.html" >https://server.51cto.com/article/697683.html<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
   </entry>
   <entry>
     <title>Ubuntu 定时执行 python脚本</title>
@@ -1240,54 +1260,6 @@
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>Ubuntu</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2022/04/30/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2Hexo%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p><a class="link"   href="https://www.yangyanxing.com/article/hexo-deployment-in-ubuntu.html" >https://www.yangyanxing.com/article/hexo-deployment-in-ubuntu.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://cloud.tencent.com/developer/article/1620879?from=15425" >https://cloud.tencent.com/developer/article/1620879?from=15425<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://www.jianshu.com/p/16b89f4f7136" >https://www.jianshu.com/p/16b89f4f7136<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://www.yisu.com/zixun/556831.html" >https://www.yisu.com/zixun/556831.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://www.jianshu.com/p/451218449f54" >https://www.jianshu.com/p/451218449f54<i class="fas fa-external-link-alt"></i></a></p>
-<p>腾讯云 Hexo ssh密钥用法</p>
-<p><a class="link"   href="https://cloud.tencent.com/developer/article/1632020" >https://cloud.tencent.com/developer/article/1632020<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://www.drflower.top/posts/963961c3/#%E4%BF%AE%E6%94%B9sudoers%E6%96%87%E4%BB%B6" >https://www.drflower.top/posts/963961c3/#%E4%BF%AE%E6%94%B9sudoers%E6%96%87%E4%BB%B6<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://mingfang310.github.io/2021/07/14/jiang-hexo-bo-ke-bu-shu-dao-teng-xun-yun/" >https://mingfang310.github.io/2021/07/14/jiang-hexo-bo-ke-bu-shu-dao-teng-xun-yun/<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://server.51cto.com/article/697683.html" >https://server.51cto.com/article/697683.html<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img src="/img/ubuntu_cpu_1.png"/>
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img src="/img/ubuntu_cpu_2.png"/>
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
         <tag>Ubuntu</tag>
         <tag>Linux</tag>
       </tags>
@@ -1599,37 +1571,36 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
+<img src="/img/ubuntu_cpu_1.png"/>
 
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
 </ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载YouTube视频"><a href="#二、下载YouTube视频" class="headerlink" title="二、下载YouTube视频"></a>二、下载YouTube视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img src="/img/ubuntu_cpu_2.png"/>
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
       <categories>
-        <category>Software</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Software</tag>
+        <tag>Ubuntu</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1746,7 +1717,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;" >&#103;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -1809,6 +1780,40 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载YouTube视频"><a href="#二、下载YouTube视频" class="headerlink" title="二、下载YouTube视频"></a>二、下载YouTube视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
