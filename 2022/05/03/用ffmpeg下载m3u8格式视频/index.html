@@ -9,7 +9,7 @@
     
     <title>
         
-            Github Pages绑定个人域名 |
+            用FFmpeg下载m3u8格式视频 |
         
         烟雨平生
     </title>
@@ -150,7 +150,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Github Pages绑定个人域名</span>
+            <span class="title-hover-animation">用FFmpeg下载m3u8格式视频</span>
         </div>
 
         
@@ -167,8 +167,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-04-09 16:00:00</span>
-        <span class="mobile">2022-04-09 16:00</span>
+        <span class="pc">2022-05-03 20:55:00</span>
+        <span class="mobile">2022-05-03 20:55</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -176,7 +176,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
+                        <a href="/categories/Software/">Software</a>&nbsp;
                     </li>
                 
             </ul>
@@ -188,11 +188,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Github/">Github</a>&nbsp;
+                        <a href="/tags/Software/">Software</a>&nbsp;
                     </li>
                 
             </ul>
@@ -215,38 +211,65 @@
         
 
         <div class="article-content markdown-body">
-            <p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   target="_blank" rel="noopener" href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+            <p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
+<p>反正FFmpeg很强大的，功能也很多。这篇文章，主要介绍下载m3u8视频。</p>
 <a id="more"></a>
 
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img src="/img/Github_Pages_domain_name_1.png"/>
-<img src="/img/Github_Pages_domain_name_2.png"/>
+<p>之前有两篇文章介绍了下载视频的工具，即：</p>
+<ul>
+<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a></li>
+<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a>
 
 </li>
 </ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img src="/img/Github_Pages_domain_name_3.png"/>
+<p>you-get 和 youtube-dl 这两差不多，youtube-dl 能下载包括油管视频在内的不少视频了。这两都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。而且也都用到了FFmpeg的功能，所以都已经安装了。</p>
+<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   target="_blank" rel="noopener" href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
+<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img src="/img/ffmpeg_download_m3u8_1.png" style="zoom: 50%;"/></p>
+<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
+<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
+<h2 id="二、下载m3u8格式视频"><a href="#二、下载m3u8格式视频" class="headerlink" title="二、下载m3u8格式视频"></a>二、下载m3u8格式视频</h2><p>比如，有如下视频想要下载：<br><a class="link"   target="_blank" rel="noopener" href="https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a" >https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a<i class="fas fa-external-link-alt"></i></a></p>
+<p>用别的插件一看就能看到是m3u8的。</p>
+<p>这个站点的，先试了下，用 VLC media player 这个播放器软件也可以下载，以前碰到过m3u8格式的无法用这个下载的。<br>如果你没装ffmpeg的话，也可以搜一下“<strong>VLC media player 下载m3u8视频方式</strong>”，这个也简单的。</p>
+<p>不管是用VLC media player 下载，还是用ffmpeg下载，首先都需要找到这个视频的m3u8的地址。</p>
+<h3 id="1-找到视频对应的m3u8地址"><a href="#1-找到视频对应的m3u8地址" class="headerlink" title="1.找到视频对应的m3u8地址"></a>1.找到视频对应的m3u8地址</h3><p>1).直接用浏览器F12开发者工具找m3u8地址</p>
+<p>这个不管Chrome浏览器，还是Edge、Firefox这些基本上所有浏览器都有了。操作如下：</p>
+<ul>
+<li>按<strong>F12</strong>打开浏览器的开发者工具，选择【网络】项；</li>
+<li>在【Name】中找到.m3u8后单击（按Name排序一下，很容易找到的）；</li>
+<li>复制右侧的【请求网址】，网址最后应该都是 .m3u8。</li>
+</ul>
+<img src="/img/ffmpeg_download_m3u8_2.png" style="zoom: 50%;"/>
 
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   target="_blank" rel="noopener" href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img src="/img/Github_Pages_domain_name_4.png"/></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img src="/img/Github_Pages_domain_name_5.png"/></p>
-<p>这样就可以了。</p>
+<p>比如我复制出来为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;r1-ndr.ykt.cbern.com.cn&#x2F;edu_product&#x2F;65&#x2F;video&#x2F;17b9d867547a11eb96b8fa20200c3759&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.false&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8</span><br></pre></td></tr></table></figure>
+<p>2).直接用浏览器插件找m3u8地址</p>
+<p>比如这里直接用“猫抓”的插件：</p>
+<ul>
+<li>播放视频，点击猫抓插件；</li>
+<li>直接复制最上面的m3u8地址。</li>
+</ul>
+<img src="/img/ffmpeg_download_m3u8_3.png" style="zoom: 50%;"/>
 
+<p>复制出来和上面的方法是一样的。</p>
+<h3 id="2-用ffmpeg下载m3u8视频"><a href="#2-用ffmpeg下载m3u8视频" class="headerlink" title="2.用ffmpeg下载m3u8视频"></a>2.用ffmpeg下载m3u8视频</h3><p>添加好环境变量后，直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
+<p>输入命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i 你要下载的m3u8地址 -c copy -bsf:a aac_adtstoasc ./保存视频的名字.mp4</span><br></pre></td></tr></table></figure>
+<p>比如我要下载上面的视频，就输入以下命令后，回车：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i https://r1-ndr.ykt.cbern.com.cn/edu_product/65/video/17b9d867547a11eb96b8fa20200c3759/e6d5486a49d609bfca30e0f3a328f031.1280.720.false/e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8 -c copy -bsf:a aac_adtstoasc ./1234.mp4</span><br></pre></td></tr></table></figure>
+<p>等完成后，这个目录下就有了下载好的名为 1234.mp4的视频了。</p>
+<img src="/img/ffmpeg_download_m3u8_4.png" style="zoom: 50%;"/>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Github Pages绑定个人域名</li>
+        <li>本文标题：用FFmpeg下载m3u8格式视频</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-04-09 16:00:00</li>
+        <li>创建时间：2022-05-03 20:55:00</li>
         <li>
-            本文链接：http://121.4.29.213/2022/04/09/Github Pages绑定个人域名/
+            本文链接：http://121.4.29.213/2022/05/03/用ffmpeg下载m3u8格式视频/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -261,11 +284,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Github/">#Github</a>&nbsp;
+                        <a href="/tags/Software/">#Software</a>&nbsp;
                     </li>
                 
             </ul>
@@ -274,29 +293,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">youtube-dl 使用教程</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/"
+                           href="/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">【小白教程】免费建立静态博客网站（Github+Hexo）</span>
+                                <span class="post-nav-title-item">Hexo Keep主题添加归档页和标签页</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -505,7 +509,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9C%A8Github%E4%B8%8A%E8%BF%9B%E8%A1%8C%E8%AE%BE%E7%BD%AE"><span class="nav-text">1.在Github上进行设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0CNAME%E6%96%87%E4%BB%B6"><span class="nav-text">2.添加CNAME文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9DNS%E4%B8%AD%E5%AF%B9%E5%BA%94%E7%9A%84IP%E5%9C%B0%E5%9D%80"><span class="nav-text">3.修改DNS中对应的IP地址</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BDFFmpeg"><span class="nav-text">一、下载FFmpeg</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BDFFmpeg"><span class="nav-text">1.下载FFmpeg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">2.添加到环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91"><span class="nav-text">二、下载m3u8格式视频</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%89%BE%E5%88%B0%E8%A7%86%E9%A2%91%E5%AF%B9%E5%BA%94%E7%9A%84m3u8%E5%9C%B0%E5%9D%80"><span class="nav-text">1.找到视频对应的m3u8地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E8%A7%86%E9%A2%91"><span class="nav-text">2.用ffmpeg下载m3u8视频</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
