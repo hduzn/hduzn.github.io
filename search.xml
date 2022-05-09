@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>2022年，继续重新开始</title>
+    <url>/2021/02/05/2021start/</url>
+    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+<a id="more"></a>
+
+<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
+<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
+<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
+<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
+<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
+<p>更新于【2022-05-01】</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Docker EwoMail修改MySQL密码</title>
     <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
@@ -29,18 +43,104 @@
       </tags>
   </entry>
   <entry>
-    <title>2022年，继续重新开始</title>
-    <url>/2021/02/05/2021start/</url>
-    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
+    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
+<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
 <a id="more"></a>
 
-<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
-<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
-<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
-<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
-<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
-<p>更新于【2022-05-01】</p>
+<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
+<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
+<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
+<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
+<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
+<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
+<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
+<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>成功了！！！</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>python中类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Integer</td>
+<td>int</td>
+<td>普通整数，一般是32位</td>
+</tr>
+<tr>
+<td>SmallInteger</td>
+<td>int</td>
+<td>取值范围小的整数,—般是16位</td>
+</tr>
+<tr>
+<td>BigInteger</td>
+<td>int或long</td>
+<td>不限制精度的整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>float</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>Numeric</td>
+<td>decimal.Decimal</td>
+<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
+</tr>
+<tr>
+<td>String</td>
+<td>str</td>
+<td>变长字符串</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>str</td>
+<td>变长字符串，对较长或不限长度的字符串做了优化</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>bool</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>datetime.date</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>LargeBinary</td>
+<td>str</td>
+<td>二进制文件</td>
+</tr>
+</tbody></table>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Flask</tag>
+      </tags>
   </entry>
   <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
@@ -164,106 +264,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
-    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
-<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
-<a id="more"></a>
-
-<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
-<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
-<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
-<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>改成：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
-<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
-<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
-<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
-<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
-<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>成功了！！！</p>
-<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
-<thead>
-<tr>
-<th>类型名</th>
-<th>python中类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Integer</td>
-<td>int</td>
-<td>普通整数，一般是32位</td>
-</tr>
-<tr>
-<td>SmallInteger</td>
-<td>int</td>
-<td>取值范围小的整数,—般是16位</td>
-</tr>
-<tr>
-<td>BigInteger</td>
-<td>int或long</td>
-<td>不限制精度的整数</td>
-</tr>
-<tr>
-<td>Float</td>
-<td>float</td>
-<td>浮点数</td>
-</tr>
-<tr>
-<td>Numeric</td>
-<td>decimal.Decimal</td>
-<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
-</tr>
-<tr>
-<td>String</td>
-<td>str</td>
-<td>变长字符串</td>
-</tr>
-<tr>
-<td>Text</td>
-<td>str</td>
-<td>变长字符串，对较长或不限长度的字符串做了优化</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>bool</td>
-<td>布尔值</td>
-</tr>
-<tr>
-<td>Date</td>
-<td>datetime.date</td>
-<td>时间</td>
-</tr>
-<tr>
-<td>Time</td>
-<td>datetime.datetime</td>
-<td>日期和时间</td>
-</tr>
-<tr>
-<td>LargeBinary</td>
-<td>str</td>
-<td>二进制文件</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Flask</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Github Pages绑定个人域名</title>
     <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
     <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
@@ -361,10 +361,10 @@
 <p>但是，有一个问题，就是当你继续更新博客文章后，这两个菜单中的内容并不会更新。所以还需要修改这两个文件的内容。</p>
 <h3 id="3-修改index-md文件中的内容。"><a href="#3-修改index-md文件中的内容。" class="headerlink" title="3.修改index.md文件中的内容。"></a>3.修改index.md文件中的内容。</h3><p>1).修改 <code>source\categories\index.md</code> 文件</p>
 <p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comments: false</span><br></pre></td></tr></table></figure>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
 <p>2).修改 <code>source\tags\index.md</code> 文件</p>
 <p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comments: false</span><br></pre></td></tr></table></figure>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
 <p>主要是增加type参数，comments设为false表示该页面不允许评论。</p>
 <p>至此，再更新博客文章后，【归档】和【标签】菜单中也会跟着更新了。</p>
 ]]></content>
@@ -489,37 +489,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
-<a id="more"></a>
-
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo博客部署到云服务器（Ubuntu）上</title>
     <url>/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/</url>
     <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -601,6 +570,37 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+<a id="more"></a>
+
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo链接站内文章方法</title>
     <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
@@ -620,76 +620,6 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux vim/vi 命令简单使用</title>
-    <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
-<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
-<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
-<a id="more"></a>
-
-<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
-<ul>
-<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
-<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
-</ul>
-<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
-<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
-<table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">:w</td>
-<td>保存</td>
-</tr>
-<tr>
-<td align="left">:wq</td>
-<td>保存并退出</td>
-</tr>
-<tr>
-<td align="left">:q</td>
-<td>不保存退出</td>
-</tr>
-</tbody></table>
-<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">o</td>
-<td>插入一行</td>
-</tr>
-<tr>
-<td align="left">dd</td>
-<td>删除一行</td>
-</tr>
-<tr>
-<td align="left">dw</td>
-<td>删除选中字母开始的第一个字母</td>
-</tr>
-</tbody></table>
-<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
-<ul>
-<li>1.用vim 打开文件后，是命令模式；</li>
-<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
-<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
-<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -786,6 +716,112 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux vim/vi 命令简单使用</title>
+    <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
+<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
+<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
+<a id="more"></a>
+
+<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
+<ul>
+<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
+<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
+</ul>
+<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
+<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">:w</td>
+<td>保存</td>
+</tr>
+<tr>
+<td align="left">:wq</td>
+<td>保存并退出</td>
+</tr>
+<tr>
+<td align="left">:q</td>
+<td>不保存退出</td>
+</tr>
+</tbody></table>
+<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">o</td>
+<td>插入一行</td>
+</tr>
+<tr>
+<td align="left">dd</td>
+<td>删除一行</td>
+</tr>
+<tr>
+<td align="left">dw</td>
+<td>删除选中字母开始的第一个字母</td>
+</tr>
+</tbody></table>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
+<ul>
+<li>1.用vim 打开文件后，是命令模式；</li>
+<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
+<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
+<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令小记（不断更新中）</title>
+    <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line">whoami</span><br><span class="line">ls</span><br><span class="line">ls -l</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1</span><br><span class="line">rm -rf dir1</span><br><span class="line">cp -r dir1 dir2</span><br><span class="line">mv dir1 dir2</span><br><span class="line"></span><br><span class="line"><span class="built_in">which</span> python</span><br><span class="line">su root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt</span><br><span class="line">vim a.txt</span><br><span class="line">cat a.txt</span><br><span class="line">mv a.txt b.txt</span><br><span class="line">rm a.txt</span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>CentOS</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="二、Linux命令具体使用文章集合"><a href="#二、Linux命令具体使用文章集合" class="headerlink" title="二、Linux命令具体使用文章集合"></a>二、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Ubuntu 定时执行 python脚本">Ubuntu 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Navicat连接MySQL数据库不成功</title>
     <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
     <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
@@ -827,42 +863,6 @@
       <tags>
         <tag>MySQL</tag>
         <tag>Navicat</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux命令小记（不断更新中）</title>
-    <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line">whoami</span><br><span class="line">ls</span><br><span class="line">ls -l</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1</span><br><span class="line">rm -rf dir1</span><br><span class="line">cp -r dir1 dir2</span><br><span class="line">mv dir1 dir2</span><br><span class="line"></span><br><span class="line"><span class="built_in">which</span> python</span><br><span class="line">su root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt</span><br><span class="line">vim a.txt</span><br><span class="line">cat a.txt</span><br><span class="line">mv a.txt b.txt</span><br><span class="line">rm a.txt</span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>CentOS</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="二、Linux命令具体使用文章集合"><a href="#二、Linux命令具体使用文章集合" class="headerlink" title="二、Linux命令具体使用文章集合"></a>二、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Ubuntu 定时执行 python脚本">Ubuntu 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1003,35 +1003,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python selenium3 切换到新的窗口方法</title>
     <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Python 用selenium（selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
@@ -1064,6 +1035,35 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1176,6 +1176,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SQLite 清空表数据并将自增量归0</title>
     <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
     <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
@@ -1227,43 +1264,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SyntaxError EOL while scanning string literal</title>
     <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
     <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
@@ -1280,6 +1280,34 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Ubuntu Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1310,34 +1338,6 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Ubuntu Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1419,45 +1419,6 @@
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
         <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 安装Selenium自动化测试</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line">print(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -1563,9 +1524,48 @@
         <category>Linux</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 安装Selenium自动化测试</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
+<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<a id="more"></a>
+<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
+<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
+<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
+<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
+<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
+<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
+<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
+<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line">print(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
         <tag>Python</tag>
         <tag>Ubuntu</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -2125,38 +2125,6 @@
       </tags>
   </entry>
   <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -2209,7 +2177,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#109;" >&#x67;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -2254,6 +2222,38 @@
         <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
