@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>2022年，继续重新开始</title>
-    <url>/2021/02/05/2021start/</url>
-    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
-<a id="more"></a>
-
-<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
-<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
-<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
-<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
-<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
-<p>更新于【2022-05-01】</p>
-]]></content>
-  </entry>
-  <entry>
     <title>Docker EwoMail修改MySQL密码</title>
     <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
@@ -41,6 +27,20 @@
       <tags>
         <tag>Docker</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>2022年，继续重新开始</title>
+    <url>/2021/02/05/2021start/</url>
+    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+<a id="more"></a>
+
+<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
+<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
+<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
+<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
+<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
+<p>更新于【2022-05-01】</p>
+]]></content>
   </entry>
   <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
@@ -489,6 +489,37 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+<a id="more"></a>
+
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo博客部署到云服务器（Ubuntu）上</title>
     <url>/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/</url>
     <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -567,37 +598,6 @@
       <tags>
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
-<a id="more"></a>
-
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -742,42 +742,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux命令小记（不断更新中）</title>
-    <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line">whoami</span><br><span class="line">ls</span><br><span class="line">ls -l</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1</span><br><span class="line">rm -rf dir1</span><br><span class="line">cp -r dir1 dir2</span><br><span class="line">mv dir1 dir2</span><br><span class="line"></span><br><span class="line"><span class="built_in">which</span> python</span><br><span class="line">su root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt</span><br><span class="line">vim a.txt</span><br><span class="line">cat a.txt</span><br><span class="line">mv a.txt b.txt</span><br><span class="line">rm a.txt</span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>CentOS</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="二、Linux命令具体使用文章集合"><a href="#二、Linux命令具体使用文章集合" class="headerlink" title="二、Linux命令具体使用文章集合"></a>二、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Ubuntu 定时执行 python脚本">Ubuntu 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux nohup 后台运行 命令详解</title>
     <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
@@ -863,6 +827,42 @@
       <tags>
         <tag>MySQL</tag>
         <tag>Navicat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令小记（不断更新中）</title>
+    <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br><span class="line">whoami</span><br><span class="line">ls</span><br><span class="line">ls -l</span><br><span class="line">ifconfig</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1</span><br><span class="line">rm -rf dir1</span><br><span class="line">cp -r dir1 dir2</span><br><span class="line">mv dir1 dir2</span><br><span class="line"></span><br><span class="line"><span class="built_in">which</span> python</span><br><span class="line">su root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt</span><br><span class="line">vim a.txt</span><br><span class="line">cat a.txt</span><br><span class="line">mv a.txt b.txt</span><br><span class="line">rm a.txt</span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>CentOS</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="二、Linux命令具体使用文章集合"><a href="#二、Linux命令具体使用文章集合" class="headerlink" title="二、Linux命令具体使用文章集合"></a>二、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Ubuntu 定时执行 python脚本">Ubuntu 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1264,6 +1264,25 @@
       </tags>
   </entry>
   <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line">print(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Typora+PicGo无法显示Github图床图片问题</title>
     <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
@@ -1291,25 +1310,6 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line">print(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1397,6 +1397,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 安装Selenium自动化测试</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
@@ -1433,64 +1458,6 @@
         <tag>Python</tag>
         <tag>Ubuntu</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
-<a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img src="/img/ubuntu_cpu_1.png"/>
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img src="/img/ubuntu_cpu_2.png"/>
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1602,49 +1569,36 @@
       </tags>
   </entry>
   <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
+<img src="/img/ubuntu_cpu_1.png"/>
 
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
 </ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img src="/img/ubuntu_cpu_2.png"/>
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
 ]]></content>
       <categories>
-        <category>iphone</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>iphone</tag>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1767,6 +1721,52 @@
       </categories>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
       </tags>
   </entry>
   <entry>
@@ -2125,6 +2125,38 @@
       </tags>
   </entry>
   <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -2177,7 +2209,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#109;" >&#x67;&#105;&#116;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -2280,38 +2312,6 @@
       </categories>
       <tags>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
