@@ -15,34 +15,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -264,6 +236,99 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img src="/img/Github_Pages_domain_name_1.png"/>
+<img src="/img/Github_Pages_domain_name_2.png"/>
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img src="/img/Github_Pages_domain_name_3.png"/>
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img src="/img/Github_Pages_domain_name_4.png"/></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img src="/img/Github_Pages_domain_name_5.png"/></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo Keep主题添加归档页和标签页</title>
+    <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
+    <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题默认导航菜单上没有【归档】和【标签】菜单。所以需要自己开启。</p>
+<a id="more"></a>
+
+<h3 id="1-修改主题配置文件（-config-yml）"><a href="#1-修改主题配置文件（-config-yml）" class="headerlink" title="1.修改主题配置文件（_config.yml）"></a>1.修改主题配置文件（<code>_config.yml</code>）</h3><p>主题的配置文件（<code>_config.yml</code>）中导航菜单中归档页（Categories）和标签页（Tags）默认是注释了的。</p>
+<p>所以，只要去掉注释，就可以启用了。如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">Home:</span> <span class="string">/</span></span><br><span class="line">  <span class="attr">Archives:</span> <span class="string">/archives</span></span><br><span class="line">  <span class="attr">Categories:</span> <span class="string">/categories</span></span><br><span class="line">  <span class="attr">Tags:</span> <span class="string">/tags</span></span><br><span class="line">  <span class="comment"># Links: /links</span></span><br><span class="line">  <span class="comment"># About: /about</span></span><br><span class="line">  <span class="comment"># Changelog: /changelog</span></span><br><span class="line">  <span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
+<p>去掉注释后，首页导航菜单中有了【归档】和【标签】菜单，但打开并没有内容。</p>
+<h3 id="2-添加【归档】和【标签】对应的页面文件"><a href="#2-添加【归档】和【标签】对应的页面文件" class="headerlink" title="2.添加【归档】和【标签】对应的页面文件"></a>2.添加【归档】和【标签】对应的页面文件</h3><p>直接用 hexo命令新建页面。<br>在Hexo目录下，打开【Git Bash】，依次执行以下两条语句：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;categories&quot;</span></span><br><span class="line">hexo new <span class="string">&quot;tags&quot;</span></span><br></pre></td></tr></table></figure>
+<p>执行完两条命令后，会有Hexo的source目录下新建出 <code>categories\index.md</code> 文件和<code>tages\index.md</code> 文件。</p>
+<p>当然新建完后，发现首页导航菜单中【归档】和【标签】菜单打开也有了内容。</p>
+<p>但是，有一个问题，就是当你继续更新博客文章后，这两个菜单中的内容并不会更新。所以还需要修改这两个文件的内容。</p>
+<h3 id="3-修改index-md文件中的内容。"><a href="#3-修改index-md文件中的内容。" class="headerlink" title="3.修改index.md文件中的内容。"></a>3.修改index.md文件中的内容。</h3><p>1).修改 <code>source\categories\index.md</code> 文件</p>
+<p>在Front-matter部分增加后面2行内容，修改为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
+<p>2).修改 <code>source\tags\index.md</code> 文件</p>
+<p>在Front-matter部分增加后面2行内容，修改为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
+<p>主要是增加type参数，comments设为false表示该页面不允许评论。</p>
+<p>至此，再更新博客文章后，【归档】和【标签】菜单中也会跟着更新了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -305,74 +370,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>Markdown</tag>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo Keep主题添加归档页和标签页</title>
-    <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
-    <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题默认导航菜单上没有【归档】和【标签】菜单。所以需要自己开启。</p>
-<a id="more"></a>
-
-<h3 id="1-修改主题配置文件（-config-yml）"><a href="#1-修改主题配置文件（-config-yml）" class="headerlink" title="1.修改主题配置文件（_config.yml）"></a>1.修改主题配置文件（<code>_config.yml</code>）</h3><p>主题的配置文件（<code>_config.yml</code>）中导航菜单中归档页（Categories）和标签页（Tags）默认是注释了的。</p>
-<p>所以，只要去掉注释，就可以启用了。如下所示：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">Home:</span> <span class="string">/</span></span><br><span class="line">  <span class="attr">Archives:</span> <span class="string">/archives</span></span><br><span class="line">  <span class="attr">Categories:</span> <span class="string">/categories</span></span><br><span class="line">  <span class="attr">Tags:</span> <span class="string">/tags</span></span><br><span class="line">  <span class="comment"># Links: /links</span></span><br><span class="line">  <span class="comment"># About: /about</span></span><br><span class="line">  <span class="comment"># Changelog: /changelog</span></span><br><span class="line">  <span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
-<p>去掉注释后，首页导航菜单中有了【归档】和【标签】菜单，但打开并没有内容。</p>
-<h3 id="2-添加【归档】和【标签】对应的页面文件"><a href="#2-添加【归档】和【标签】对应的页面文件" class="headerlink" title="2.添加【归档】和【标签】对应的页面文件"></a>2.添加【归档】和【标签】对应的页面文件</h3><p>直接用 hexo命令新建页面。<br>在Hexo目录下，打开【Git Bash】，依次执行以下两条语句：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;categories&quot;</span></span><br><span class="line">hexo new <span class="string">&quot;tags&quot;</span></span><br></pre></td></tr></table></figure>
-<p>执行完两条命令后，会有Hexo的source目录下新建出 <code>categories\index.md</code> 文件和<code>tages\index.md</code> 文件。</p>
-<p>当然新建完后，发现首页导航菜单中【归档】和【标签】菜单打开也有了内容。</p>
-<p>但是，有一个问题，就是当你继续更新博客文章后，这两个菜单中的内容并不会更新。所以还需要修改这两个文件的内容。</p>
-<h3 id="3-修改index-md文件中的内容。"><a href="#3-修改index-md文件中的内容。" class="headerlink" title="3.修改index.md文件中的内容。"></a>3.修改index.md文件中的内容。</h3><p>1).修改 <code>source\categories\index.md</code> 文件</p>
-<p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
-<p>2).修改 <code>source\tags\index.md</code> 文件</p>
-<p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
-<p>主要是增加type参数，comments设为false表示该页面不允许评论。</p>
-<p>至此，再更新博客文章后，【归档】和【标签】菜单中也会跟着更新了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img src="/img/Github_Pages_domain_name_1.png"/>
-<img src="/img/Github_Pages_domain_name_2.png"/>
-
-</li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img src="/img/Github_Pages_domain_name_3.png"/>
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img src="/img/Github_Pages_domain_name_4.png"/></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img src="/img/Github_Pages_domain_name_5.png"/></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -515,28 +515,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo 主题添加 Valine 评论功能</title>
     <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
     <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
@@ -589,76 +567,6 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux vim/vi 命令简单使用</title>
-    <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
-<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
-<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
-<a id="more"></a>
-
-<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
-<ul>
-<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
-<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
-</ul>
-<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
-<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
-<table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">:w</td>
-<td>保存</td>
-</tr>
-<tr>
-<td align="left">:wq</td>
-<td>保存并退出</td>
-</tr>
-<tr>
-<td align="left">:q</td>
-<td>不保存退出</td>
-</tr>
-</tbody></table>
-<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">o</td>
-<td>插入一行</td>
-</tr>
-<tr>
-<td align="left">dd</td>
-<td>删除一行</td>
-</tr>
-<tr>
-<td align="left">dw</td>
-<td>删除选中字母开始的第一个字母</td>
-</tr>
-</tbody></table>
-<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
-<ul>
-<li>1.用vim 打开文件后，是命令模式；</li>
-<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
-<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
-<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -742,6 +650,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux nohup 后台运行 命令详解</title>
     <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
@@ -783,6 +713,163 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux vim/vi 命令简单使用</title>
+    <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
+<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
+<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
+<a id="more"></a>
+
+<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
+<ul>
+<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
+<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
+</ul>
+<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
+<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">:w</td>
+<td>保存</td>
+</tr>
+<tr>
+<td align="left">:wq</td>
+<td>保存并退出</td>
+</tr>
+<tr>
+<td align="left">:q</td>
+<td>不保存退出</td>
+</tr>
+</tbody></table>
+<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">o</td>
+<td>插入一行</td>
+</tr>
+<tr>
+<td align="left">dd</td>
+<td>删除一行</td>
+</tr>
+<tr>
+<td align="left">dw</td>
+<td>删除选中字母开始的第一个字母</td>
+</tr>
+</tbody></table>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
+<ul>
+<li>1.用vim 打开文件后，是命令模式；</li>
+<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
+<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
+<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Selenium查找元素方法汇总</title>
+    <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
+<p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>这篇文章主要针对第3步，列举一些查找元素的方法。</p>
+<a id="more"></a>
+
+<p>在浏览器中查找网页元素，直接按F12，打开开发者模式，在【元素】（Elements）选项中就可以查看网页源码。</p>
+<p>查找网页元素时，有两个情况：</p>
+<ul>
+<li>webdriver.find_element：只查找1个元素（返回WebElement对象）；</li>
+<li>webdriver.find_elements：查找多个元素（返回一个List的WebElement对象）</li>
+</ul>
+<h2 id="一、只查找一个元素（find-element方法）"><a href="#一、只查找一个元素（find-element方法）" class="headerlink" title="一、只查找一个元素（find_element方法）"></a>一、只查找一个元素（find_element方法）</h2><h3 id="1-简单的直接查找"><a href="#1-简单的直接查找" class="headerlink" title="1.简单的直接查找"></a>1.简单的直接查找</h3><ul>
+<li>By.ID：通过HTML标签的id属性（id属性在HTML文档中具体唯一性，所以有id优先通过这个查找）</li>
+<li>By.CLASS_NAME：通过HTML标签的class属性（class属性并没有唯一性，如果有多个元素的话，只会返回第1个；当然有些class在站点中唯一的话，也是可以用来查找的）</li>
+<li>By.TAG_NAME：通过HTML标签（多个元素的话，也是返回第1个）</li>
+</ul>
+<p>对应代码为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="comment"># 初始化代码 ...</span></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">e1 = wd.find_element(By.ID, <span class="string">&#x27;sb_form_q&#x27;</span>) <span class="comment"># 搜索框</span></span><br><span class="line">e2 = wd.find_element(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line">e3 = wd.find_element(By.TAG_NAME, <span class="string">&#x27;input&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>在F12打开的开发者工具中，按 <code>Ctrl+F</code>键，打开搜索。<br>如果是id，搜索id名前面加上<code>#</code>号，直接就能搜索id。如图所示：<br><img src="/img/Python_Selenium_find_element_1.png"  style="zoom: 50%;"/></p>
+<p>可以用 <code>WebElement.send_keys(&#39;搜索内容&#39;)</code>测试是否找到了这个元素，或者直接print一下。</p>
+<p>如果找不到元素，或者有这个元素、网站响应速度比代码执行速度慢点，find_element 方法就会抛出 selenium.common.exceptions.NoSuchElementException 异常。</p>
+<h3 id="2-处理-NoSuchElementException-的异常"><a href="#2-处理-NoSuchElementException-的异常" class="headerlink" title="2.处理 NoSuchElementException 的异常"></a>2.处理 NoSuchElementException 的异常</h3><p>因为有2种情况，都会有有这个异常：</p>
+<ul>
+<li>情况一：找不到此元素</li>
+<li>情况二：代码执行速度比网站响应快</li>
+</ul>
+<p>1).如果是第二种情况</p>
+<p>虽然用了 <code>wd.implicitly_wait(10)</code> ，但有时候还是会有这个问题。</p>
+<p>我一般这样处理这个异常，get方法之后sleep一下（时间不是固定，看网络和站点的响应情况），然后如果报这个异常，就再sleep多等待一下再查找这个元素。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">wd.get(site_url)</span><br><span class="line">time.sleep(<span class="number">2</span>) <span class="comment"># 等待2秒</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> selenium.common.exceptions.NoSuchElementException:</span><br><span class="line">    time.sleep(<span class="number">5</span>) <span class="comment"># 等待5秒</span></span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>2).如果是第一种情况</p>
+<p>就直接在语句后面加个 if(element)的判断好了，看看false的时候（没找到元素）需要做什么处理或者提示。</p>
+<h3 id="3-通过CSS-SELECTOR-复杂一点的查找（全能查找）"><a href="#3-通过CSS-SELECTOR-复杂一点的查找（全能查找）" class="headerlink" title="3.通过CSS_SELECTOR 复杂一点的查找（全能查找）"></a>3.通过CSS_SELECTOR 复杂一点的查找（全能查找）</h3><p><strong>By.CSS_SELECTOR</strong>就比较全能了，用这个也可以根据ID、CLASS_NAME来查找的。</p>
+<p>1).普通查找</p>
+<ul>
+<li>(By.CSS_SELECTOR,’#sb_form_q’)：# 根据id查找，= (By.ID, ‘sb_form_q’)</li>
+<li>(By.CSS_SELECTOR,’.sb_form_q’)：# 根据class name查找，=(By.CLASS_NAME, ‘sb_form_q’)</li>
+</ul>
+<p>2).子元素、后台元素查找（这个经常会用到）</p>
+<p>比如有如下一段html代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner11&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层11<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner12&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner33&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层33<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner44&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我要查找“内层33”这个内容，那我们可以这样找：</p>
+<ul>
+<li><code>(By.CSS_SELECTOR, &#39;.container &gt; .layer1 &gt; .inner33&#39;)</code>：# 如果用大于号，表示子元素，必须一层一层，中间不能少个</li>
+<li><code>(By.CSS_SELECTOR, &#39;.container .layer1 .inner33&#39;)</code>： # 如果没用大于号，表示后代元素</li>
+<li><code>(By.CSS_SELECTOR, &#39;.container .inner33&#39;)</code>： # 后代元素中间每一层就不是必须了</li>
+</ul>
+<p>3).根据属性查找（这个也常用）</p>
+<ul>
+<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44的</li>
+<li><code>(By.CSS_SELECTOR,&#39;button[type=submit]&#39;)</code>：# 查找tag是button且type属性是submit的</li>
+<li> <code>(By.CSS_SELECTOR,&#39;[href=&quot;www.test.com&quot;]&#39;)</code>：# 查找对应的href属性值</li>
+<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;][ctype=&quot;test&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44、ctype属性是test的（可以多个属性）</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href*=&quot;http&quot;]&#39;)</code>：# 还可以用正则，查找a标签href属性包含http的</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href^=&quot;http&quot;]&#39;)</code>：# 查找a标签href属性以http开头的</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href$=&quot;.cn&quot;]&#39;)</code>：# 查找a标签href属性以.cn结尾的</li>
+</ul>
+<p>用的最多的感觉除了偶尔能用直接查找外，就是后代元素（多个class_name定位）和根据属性查找。</p>
+<h3 id="4-Xpath选择器（全能查找）"><a href="#4-Xpath选择器（全能查找）" class="headerlink" title="4.Xpath选择器（全能查找）"></a>4.Xpath选择器（全能查找）</h3><p>用css查找基本上很方便、强大了，只是有些场景用 css 查找元素会比较麻烦，而xpath比较方便。<br>另外 Xpath 还有其他领域会使用到，比如爬虫框架 Scrapy，手机App框架 Appium。</p>
+<p>用Xpath的时候，代码就用By.XPATH，类似这样： <code>wd.find_element(By.XPATH,&#39;/html/body/div&#39;)</code></p>
+<p>等回头研究用爬虫的时候，用的例子多一些，再单独写一篇。此篇略。</p>
+<h2 id="二、查找多个元素（find-elements方法）"><a href="#二、查找多个元素（find-elements方法）" class="headerlink" title="二、查找多个元素（find_elements方法）"></a>二、查找多个元素（find_elements方法）</h2><p>比如有时候一个class_name会有很多地方在用 ，就可以查多个元素。</p>
+<p>find_elements方法返回是一个List的列表，所以用for循环一下就能得到每一个。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elements = wd.find_elements(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elements:</span><br><span class="line">    print(element.text)</span><br></pre></td></tr></table></figure>
+<p>所以CSS_SELECTOR中还有子节点的写法，我一般也不用，直接find_elements后，取列表中第几个。</p>
+<p><strong>find_element 和 find_elements 的区别</strong></p>
+<ul>
+<li>find_elements：找出符合条件的所有元素， 如果没有，返回空列表</li>
+<li>find_element：找出符合条件的第一个元素，如果没有，抛出NoSuchElementException 异常</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -916,90 +1003,35 @@
       </tags>
   </entry>
   <entry>
-    <title>Python Selenium查找元素方法汇总</title>
-    <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
-<p><strong>Selenium用法</strong> 主要就4步：</p>
-<ul>
-<li>1.创建WebDriver对象；</li>
-<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
-<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
-<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
-</ul>
-<p>这篇文章主要针对第3步，列举一些查找元素的方法。</p>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
 <a id="more"></a>
 
-<p>在浏览器中查找网页元素，直接按F12，打开开发者模式，在【元素】（Elements）选项中就可以查看网页源码。</p>
-<p>查找网页元素时，有两个情况：</p>
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img src="/img/Python_image_resize_1.png"/></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
 <ul>
-<li>webdriver.find_element：只查找1个元素（返回WebElement对象）；</li>
-<li>webdriver.find_elements：查找多个元素（返回一个List的WebElement对象）</li>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
 </ul>
-<h2 id="一、只查找一个元素（find-element方法）"><a href="#一、只查找一个元素（find-element方法）" class="headerlink" title="一、只查找一个元素（find_element方法）"></a>一、只查找一个元素（find_element方法）</h2><h3 id="1-简单的直接查找"><a href="#1-简单的直接查找" class="headerlink" title="1.简单的直接查找"></a>1.简单的直接查找</h3><ul>
-<li>By.ID：通过HTML标签的id属性（id属性在HTML文档中具体唯一性，所以有id优先通过这个查找）</li>
-<li>By.CLASS_NAME：通过HTML标签的class属性（class属性并没有唯一性，如果有多个元素的话，只会返回第1个；当然有些class在站点中唯一的话，也是可以用来查找的）</li>
-<li>By.TAG_NAME：通过HTML标签（多个元素的话，也是返回第1个）</li>
-</ul>
-<p>对应代码为：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="comment"># 初始化代码 ...</span></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">e1 = wd.find_element(By.ID, <span class="string">&#x27;sb_form_q&#x27;</span>) <span class="comment"># 搜索框</span></span><br><span class="line">e2 = wd.find_element(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line">e3 = wd.find_element(By.TAG_NAME, <span class="string">&#x27;input&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>在F12打开的开发者工具中，按 <code>Ctrl+F</code>键，打开搜索。<br>如果是id，搜索id名前面加上<code>#</code>号，直接就能搜索id。如图所示：<br><img src="/img/Python_Selenium_find_element_1.png"  style="zoom: 50%;"/></p>
-<p>可以用 <code>WebElement.send_keys(&#39;搜索内容&#39;)</code>测试是否找到了这个元素，或者直接print一下。</p>
-<p>如果找不到元素，或者有这个元素、网站响应速度比代码执行速度慢点，find_element 方法就会抛出 selenium.common.exceptions.NoSuchElementException 异常。</p>
-<h3 id="2-处理-NoSuchElementException-的异常"><a href="#2-处理-NoSuchElementException-的异常" class="headerlink" title="2.处理 NoSuchElementException 的异常"></a>2.处理 NoSuchElementException 的异常</h3><p>因为有2种情况，都会有有这个异常：</p>
-<ul>
-<li>情况一：找不到此元素</li>
-<li>情况二：代码执行速度比网站响应快</li>
-</ul>
-<p>1).如果是第二种情况</p>
-<p>虽然用了 <code>wd.implicitly_wait(10)</code> ，但有时候还是会有这个问题。</p>
-<p>我一般这样处理这个异常，get方法之后sleep一下（时间不是固定，看网络和站点的响应情况），然后如果报这个异常，就再sleep多等待一下再查找这个元素。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">wd.get(site_url)</span><br><span class="line">time.sleep(<span class="number">2</span>) <span class="comment"># 等待2秒</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> selenium.common.exceptions.NoSuchElementException:</span><br><span class="line">    time.sleep(<span class="number">5</span>) <span class="comment"># 等待5秒</span></span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>2).如果是第一种情况</p>
-<p>就直接在语句后面加个 if(element)的判断好了，看看false的时候（没找到元素）需要做什么处理或者提示。</p>
-<h3 id="3-通过CSS-SELECTOR-复杂一点的查找（全能查找）"><a href="#3-通过CSS-SELECTOR-复杂一点的查找（全能查找）" class="headerlink" title="3.通过CSS_SELECTOR 复杂一点的查找（全能查找）"></a>3.通过CSS_SELECTOR 复杂一点的查找（全能查找）</h3><p><strong>By.CSS_SELECTOR</strong>就比较全能了，用这个也可以根据ID、CLASS_NAME来查找的。</p>
-<p>1).普通查找</p>
-<ul>
-<li>(By.CSS_SELECTOR,’#sb_form_q’)：# 根据id查找，= (By.ID, ‘sb_form_q’)</li>
-<li>(By.CSS_SELECTOR,’.sb_form_q’)：# 根据class name查找，=(By.CLASS_NAME, ‘sb_form_q’)</li>
-</ul>
-<p>2).子元素、后台元素查找（这个经常会用到）</p>
-<p>比如有如下一段html代码：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner11&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层11<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner12&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner33&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层33<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner44&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>我要查找“内层33”这个内容，那我们可以这样找：</p>
-<ul>
-<li><code>(By.CSS_SELECTOR, &#39;.container &gt; .layer1 &gt; .inner33&#39;)</code>：# 如果用大于号，表示子元素，必须一层一层，中间不能少个</li>
-<li><code>(By.CSS_SELECTOR, &#39;.container .layer1 .inner33&#39;)</code>： # 如果没用大于号，表示后代元素</li>
-<li><code>(By.CSS_SELECTOR, &#39;.container .inner33&#39;)</code>： # 后代元素中间每一层就不是必须了</li>
-</ul>
-<p>3).根据属性查找（这个也常用）</p>
-<ul>
-<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44的</li>
-<li><code>(By.CSS_SELECTOR,&#39;button[type=submit]&#39;)</code>：# 查找tag是button且type属性是submit的</li>
-<li> <code>(By.CSS_SELECTOR,&#39;[href=&quot;www.test.com&quot;]&#39;)</code>：# 查找对应的href属性值</li>
-<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;][ctype=&quot;test&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44、ctype属性是test的（可以多个属性）</li>
-<li><code>(By.CSS_SELECTOR,&#39;a[href*=&quot;http&quot;]&#39;)</code>：# 还可以用正则，查找a标签href属性包含http的</li>
-<li><code>(By.CSS_SELECTOR,&#39;a[href^=&quot;http&quot;]&#39;)</code>：# 查找a标签href属性以http开头的</li>
-<li><code>(By.CSS_SELECTOR,&#39;a[href$=&quot;.cn&quot;]&#39;)</code>：# 查找a标签href属性以.cn结尾的</li>
-</ul>
-<p>用的最多的感觉除了偶尔能用直接查找外，就是后代元素（多个class_name定位）和根据属性查找。</p>
-<h3 id="4-Xpath选择器（全能查找）"><a href="#4-Xpath选择器（全能查找）" class="headerlink" title="4.Xpath选择器（全能查找）"></a>4.Xpath选择器（全能查找）</h3><p>用css查找基本上很方便、强大了，只是有些场景用 css 查找元素会比较麻烦，而xpath比较方便。<br>另外 Xpath 还有其他领域会使用到，比如爬虫框架 Scrapy，手机App框架 Appium。</p>
-<p>用Xpath的时候，代码就用By.XPATH，类似这样： <code>wd.find_element(By.XPATH,&#39;/html/body/div&#39;)</code></p>
-<p>等回头研究用爬虫的时候，用的例子多一些，再单独写一篇。此篇略。</p>
-<h2 id="二、查找多个元素（find-elements方法）"><a href="#二、查找多个元素（find-elements方法）" class="headerlink" title="二、查找多个元素（find_elements方法）"></a>二、查找多个元素（find_elements方法）</h2><p>比如有时候一个class_name会有很多地方在用 ，就可以查多个元素。</p>
-<p>find_elements方法返回是一个List的列表，所以用for循环一下就能得到每一个。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">elements = wd.find_elements(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elements:</span><br><span class="line">    print(element.text)</span><br></pre></td></tr></table></figure>
-<p>所以CSS_SELECTOR中还有子节点的写法，我一般也不用，直接find_elements后，取列表中第几个。</p>
-<p><strong>find_element 和 find_elements 的区别</strong></p>
-<ul>
-<li>find_elements：找出符合条件的所有元素， 如果没有，返回空列表</li>
-<li>find_element：找出符合条件的第一个元素，如果没有，抛出NoSuchElementException 异常</li>
-</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
 ]]></content>
       <categories>
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1064,6 +1096,35 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 正则表达式</title>
+    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p>正则表达式是什么？</p>
+<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
+<p>比如：</p>
+<ul>
+<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
+<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
+<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
+<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1147,72 +1208,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 正则表达式</title>
-    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-    <content><![CDATA[<p>正则表达式是什么？</p>
-<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
-<p>比如：</p>
-<ul>
-<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
-<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
-<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
-<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SQLite 清空表数据并将自增量归0</title>
     <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
     <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
@@ -1264,6 +1259,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-Type: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        print(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SyntaxError EOL while scanning string literal</title>
     <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
     <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
@@ -1280,36 +1312,6 @@
       </categories>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Typora+PicGo无法显示Github图床图片问题</title>
-    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
-<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
-<a id="more"></a>
-
-<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
-<p>如下图：</p>
-<img src="/img/Typora_PicGo_Github_pic_1.png"/>
-
-<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
-<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
-<p>hosts文件在Windows系统中的路径：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
-<p>添加以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启下 Typora，果然可以了！</p>
-<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
-        <tag>Typora</tag>
-        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
@@ -1397,6 +1399,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Typora+PicGo无法显示Github图床图片问题</title>
+    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
+<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+<a id="more"></a>
+
+<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
+<p>如下图：</p>
+<img src="/img/Typora_PicGo_Github_pic_1.png"/>
+
+<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
+<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
+<p>hosts文件在Windows系统中的路径：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
+<p>添加以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启下 Typora，果然可以了！</p>
+<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>Typora</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 命令行安装Chrome浏览器</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
@@ -1419,6 +1451,128 @@
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
         <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker 常用命令</title>
+    <url>/2022/05/09/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<p>Docker 是一个开源的应用容器引擎。<br>也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要；而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。</p>
+<p>Docker 入门教程：<br><a class="link"   href="https://www.runoob.com/docker/docker-tutorial.html" >https://www.runoob.com/docker/docker-tutorial.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP" >https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p><strong>Docker使用也很简单，一般步骤</strong>：</p>
+<ul>
+<li>拉取一个镜像（<code>docker pull</code>）</li>
+<li>创建一个容器（<code>docker run</code>）</li>
+<li>在容器中运行命令（<code>docker exec </code>）</li>
+</ul>
+<p>简单说，比如我（Centos系统）安装了Docker，可以下载一个ubuntu镜像（image）；<br>然后根据这个镜像，我可以创建容器叫 ubuntu1，ubuntu2，ubuntu3，这样就创建了3个容器；<br>然后进入容器ubuntu1，可以在容器里操作，比如安装mysql；<br>进入ubuntu2，安装sqlserver；<br>……<br>在不同的容器里可以做不同的测试。当不需要第1个容器，就删除第1个就行。</p>
+<h2 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h2><p><code>docker [command] --help</code>可以查看command命令的使用方法</p>
+<p>比如：<code>docker ps --help</code>：就可以查看<code>docker ps</code>这个命令的options（参数选项）。</p>
+<h3 id="1-镜像"><a href="#1-镜像" class="headerlink" title="1.镜像"></a>1.镜像</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker pull</td>
+<td>拉取（下载）镜像</td>
+</tr>
+<tr>
+<td>docker images</td>
+<td>列出镜像</td>
+</tr>
+<tr>
+<td>docker rmi</td>
+<td>删除镜像</td>
+</tr>
+<tr>
+<td>docker image prune</td>
+<td>删除未被容器使用的镜像</td>
+</tr>
+<tr>
+<td>docker build</td>
+<td>创建新镜像（需要Dockerfile）</td>
+</tr>
+<tr>
+<td>docker tag</td>
+<td>标记镜像</td>
+</tr>
+<tr>
+<td>docker save/load</td>
+<td>镜像保存</td>
+</tr>
+</tbody></table>
+<p><strong>查找镜像</strong>两种方法：</p>
+<ul>
+<li>方法一：官方镜像：<a class="link"   href="https://hub.docker.com/search?image_filter=official&amp;q=" >https://hub.docker.com/search?image_filter=official&amp;q=<i class="fas fa-external-link-alt"></i></a> 直接找到对应版本</li>
+<li>方法二：<code>docker search [镜像名称]</code> # <code>docker search mysql</code>，搜索ubuntu镜像，搜索出来OFFICIAL标[OK]的表示官方发布的</li>
+</ul>
+<p><strong>最常用的命令：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull [image name] <span class="comment"># docker pull mysql:8.0 拉取mysql:8.0版本的镜像</span></span><br><span class="line">docker images <span class="comment"># 列出镜像列表</span></span><br><span class="line">docker rmi -f [image name] <span class="comment"># docker rmi -f mysql 强制删除mysql镜像</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-容器"><a href="#2-容器" class="headerlink" title="2.容器"></a>2.容器</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker run</td>
+<td>创建容器</td>
+</tr>
+<tr>
+<td>docker ps</td>
+<td>列出运行中的容器</td>
+</tr>
+<tr>
+<td>docker start/stop</td>
+<td>启动/停止</td>
+</tr>
+<tr>
+<td>docker rm</td>
+<td>删除容器</td>
+</tr>
+<tr>
+<td>docker rename</td>
+<td>重命名</td>
+</tr>
+<tr>
+<td>docker cp</td>
+<td>复制</td>
+</tr>
+<tr>
+<td>docker container prune</td>
+<td>删除停止的容器</td>
+</tr>
+<tr>
+<td>docker exec</td>
+<td>运行命令</td>
+</tr>
+<tr>
+<td>docker commit</td>
+<td>从容器创建新镜像</td>
+</tr>
+</tbody></table>
+<p><strong>最常用的命令：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it ubuntu /bin/bash <span class="comment"># 创建容器后，进入容器，输入`exit`回车退出</span></span><br><span class="line">docker run -itd --name u-test ubuntu /bin/bash <span class="comment"># -d表示后台运行 --name添加名称</span></span><br><span class="line"></span><br><span class="line">docker ps <span class="comment"># 列出运行中的容器</span></span><br><span class="line">docker ps -a <span class="comment"># 列出所有容器（包括停止的容器）</span></span><br><span class="line">docker stop &lt;container ID&gt; <span class="comment"># 停止容器（根据容器ID）</span></span><br><span class="line">docker start &lt;container ID&gt; <span class="comment"># 启动容器（根据容器ID）</span></span><br><span class="line">docker restart &lt;container ID&gt; <span class="comment"># 重启容器（根据容器ID）</span></span><br><span class="line">docker rm -f &lt;container ID&gt; <span class="comment"># 强制（-f参数）删除容器（根据容器ID）</span></span><br><span class="line"></span><br><span class="line">docker <span class="built_in">exec</span> -it &lt;container ID&gt; /bin/bash <span class="comment"># 进入容器（根据容器ID），`exit`退出</span></span><br></pre></td></tr></table></figure>
+<p>Easy提供的一张Docker命令集的图：<br><img src="/img/docker_command_1.png" style="zoom: 50%;"/></p>
+<h2 id="docker-常用举例"><a href="#docker-常用举例" class="headerlink" title="docker 常用举例"></a>docker 常用举例</h2><h3 id="1-创建mysql容器"><a href="#1-创建mysql容器" class="headerlink" title="1.创建mysql容器"></a>1.创建mysql容器</h3><p>步骤：</p>
+<ul>
+<li>拉取 mysql8.0版本镜像</li>
+<li>创建mysql容器（-p 把mysql3306的端口映射到主机的3308端口上，root password设置）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:8.0</span><br><span class="line">docker run -p 3308:3306 --name mysql -e MYSQL_ROOT_PASSWORD=123MYSQL -d mysql:8.0</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -1599,128 +1753,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>docker 常用命令</title>
-    <url>/2022/05/09/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<p>Docker 是一个开源的应用容器引擎。<br>也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要；而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。</p>
-<p>Docker 入门教程：<br><a class="link"   href="https://www.runoob.com/docker/docker-tutorial.html" >https://www.runoob.com/docker/docker-tutorial.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP" >https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p><strong>Docker使用也很简单，一般步骤</strong>：</p>
-<ul>
-<li>拉取一个镜像（<code>docker pull</code>）</li>
-<li>创建一个容器（<code>docker run</code>）</li>
-<li>在容器中运行命令（<code>docker exec </code>）</li>
-</ul>
-<p>简单说，比如我（Centos系统）安装了Docker，可以下载一个ubuntu镜像（image）；<br>然后根据这个镜像，我可以创建容器叫 ubuntu1，ubuntu2，ubuntu3，这样就创建了3个容器；<br>然后进入容器ubuntu1，可以在容器里操作，比如安装mysql；<br>进入ubuntu2，安装sqlserver；<br>……<br>在不同的容器里可以做不同的测试。当不需要第1个容器，就删除第1个就行。</p>
-<h2 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h2><p><code>docker [command] --help</code>可以查看command命令的使用方法</p>
-<p>比如：<code>docker ps --help</code>：就可以查看<code>docker ps</code>这个命令的options（参数选项）。</p>
-<h3 id="1-镜像"><a href="#1-镜像" class="headerlink" title="1.镜像"></a>1.镜像</h3><table>
-<thead>
-<tr>
-<th>docker 命令</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>docker pull</td>
-<td>拉取（下载）镜像</td>
-</tr>
-<tr>
-<td>docker images</td>
-<td>列出镜像</td>
-</tr>
-<tr>
-<td>docker rmi</td>
-<td>删除镜像</td>
-</tr>
-<tr>
-<td>docker image prune</td>
-<td>删除未被容器使用的镜像</td>
-</tr>
-<tr>
-<td>docker build</td>
-<td>创建新镜像（需要Dockerfile）</td>
-</tr>
-<tr>
-<td>docker tag</td>
-<td>标记镜像</td>
-</tr>
-<tr>
-<td>docker save/load</td>
-<td>镜像保存</td>
-</tr>
-</tbody></table>
-<p><strong>查找镜像</strong>两种方法：</p>
-<ul>
-<li>方法一：官方镜像：<a class="link"   href="https://hub.docker.com/search?image_filter=official&amp;q=" >https://hub.docker.com/search?image_filter=official&amp;q=<i class="fas fa-external-link-alt"></i></a> 直接找到对应版本</li>
-<li>方法二：<code>docker search [镜像名称]</code> # <code>docker search mysql</code>，搜索ubuntu镜像，搜索出来OFFICIAL标[OK]的表示官方发布的</li>
-</ul>
-<p><strong>最常用的命令：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull [image name] <span class="comment"># docker pull mysql:8.0 拉取mysql:8.0版本的镜像</span></span><br><span class="line">docker images <span class="comment"># 列出镜像列表</span></span><br><span class="line">docker rmi -f [image name] <span class="comment"># docker rmi -f mysql 强制删除mysql镜像</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-容器"><a href="#2-容器" class="headerlink" title="2.容器"></a>2.容器</h3><table>
-<thead>
-<tr>
-<th>docker 命令</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>docker run</td>
-<td>创建容器</td>
-</tr>
-<tr>
-<td>docker ps</td>
-<td>列出运行中的容器</td>
-</tr>
-<tr>
-<td>docker start/stop</td>
-<td>启动/停止</td>
-</tr>
-<tr>
-<td>docker rm</td>
-<td>删除容器</td>
-</tr>
-<tr>
-<td>docker rename</td>
-<td>重命名</td>
-</tr>
-<tr>
-<td>docker cp</td>
-<td>复制</td>
-</tr>
-<tr>
-<td>docker container prune</td>
-<td>删除停止的容器</td>
-</tr>
-<tr>
-<td>docker exec</td>
-<td>运行命令</td>
-</tr>
-<tr>
-<td>docker commit</td>
-<td>从容器创建新镜像</td>
-</tr>
-</tbody></table>
-<p><strong>最常用的命令：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it ubuntu /bin/bash <span class="comment"># 创建容器后，进入容器，输入`exit`回车退出</span></span><br><span class="line">docker run -itd --name u-test ubuntu /bin/bash <span class="comment"># -d表示后台运行 --name添加名称</span></span><br><span class="line"></span><br><span class="line">docker ps <span class="comment"># 列出运行中的容器</span></span><br><span class="line">docker ps -a <span class="comment"># 列出所有容器（包括停止的容器）</span></span><br><span class="line">docker stop &lt;container ID&gt; <span class="comment"># 停止容器（根据容器ID）</span></span><br><span class="line">docker start &lt;container ID&gt; <span class="comment"># 启动容器（根据容器ID）</span></span><br><span class="line">docker restart &lt;container ID&gt; <span class="comment"># 重启容器（根据容器ID）</span></span><br><span class="line">docker rm -f &lt;container ID&gt; <span class="comment"># 强制（-f参数）删除容器（根据容器ID）</span></span><br><span class="line"></span><br><span class="line">docker <span class="built_in">exec</span> -it &lt;container ID&gt; /bin/bash <span class="comment"># 进入容器（根据容器ID），`exit`退出</span></span><br></pre></td></tr></table></figure>
-<p>Easy提供的一张Docker命令集的图：<br><img src="/img/docker_command_1.png" style="zoom: 50%;"/></p>
-<h2 id="docker-常用举例"><a href="#docker-常用举例" class="headerlink" title="docker 常用举例"></a>docker 常用举例</h2><h3 id="1-创建mysql容器"><a href="#1-创建mysql容器" class="headerlink" title="1.创建mysql容器"></a>1.创建mysql容器</h3><p>步骤：</p>
-<ul>
-<li>拉取 mysql8.0版本镜像</li>
-<li>创建mysql容器（-p 把mysql3306的端口映射到主机的3308端口上，root password设置）</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:8.0</span><br><span class="line">docker run -p 3308:3306 --name mysql -e MYSQL_ROOT_PASSWORD=123MYSQL -d mysql:8.0</span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -2177,7 +2209,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#x67;&#105;&#116;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#64;&#x67;&#105;&#116;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -2219,8 +2251,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>PicGo</tag>
       </tags>
   </entry>
