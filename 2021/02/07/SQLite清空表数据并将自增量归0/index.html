@@ -24,7 +24,7 @@
     KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
     KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
   </script>
-</head>
+<meta name="generator" content="Hexo 5.3.0"></head>
 
 
 <body>
@@ -278,7 +278,7 @@
 </ul>
 <p>所以，当清空表中记录后，如果没有把这个自增的序号归0，添加下一条记录的时候，序号会从之前的数+1。</p>
 <p>自增量归0的SQL语句是：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> sqlite_sequence <span class="keyword">set</span> seq <span class="operator">=</span> <span class="number">0</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;test&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update sqlite_sequence <span class="keyword">set</span> seq <span class="operator">=</span> <span class="number">0</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;test&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="3、python代码实现"><a href="#3、python代码实现" class="headerlink" title="3、python代码实现"></a>3、python代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">sql1 = <span class="string">&#x27;delete from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql1)</span><br><span class="line">sql2 = <span class="string">&#x27;update sqlite_sequence set seq = 0 where name = &#x27;</span> + <span class="string">&quot;&#x27;&quot;</span> + table_name + <span class="string">&quot;&#x27;&quot;</span></span><br><span class="line">cursor.execute(sql2)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
         </div>
