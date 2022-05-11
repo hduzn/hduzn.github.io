@@ -9,7 +9,7 @@
     
     <title>
         
-            Ubuntu 定时执行 python脚本 |
+            Ubuntu Nginx服务器SSL证书安装部署 |
         
         烟雨平生
     </title>
@@ -176,7 +176,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Ubuntu 定时执行 python脚本</span>
+            <span class="title-hover-animation">Ubuntu Nginx服务器SSL证书安装部署</span>
         </div>
 
         
@@ -193,8 +193,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-08 22:10:00</span>
-        <span class="mobile">2021-02-08 22:10</span>
+        <span class="pc">2022-05-11 18:06:51</span>
+        <span class="mobile">2022-05-11 18:06</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -202,7 +202,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -214,15 +214,15 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Python/">Python</a>&nbsp;
+                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
                     <li>
                         | <a href="/tags/Ubuntu/">Ubuntu</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Nginx/">Nginx</a>&nbsp;
                     </li>
                 
             </ul>
@@ -245,113 +245,73 @@
         
 
         <div class="article-content markdown-body">
-            <p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
-<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
+            <p>为什么要安装SSL证书，如果没有SSL证书，访问网站的时候，前面会有个小叹号，是用 <code>http://www.hduzn.cn</code>这样的域名访问的。如果部署了SSL，访问的时候、域名前面就有个安全锁的小图标了。是用 <code>https://www.hduzn.cn</code>这样的地址访问的。</p>
+<p>反正都可以免费申请SSL证书的，就申请了下。</p>
 <a id="more"></a>
-<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p>以上是缩写，全拼是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p><strong>含义</strong>：</p>
-<ul>
-<li>m: 每个小时的第几分钟执行，0-59</li>
-<li>h: 第天的第几个小时执行，0-23</li>
-<li>dom: 每月的第几天执行，1-31</li>
-<li>mon: 每年的第几个月执行，1-12</li>
-<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
-<li>command: 定时执行的命令</li>
-</ul>
-<p><strong>其它</strong>：</p>
-<ul>
-<li>*： 表示任何时间</li>
-<li>*/2: 表示每隔2分钟</li>
-<li>-：表示区间，比如1-3</li>
-<li>,：表示区间不连续，比如1,3,6</li>
-</ul>
-<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>含义</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>*  * * * * ifconfig</td>
-<td>每天第一分钟都在执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>1 * * * * ifconfig</td>
-<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
-<td>01:01, 02:01, 03:01, 04:01……</td>
-</tr>
-<tr>
-<td>0 9 * * * ifconfig</td>
-<td>每天 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 10 * * ifconfig</td>
-<td>每个月的10号 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 * * 1,2 ifconfig</td>
-<td>每周一、周二 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-</tbody></table>
-<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
-<ol>
-<li>/bin/nano</li>
-<li>/usr/bin/vim.basic</li>
-<li>/usr/bin/vim.tiny</li>
-<li>/bin/ed</li>
-</ol>
-<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
-<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
+
+<p><strong>前言</strong>：<br>已经把Hexo博客部署到Ubuntu服务器上了，可以通过http访问了。<br>部署的文章参考此篇：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<h2 id="一、下载SSL证书（本地）"><a href="#一、下载SSL证书（本地）" class="headerlink" title="一、下载SSL证书（本地）"></a>一、下载SSL证书（本地）</h2><p>在腾讯云买的域名，在DNSPod中直接点击SSL的图标，点【点此管理】即可跳转到腾讯云上SSL证书管理的页面。</p>
+<p><strong>1.申请证书</strong></p>
+<p>点击【申请证书】，就能申请免费的证书。</p>
+<p><strong>2.下载证书</strong></p>
+<p>点击【下载证书】，会提供各种服务器类型的证书下载。（比如Tomcat、Apache、Nginx、IIS等）</p>
+<p>如果配置好DNS了，系统会检测，会提示你推荐下载哪一类证书。</p>
+<p>腾讯云的SSL证书管理控制台：<a class="link"   target="_blank" rel="noopener" href="https://console.cloud.tencent.com/ssl" >https://console.cloud.tencent.com/ssl<i class="fas fa-external-link-alt"></i></a></p>
+<p>我这里用的Nginx服务器，就下载Nginx的证书。</p>
+<p>下载后，解压出来一个 hduzn.cn_nginx 文件夹，里面一共4个文件：</p>
 <blockquote>
-<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
+<p>hduzn.cn_bundle.crt 证书文件<br>hduzn.cn.key 私钥文件<br>hduzn.cn.csr 没用到<br>hduzn.cn_bundle.pem 没用到</p>
 </blockquote>
-<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
-<p>最后一行是命令格式：</p>
+<p>就用到前两个文件，后两个没用到。</p>
+<h2 id="二、部署SSL证书（服务器）"><a href="#二、部署SSL证书（服务器）" class="headerlink" title="二、部署SSL证书（服务器）"></a>二、部署SSL证书（服务器）</h2><p>腾讯云提供的Nginx服务器SSL证书安装部署的文档：<a class="link"   target="_blank" rel="noopener" href="https://cloud.tencent.com/document/product/400/35244" >https://cloud.tencent.com/document/product/400/35244<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="1-上传证书到服务器"><a href="#1-上传证书到服务器" class="headerlink" title="1.上传证书到服务器"></a>1.上传证书到服务器</h3><p>直接用Xftp上传。因为用Xshell，所以对应也装了Xftp用，很方便传文件。</p>
+<p>因为可能涉及权限问题，所以准备分两步走：</p>
+<ul>
+<li>1).先把文件上传到用户的home目录；</li>
+<li>2).再把文件复制到Nginx配置的目录里。</li>
+</ul>
+<p>先建个ssl/nginx_ssl目录，然后把<code>hduzn.cn_bundle.crt</code>和<code>hduzn.cn.key</code>两个文件用Xftp上传到目录：<code>/home/ubuntu/ssl/nginx_ssl</code>。</p>
+<p>再到服务器中运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp hduzn.cn_bundle.crt /etc/nginx/sites-available</span><br><span class="line">sudo cp hduzn.cn.key /etc/nginx/sites-available</span><br></pre></td></tr></table></figure>
+<p>直接把两个文件放 /etc/nginx/目录下，我索性跟配置文件放一起了。</p>
+<h3 id="2-修改站点Nginx配置文件"><a href="#2-修改站点Nginx配置文件" class="headerlink" title="2.修改站点Nginx配置文件"></a>2.修改站点Nginx配置文件</h3><p>根据之前Hexo部署到Ubuntu的内容，我的站点的Nginx配置文件是：<code>/etc/nginx/sites-available/default</code></p>
 <blockquote>
-<p># m h dom mon dow command</p>
+<p>如果你不想直接用vim命令写这么多行，也可以跟我一样，把这个default文件先通过Xftp下载到本地。改完了再上传上去。通过命令强制覆盖原文件就行了。</p>
 </blockquote>
-<p>在最下面添加自己的任务就可以了。</p>
-<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
-<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
-<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
-<p>得到结果比如是：<code>/usr/bin/python3</code></p>
-<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
-<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
-<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
-<p>所以，最终添加的这条定时任务记录是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
-<p>1.设计好自己想要执行的 python任务</p>
-<p>比如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>2.打开定时任务编辑，添加任务记录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>3.重启 cron服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>
+<p>原修改好的文件（用http访问）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80 default_server;</span><br><span class="line">    listen [::]:80 default_server ipv6only&#x3D;on;</span><br><span class="line"></span><br><span class="line">    root &#x2F;var&#x2F;www&#x2F;hexo; # 需要修改的部分</span><br><span class="line">    index index.html index.htm;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>行数说明：</p>
+<ul>
+<li>4：监听80端口，default_server 即设为默认虚拟主机，无效访问会转到该站点</li>
+<li>5：对应 ipv6</li>
+<li>7：nginx托管的hexo目录路径</li>
+</ul>
+<h4 id="https访问配置"><a href="#https访问配置" class="headerlink" title="https访问配置"></a>https访问配置</h4><p>加上https访问配置后，文件主要部分改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># Default server configuration</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80 default_server;</span><br><span class="line">	listen [::]:80 default_server;</span><br><span class="line">	server_name www.hduzn.cn # 写上域名</span><br><span class="line"></span><br><span class="line">	#root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rewrite ^(.*) https:&#x2F;&#x2F;www.hduzn.cn$1 permanent; # 将http访问重定向为https访问</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># HTTPS server</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	# SSL configuration</span><br><span class="line">	#</span><br><span class="line">	listen 443 ssl; # ssl的端口</span><br><span class="line">	listen [::]:443 ssl;</span><br><span class="line">	server_name www.hduzn.cn; # 写上域名</span><br><span class="line">	ssl_certificate &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn_bundle.crt;</span><br><span class="line">    ssl_certificate_key &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn.key;</span><br><span class="line">	ssl_session_cache shared:SSL:1m;</span><br><span class="line">	ssl_session_timeout 5m;</span><br><span class="line">	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers RC4:HIGH:!aNULL:!MD5;</span><br><span class="line">    ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">	root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>行数说明：</p>
+<ul>
+<li>18：将http访问重定向为https访问，即定向到第二个 server 块，需要注意ssl证书到期时间</li>
+<li>26：监听SSL的443端口</li>
+<li>27：对应 ipv6</li>
+<li>29：证书文件</li>
+<li>30：私钥文件</li>
+<li>33：协议配置</li>
+<li>34：加密套件</li>
+<li>37：nginx托管的hexo目录路径</li>
+</ul>
+<p>修改完后，重启Nginx。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Ubuntu 定时执行 python脚本</li>
+        <li>本文标题：Ubuntu Nginx服务器SSL证书安装部署</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-08 22:10:00</li>
+        <li>创建时间：2022-05-11 18:06:51</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/08/Ubuntu定时执行python脚本/
+            本文链接：http://hduzn.cn/2022/05/11/Ubuntu-Nginx服务器SSL证书安装部署/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -366,15 +326,15 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Python/">#Python</a>&nbsp;
+                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
                     </li>
                 
                     <li class="tag-item">
                         <a href="/tags/Ubuntu/">#Ubuntu</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Nginx/">#Nginx</a>&nbsp;
                     </li>
                 
             </ul>
@@ -383,29 +343,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">SyntaxError EOL while scanning string literal</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"
+                           href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux vim/vi 命令简单使用</span>
+                                <span class="post-nav-title-item">Python 批量修改图片尺寸</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -616,7 +561,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81crontab%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3"><span class="nav-text">一、crontab命令格式详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%EF%BC%9A"><span class="nav-text">1.命令格式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%91%BD%E4%BB%A4%E4%B8%BE%E4%BE%8B"><span class="nav-text">2.命令举例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%BE%91%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1crontab%EF%BC%9A"><span class="nav-text">二、编辑定时任务crontab：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython-%E8%84%9A%E6%9C%AC"><span class="nav-text">三、定时执行python 脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-python%E8%B7%AF%E5%BE%84"><span class="nav-text">1.python路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-python%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="nav-text">2.python文件的绝对路径</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">四、小结</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BDSSL%E8%AF%81%E4%B9%A6%EF%BC%88%E6%9C%AC%E5%9C%B0%EF%BC%89"><span class="nav-text">一、下载SSL证书（本地）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2SSL%E8%AF%81%E4%B9%A6%EF%BC%88%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%89"><span class="nav-text">二、部署SSL证书（服务器）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8A%E4%BC%A0%E8%AF%81%E4%B9%A6%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">1.上传证书到服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9%E7%AB%99%E7%82%B9Nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2.修改站点Nginx配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#https%E8%AE%BF%E9%97%AE%E9%85%8D%E7%BD%AE"><span class="nav-text">https访问配置</span></a></li></ol></li></ol></li></ol>
     </div>
 </div>
         </aside>
