@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>2022年，继续重新开始</title>
+    <url>/2021/02/05/2021start/</url>
+    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+<a id="more"></a>
+
+<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
+<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
+<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
+<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
+<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
+<p>更新于【2022-05-01】</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Docker EwoMail修改MySQL密码</title>
     <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
@@ -29,18 +43,104 @@
       </tags>
   </entry>
   <entry>
-    <title>2022年，继续重新开始</title>
-    <url>/2021/02/05/2021start/</url>
-    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
+    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
+<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
 <a id="more"></a>
 
-<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
-<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
-<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
-<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
-<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
-<p>更新于【2022-05-01】</p>
+<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
+<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
+<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
+<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
+<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
+<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
+<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
+<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>成功了！！！</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>python中类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Integer</td>
+<td>int</td>
+<td>普通整数，一般是32位</td>
+</tr>
+<tr>
+<td>SmallInteger</td>
+<td>int</td>
+<td>取值范围小的整数,—般是16位</td>
+</tr>
+<tr>
+<td>BigInteger</td>
+<td>int或long</td>
+<td>不限制精度的整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>float</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>Numeric</td>
+<td>decimal.Decimal</td>
+<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
+</tr>
+<tr>
+<td>String</td>
+<td>str</td>
+<td>变长字符串</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>str</td>
+<td>变长字符串，对较长或不限长度的字符串做了优化</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>bool</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>datetime.date</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>LargeBinary</td>
+<td>str</td>
+<td>二进制文件</td>
+</tr>
+</tbody></table>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Flask</tag>
+      </tags>
   </entry>
   <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
@@ -161,106 +261,6 @@
       <tags>
         <tag>Docker</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
-    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
-<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
-<a id="more"></a>
-
-<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
-<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
-<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
-<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>改成：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
-<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
-<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
-<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
-<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
-<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>成功了！！！</p>
-<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
-<thead>
-<tr>
-<th>类型名</th>
-<th>python中类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Integer</td>
-<td>int</td>
-<td>普通整数，一般是32位</td>
-</tr>
-<tr>
-<td>SmallInteger</td>
-<td>int</td>
-<td>取值范围小的整数,—般是16位</td>
-</tr>
-<tr>
-<td>BigInteger</td>
-<td>int或long</td>
-<td>不限制精度的整数</td>
-</tr>
-<tr>
-<td>Float</td>
-<td>float</td>
-<td>浮点数</td>
-</tr>
-<tr>
-<td>Numeric</td>
-<td>decimal.Decimal</td>
-<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
-</tr>
-<tr>
-<td>String</td>
-<td>str</td>
-<td>变长字符串</td>
-</tr>
-<tr>
-<td>Text</td>
-<td>str</td>
-<td>变长字符串，对较长或不限长度的字符串做了优化</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>bool</td>
-<td>布尔值</td>
-</tr>
-<tr>
-<td>Date</td>
-<td>datetime.date</td>
-<td>时间</td>
-</tr>
-<tr>
-<td>Time</td>
-<td>datetime.datetime</td>
-<td>日期和时间</td>
-</tr>
-<tr>
-<td>LargeBinary</td>
-<td>str</td>
-<td>二进制文件</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Flask</tag>
       </tags>
   </entry>
   <entry>
@@ -602,6 +602,33 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo 自定义页面 跳过渲染</title>
+    <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
+    <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
+<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
+<p><strong>Hexo跳过渲染 方法：</strong></p>
+<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
+<a id="more"></a>
+
+<p><strong>举例</strong></p>
+<p>1.根目录下的a.html文件跳过渲染 配置：</p>
+<p>把a.html文件放在Hexo/source 目录下。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
+<p>2.source/test 文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
+<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
+<p>4.跳过多个：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo博客同步部署到Github Pages</title>
     <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
     <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
@@ -634,7 +661,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;" >&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -655,7 +682,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -663,28 +690,6 @@
       </categories>
       <tags>
         <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -799,50 +804,6 @@
 <p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
 <h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
 <p>Readme.txt文件的所有者就变为testuser</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
-<a id="more"></a>
-
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
-<blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
-</blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img src="/img/linux_nohup_1.png" /></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1015,6 +976,72 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
+<a id="more"></a>
+
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
+<blockquote>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
+</blockquote>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img src="/img/linux_nohup_1.png" /></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python openpyxl.load_workbook excel file error</title>
     <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
     <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
@@ -1041,6 +1068,41 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python selenium3 切换到新的窗口方法</title>
+    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>Python 用selenium（selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
+<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+<a id="more"></a>
+
+<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
+<p>运行后的结果是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
+<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
+<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+</ul>
+<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
+<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -1132,121 +1194,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python selenium3 切换到新的窗口方法</title>
-    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>Python 用selenium（selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
-<a id="more"></a>
-
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
-</ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 数据库（SQLite）教程</title>
-    <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
-<p>Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。</p>
-<a id="more"></a>
-
-<h1 id="选择SQLite的原因"><a href="#选择SQLite的原因" class="headerlink" title="选择SQLite的原因"></a>选择SQLite的原因</h1><p>自己的小东西，轻量极感觉用SQLite3也可以了，省得装MySQL这些了。然后再装个 DB Browser for SQLite的软件，开源的免费可视化工具，用来操作SQLite数据库文件溜溜的、贼方便了~</p>
-<p>所以自己选择SQLite的2个主要原因是：</p>
-<ol>
-<li>Python内置了SQLite3，不需要再装任何东西；</li>
-<li>有DB Browser for SQLite这样开源免费的软件工具，操作又方便，建库、建表、修改表之类都很方便，保存成一个.db文件也方便。</li>
-</ol>
-<p>当然，这是看自己需求选择的原因。</p>
-<h1 id="数据库相关概念简介"><a href="#数据库相关概念简介" class="headerlink" title="数据库相关概念简介"></a>数据库相关概念简介</h1><p>一个数据库对应保存成一个 .db文件；<br>一个数据库里面可以有很多表（Table）；</p>
-<p>比如有一个学校的数据库，一般就会有：</p>
-<ul>
-<li>教职工表（里面有教师姓名之类的信息）</li>
-<li>班级表（里面有班级名称、人数等信息）</li>
-<li>全体学生表（里面有学生姓名、班级等信息）</li>
-</ul>
-<p>关于数据库知识，随便搜几篇文章看一下，自己去了解一下SQL，这里就不介绍了。<br>数据库的使用，自己设计几个表，就懂了点基础了，平常自己用用够用就行了（表的设计靠实践）。</p>
-<h1 id="Python-SQLite"><a href="#Python-SQLite" class="headerlink" title="Python SQLite"></a>Python SQLite</h1><h3 id="一、SQLite使用过程描述"><a href="#一、SQLite使用过程描述" class="headerlink" title="一、SQLite使用过程描述"></a>一、SQLite使用过程描述</h3><p>1.要操作关系数据库，首先要连接到数据库，一个数据库连接称为connection。</p>
-<p>2.连接到数据库之后，需要打开游标（Cursor），通过Cursor执行SQL语句，然后获得执行的结果。</p>
-<p>3.最后关闭数据库连接。</p>
-<h3 id="二、操作数据库举例"><a href="#二、操作数据库举例" class="headerlink" title="二、操作数据库举例"></a>二、操作数据库举例</h3><p>数据库的操作，概括一下主要就是【增 删 改 查】，这4个会了，基础就差不多可以上了。</p>
-<ul>
-<li>增：insert into 语句</li>
-<li>删：delete from 语句</li>
-<li>改：update 语句</li>
-<li>查：select 语句</li>
-</ul>
-<h4 id="1-创建数据库、表"><a href="#1-创建数据库、表" class="headerlink" title="1.创建数据库、表"></a>1.创建数据库、表</h4><p>创建一个test的表，表里面有 id、code、name 3个字段。</p>
-<p><strong>字段的类型</strong> 有：<br>INTEGER(int数值)、TEXT(string字符串)、REAL(float符点数)，主要这3种。</p>
-<p><strong>字段的属性</strong> 有：</p>
-<ul>
-<li>NOT NULL：非空，表示字段不能是空的；</li>
-<li>PRIMARY KEY：主键；</li>
-<li>AUTOINCREMENT：自动增加（这一项是自动增加的，一般用于id）；</li>
-<li>UNIQUE：唯一，表示在这个表里这个字段是唯一的。</li>
-<li>DEFAULT ‘ ‘：表示默认值为 ‘ ‘</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="comment"># 数据库文件是 test.db，如果文件不存在，会自动创建</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">sql = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    CREATE TABLE &quot;test&quot; (</span></span><br><span class="line"><span class="string">    &quot;id&quot;    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;code&quot;  TEXT NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;name&quot;  TEXT DEFAULT &#x27; &#x27;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">cursor.execute(sql)</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<h4 id="2-增：表中添加一条数据"><a href="#2-增：表中添加一条数据" class="headerlink" title="2.增：表中添加一条数据"></a>2.增：表中添加一条数据</h4><p>sql语句中可以用参数的形式，execute执行sql的时候把参数传进去就可以了。</p>
-<p>对应是Tuple（元组的数据类型），Python里List列表用的比较多，可以通过tuple()函数转成Tuple，当然，也可以直接定义成Tuple类型。</p>
-<p>因为一般别的地方获取的数据List类型比较多，所以这里举例用了List。</p>
-<p>添加一条的SQL语句是：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test (code, name) <span class="keyword">values</span> (<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>python代码示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;insert into &#x27;</span> + table_name + <span class="string">&#x27; (code, name) values (?,?)&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加一条数据</span></span><br><span class="line">list1 = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>]    </span><br><span class="line">cursor.execute(sql, <span class="built_in">tuple</span>(list1))</span><br><span class="line"><span class="comment"># 添加多条数据</span></span><br><span class="line">list2 = [[<span class="string">&#x27;213124&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>], [<span class="string">&#x27;213125&#x27;</span>, <span class="string">&#x27;王五&#x27;</span>]]</span><br><span class="line"><span class="keyword">for</span> one <span class="keyword">in</span> list2:</span><br><span class="line">    cursor.execute(sql, <span class="built_in">tuple</span>(one))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<p>sql的语句用参数的好处就是可以在for循环中直接使用，不用每一条固定一条sql语句。</p>
-<h4 id="3-删：删除一条指定数据"><a href="#3-删：删除一条指定数据" class="headerlink" title="3.删：删除一条指定数据"></a>3.删：删除一条指定数据</h4><p>删除一条的SQL语句是 ：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213123&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>python代码示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除多条数据</span></span><br><span class="line">code_list = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;213124&#x27;</span>]</span><br><span class="line">sql = <span class="string">&#x27;delete from &#x27;</span> +  table_name + <span class="string">&#x27; where code = ?&#x27;</span></span><br><span class="line"><span class="keyword">for</span> code <span class="keyword">in</span> code_list:</span><br><span class="line">    cursor.execute(sql, (code,))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<h4 id="4-改：修改一条记录"><a href="#4-改：修改一条记录" class="headerlink" title="4.改：修改一条记录"></a>4.改：修改一条记录</h4><p>修改一条的SQL语句是：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">update test <span class="keyword">set</span> code <span class="operator">=</span> <span class="string">&#x27;213122&#x27;</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>python代码示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">new_code = <span class="string">&#x27;213122&#x27;</span></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;update &#x27;</span> +  table_name + <span class="string">&#x27; set code = ? where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql, (new_code,name))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<h4 id="5-查：查询记录"><a href="#5-查：查询记录" class="headerlink" title="5.查：查询记录"></a>5.查：查询记录</h4><p>查属于最常用的部分了，因为存储在数据库的数据，通常都用select语句去查询。</p>
-<p>查询的SQL语句有：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span> <span class="keyword">and</span> name <span class="operator">=</span> <span class="string">&#x27;李四&#x27;</span></span><br><span class="line"><span class="keyword">select</span> code,name <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>查询可以查询全部字段，也可以查询部分需要的字段；<br>查询后面的where条件可以是 UNIQUE 字段，那查询结果就是唯一的，如果不是 UNIQUE字段，查询结果可能会有多条。</p>
-<p>python代码示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql1 = <span class="string">&#x27;select * from &#x27;</span> + table_name + <span class="string">&#x27; where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql1, (name,))</span><br><span class="line">values1 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values1) <span class="comment"># [(1, &#x27;213122&#x27;, &#x27;张三&#x27;)]</span></span><br><span class="line">sql2 = <span class="string">&#x27;select code,name from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql2)</span><br><span class="line">values2 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values2) <span class="comment"># [(&#x27;213122&#x27;, &#x27;张三&#x27;), (&#x27;213124&#x27;, &#x27;李四&#x27;), (&#x27;213125&#x27;, &#x27;王五&#x27;)]</span></span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
-<h4 id="6-小结"><a href="#6-小结" class="headerlink" title="6.小结"></a>6.小结</h4><p><strong>使用Cursor对象执行insert，update，delete语句时，执行结果由rowcount返回影响的行数，就可以拿到执行结果。</strong></p>
-<p><strong>使用Cursor对象执行select语句时，通过fetchall()可以拿到结果集。结果集是一个list，每个元素都是一个tuple，对应一行记录。</strong></p>
-<p>像上面查询中的第4条sql语句，查询结果只需要 code,name 两个字段，那查询的结果会是一个List，每一个元素是一个tuple元组。<br>比如查询到的结果是：</p>
-<p>[(‘213124’, ‘李四’), (‘213125’, ‘王五’)]</p>
-<p>对于这样的List，Python里可以直接转换成 Dictionary（字典）类型，那用起来就更方便了。</p>
-<p>最后，记得用完 关闭connection和Cursor对象。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量修改图片尺寸</title>
     <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
     <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
@@ -1271,35 +1218,6 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
 <p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 正则表达式</title>
-    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-    <content><![CDATA[<p>正则表达式是什么？</p>
-<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
-<p>比如：</p>
-<ul>
-<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
-<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
-<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
-<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -1513,32 +1431,112 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+    <title>Python 数据库（SQLite）教程</title>
+    <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
+<p>Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。</p>
 <a id="more"></a>
 
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+<h1 id="选择SQLite的原因"><a href="#选择SQLite的原因" class="headerlink" title="选择SQLite的原因"></a>选择SQLite的原因</h1><p>自己的小东西，轻量极感觉用SQLite3也可以了，省得装MySQL这些了。然后再装个 DB Browser for SQLite的软件，开源的免费可视化工具，用来操作SQLite数据库文件溜溜的、贼方便了~</p>
+<p>所以自己选择SQLite的2个主要原因是：</p>
+<ol>
+<li>Python内置了SQLite3，不需要再装任何东西；</li>
+<li>有DB Browser for SQLite这样开源免费的软件工具，操作又方便，建库、建表、修改表之类都很方便，保存成一个.db文件也方便。</li>
+</ol>
+<p>当然，这是看自己需求选择的原因。</p>
+<h1 id="数据库相关概念简介"><a href="#数据库相关概念简介" class="headerlink" title="数据库相关概念简介"></a>数据库相关概念简介</h1><p>一个数据库对应保存成一个 .db文件；<br>一个数据库里面可以有很多表（Table）；</p>
+<p>比如有一个学校的数据库，一般就会有：</p>
+<ul>
+<li>教职工表（里面有教师姓名之类的信息）</li>
+<li>班级表（里面有班级名称、人数等信息）</li>
+<li>全体学生表（里面有学生姓名、班级等信息）</li>
+</ul>
+<p>关于数据库知识，随便搜几篇文章看一下，自己去了解一下SQL，这里就不介绍了。<br>数据库的使用，自己设计几个表，就懂了点基础了，平常自己用用够用就行了（表的设计靠实践）。</p>
+<h1 id="Python-SQLite"><a href="#Python-SQLite" class="headerlink" title="Python SQLite"></a>Python SQLite</h1><h3 id="一、SQLite使用过程描述"><a href="#一、SQLite使用过程描述" class="headerlink" title="一、SQLite使用过程描述"></a>一、SQLite使用过程描述</h3><p>1.要操作关系数据库，首先要连接到数据库，一个数据库连接称为connection。</p>
+<p>2.连接到数据库之后，需要打开游标（Cursor），通过Cursor执行SQL语句，然后获得执行的结果。</p>
+<p>3.最后关闭数据库连接。</p>
+<h3 id="二、操作数据库举例"><a href="#二、操作数据库举例" class="headerlink" title="二、操作数据库举例"></a>二、操作数据库举例</h3><p>数据库的操作，概括一下主要就是【增 删 改 查】，这4个会了，基础就差不多可以上了。</p>
+<ul>
+<li>增：insert into 语句</li>
+<li>删：delete from 语句</li>
+<li>改：update 语句</li>
+<li>查：select 语句</li>
+</ul>
+<h4 id="1-创建数据库、表"><a href="#1-创建数据库、表" class="headerlink" title="1.创建数据库、表"></a>1.创建数据库、表</h4><p>创建一个test的表，表里面有 id、code、name 3个字段。</p>
+<p><strong>字段的类型</strong> 有：<br>INTEGER(int数值)、TEXT(string字符串)、REAL(float符点数)，主要这3种。</p>
+<p><strong>字段的属性</strong> 有：</p>
+<ul>
+<li>NOT NULL：非空，表示字段不能是空的；</li>
+<li>PRIMARY KEY：主键；</li>
+<li>AUTOINCREMENT：自动增加（这一项是自动增加的，一般用于id）；</li>
+<li>UNIQUE：唯一，表示在这个表里这个字段是唯一的。</li>
+<li>DEFAULT ‘ ‘：表示默认值为 ‘ ‘</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="comment"># 数据库文件是 test.db，如果文件不存在，会自动创建</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">sql = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    CREATE TABLE &quot;test&quot; (</span></span><br><span class="line"><span class="string">    &quot;id&quot;    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;code&quot;  TEXT NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;name&quot;  TEXT DEFAULT &#x27; &#x27;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">cursor.execute(sql)</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="2-增：表中添加一条数据"><a href="#2-增：表中添加一条数据" class="headerlink" title="2.增：表中添加一条数据"></a>2.增：表中添加一条数据</h4><p>sql语句中可以用参数的形式，execute执行sql的时候把参数传进去就可以了。</p>
+<p>对应是Tuple（元组的数据类型），Python里List列表用的比较多，可以通过tuple()函数转成Tuple，当然，也可以直接定义成Tuple类型。</p>
+<p>因为一般别的地方获取的数据List类型比较多，所以这里举例用了List。</p>
+<p>添加一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test (code, name) <span class="keyword">values</span> (<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;insert into &#x27;</span> + table_name + <span class="string">&#x27; (code, name) values (?,?)&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加一条数据</span></span><br><span class="line">list1 = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>]    </span><br><span class="line">cursor.execute(sql, <span class="built_in">tuple</span>(list1))</span><br><span class="line"><span class="comment"># 添加多条数据</span></span><br><span class="line">list2 = [[<span class="string">&#x27;213124&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>], [<span class="string">&#x27;213125&#x27;</span>, <span class="string">&#x27;王五&#x27;</span>]]</span><br><span class="line"><span class="keyword">for</span> one <span class="keyword">in</span> list2:</span><br><span class="line">    cursor.execute(sql, <span class="built_in">tuple</span>(one))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p>sql的语句用参数的好处就是可以在for循环中直接使用，不用每一条固定一条sql语句。</p>
+<h4 id="3-删：删除一条指定数据"><a href="#3-删：删除一条指定数据" class="headerlink" title="3.删：删除一条指定数据"></a>3.删：删除一条指定数据</h4><p>删除一条的SQL语句是 ：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213123&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除多条数据</span></span><br><span class="line">code_list = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;213124&#x27;</span>]</span><br><span class="line">sql = <span class="string">&#x27;delete from &#x27;</span> +  table_name + <span class="string">&#x27; where code = ?&#x27;</span></span><br><span class="line"><span class="keyword">for</span> code <span class="keyword">in</span> code_list:</span><br><span class="line">    cursor.execute(sql, (code,))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="4-改：修改一条记录"><a href="#4-改：修改一条记录" class="headerlink" title="4.改：修改一条记录"></a>4.改：修改一条记录</h4><p>修改一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">update test <span class="keyword">set</span> code <span class="operator">=</span> <span class="string">&#x27;213122&#x27;</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">new_code = <span class="string">&#x27;213122&#x27;</span></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;update &#x27;</span> +  table_name + <span class="string">&#x27; set code = ? where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql, (new_code,name))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="5-查：查询记录"><a href="#5-查：查询记录" class="headerlink" title="5.查：查询记录"></a>5.查：查询记录</h4><p>查属于最常用的部分了，因为存储在数据库的数据，通常都用select语句去查询。</p>
+<p>查询的SQL语句有：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span> <span class="keyword">and</span> name <span class="operator">=</span> <span class="string">&#x27;李四&#x27;</span></span><br><span class="line"><span class="keyword">select</span> code,name <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>查询可以查询全部字段，也可以查询部分需要的字段；<br>查询后面的where条件可以是 UNIQUE 字段，那查询结果就是唯一的，如果不是 UNIQUE字段，查询结果可能会有多条。</p>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql1 = <span class="string">&#x27;select * from &#x27;</span> + table_name + <span class="string">&#x27; where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql1, (name,))</span><br><span class="line">values1 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values1) <span class="comment"># [(1, &#x27;213122&#x27;, &#x27;张三&#x27;)]</span></span><br><span class="line">sql2 = <span class="string">&#x27;select code,name from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql2)</span><br><span class="line">values2 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values2) <span class="comment"># [(&#x27;213122&#x27;, &#x27;张三&#x27;), (&#x27;213124&#x27;, &#x27;李四&#x27;), (&#x27;213125&#x27;, &#x27;王五&#x27;)]</span></span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="6-小结"><a href="#6-小结" class="headerlink" title="6.小结"></a>6.小结</h4><p><strong>使用Cursor对象执行insert，update，delete语句时，执行结果由rowcount返回影响的行数，就可以拿到执行结果。</strong></p>
+<p><strong>使用Cursor对象执行select语句时，通过fetchall()可以拿到结果集。结果集是一个list，每个元素都是一个tuple，对应一行记录。</strong></p>
+<p>像上面查询中的第4条sql语句，查询结果只需要 code,name 两个字段，那查询的结果会是一个List，每一个元素是一个tuple元组。<br>比如查询到的结果是：</p>
+<p>[(‘213124’, ‘李四’), (‘213125’, ‘王五’)]</p>
+<p>对于这样的List，Python里可以直接转换成 Dictionary（字典）类型，那用起来就更方便了。</p>
+<p>最后，记得用完 关闭connection和Cursor对象。</p>
+]]></content>
       <categories>
-        <category>Linux</category>
+        <category>Python</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
+        <tag>Python</tag>
+        <tag>SQLite</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 正则表达式</title>
+    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p>正则表达式是什么？</p>
+<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
+<p>比如：</p>
+<ul>
+<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
+<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
+<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
+<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1599,202 +1597,26 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
 <a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 定时执行 python脚本</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
-<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
-<a id="more"></a>
-<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p>以上是缩写，全拼是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p><strong>含义</strong>：</p>
-<ul>
-<li>m: 每个小时的第几分钟执行，0-59</li>
-<li>h: 第天的第几个小时执行，0-23</li>
-<li>dom: 每月的第几天执行，1-31</li>
-<li>mon: 每年的第几个月执行，1-12</li>
-<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
-<li>command: 定时执行的命令</li>
-</ul>
-<p><strong>其它</strong>：</p>
-<ul>
-<li>*： 表示任何时间</li>
-<li>*/2: 表示每隔2分钟</li>
-<li>-：表示区间，比如1-3</li>
-<li>,：表示区间不连续，比如1,3,6</li>
-</ul>
-<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>含义</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>*  * * * * ifconfig</td>
-<td>每天第一分钟都在执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>1 * * * * ifconfig</td>
-<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
-<td>01:01, 02:01, 03:01, 04:01……</td>
-</tr>
-<tr>
-<td>0 9 * * * ifconfig</td>
-<td>每天 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 10 * * ifconfig</td>
-<td>每个月的10号 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 * * 1,2 ifconfig</td>
-<td>每周一、周二 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-</tbody></table>
-<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
-<ol>
-<li>/bin/nano</li>
-<li>/usr/bin/vim.basic</li>
-<li>/usr/bin/vim.tiny</li>
-<li>/bin/ed</li>
-</ol>
-<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
-<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
-<blockquote>
-<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
-</blockquote>
-<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
-<p>最后一行是命令格式：</p>
-<blockquote>
-<p># m h dom mon dow command</p>
-</blockquote>
-<p>在最下面添加自己的任务就可以了。</p>
-<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
-<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
-<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
-<p>得到结果比如是：<code>/usr/bin/python3</code></p>
-<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
-<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
-<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
-<p>所以，最终添加的这条定时任务记录是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
-<p>1.设计好自己想要执行的 python任务</p>
-<p>比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>2.打开定时任务编辑，添加任务记录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>3.重启 cron服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 安装Selenium自动化测试</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img src="/img/ubuntu_cpu_1.png"/>
 
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img src="/img/ubuntu_cpu_2.png"/>
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
@@ -1926,6 +1748,45 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 安装Selenium自动化测试</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
+<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<a id="more"></a>
+<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
+<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
+<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
+<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
+<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
+<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
+<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
+<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Ubuntu</tag>
+        <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>iphone进入DFU模式方法</title>
     <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
@@ -1969,6 +1830,457 @@
       </categories>
       <tags>
         <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 定时执行 python脚本</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
+<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
+<a id="more"></a>
+<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p>以上是缩写，全拼是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>m: 每个小时的第几分钟执行，0-59</li>
+<li>h: 第天的第几个小时执行，0-23</li>
+<li>dom: 每月的第几天执行，1-31</li>
+<li>mon: 每年的第几个月执行，1-12</li>
+<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
+<li>command: 定时执行的命令</li>
+</ul>
+<p><strong>其它</strong>：</p>
+<ul>
+<li>*： 表示任何时间</li>
+<li>*/2: 表示每隔2分钟</li>
+<li>-：表示区间，比如1-3</li>
+<li>,：表示区间不连续，比如1,3,6</li>
+</ul>
+<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*  * * * * ifconfig</td>
+<td>每天第一分钟都在执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 * * * * ifconfig</td>
+<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
+<td>01:01, 02:01, 03:01, 04:01……</td>
+</tr>
+<tr>
+<td>0 9 * * * ifconfig</td>
+<td>每天 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 10 * * ifconfig</td>
+<td>每个月的10号 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 * * 1,2 ifconfig</td>
+<td>每周一、周二 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
+<ol>
+<li>/bin/nano</li>
+<li>/usr/bin/vim.basic</li>
+<li>/usr/bin/vim.tiny</li>
+<li>/bin/ed</li>
+</ol>
+<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
+<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
+<blockquote>
+<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
+</blockquote>
+<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
+<p>最后一行是命令格式：</p>
+<blockquote>
+<p># m h dom mon dow command</p>
+</blockquote>
+<p>在最下面添加自己的任务就可以了。</p>
+<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
+<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
+<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
+<p>得到结果比如是：<code>/usr/bin/python3</code></p>
+<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
+<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
+<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
+<p>所以，最终添加的这条定时任务记录是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
+<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
+<p>1.设计好自己想要执行的 python任务</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>2.打开定时任务编辑，添加任务记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>3.重启 cron服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img src="/img/ubuntu_cpu_1.png"/>
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img src="/img/ubuntu_cpu_2.png"/>
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>youtube-dl 使用教程</title>
+    <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
+<a id="more"></a>
+
+<h2 id="一、安装环境"><a href="#一、安装环境" class="headerlink" title="一、安装环境"></a>一、安装环境</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 youtube-dl （<a class="link"   href="https://github.com/ytdl-org/youtube-dl/releases" >https://github.com/ytdl-org/youtube-dl/releases<i class="fas fa-external-link-alt"></i></a> ）</li>
+</ul>
+<p>因为命令行需要用到 youtube-dl，所以把ffmpeg、youtube-dl.exe 都添加到系统环境变量。</p>
+<p>youtube-dl 项目github地址：<a class="link"   href="https://github.com/rg3/youtube-dl/" >https://github.com/rg3/youtube-dl/<i class="fas fa-external-link-alt"></i></a> </p>
+<h2 id="二、下载YouTube视频"><a href="#二、下载YouTube视频" class="headerlink" title="二、下载YouTube视频"></a>二、下载YouTube视频</h2><h4 id="1、查看视频所有类型，只看不下载"><a href="#1、查看视频所有类型，只看不下载" class="headerlink" title="1、查看视频所有类型，只看不下载"></a>1、查看视频所有类型，只看不下载</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -F [url]</span><br></pre></td></tr></table></figure>
+<img src="/img/youtube-dl_1.png"/>
+
+<h4 id="2、下载视频和音频并主动合并"><a href="#2、下载视频和音频并主动合并" class="headerlink" title="2、下载视频和音频并主动合并"></a>2、下载视频和音频并主动合并</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f [format code] [url]    //下载指定格式的视频和音频，如 youtube-dl -f 299+140 [url]youtube-dl -f bestvideo+bestaudio [url]    //下载质量最好的视频和音频</span><br></pre></td></tr></table></figure>
+<p>如果系统中安装了ffmpeg的话，youtube-dl会自动合并已经下载好的音频和视频，然后自动删除单独的音视频文件。</p>
+<img src="/img/youtube-dl_2.png"/>
+
+<p><strong>把下载的视频转换成mp4格式</strong><br>加上<code>--merge-output-format mp4</code> 参数</p>
+<h4 id="3、下载字幕"><a href="#3、下载字幕" class="headerlink" title="3、下载字幕"></a>3、下载字幕</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--list-subs 列出所有可以下载的字幕，包括语言以及格式</span><br><span class="line">--write-sub下载up主自己上传的字幕（非youtube自动生成）</span><br><span class="line">--write-auto-sub 下载youtube自动生成的字幕</span><br><span class="line">--sub-lang [LANGS] 选择下载字幕的语言</span><br></pre></td></tr></table></figure>
+<p>1).查看视频支持哪些语言的字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --list-subs [url]</span><br></pre></td></tr></table></figure>
+<p>2).下载字幕<br>a.只下载字幕用户上传的 zh-Hans 字幕，不下载视频</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] --write-sub --sub-lang zh-Hans --skip-download</span><br></pre></td></tr></table></figure>
+<p>b.把下载的vtt字幕转换成srt字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] --write-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt --skip-download</span><br></pre></td></tr></table></figure>
+<p>3).同时下载视频和字幕（字幕嵌入视频）<br>加上参数：–embed-sub -i</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl.exe [url] -f 299+140 --write-sub --sub-lang zh-Hans --embed-sub -i</span><br></pre></td></tr></table></figure>
+<p>会下载一个视频文件（内嵌字幕）。</p>
+<img src="/img/youtube-dl_3.png"/>
+
+<h4 id="4、总结"><a href="#4、总结" class="headerlink" title="4、总结"></a>4、总结</h4><p>1).查看视频支持哪些语言的字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --list-subs [url]</span><br></pre></td></tr></table></figure>
+<p>2).下载视频（含字幕，质量最好的视频和音频）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-Hans --embed-sub -i</span><br></pre></td></tr></table></figure>
+<h2 id="三、批量下载视频"><a href="#三、批量下载视频" class="headerlink" title="三、批量下载视频"></a>三、批量下载视频</h2><h4 id="1、下载播放列表"><a href="#1、下载播放列表" class="headerlink" title="1、下载播放列表"></a>1、下载播放列表</h4><p>参数：–yes-playlist -f -k ListURL</p>
+<p>1).下载YouTube播放列表（-i 后面跟的即列表名）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-Hans --embed-sub -i PLBAGcD3siRDguyYYzhVwZ3tLvOyyG5k6K</span><br></pre></td></tr></table></figure>
+<p>2).下载播放列表</p>
+<ul>
+<li>要从播放列表下载第 10 个文件，可使用：youtube-dl –playlist-items 10 [playlist_url]</li>
+<li>要下载多个指定的文件，只需用逗号分隔：youtube-dl –playlist-items 2,3,7,10 [playlist_url]</li>
+<li>从第 10 个开始，直接下载完整个列表：youtube-dl –playlist-start 10 [playlist_url]</li>
+<li>在播放列表中仅下载从第 2 到第 5 的文件：youtube-dl –playlist-start 2 –playlist-end 5 [playlist_url]</li>
+</ul>
+<h4 id="2、批量下载"><a href="#2、批量下载" class="headerlink" title="2、批量下载"></a>2、批量下载</h4><p>新建一个 list.bat 文件，文件内容为：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">url1</span></span><br><span class="line"><span class="string">url2</span></span><br><span class="line"><span class="string">url3</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --batch-file list.bat</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -a list.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-CN --embed-sub -i -a list.txt</span><br></pre></td></tr></table></figure>
+<h2 id="五、报错"><a href="#五、报错" class="headerlink" title="五、报错"></a>五、报错</h2><p>如果提示 HTTP Error 403: Forbidden 错误，运行一下下面的代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --rm-cache-dir</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
+    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
+    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
+<a id="more"></a>
+
+<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>为什么要使用Github Pages？</p>
+<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
+<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
+<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
+<p>（怕有问题，直接搜索安装教程照着来就行）</p>
+<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
+<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
+<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
+<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
+<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
+<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
+<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
+<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
+<img src="/img/Hexo_Github_blog_1.png"/>
+
+<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
+<p>操作如下：</p>
+<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
+<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
+<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入完成之后，屏幕会显示如下信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
+<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1).登陆GitHub，进入你的Account Settings</li>
+<li>2).选择SSH Keys</li>
+<li>3).粘贴密钥，添加即可<img src="/img/Hexo_Github_blog_2.png"/>
+
+</li>
+</ul>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果是下面的反馈：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
+<p>不要紧张，输入yes就好，然后会看到：<br><img src="/img/Hexo_Github_blog_3.png"/></p>
+<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
+<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
+<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img src="/img/Hexo_Github_blog_4.png"/>
+
+<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img src="/img/Hexo_Github_blog_5.png"/>
+
+<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img src="/img/Hexo_Github_blog_6.png"/>
+
+<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img src="/img/Hexo_Github_blog_7.png"/></p>
+<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>或者直接执行 <code>hexo g -d</code></p>
+<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
+<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
+<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
+<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
+<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
+<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
+<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
+<p>2).部署到Github上</p>
+<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
+<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
+<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
+<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用FFmpeg下载m3u8格式视频</title>
+    <url>/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/</url>
+    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
+<p>反正FFmpeg很强大的，功能也很多。这篇文章，主要介绍下载m3u8视频。</p>
+<a id="more"></a>
+
+<p>之前有两篇文章介绍了下载视频的工具，即：</p>
+<ul>
+<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a></li>
+<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a>
+
+</li>
+</ul>
+<p>you-get 和 youtube-dl 这两差不多，youtube-dl 能下载包括油管视频在内的不少视频了。这两都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。而且也都用到了FFmpeg的功能，所以都已经安装了。</p>
+<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
+<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img src="/img/ffmpeg_download_m3u8_1.png" style="zoom: 50%;"/></p>
+<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
+<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
+<h2 id="二、下载m3u8格式视频"><a href="#二、下载m3u8格式视频" class="headerlink" title="二、下载m3u8格式视频"></a>二、下载m3u8格式视频</h2><p>比如，有如下视频想要下载：<br><a class="link"   href="https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a" >https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a<i class="fas fa-external-link-alt"></i></a></p>
+<p>用别的插件一看就能看到是m3u8的。</p>
+<p>这个站点的，先试了下，用 VLC media player 这个播放器软件也可以下载，以前碰到过m3u8格式的无法用这个下载的。<br>如果你没装ffmpeg的话，也可以搜一下“<strong>VLC media player 下载m3u8视频方式</strong>”，这个也简单的。</p>
+<p>不管是用VLC media player 下载，还是用ffmpeg下载，首先都需要找到这个视频的m3u8的地址。</p>
+<h3 id="1-找到视频对应的m3u8地址"><a href="#1-找到视频对应的m3u8地址" class="headerlink" title="1.找到视频对应的m3u8地址"></a>1.找到视频对应的m3u8地址</h3><p>1).直接用浏览器F12开发者工具找m3u8地址</p>
+<p>这个不管Chrome浏览器，还是Edge、Firefox这些基本上所有浏览器都有了。操作如下：</p>
+<ul>
+<li>按<strong>F12</strong>打开浏览器的开发者工具，选择【网络】项；</li>
+<li>在【Name】中找到.m3u8后单击（按Name排序一下，很容易找到的）；</li>
+<li>复制右侧的【请求网址】，网址最后应该都是 .m3u8。</li>
+</ul>
+<img src="/img/ffmpeg_download_m3u8_2.png" style="zoom: 50%;"/>
+
+<p>比如我复制出来为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;r1-ndr.ykt.cbern.com.cn&#x2F;edu_product&#x2F;65&#x2F;video&#x2F;17b9d867547a11eb96b8fa20200c3759&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.false&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8</span><br></pre></td></tr></table></figure>
+<p>2).直接用浏览器插件找m3u8地址</p>
+<p>比如这里直接用“猫抓”的插件：</p>
+<ul>
+<li>播放视频，点击猫抓插件；</li>
+<li>直接复制最上面的m3u8地址。</li>
+</ul>
+<img src="/img/ffmpeg_download_m3u8_3.png" style="zoom: 50%;"/>
+
+<p>复制出来和上面的方法是一样的。</p>
+<h3 id="2-用ffmpeg下载m3u8视频"><a href="#2-用ffmpeg下载m3u8视频" class="headerlink" title="2.用ffmpeg下载m3u8视频"></a>2.用ffmpeg下载m3u8视频</h3><p>添加好环境变量后，直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
+<p>输入命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i 你要下载的m3u8地址 -c copy -bsf:a aac_adtstoasc ./保存视频的名字.mp4</span><br></pre></td></tr></table></figure>
+<p>比如我要下载上面的视频，就输入以下命令后，回车：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i https://r1-ndr.ykt.cbern.com.cn/edu_product/65/video/17b9d867547a11eb96b8fa20200c3759/e6d5486a49d609bfca30e0f3a328f031.1280.720.false/e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8 -c copy -bsf:a aac_adtstoasc ./1234.mp4</span><br></pre></td></tr></table></figure>
+<p>等完成后，这个目录下就有了下载好的名为 1234.mp4的视频了。</p>
+<img src="/img/ffmpeg_download_m3u8_4.png" style="zoom: 50%;"/>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -2229,291 +2541,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>youtube-dl 使用教程</title>
-    <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
-<a id="more"></a>
-
-<h2 id="一、安装环境"><a href="#一、安装环境" class="headerlink" title="一、安装环境"></a>一、安装环境</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 youtube-dl （<a class="link"   href="https://github.com/ytdl-org/youtube-dl/releases" >https://github.com/ytdl-org/youtube-dl/releases<i class="fas fa-external-link-alt"></i></a> ）</li>
-</ul>
-<p>因为命令行需要用到 youtube-dl，所以把ffmpeg、youtube-dl.exe 都添加到系统环境变量。</p>
-<p>youtube-dl 项目github地址：<a class="link"   href="https://github.com/rg3/youtube-dl/" >https://github.com/rg3/youtube-dl/<i class="fas fa-external-link-alt"></i></a> </p>
-<h2 id="二、下载YouTube视频"><a href="#二、下载YouTube视频" class="headerlink" title="二、下载YouTube视频"></a>二、下载YouTube视频</h2><h4 id="1、查看视频所有类型，只看不下载"><a href="#1、查看视频所有类型，只看不下载" class="headerlink" title="1、查看视频所有类型，只看不下载"></a>1、查看视频所有类型，只看不下载</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -F [url]</span><br></pre></td></tr></table></figure>
-<img src="/img/youtube-dl_1.png"/>
-
-<h4 id="2、下载视频和音频并主动合并"><a href="#2、下载视频和音频并主动合并" class="headerlink" title="2、下载视频和音频并主动合并"></a>2、下载视频和音频并主动合并</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f [format code] [url]    //下载指定格式的视频和音频，如 youtube-dl -f 299+140 [url]youtube-dl -f bestvideo+bestaudio [url]    //下载质量最好的视频和音频</span><br></pre></td></tr></table></figure>
-<p>如果系统中安装了ffmpeg的话，youtube-dl会自动合并已经下载好的音频和视频，然后自动删除单独的音视频文件。</p>
-<img src="/img/youtube-dl_2.png"/>
-
-<p><strong>把下载的视频转换成mp4格式</strong><br>加上<code>--merge-output-format mp4</code> 参数</p>
-<h4 id="3、下载字幕"><a href="#3、下载字幕" class="headerlink" title="3、下载字幕"></a>3、下载字幕</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--list-subs 列出所有可以下载的字幕，包括语言以及格式</span><br><span class="line">--write-sub下载up主自己上传的字幕（非youtube自动生成）</span><br><span class="line">--write-auto-sub 下载youtube自动生成的字幕</span><br><span class="line">--sub-lang [LANGS] 选择下载字幕的语言</span><br></pre></td></tr></table></figure>
-<p>1).查看视频支持哪些语言的字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --list-subs [url]</span><br></pre></td></tr></table></figure>
-<p>2).下载字幕<br>a.只下载字幕用户上传的 zh-Hans 字幕，不下载视频</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] --write-sub --sub-lang zh-Hans --skip-download</span><br></pre></td></tr></table></figure>
-<p>b.把下载的vtt字幕转换成srt字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] --write-sub --sub-lang zh-Hans --sub-format vtt --convert-subs srt --skip-download</span><br></pre></td></tr></table></figure>
-<p>3).同时下载视频和字幕（字幕嵌入视频）<br>加上参数：–embed-sub -i</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl.exe [url] -f 299+140 --write-sub --sub-lang zh-Hans --embed-sub -i</span><br></pre></td></tr></table></figure>
-<p>会下载一个视频文件（内嵌字幕）。</p>
-<img src="/img/youtube-dl_3.png"/>
-
-<h4 id="4、总结"><a href="#4、总结" class="headerlink" title="4、总结"></a>4、总结</h4><p>1).查看视频支持哪些语言的字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --list-subs [url]</span><br></pre></td></tr></table></figure>
-<p>2).下载视频（含字幕，质量最好的视频和音频）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl [url] -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-Hans --embed-sub -i</span><br></pre></td></tr></table></figure>
-<h2 id="三、批量下载视频"><a href="#三、批量下载视频" class="headerlink" title="三、批量下载视频"></a>三、批量下载视频</h2><h4 id="1、下载播放列表"><a href="#1、下载播放列表" class="headerlink" title="1、下载播放列表"></a>1、下载播放列表</h4><p>参数：–yes-playlist -f -k ListURL</p>
-<p>1).下载YouTube播放列表（-i 后面跟的即列表名）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-Hans --embed-sub -i PLBAGcD3siRDguyYYzhVwZ3tLvOyyG5k6K</span><br></pre></td></tr></table></figure>
-<p>2).下载播放列表</p>
-<ul>
-<li>要从播放列表下载第 10 个文件，可使用：youtube-dl –playlist-items 10 [playlist_url]</li>
-<li>要下载多个指定的文件，只需用逗号分隔：youtube-dl –playlist-items 2,3,7,10 [playlist_url]</li>
-<li>从第 10 个开始，直接下载完整个列表：youtube-dl –playlist-start 10 [playlist_url]</li>
-<li>在播放列表中仅下载从第 2 到第 5 的文件：youtube-dl –playlist-start 2 –playlist-end 5 [playlist_url]</li>
-</ul>
-<h4 id="2、批量下载"><a href="#2、批量下载" class="headerlink" title="2、批量下载"></a>2、批量下载</h4><p>新建一个 list.bat 文件，文件内容为：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">url1</span></span><br><span class="line"><span class="string">url2</span></span><br><span class="line"><span class="string">url3</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --batch-file list.bat</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -a list.txt</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-CN --embed-sub -i -a list.txt</span><br></pre></td></tr></table></figure>
-<h2 id="五、报错"><a href="#五、报错" class="headerlink" title="五、报错"></a>五、报错</h2><p>如果提示 HTTP Error 403: Forbidden 错误，运行一下下面的代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --rm-cache-dir</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img src="/img/Hexo_theme_Keep_1.png" style="zoom: 50%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img src="/img/Hexo_theme_Keep_2.png" style="zoom: 50%;"/>
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img src="/img/Hexo_theme_Keep_3.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img src="/img/Hexo_theme_Keep_4.png" style="zoom: 70%;"/><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img src="/img/Hexo_theme_Keep_5.png" style="zoom: 50%;"/>
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img src="/img/Hexo_theme_Keep_6.png"/>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
-    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
-    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
-<a id="more"></a>
-
-<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>为什么要使用Github Pages？</p>
-<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
-<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
-<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
-<p>（怕有问题，直接搜索安装教程照着来就行）</p>
-<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
-<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
-<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
-<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
-<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
-<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
-<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
-<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
-<img src="/img/Hexo_Github_blog_1.png"/>
-
-<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
-<p>操作如下：</p>
-<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
-<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
-<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入完成之后，屏幕会显示如下信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
-<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>1).登陆GitHub，进入你的Account Settings</li>
-<li>2).选择SSH Keys</li>
-<li>3).粘贴密钥，添加即可<img src="/img/Hexo_Github_blog_2.png"/>
-
-</li>
-</ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#46;&#99;&#x6f;&#109;" >&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#46;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果是下面的反馈：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
-<p>不要紧张，输入yes就好，然后会看到：<br><img src="/img/Hexo_Github_blog_3.png"/></p>
-<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
-<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
-<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img src="/img/Hexo_Github_blog_4.png"/>
-
-<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img src="/img/Hexo_Github_blog_5.png"/>
-
-<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img src="/img/Hexo_Github_blog_6.png"/>
-
-<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img src="/img/Hexo_Github_blog_7.png"/></p>
-<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>或者直接执行 <code>hexo g -d</code></p>
-<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
-<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
-<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
-<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
-<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
-<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
-<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
-<p>2).部署到Github上</p>
-<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
-<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
-<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
-<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用FFmpeg下载m3u8格式视频</title>
-    <url>/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/</url>
-    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
-<p>反正FFmpeg很强大的，功能也很多。这篇文章，主要介绍下载m3u8视频。</p>
-<a id="more"></a>
-
-<p>之前有两篇文章介绍了下载视频的工具，即：</p>
-<ul>
-<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a></li>
-<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a>
-
-</li>
-</ul>
-<p>you-get 和 youtube-dl 这两差不多，youtube-dl 能下载包括油管视频在内的不少视频了。这两都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。而且也都用到了FFmpeg的功能，所以都已经安装了。</p>
-<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
-<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img src="/img/ffmpeg_download_m3u8_1.png" style="zoom: 50%;"/></p>
-<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
-<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
-<h2 id="二、下载m3u8格式视频"><a href="#二、下载m3u8格式视频" class="headerlink" title="二、下载m3u8格式视频"></a>二、下载m3u8格式视频</h2><p>比如，有如下视频想要下载：<br><a class="link"   href="https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a" >https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a<i class="fas fa-external-link-alt"></i></a></p>
-<p>用别的插件一看就能看到是m3u8的。</p>
-<p>这个站点的，先试了下，用 VLC media player 这个播放器软件也可以下载，以前碰到过m3u8格式的无法用这个下载的。<br>如果你没装ffmpeg的话，也可以搜一下“<strong>VLC media player 下载m3u8视频方式</strong>”，这个也简单的。</p>
-<p>不管是用VLC media player 下载，还是用ffmpeg下载，首先都需要找到这个视频的m3u8的地址。</p>
-<h3 id="1-找到视频对应的m3u8地址"><a href="#1-找到视频对应的m3u8地址" class="headerlink" title="1.找到视频对应的m3u8地址"></a>1.找到视频对应的m3u8地址</h3><p>1).直接用浏览器F12开发者工具找m3u8地址</p>
-<p>这个不管Chrome浏览器，还是Edge、Firefox这些基本上所有浏览器都有了。操作如下：</p>
-<ul>
-<li>按<strong>F12</strong>打开浏览器的开发者工具，选择【网络】项；</li>
-<li>在【Name】中找到.m3u8后单击（按Name排序一下，很容易找到的）；</li>
-<li>复制右侧的【请求网址】，网址最后应该都是 .m3u8。</li>
-</ul>
-<img src="/img/ffmpeg_download_m3u8_2.png" style="zoom: 50%;"/>
-
-<p>比如我复制出来为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;r1-ndr.ykt.cbern.com.cn&#x2F;edu_product&#x2F;65&#x2F;video&#x2F;17b9d867547a11eb96b8fa20200c3759&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.false&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8</span><br></pre></td></tr></table></figure>
-<p>2).直接用浏览器插件找m3u8地址</p>
-<p>比如这里直接用“猫抓”的插件：</p>
-<ul>
-<li>播放视频，点击猫抓插件；</li>
-<li>直接复制最上面的m3u8地址。</li>
-</ul>
-<img src="/img/ffmpeg_download_m3u8_3.png" style="zoom: 50%;"/>
-
-<p>复制出来和上面的方法是一样的。</p>
-<h3 id="2-用ffmpeg下载m3u8视频"><a href="#2-用ffmpeg下载m3u8视频" class="headerlink" title="2.用ffmpeg下载m3u8视频"></a>2.用ffmpeg下载m3u8视频</h3><p>添加好环境变量后，直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
-<p>输入命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i 你要下载的m3u8地址 -c copy -bsf:a aac_adtstoasc ./保存视频的名字.mp4</span><br></pre></td></tr></table></figure>
-<p>比如我要下载上面的视频，就输入以下命令后，回车：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i https://r1-ndr.ykt.cbern.com.cn/edu_product/65/video/17b9d867547a11eb96b8fa20200c3759/e6d5486a49d609bfca30e0f3a328f031.1280.720.false/e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8 -c copy -bsf:a aac_adtstoasc ./1234.mp4</span><br></pre></td></tr></table></figure>
-<p>等完成后，这个目录下就有了下载好的名为 1234.mp4的视频了。</p>
-<img src="/img/ffmpeg_download_m3u8_4.png" style="zoom: 50%;"/>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>

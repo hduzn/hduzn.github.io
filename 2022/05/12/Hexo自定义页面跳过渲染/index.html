@@ -9,7 +9,7 @@
     
     <title>
         
-            Hexo博客同步部署到Github Pages |
+            Hexo 自定义页面 跳过渲染 |
         
         烟雨平生
     </title>
@@ -176,7 +176,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Hexo博客同步部署到Github Pages</span>
+            <span class="title-hover-animation">Hexo 自定义页面 跳过渲染</span>
         </div>
 
         
@@ -193,8 +193,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-05-12 10:09:35</span>
-        <span class="mobile">2022-05-12 10:09</span>
+        <span class="pc">2022-05-12 12:43:22</span>
+        <span class="mobile">2022-05-12 12:43</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -214,11 +214,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Github/">Github</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Hexo/">Hexo</a>&nbsp;
+                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -241,71 +237,34 @@
         
 
         <div class="article-content markdown-body">
-            <p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+            <p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
+<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
+<p><strong>Hexo跳过渲染 方法：</strong></p>
+<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
 <a id="more"></a>
 
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;" >&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-
+<p><strong>举例</strong></p>
+<p>1.根目录下的a.html文件跳过渲染 配置：</p>
+<p>把a.html文件放在Hexo/source 目录下。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
+<p>2.source/test 文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
+<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
+<p>4.跳过多个：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Hexo博客同步部署到Github Pages</li>
+        <li>本文标题：Hexo 自定义页面 跳过渲染</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-05-12 10:09:35</li>
+        <li>创建时间：2022-05-12 12:43:22</li>
         <li>
-            本文链接：http://hduzn.cn/2022/05/12/Hexo博客同步部署到Github-Pages/
+            本文链接：http://hduzn.cn/2022/05/12/Hexo自定义页面跳过渲染/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -320,10 +279,6 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Github/">#Github</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
                         <a href="/tags/Hexo/">#Hexo</a>&nbsp;
                     </li>
                 
@@ -333,29 +288,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Hexo 自定义页面 跳过渲染</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/05/11/Ubuntu-Nginx%E6%9C%8D%E5%8A%A1%E5%99%A8SSL%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"
+                           href="/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu Nginx服务器SSL证书安装部署</span>
+                                <span class="post-nav-title-item">Hexo博客同步部署到Github Pages</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -566,7 +506,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%9B%E5%BB%BAGithub-Pages"><span class="nav-text">一、创建Github Pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E4%B8%93%E7%94%A8%E7%9A%84SSH%E5%AF%86%E9%92%A5"><span class="nav-text">二、创建专用的SSH密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E5%AF%B9%E6%96%B0%E7%9A%84SSH%E5%AF%86%E9%92%A5"><span class="nav-text">1.创建一对新的SSH密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8A%8ASSH%E5%85%AC%E9%92%A5%E6%B7%BB%E5%8A%A0%E5%88%B0Github%E4%B8%AD"><span class="nav-text">2.把SSH公钥添加到Github中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9C%AC%E6%9C%BASSH%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">3.本机SSH配置文件修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ssh%E6%B5%8B%E8%AF%95"><span class="nav-text">4.ssh测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BF%AE%E6%94%B9Hexo%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88-config-yml%EF%BC%89"><span class="nav-text">三、修改Hexo配置文件（_config.yml）</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
