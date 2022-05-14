@@ -9,7 +9,7 @@
     
     <title>
         
-            Python selenium 切换到新的窗口方法 |
+            Hexo创建sitemap站点地图向搜索引擎提交 |
         
         烟雨平生
     </title>
@@ -176,7 +176,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Python selenium 切换到新的窗口方法</span>
+            <span class="title-hover-animation">Hexo创建sitemap站点地图向搜索引擎提交</span>
         </div>
 
         
@@ -193,8 +193,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-19 14:20:00</span>
-        <span class="mobile">2021-02-19 14:20</span>
+        <span class="pc">2022-05-14 09:55:01</span>
+        <span class="mobile">2022-05-14 09:55</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -202,7 +202,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Python/">Python</a>&nbsp;
+                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -214,11 +214,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Python/">Python</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
+                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -241,29 +237,39 @@
         
 
         <div class="article-content markdown-body">
-            <p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+            <p>站点地图是一种xml文件，可以通过该文件列出网站上的网页，从而将网站内容的组织架构告知Google和其他搜索引擎。Sitemap 可方便管理员通知搜索引擎他们网站上有哪些可供抓取的网页。搜索引擎网页抓取工具会读取此文件，以便更加智能地抓取您的网站。</p>
+<p>向搜索引擎提交自己hexo博客的sitemap，有助于让别人更好地通过搜索引擎搜索到自己的博客。</p>
 <a id="more"></a>
 
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
-<p><strong>解决思路</strong>：</p>
+<h2 id="一、生成Hexo博客的sitemap文件"><a href="#一、生成Hexo博客的sitemap文件" class="headerlink" title="一、生成Hexo博客的sitemap文件"></a>一、生成Hexo博客的sitemap文件</h2><p>Hexo有提供2个插件，用来自动生成sitemap文件。用以下命令安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
+<p>安装完后，每当执行 <code>hexo generate</code>命令后，就会在Hexo下的public目录下生成两个文件。</p>
 <ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+<li>sitemap.xml 这个用来提交给Google、Bing等搜索引擎</li>
+<li>baidusitemap.xml 这个是百度专用的</li>
 </ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+<p>运行 <code>hexo deploy</code>命令后，打开访问：<code>域名/sitemap.xml</code>，<code>域名/baidusitemap.xml</code>这两个文件都能访问，就没问题了。</p>
+<p>访问结果如下图所示：<br><img src="/img/Hexo_sitemap_1.png"/></p>
+<h2 id="二、提交站点地图-sitemap-给搜索引擎"><a href="#二、提交站点地图-sitemap-给搜索引擎" class="headerlink" title="二、提交站点地图(sitemap)给搜索引擎"></a>二、提交站点地图(sitemap)给搜索引擎</h2><h3 id="1-提交给Google"><a href="#1-提交给Google" class="headerlink" title="1.提交给Google"></a>1.提交给Google</h3><p>网址：<a class="link"   target="_blank" rel="noopener" href="https://search.google.com/search-console/" >https://search.google.com/search-console/<i class="fas fa-external-link-alt"></i></a><br>当然，前提是你能访问Google，并注册了Google的账号了。</p>
+<p>1).需要有个先验证你对网站的所有权</p>
+<ul>
+<li><p>首先，按操作提示下载提供的HTML验证文件（google2342fweklrljlj235423.html类型这样的文件）；</p>
+</li>
+<li><p>然后，要把这个文件放网站首页；</p>
+<p>（就直接放<code>Hexo/source</code>目录下，按<a href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/" title="Hexo 自定义页面 跳过渲染">Hexo 自定义页面 跳过渲染</a>这篇文章的跳过渲染方法，<code>hexo g</code>后就会生成在public目录下了）</p>
+</li>
+<li><p>最后，添加站点地图</p>
+<p>有两种方式，可以自己都试下。提交完后如下图所示就行了，回头再看：</p>
+<img src="/img/Hexo_sitemap_2.png"/>
+
+</li>
+</ul>
+<h3 id="2-提交给Bing"><a href="#2-提交给Bing" class="headerlink" title="2.提交给Bing"></a>2.提交给Bing</h3><p>如果能提交给Google的话，先提交给Google后，再提交给Bing就很简单。因为可以直接授权通过。</p>
+<p>网址：<a class="link"   target="_blank" rel="noopener" href="https://www.bing.com/webmasters" >https://www.bing.com/webmasters<i class="fas fa-external-link-alt"></i></a></p>
+<p>然后我就直接添加了下【网站地图】，就用sitemap.xml文件就行，把http和https的直接添加试了下。<br><img src="/img/Hexo_sitemap_3.png"/></p>
+<h3 id="3-提交给百度"><a href="#3-提交给百度" class="headerlink" title="3.提交给百度"></a>3.提交给百度</h3><p>百度原来叫站长平台吧，现在好像改名叫什么资源了。<br>网址：<a class="link"   target="_blank" rel="noopener" href="https://ziyuan.baidu.com/linksubmit/index" >https://ziyuan.baidu.com/linksubmit/index<i class="fas fa-external-link-alt"></i></a></p>
+<p>百度是我最搞不懂的，明明<code>域名/baidusitemap.xml</code>文件都能访问，反正提交还是失败。<br>提示“主域校验失败”。<br><img src="/img/Hexo_sitemap_4.png"/></p>
+<p>难道文章里还不能出现别的站点了？？太奇怪了，什么玩意~ 遂放弃。</p>
 
         </div>
 
@@ -271,11 +277,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Python selenium 切换到新的窗口方法</li>
+        <li>本文标题：Hexo创建sitemap站点地图向搜索引擎提交</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-19 14:20:00</li>
+        <li>创建时间：2022-05-14 09:55:01</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/19/Python-selenium3-切换到新的窗口方法/
+            本文链接：http://hduzn.cn/2022/05/14/Hexo创建sitemap站点地图向搜索引擎提交/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -290,11 +296,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Python/">#Python</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
+                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -303,29 +305,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Python 对图片进行文字识别</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/"
+                           href="/2022/05/13/Python-%E5%A4%87%E4%BB%BD-%E8%B1%86%E7%93%A3-%E8%AF%BB%E8%BF%87%E7%9A%84%E4%B9%A6%E7%9A%84%E8%AE%B0%E5%BD%95/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python openpyxl.load_workbook excel file error</span>
+                                <span class="post-nav-title-item">Python 备份 豆瓣 读过的书的记录</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -536,7 +523,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="nav-text">重现问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%94%9F%E6%88%90Hexo%E5%8D%9A%E5%AE%A2%E7%9A%84sitemap%E6%96%87%E4%BB%B6"><span class="nav-text">一、生成Hexo博客的sitemap文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%8F%90%E4%BA%A4%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9B%BE-sitemap-%E7%BB%99%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="nav-text">二、提交站点地图(sitemap)给搜索引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%8F%90%E4%BA%A4%E7%BB%99Google"><span class="nav-text">1.提交给Google</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8F%90%E4%BA%A4%E7%BB%99Bing"><span class="nav-text">2.提交给Bing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%8F%90%E4%BA%A4%E7%BB%99%E7%99%BE%E5%BA%A6"><span class="nav-text">3.提交给百度</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
