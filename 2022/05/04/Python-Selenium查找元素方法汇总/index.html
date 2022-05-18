@@ -23,7 +23,7 @@
     <script id="hexo-configurations">
     let KEEP = window.KEEP || {};
     KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
-    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
     KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
   </script>
 <meta name="generator" content="Hexo 5.3.0"></head>
@@ -231,6 +231,10 @@
     
     
     
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
 </div>
 
                     </div>
@@ -263,7 +267,12 @@
 </ul>
 <p>对应代码为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="comment"># 初始化代码 ...</span></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">e1 = wd.find_element(By.ID, <span class="string">&#x27;sb_form_q&#x27;</span>) <span class="comment"># 搜索框</span></span><br><span class="line">e2 = wd.find_element(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line">e3 = wd.find_element(By.TAG_NAME, <span class="string">&#x27;input&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>在F12打开的开发者工具中，按 <code>Ctrl+F</code>键，打开搜索。<br>如果是id，搜索id名前面加上<code>#</code>号，直接就能搜索id。如图所示：<br><img src="/img/Python_Selenium_find_element_1.png"  style="zoom: 50%;"/></p>
+<p>在F12打开的开发者工具中，按 <code>Ctrl+F</code>键，打开搜索。<br>如果是id，搜索id名前面加上<code>#</code>号，直接就能搜索id。如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_Selenium_find_element_1.png"
+                       style="zoom: 50%;"
+                ></p>
 <p>可以用 <code>WebElement.send_keys(&#39;搜索内容&#39;)</code>测试是否找到了这个元素，或者直接print一下。</p>
 <p>如果找不到元素，或者有这个元素、网站响应速度比代码执行速度慢点，find_element 方法就会抛出 selenium.common.exceptions.NoSuchElementException 异常。</p>
 <h3 id="2-处理-NoSuchElementException-的异常"><a href="#2-处理-NoSuchElementException-的异常" class="headerlink" title="2.处理 NoSuchElementException 的异常"></a>2.处理 NoSuchElementException 的异常</h3><p>因为有2种情况，都会有有这个异常：</p>
@@ -489,6 +498,20 @@
             2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
         </div>
         
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
         <div class="theme-info info-item">
             由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
         </div>
@@ -642,6 +665,10 @@
 <script src="/js/code-copy.js"></script>
 
 
+
+
+    
+<script src="/js/lazyload.js"></script>
 
 
 
