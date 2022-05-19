@@ -595,71 +595,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#x67;&#105;&#116;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo博客部署到云服务器（Ubuntu）上</title>
     <url>/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/</url>
     <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -741,33 +676,67 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
 <a id="more"></a>
 
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -799,20 +768,29 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
 <a id="more"></a>
 
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -989,6 +967,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令小记（不断更新中）</title>
     <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
     <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
@@ -1162,35 +1162,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python Selenium查找元素方法汇总</title>
     <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
     <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
@@ -1281,6 +1252,35 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1595,56 +1595,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python文件操作 shutil库使用举例</title>
-    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
-<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
-<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
-<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
-<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
-<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
-<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
-<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
-<li>src，dst都是目录</li>
-<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
-<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
-<li>删除path目录，path不能是文件</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
-<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
-<li>把src文件或目录移动到dst目录</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SQLite 清空表数据并将自增量归0</title>
     <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
     <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
@@ -1696,6 +1646,75 @@
       </tags>
   </entry>
   <entry>
+    <title>Python文件操作 shutil库使用举例</title>
+    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
+<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
+<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
+<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
+<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
+<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
+<li>src，dst都是目录</li>
+<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
+<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
+<li>删除path目录，path不能是文件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
+<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
+<li>把src文件或目录移动到dst目录</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Typora+PicGo无法显示Github图床图片问题</title>
     <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
@@ -1731,22 +1750,100 @@
       </tags>
   </entry>
   <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+    <title>Ubuntu Nginx服务器SSL证书安装部署</title>
+    <url>/2022/05/11/Ubuntu-Nginx%E6%9C%8D%E5%8A%A1%E5%99%A8SSL%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[<p>为什么要安装SSL证书，如果没有SSL证书，访问网站的时候，前面会有个小叹号，是用 <code>http://www.hduzn.cn</code>这样的域名访问的。如果部署了SSL，访问的时候、域名前面就有个安全锁的小图标了。是用 <code>https://www.hduzn.cn</code>这样的地址访问的。</p>
+<p>反正都可以免费申请SSL证书的，就申请了下。</p>
 <a id="more"></a>
 
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
+<p><strong>前言</strong>：<br>已经把Hexo博客部署到Ubuntu服务器上了，可以通过http访问了。<br>部署的文章参考此篇：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<h2 id="一、下载SSL证书（本地）"><a href="#一、下载SSL证书（本地）" class="headerlink" title="一、下载SSL证书（本地）"></a>一、下载SSL证书（本地）</h2><p>在腾讯云买的域名，在DNSPod中直接点击SSL的图标，点【点此管理】即可跳转到腾讯云上SSL证书管理的页面。</p>
+<p><strong>1.申请证书</strong></p>
+<p>点击【申请证书】，就能申请免费的证书。</p>
+<p><strong>2.下载证书</strong></p>
+<p>点击【下载证书】，会提供各种服务器类型的证书下载。（比如Tomcat、Apache、Nginx、IIS等）</p>
+<p>如果配置好DNS了，系统会检测，会提示你推荐下载哪一类证书。</p>
+<p>腾讯云的SSL证书管理控制台：<a class="link"   href="https://console.cloud.tencent.com/ssl" >https://console.cloud.tencent.com/ssl<i class="fas fa-external-link-alt"></i></a></p>
+<p>我这里用的Nginx服务器，就下载Nginx的证书。</p>
+<p>下载后，解压出来一个 hduzn.cn_nginx 文件夹，里面一共4个文件：</p>
+<blockquote>
+<p>hduzn.cn_bundle.crt 证书文件<br>hduzn.cn.key 私钥文件<br>hduzn.cn.csr 没用到<br>hduzn.cn_bundle.pem 没用到</p>
+</blockquote>
+<p>就用到前两个文件，后两个没用到。</p>
+<h2 id="二、部署SSL证书（服务器）"><a href="#二、部署SSL证书（服务器）" class="headerlink" title="二、部署SSL证书（服务器）"></a>二、部署SSL证书（服务器）</h2><p>腾讯云提供的Nginx服务器SSL证书安装部署的文档：<a class="link"   href="https://cloud.tencent.com/document/product/400/35244" >https://cloud.tencent.com/document/product/400/35244<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="1-上传证书到服务器"><a href="#1-上传证书到服务器" class="headerlink" title="1.上传证书到服务器"></a>1.上传证书到服务器</h3><p>直接用Xftp上传。因为用Xshell，所以对应也装了Xftp用，很方便传文件。</p>
+<p>因为可能涉及权限问题，所以准备分两步走：</p>
+<ul>
+<li>1).先把文件上传到用户的home目录；</li>
+<li>2).再把文件复制到Nginx配置的目录里。</li>
+</ul>
+<p>先建个ssl/nginx_ssl目录，然后把<code>hduzn.cn_bundle.crt</code>和<code>hduzn.cn.key</code>两个文件用Xftp上传到目录：<code>/home/ubuntu/ssl/nginx_ssl</code>。</p>
+<p>再到服务器中运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp hduzn.cn_bundle.crt /etc/nginx/sites-available</span><br><span class="line">sudo cp hduzn.cn.key /etc/nginx/sites-available</span><br></pre></td></tr></table></figure>
+<p>直接把两个文件放 /etc/nginx/目录下，我索性跟配置文件放一起了。</p>
+<h3 id="2-修改站点Nginx配置文件"><a href="#2-修改站点Nginx配置文件" class="headerlink" title="2.修改站点Nginx配置文件"></a>2.修改站点Nginx配置文件</h3><p>根据之前Hexo部署到Ubuntu的内容，我的站点的Nginx配置文件是：<code>/etc/nginx/sites-available/default</code></p>
+<blockquote>
+<p>如果你不想直接用vim命令写这么多行，也可以跟我一样，把这个default文件先通过Xftp下载到本地。改完了再上传上去。通过命令强制覆盖原文件就行了。</p>
+</blockquote>
+<p>原修改好的文件（用http访问）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80 default_server;</span><br><span class="line">    listen [::]:80 default_server ipv6only&#x3D;on;</span><br><span class="line"></span><br><span class="line">    root &#x2F;var&#x2F;www&#x2F;hexo; # 需要修改的部分</span><br><span class="line">    index index.html index.htm;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>行数说明：</p>
+<ul>
+<li>4：监听80端口，default_server 即设为默认虚拟主机，无效访问会转到该站点</li>
+<li>5：对应 ipv6</li>
+<li>7：nginx托管的hexo目录路径</li>
+</ul>
+<h4 id="https访问配置"><a href="#https访问配置" class="headerlink" title="https访问配置"></a>https访问配置</h4><p>加上https访问配置后（主要添加了HTTPS server部分），文件主要部分改为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"># Default server configuration</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80 default_server;</span><br><span class="line">	listen [::]:80 default_server;</span><br><span class="line">	server_name www.hduzn.cn # 写上域名</span><br><span class="line"></span><br><span class="line">	#root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rewrite ^(.*) https:&#x2F;&#x2F;www.hduzn.cn$1 permanent; # 将http访问重定向为https访问</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># HTTPS server</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	# SSL configuration</span><br><span class="line">	#</span><br><span class="line">	listen 443 ssl; # ssl的端口</span><br><span class="line">	listen [::]:443 ssl;</span><br><span class="line">	server_name www.hduzn.cn; # 写上域名</span><br><span class="line">	ssl_certificate &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn_bundle.crt;</span><br><span class="line">    ssl_certificate_key &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn.key;</span><br><span class="line">	ssl_session_cache shared:SSL:1m;</span><br><span class="line">	ssl_session_timeout 5m;</span><br><span class="line">	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers RC4:HIGH:!aNULL:!MD5;</span><br><span class="line">    ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">	root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>行数说明：</p>
+<ul>
+<li>18：将http访问重定向为https访问，即定向到第二个 server 块，需要注意ssl证书到期时间</li>
+<li>26：监听SSL的443端口</li>
+<li>27：对应 ipv6</li>
+<li>29：证书文件</li>
+<li>30：私钥文件</li>
+<li>33：协议配置</li>
+<li>34：加密套件</li>
+<li>37：nginx托管的hexo目录路径</li>
+</ul>
+<p>修改完后，重启Nginx。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Python</category>
+        <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Python</tag>
+        <tag>Hexo</tag>
+        <tag>Ubuntu</tag>
+        <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1832,100 +1929,42 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+    <title>Ubuntu 安装Selenium自动化测试</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
+<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
 <a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
+<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
+<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
+<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
+<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
+<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
+<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
+<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
+        <tag>Python</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu Nginx服务器SSL证书安装部署</title>
-    <url>/2022/05/11/Ubuntu-Nginx%E6%9C%8D%E5%8A%A1%E5%99%A8SSL%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/</url>
-    <content><![CDATA[<p>为什么要安装SSL证书，如果没有SSL证书，访问网站的时候，前面会有个小叹号，是用 <code>http://www.hduzn.cn</code>这样的域名访问的。如果部署了SSL，访问的时候、域名前面就有个安全锁的小图标了。是用 <code>https://www.hduzn.cn</code>这样的地址访问的。</p>
-<p>反正都可以免费申请SSL证书的，就申请了下。</p>
-<a id="more"></a>
-
-<p><strong>前言</strong>：<br>已经把Hexo博客部署到Ubuntu服务器上了，可以通过http访问了。<br>部署的文章参考此篇：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<h2 id="一、下载SSL证书（本地）"><a href="#一、下载SSL证书（本地）" class="headerlink" title="一、下载SSL证书（本地）"></a>一、下载SSL证书（本地）</h2><p>在腾讯云买的域名，在DNSPod中直接点击SSL的图标，点【点此管理】即可跳转到腾讯云上SSL证书管理的页面。</p>
-<p><strong>1.申请证书</strong></p>
-<p>点击【申请证书】，就能申请免费的证书。</p>
-<p><strong>2.下载证书</strong></p>
-<p>点击【下载证书】，会提供各种服务器类型的证书下载。（比如Tomcat、Apache、Nginx、IIS等）</p>
-<p>如果配置好DNS了，系统会检测，会提示你推荐下载哪一类证书。</p>
-<p>腾讯云的SSL证书管理控制台：<a class="link"   href="https://console.cloud.tencent.com/ssl" >https://console.cloud.tencent.com/ssl<i class="fas fa-external-link-alt"></i></a></p>
-<p>我这里用的Nginx服务器，就下载Nginx的证书。</p>
-<p>下载后，解压出来一个 hduzn.cn_nginx 文件夹，里面一共4个文件：</p>
-<blockquote>
-<p>hduzn.cn_bundle.crt 证书文件<br>hduzn.cn.key 私钥文件<br>hduzn.cn.csr 没用到<br>hduzn.cn_bundle.pem 没用到</p>
-</blockquote>
-<p>就用到前两个文件，后两个没用到。</p>
-<h2 id="二、部署SSL证书（服务器）"><a href="#二、部署SSL证书（服务器）" class="headerlink" title="二、部署SSL证书（服务器）"></a>二、部署SSL证书（服务器）</h2><p>腾讯云提供的Nginx服务器SSL证书安装部署的文档：<a class="link"   href="https://cloud.tencent.com/document/product/400/35244" >https://cloud.tencent.com/document/product/400/35244<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="1-上传证书到服务器"><a href="#1-上传证书到服务器" class="headerlink" title="1.上传证书到服务器"></a>1.上传证书到服务器</h3><p>直接用Xftp上传。因为用Xshell，所以对应也装了Xftp用，很方便传文件。</p>
-<p>因为可能涉及权限问题，所以准备分两步走：</p>
-<ul>
-<li>1).先把文件上传到用户的home目录；</li>
-<li>2).再把文件复制到Nginx配置的目录里。</li>
-</ul>
-<p>先建个ssl/nginx_ssl目录，然后把<code>hduzn.cn_bundle.crt</code>和<code>hduzn.cn.key</code>两个文件用Xftp上传到目录：<code>/home/ubuntu/ssl/nginx_ssl</code>。</p>
-<p>再到服务器中运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp hduzn.cn_bundle.crt /etc/nginx/sites-available</span><br><span class="line">sudo cp hduzn.cn.key /etc/nginx/sites-available</span><br></pre></td></tr></table></figure>
-<p>直接把两个文件放 /etc/nginx/目录下，我索性跟配置文件放一起了。</p>
-<h3 id="2-修改站点Nginx配置文件"><a href="#2-修改站点Nginx配置文件" class="headerlink" title="2.修改站点Nginx配置文件"></a>2.修改站点Nginx配置文件</h3><p>根据之前Hexo部署到Ubuntu的内容，我的站点的Nginx配置文件是：<code>/etc/nginx/sites-available/default</code></p>
-<blockquote>
-<p>如果你不想直接用vim命令写这么多行，也可以跟我一样，把这个default文件先通过Xftp下载到本地。改完了再上传上去。通过命令强制覆盖原文件就行了。</p>
-</blockquote>
-<p>原修改好的文件（用http访问）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80 default_server;</span><br><span class="line">    listen [::]:80 default_server ipv6only&#x3D;on;</span><br><span class="line"></span><br><span class="line">    root &#x2F;var&#x2F;www&#x2F;hexo; # 需要修改的部分</span><br><span class="line">    index index.html index.htm;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>行数说明：</p>
-<ul>
-<li>4：监听80端口，default_server 即设为默认虚拟主机，无效访问会转到该站点</li>
-<li>5：对应 ipv6</li>
-<li>7：nginx托管的hexo目录路径</li>
-</ul>
-<h4 id="https访问配置"><a href="#https访问配置" class="headerlink" title="https访问配置"></a>https访问配置</h4><p>加上https访问配置后（主要添加了HTTPS server部分），文件主要部分改为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"># Default server configuration</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	listen 80 default_server;</span><br><span class="line">	listen [::]:80 default_server;</span><br><span class="line">	server_name www.hduzn.cn # 写上域名</span><br><span class="line"></span><br><span class="line">	#root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rewrite ^(.*) https:&#x2F;&#x2F;www.hduzn.cn$1 permanent; # 将http访问重定向为https访问</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># HTTPS server</span><br><span class="line">#</span><br><span class="line">server &#123;</span><br><span class="line">	# SSL configuration</span><br><span class="line">	#</span><br><span class="line">	listen 443 ssl; # ssl的端口</span><br><span class="line">	listen [::]:443 ssl;</span><br><span class="line">	server_name www.hduzn.cn; # 写上域名</span><br><span class="line">	ssl_certificate &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn_bundle.crt;</span><br><span class="line">    ssl_certificate_key &#x2F;etc&#x2F;nginx&#x2F;sites-available&#x2F;hduzn.cn.key;</span><br><span class="line">	ssl_session_cache shared:SSL:1m;</span><br><span class="line">	ssl_session_timeout 5m;</span><br><span class="line">	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers RC4:HIGH:!aNULL:!MD5;</span><br><span class="line">    ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">	root &#x2F;var&#x2F;www&#x2F;hexo; # nginx托管的hexo目录路径</span><br><span class="line">	#server_name _;</span><br><span class="line"></span><br><span class="line">	location &#x2F; &#123;</span><br><span class="line">		# First attempt to serve request as file, then</span><br><span class="line">		# as directory, then fall back to displaying a 404.</span><br><span class="line">		try_files $uri $uri&#x2F; &#x3D;404;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>行数说明：</p>
-<ul>
-<li>18：将http访问重定向为https访问，即定向到第二个 server 块，需要注意ssl证书到期时间</li>
-<li>26：监听SSL的443端口</li>
-<li>27：对应 ipv6</li>
-<li>29：证书文件</li>
-<li>30：私钥文件</li>
-<li>33：协议配置</li>
-<li>34：加密套件</li>
-<li>37：nginx托管的hexo目录路径</li>
-</ul>
-<p>修改完后，重启Nginx。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Ubuntu</tag>
-        <tag>Nginx</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -2207,91 +2246,6 @@
       </tags>
   </entry>
   <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 安装Selenium自动化测试</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>U盘启动进入PE系统 快捷键</title>
     <url>/2022/04/09/u%E7%9B%98%E5%90%AF%E5%8A%A8%E8%BF%9B%E5%85%A5PE%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
     <content><![CDATA[<p>用U盘装系统的时候，我们要设置为从U盘启动，可以进入BIOS后，设置成优先从U盘启动。<br>还有个比较快捷的方法，我们一般都是直接用快捷键进入，选择进入U盘PE系统。</p>
@@ -2552,6 +2506,187 @@
       </tags>
   </entry>
   <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
+    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
+    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
+<a id="more"></a>
+
+<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>为什么要使用Github Pages？</p>
+<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
+<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
+<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
+<p>（怕有问题，直接搜索安装教程照着来就行）</p>
+<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
+<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
+<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
+<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
+<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
+<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
+<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
+<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_1.png"
+                     
+                >
+
+<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
+<p>操作如下：</p>
+<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
+<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
+<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入完成之后，屏幕会显示如下信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
+<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1).登陆GitHub，进入你的Account Settings</li>
+<li>2).选择SSH Keys</li>
+<li>3).粘贴密钥，添加即可<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#111;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果是下面的反馈：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
+<p>不要紧张，输入yes就好，然后会看到：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_3.png"
+                     
+                ></p>
+<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
+<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
+<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_4.png"
+                     
+                >
+
+<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_5.png"
+                     
+                >
+
+<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_6.png"
+                     
+                >
+
+<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_7.png"
+                     
+                ></p>
+<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>或者直接执行 <code>hexo g -d</code></p>
+<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
+<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
+<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
+<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
+<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
+<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
+<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
+<p>2).部署到Github上</p>
+<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
+<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
+<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
+<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>you-get 使用教程</title>
     <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
@@ -2704,141 +2839,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
-    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
-    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
-<a id="more"></a>
-
-<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>为什么要使用Github Pages？</p>
-<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
-<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
-<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
-<p>（怕有问题，直接搜索安装教程照着来就行）</p>
-<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
-<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
-<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
-<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
-<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
-<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
-<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
-<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_1.png"
-                     
-                >
-
-<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
-<p>操作如下：</p>
-<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
-<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
-<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入完成之后，屏幕会显示如下信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
-<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>1).登陆GitHub，进入你的Account Settings</li>
-<li>2).选择SSH Keys</li>
-<li>3).粘贴密钥，添加即可<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果是下面的反馈：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
-<p>不要紧张，输入yes就好，然后会看到：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_3.png"
-                     
-                ></p>
-<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
-<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
-<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_4.png"
-                     
-                >
-
-<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_5.png"
-                     
-                >
-
-<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_6.png"
-                     
-                >
-
-<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_7.png"
-                     
-                ></p>
-<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>或者直接执行 <code>hexo g -d</code></p>
-<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
-<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
-<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
-<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
-<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
-<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
-<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
-<p>2).部署到Github上</p>
-<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
-<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
-<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
-<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
