@@ -43,6 +43,106 @@
       </tags>
   </entry>
   <entry>
+    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
+    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
+<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
+<a id="more"></a>
+
+<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
+<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
+<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
+<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
+<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
+<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
+<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
+<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>成功了！！！</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
+<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>python中类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Integer</td>
+<td>int</td>
+<td>普通整数，一般是32位</td>
+</tr>
+<tr>
+<td>SmallInteger</td>
+<td>int</td>
+<td>取值范围小的整数,—般是16位</td>
+</tr>
+<tr>
+<td>BigInteger</td>
+<td>int或long</td>
+<td>不限制精度的整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>float</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>Numeric</td>
+<td>decimal.Decimal</td>
+<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
+</tr>
+<tr>
+<td>String</td>
+<td>str</td>
+<td>变长字符串</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>str</td>
+<td>变长字符串，对较长或不限长度的字符串做了优化</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>bool</td>
+<td>布尔值</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>datetime.date</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>LargeBinary</td>
+<td>str</td>
+<td>二进制文件</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Flask</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -161,106 +261,6 @@
       <tags>
         <tag>Docker</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Flask SQLAlchemy 浮点数类型Float 丢失精度 解决方法</title>
-    <url>/2022/04/10/Flask-SQLAlchemy%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8BFloat%E4%B8%A2%E5%A4%B1%E7%B2%BE%E5%BA%A6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>数据库里，用到float类型的时候，会有精度损失。</p>
-<p>比如，用Flask的SQLAlchemy的时候，定义数据库表对应的字段的时候，如果MySQL里存的是float类型，那就定义成 SQLAlchemy的Float 类型。<br>然后，当我把一个2位小数的数存进数据库，一查看，有的变成了1位小数，有的直接无小数了，反正就奇奇怪怪的。这就是因为精度损失了。</p>
-<a id="more"></a>
-
-<p>我们一般在操作数据库的时候，可能用 decimal 或者 double 这样的字段类型来替换 float 类型，就可以解决这个问题了。</p>
-<p>但是 SQLAlchemy 里并没有直接的 double 或者 decimal 类型。<br>然后就找到了对应的 <strong>Numeric</strong> 类型，是对应 Python中的Decimal 类型的。</p>
-<h2 id="解决方法过程"><a href="#解决方法过程" class="headerlink" title="解决方法过程"></a>解决方法过程</h2><p>如果不想看解决的过程的，建议直接跳到看第3点【总结】部分就行。</p>
-<h3 id="1、把字段的定义由原来的："><a href="#1、把字段的定义由原来的：" class="headerlink" title="1、把字段的定义由原来的："></a>1、把字段的定义由原来的：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>改成：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric)</span><br></pre></td></tr></table></figure>
-<p>去数据库里一看表设计，这个high字段类型已经成功变成了 decimal 类型。</p>
-<p>但是，发现直接没有小数了，直接就变成整数了。<br>一看表设计，虽然 high 字段已经变成了 decimal 类型，长度为10，但小数点位数却是空的，那就相当于0，没有小数。</p>
-<h3 id="2、设定小数点位数"><a href="#2、设定小数点位数" class="headerlink" title="2、设定小数点位数"></a>2、设定小数点位数</h3><p>然后，查看了SQLAlchemy文档， Numeric 定义的部分。主要看一下参数有些啥。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sqlalchemy</span>.<span class="title">types</span>.<span class="title">NUMERIC</span>(<span class="params">precision=<span class="literal">None</span>, scale=<span class="literal">None</span>, decimal_return_scale=<span class="literal">None</span>, asdecimal=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
-<p>第1个参数 precision：长度<br>第2个参数 scale：小数点位数</p>
-<p>因为我看到长度默认就是10了，于是，就傻傻觉得只设一下scale参数就行。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(scale=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>结果，还是不行，压根没效果。<br>然后，一看，一想，才觉得，索性要把前面的precision 参数也设一下。就改成了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>成功了！！！</p>
-<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>原来定义是 Float 类型的字段是这样定义的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Float)</span><br></pre></td></tr></table></figure>
-<p>然后改成 Numeric 类型（对应数据库中 decimal 类型）是这样的（保留2位小数）：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">high = db.Column(db.Numeric(<span class="number">10</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="SQLAlchemy-常用的字段类型"><a href="#SQLAlchemy-常用的字段类型" class="headerlink" title="SQLAlchemy 常用的字段类型"></a>SQLAlchemy 常用的字段类型</h2><table>
-<thead>
-<tr>
-<th>类型名</th>
-<th>python中类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Integer</td>
-<td>int</td>
-<td>普通整数，一般是32位</td>
-</tr>
-<tr>
-<td>SmallInteger</td>
-<td>int</td>
-<td>取值范围小的整数,—般是16位</td>
-</tr>
-<tr>
-<td>BigInteger</td>
-<td>int或long</td>
-<td>不限制精度的整数</td>
-</tr>
-<tr>
-<td>Float</td>
-<td>float</td>
-<td>浮点数</td>
-</tr>
-<tr>
-<td>Numeric</td>
-<td>decimal.Decimal</td>
-<td>固定精度数字的类型，例如 NUMERIC 或 DECIMAL</td>
-</tr>
-<tr>
-<td>String</td>
-<td>str</td>
-<td>变长字符串</td>
-</tr>
-<tr>
-<td>Text</td>
-<td>str</td>
-<td>变长字符串，对较长或不限长度的字符串做了优化</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>bool</td>
-<td>布尔值</td>
-</tr>
-<tr>
-<td>Date</td>
-<td>datetime.date</td>
-<td>时间</td>
-</tr>
-<tr>
-<td>Time</td>
-<td>datetime.datetime</td>
-<td>日期和时间</td>
-</tr>
-<tr>
-<td>LargeBinary</td>
-<td>str</td>
-<td>二进制文件</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Flask</tag>
       </tags>
   </entry>
   <entry>
@@ -513,7 +513,7 @@
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
 <h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
 <p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
 <h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
 <p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
@@ -591,6 +591,71 @@
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+<a id="more"></a>
+
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#117;&#x62;&#46;&#99;&#111;&#109;" >&#103;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#117;&#x62;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -676,67 +741,33 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
 <a id="more"></a>
 
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-]]></content>
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -768,29 +799,20 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
 <a id="more"></a>
 
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -918,77 +940,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
-<a id="more"></a>
-
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
-<blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
-</blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/linux_nohup_1.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux命令小记（不断更新中）</title>
     <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
     <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
@@ -1057,57 +1008,52 @@
       </tags>
   </entry>
   <entry>
-    <title>Navicat连接MySQL数据库不成功</title>
-    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
-    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
-<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
 <a id="more"></a>
 
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_1.png"
-                     
-                >
-
-<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>输入密码：123MYSQL456</p>
-<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_2.png"
-                     
-                >
-
-<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
-<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
-<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
 <blockquote>
-<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
 </blockquote>
-<p>然后再查询user表，结果就如上所示。</p>
-<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
-<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
-<p>再用Navicat连接MySQL服务器，提示成功！</p>
-<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/linux_nohup_1.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
       <categories>
-        <category>MySQL</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>MySQL</tag>
-        <tag>Navicat</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1159,6 +1105,60 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Navicat连接MySQL数据库不成功</title>
+    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
+    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
+<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
+<a id="more"></a>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_1.png"
+                     
+                >
+
+<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>输入密码：123MYSQL456</p>
+<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_2.png"
+                     
+                >
+
+<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
+<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
+<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<blockquote>
+<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+</blockquote>
+<p>然后再查询user表，结果就如上所示。</p>
+<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
+<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+<p>再用Navicat连接MySQL服务器，提示成功！</p>
+<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Navicat</tag>
       </tags>
   </entry>
   <entry>
@@ -1319,6 +1319,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 备份 豆瓣 读过的书的记录</title>
     <url>/2022/05/13/Python-%E5%A4%87%E4%BB%BD-%E8%B1%86%E7%93%A3-%E8%AF%BB%E8%BF%87%E7%9A%84%E4%B9%A6%E7%9A%84%E8%AE%B0%E5%BD%95/</url>
     <content><![CDATA[<blockquote>
@@ -1412,9 +1449,10 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+    <title>Python 批量转换图片格式</title>
+    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
+    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
+<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
 <p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
 <a id="more"></a>
 
@@ -1425,22 +1463,14 @@
                      data-src="/img/Python_image_resize_1.png"
                      
                 ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
+<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
 <ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
+<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
 </ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
 <p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
-]]></content>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -1558,6 +1588,50 @@
       </tags>
   </entry>
   <entry>
+    <title>Python中with - as用法</title>
+    <url>/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<p>最常见到的用到with as的地方，比如打开文件的时候：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+<p>为什么要用with as，可以理解为是简化版的 try except语句，可以处理异常。</p>
+<a id="more"></a>
+
+<h2 id="为什么要用with-as"><a href="#为什么要用with-as" class="headerlink" title="为什么要用with as"></a>为什么要用with as</h2><p>比如，上面的代码，不用with as 写法，一般这样写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>)</span><br><span class="line">data = file.read()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">file.close</span><br></pre></td></tr></table></figure>
+<p>这样就会有个问题：当”1.txt”文件不存在的时候，就会报异常，就需要处理异常，或者先判断文件是否存在。你就可能需要这样写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    file = <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>)</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    file.close()</span><br></pre></td></tr></table></figure>
+<p>而用with as就不需要这么麻烦了，能自动处理异常。</p>
+<p><strong>with as</strong>语句结构如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> expression <span class="keyword">as</span> [variable]:</span><br><span class="line">    <span class="comment"># 代码块，对[variable]的操作等</span></span><br></pre></td></tr></table></figure>
+<h2 id="with-工作原理"><a href="#with-工作原理" class="headerlink" title="with 工作原理"></a>with 工作原理</h2><p>with所求值的对象必须有一个enter()方法，一个exit()方法。</p>
+<ul>
+<li>1.紧跟with后面的语句被求值后，返回对象的<code>__enter__()</code>方法被调用，这个方法的返回值将被赋值给as后面的变量；</li>
+<li>2.当with后面的代码块全部被执行完之后，将调用前面返回对象的<code>__exit__()</code>方法。所以也不用close()了。</li>
+</ul>
+<p>比如下面的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sample</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span> <span class="comment"># 3</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __enter__()&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Foo&quot;</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exc_type, exc_value, exc_trace</span>):</span> <span class="comment"># 5</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __exit__()&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_sample</span>():</span><span class="comment"># 2</span></span><br><span class="line">    <span class="keyword">return</span> Sample()</span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> get_sample() <span class="keyword">as</span> sample: <span class="comment"># 1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;sample:&quot;</span>, sample) <span class="comment"># 4</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>代码输出结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">In __enter__()</span><br><span class="line">sample: Foo</span><br><span class="line">In __exit__()</span><br></pre></td></tr></table></figure>
+<p>代码执行过程：</p>
+<ul>
+<li>1.with as语句中sample=get_sample()，调用get_sample()方法；</li>
+<li>2.返回一个Sample()对象；</li>
+<li>3.调用Sample()对象的<code>__enter__()</code>方法，输出<code>In __enter__()</code>，并return “Foo”；</li>
+<li>4.执行with下面代码块的语句，<code>print(&quot;sample:&quot;, sample)</code>；</li>
+<li>5.with执行完后，调用Sample()对象的<code>__exit__()</code>方法，输出<code>In __exit__()</code>。</li>
+</ul>
+<p>exit()方法中有3个参数：<code>exc_type</code>，<code>exc_value</code>，<code>exc_trace</code>，是在异常处理中用的。</p>
+<blockquote>
+<p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 对图片进行文字识别</title>
     <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
     <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
@@ -1587,6 +1661,56 @@
 <h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
 <h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python文件操作 shutil库使用举例</title>
+    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
+<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
+<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
+<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
+<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
+<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
+<li>src，dst都是目录</li>
+<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
+<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
+<li>删除path目录，path不能是文件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
+<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
+<li>把src文件或目录移动到dst目录</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -1643,56 +1767,6 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python文件操作 shutil库使用举例</title>
-    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
-<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
-<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
-<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
-<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
-<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
-<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
-<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
-<li>src，dst都是目录</li>
-<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
-<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
-<li>删除path目录，path不能是文件</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
-<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
-<li>把src文件或目录移动到dst目录</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2070,8 +2144,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -2243,6 +2317,52 @@
       </categories>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
       </tags>
   </entry>
   <entry>
@@ -2506,187 +2626,6 @@
       </tags>
   </entry>
   <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
-    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
-    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
-<a id="more"></a>
-
-<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>为什么要使用Github Pages？</p>
-<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
-<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
-<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
-<p>（怕有问题，直接搜索安装教程照着来就行）</p>
-<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
-<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
-<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
-<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
-<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
-<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
-<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
-<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_1.png"
-                     
-                >
-
-<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
-<p>操作如下：</p>
-<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
-<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
-<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入完成之后，屏幕会显示如下信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
-<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>1).登陆GitHub，进入你的Account Settings</li>
-<li>2).选择SSH Keys</li>
-<li>3).粘贴密钥，添加即可<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#111;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#116;&#x68;&#117;&#98;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果是下面的反馈：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
-<p>不要紧张，输入yes就好，然后会看到：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_3.png"
-                     
-                ></p>
-<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
-<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
-<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_4.png"
-                     
-                >
-
-<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_5.png"
-                     
-                >
-
-<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_6.png"
-                     
-                >
-
-<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_7.png"
-                     
-                ></p>
-<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>或者直接执行 <code>hexo g -d</code></p>
-<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
-<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
-<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
-<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
-<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
-<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
-<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
-<p>2).部署到Github上</p>
-<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
-<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
-<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
-<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>you-get 使用教程</title>
     <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
@@ -2794,6 +2733,141 @@
       </categories>
       <tags>
         <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
+    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
+    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
+<a id="more"></a>
+
+<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>为什么要使用Github Pages？</p>
+<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
+<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
+<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
+<p>（怕有问题，直接搜索安装教程照着来就行）</p>
+<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
+<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
+<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
+<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
+<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
+<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
+<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
+<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_1.png"
+                     
+                >
+
+<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
+<p>操作如下：</p>
+<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
+<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
+<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入完成之后，屏幕会显示如下信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
+<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1).登陆GitHub，进入你的Account Settings</li>
+<li>2).选择SSH Keys</li>
+<li>3).粘贴密钥，添加即可<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#109;" >&#103;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果是下面的反馈：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
+<p>不要紧张，输入yes就好，然后会看到：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_3.png"
+                     
+                ></p>
+<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
+<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
+<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_4.png"
+                     
+                >
+
+<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_5.png"
+                     
+                >
+
+<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_6.png"
+                     
+                >
+
+<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_7.png"
+                     
+                ></p>
+<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>或者直接执行 <code>hexo g -d</code></p>
+<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
+<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
+<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
+<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
+<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
+<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
+<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
+<p>2).部署到Github上</p>
+<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
+<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
+<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
+<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>

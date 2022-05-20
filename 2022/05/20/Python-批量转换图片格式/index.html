@@ -9,7 +9,7 @@
     
     <title>
         
-            关于 |
+            Python 批量转换图片格式 |
         
         烟雨平生
     </title>
@@ -101,7 +101,7 @@
                         </li>
                     
                         <li class="menu-item">
-                            <a class="active"
+                            <a class=""
                                href="/about"
                             >
                                 关于
@@ -155,7 +155,7 @@
                 </li>
             
                 <li class="drawer-menu-item flex-center">
-                    <a class="active"
+                    <a class=""
                        href="/about">关于</a>
                 </li>
             
@@ -175,26 +175,145 @@
 
                 
                     <div class="fade-in-down-animation">
-    <div class="page-template-container">
-        
-        
-        <div class="page-template-content markdown-body">
-            
-                <h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><p>毕业于杭州电子科技大学计算机科学与技术专业。</p>
-<p>曾学过C/C++，曾从事Java开发（此皆是过往）。现从事计算机相关教育行业。</p>
-<p>感兴趣的事：</p>
-<ul>
-<li>看看书（历史、金融、经济、法律，各种闲书、杂书等）；</li>
-<li>写写代码（只会写Python了，边学边给自己写写工具用）；</li>
-<li>研究研究，折腾折腾。</li>
-</ul>
-<p><strong>联系方式：</strong></p>
-<p>Email：<a class="link"   href="mailto:&#104;&#100;&#x75;&#x7a;&#110;&#64;&#x76;&#x69;&#112;&#46;&#x71;&#113;&#x2e;&#99;&#111;&#x6d;" >&#104;&#100;&#x75;&#x7a;&#110;&#64;&#x76;&#x69;&#112;&#46;&#x71;&#113;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a></p>
+    <div class="article-content-container">
 
-            
+        <div class="article-title">
+            <span class="title-hover-animation">Python 批量转换图片格式</span>
         </div>
-        <div class="page-template-comments">
-            
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-20 22:39:00</span>
+        <span class="mobile">2022-05-20 22:39</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
+<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   target="_blank" rel="noopener" href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
+<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
+</ul>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python 批量转换图片格式</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-05-20 22:39:00</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/05/20/Python-批量转换图片格式/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python中with - as用法</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
                 <div class="comments-container">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
@@ -271,8 +390,8 @@
     
 </div>
 
-            
-        </div>
+            </div>
+        
     </div>
 </div>
 
@@ -322,6 +441,27 @@
     </div>
 
     
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
 
     <div class="right-bottom-side-tools">
         <div class="side-tools-container">
@@ -367,6 +507,14 @@
 
     </div>
 
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Pillow%E5%BA%93"><span class="nav-text">安装Pillow库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F"><span class="nav-text">批量转换图片格式</span></a></li></ol>
+    </div>
+</div>
+        </aside>
     
 
     <div class="image-viewer-container">
@@ -440,6 +588,14 @@
 
 
 <div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
     
 </div>
 
