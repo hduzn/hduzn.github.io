@@ -15,34 +15,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -164,65 +136,31 @@
       </tags>
   </entry>
   <entry>
-    <title>Github 图床使用教程</title>
-    <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<h2 id="1-Create-a-repository"><a href="#1-Create-a-repository" class="headerlink" title="1.Create a repository"></a>1.Create a repository</h2><p>创建一个仓库，专门准备用来放博客使用的图片。</p>
-<p><strong>repository 设置</strong></p>
-<p>名称只要是可用的都行，默认选择的是 Public，可以把 Add a README file勾选上。</p>
-<p>设置好之后，最后点击【Create repository】。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_1.png"
-                     
-                ></p>
-<h2 id="2-创建-token"><a href="#2-创建-token" class="headerlink" title="2.创建 token"></a>2.创建 token</h2><p>右上角头像下面的【Settings】-&gt;【Developer settings】-&gt;【Personal access tokens】-&gt;点击【Generate new token】。</p>
-<ul>
-<li>Note：取个备注名</li>
-<li>勾选 repo</li>
-</ul>
-<p>最后拉到页面最下面点击【Generate token】就创建好了token。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_2.png"
-                     
-                ></p>
-<p>完成之后有一长串字母+数字的token，复制下来就行了。</p>
-<h2 id="3-用-PicGo工具上传图片"><a href="#3-用-PicGo工具上传图片" class="headerlink" title="3.用 PicGo工具上传图片"></a>3.用 PicGo工具上传图片</h2><p>PicGo 官方下载：<a class="link"   href="https://github.com/Molunerfinn/PicGo/releases" >https://github.com/Molunerfinn/PicGo/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>PicGo 官方介绍页面：<a class="link"   href="https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo" >https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo<i class="fas fa-external-link-alt"></i></a></p>
-<p>下载之后安装运行。</p>
-<p>1).在PicGo设置中选择 Github图床</p>
-<p>2).图床设置</p>
-<ul>
-<li>仓库名为：h***n/Picbed_Go （[github用户名]/[图床仓库名]）创建的时候上面有；</li>
-<li>分支名：点进 repository就能看到，之前默认都是 master；</li>
-<li>Token：就是上面的token<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_3.png"
-                     
-                >
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
 
-</li>
-</ul>
-<p>3).上传区上传图片</p>
-<p>把图片拖进去就能上传。</p>
-<p>4).在相册里面可以看到上传的图片，图片下方第一个按钮就是复制，把地址复制出来直接就能在markdown中用。</p>
-<p>地址示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="4-使用示例"><a href="#4-使用示例" class="headerlink" title="4.使用示例"></a>4.使用示例</h2><p>比如图片上传后的地址是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
-<p>直接放在markdown的.md文件中，有预览效果的就能直接预览看到了。</p>
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Hexo</category>
+        <category>Docker</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
-        <tag>Markdown</tag>
-        <tag>Github</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -378,8 +316,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -413,6 +351,68 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github 图床使用教程</title>
+    <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
+<a id="more"></a>
+
+<h2 id="1-Create-a-repository"><a href="#1-Create-a-repository" class="headerlink" title="1.Create a repository"></a>1.Create a repository</h2><p>创建一个仓库，专门准备用来放博客使用的图片。</p>
+<p><strong>repository 设置</strong></p>
+<p>名称只要是可用的都行，默认选择的是 Public，可以把 Add a README file勾选上。</p>
+<p>设置好之后，最后点击【Create repository】。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/github_picbed_1.png"
+                     
+                ></p>
+<h2 id="2-创建-token"><a href="#2-创建-token" class="headerlink" title="2.创建 token"></a>2.创建 token</h2><p>右上角头像下面的【Settings】-&gt;【Developer settings】-&gt;【Personal access tokens】-&gt;点击【Generate new token】。</p>
+<ul>
+<li>Note：取个备注名</li>
+<li>勾选 repo</li>
+</ul>
+<p>最后拉到页面最下面点击【Generate token】就创建好了token。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/github_picbed_2.png"
+                     
+                ></p>
+<p>完成之后有一长串字母+数字的token，复制下来就行了。</p>
+<h2 id="3-用-PicGo工具上传图片"><a href="#3-用-PicGo工具上传图片" class="headerlink" title="3.用 PicGo工具上传图片"></a>3.用 PicGo工具上传图片</h2><p>PicGo 官方下载：<a class="link"   href="https://github.com/Molunerfinn/PicGo/releases" >https://github.com/Molunerfinn/PicGo/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>PicGo 官方介绍页面：<a class="link"   href="https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo" >https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo<i class="fas fa-external-link-alt"></i></a></p>
+<p>下载之后安装运行。</p>
+<p>1).在PicGo设置中选择 Github图床</p>
+<p>2).图床设置</p>
+<ul>
+<li>仓库名为：h***n/Picbed_Go （[github用户名]/[图床仓库名]）创建的时候上面有；</li>
+<li>分支名：点进 repository就能看到，之前默认都是 master；</li>
+<li>Token：就是上面的token<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/github_picbed_3.png"
+                     
+                >
+
+</li>
+</ul>
+<p>3).上传区上传图片</p>
+<p>把图片拖进去就能上传。</p>
+<p>4).在相册里面可以看到上传的图片，图片下方第一个按钮就是复制，把地址复制出来直接就能在markdown中用。</p>
+<p>地址示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="4-使用示例"><a href="#4-使用示例" class="headerlink" title="4.使用示例"></a>4.使用示例</h2><p>比如图片上传后的地址是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+<p>直接放在markdown的.md文件中，有预览效果的就能直接预览看到了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>Markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -627,7 +627,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#64;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -648,15 +648,15 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;" >&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -772,6 +772,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo 自定义页面 跳过渲染</title>
     <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
     <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
@@ -799,25 +821,52 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+    <title>Linux 修改文件权限</title>
+    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
+    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
 <a id="more"></a>
 
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
+<ul>
+<li>read</li>
+<li>write</li>
+<li>execute</li>
+<li>none</li>
+</ul>
+<p>例如：运行命令 <code>ls -l</code> 后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
+<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
+<ul>
+<li>r 代表read，可读</li>
+<li>w 代表write，可写入</li>
+<li>x 代表execute，可执行</li>
+<li>-代表none</li>
+</ul>
+<p>这里就代表什么样的人对文件有什么样的权限。</p>
+<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
+<ul>
+<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
+<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
+<li>最后3位(r–)表示：其它人，只读</li>
+</ul>
+<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
+<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
+<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
+<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
+<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
+<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
+</ul>
+<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
+<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
+<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
+<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
+<p>Readme.txt文件的所有者就变为testuser</p>
 ]]></content>
       <categories>
-        <category>Hexo</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -882,55 +931,6 @@
 <li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
 <li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
 </ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 修改文件权限</title>
-    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
-    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
-<a id="more"></a>
-
-<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
-<ul>
-<li>read</li>
-<li>write</li>
-<li>execute</li>
-<li>none</li>
-</ul>
-<p>例如：运行命令 <code>ls -l</code> 后</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
-<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
-<ul>
-<li>r 代表read，可读</li>
-<li>w 代表write，可写入</li>
-<li>x 代表execute，可执行</li>
-<li>-代表none</li>
-</ul>
-<p>这里就代表什么样的人对文件有什么样的权限。</p>
-<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
-<ul>
-<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
-<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
-<li>最后3位(r–)表示：其它人，只读</li>
-</ul>
-<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
-<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
-<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
-<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
-<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
-<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
-</ul>
-<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
-<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
-<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
-<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
-<p>Readme.txt文件的所有者就变为testuser</p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1162,35 +1162,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python Selenium查找元素方法汇总</title>
     <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
     <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
@@ -1284,69 +1255,26 @@
       </tags>
   </entry>
   <entry>
-    <title>Python selenium 切换到新的窗口方法</title>
-    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
 <a id="more"></a>
 
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
-<p><strong>解决思路</strong>：</p>
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
 <ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
 </ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
-</ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -1479,6 +1407,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Python selenium 切换到新的窗口方法</title>
+    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
+<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+<a id="more"></a>
+
+<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
+<p>运行后的结果是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
+<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
+<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+</ul>
+<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
+<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 数据库（SQLite）教程</title>
     <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
@@ -1588,50 +1588,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python中with - as用法</title>
-    <url>/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[<p>最常见到的用到with as的地方，比如打开文件的时候：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
-<p>为什么要用with as，可以理解为是简化版的 try except语句，可以处理异常。</p>
-<a id="more"></a>
-
-<h2 id="为什么要用with-as"><a href="#为什么要用with-as" class="headerlink" title="为什么要用with as"></a>为什么要用with as</h2><p>比如，上面的代码，不用with as 写法，一般这样写：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>)</span><br><span class="line">data = file.read()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">file.close</span><br></pre></td></tr></table></figure>
-<p>这样就会有个问题：当”1.txt”文件不存在的时候，就会报异常，就需要处理异常，或者先判断文件是否存在。你就可能需要这样写：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    file = <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>)</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    file.close()</span><br></pre></td></tr></table></figure>
-<p>而用with as就不需要这么麻烦了，能自动处理异常。</p>
-<p><strong>with as</strong>语句结构如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> expression <span class="keyword">as</span> [variable]:</span><br><span class="line">    <span class="comment"># 代码块，对[variable]的操作等</span></span><br></pre></td></tr></table></figure>
-<h2 id="with-工作原理"><a href="#with-工作原理" class="headerlink" title="with 工作原理"></a>with 工作原理</h2><p>with所求值的对象必须有一个enter()方法，一个exit()方法。</p>
-<ul>
-<li>1.紧跟with后面的语句被求值后，返回对象的<code>__enter__()</code>方法被调用，这个方法的返回值将被赋值给as后面的变量；</li>
-<li>2.当with后面的代码块全部被执行完之后，将调用前面返回对象的<code>__exit__()</code>方法。所以也不用close()了。</li>
-</ul>
-<p>比如下面的代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sample</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span> <span class="comment"># 3</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __enter__()&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Foo&quot;</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exc_type, exc_value, exc_trace</span>):</span> <span class="comment"># 5</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __exit__()&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_sample</span>():</span><span class="comment"># 2</span></span><br><span class="line">    <span class="keyword">return</span> Sample()</span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> get_sample() <span class="keyword">as</span> sample: <span class="comment"># 1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;sample:&quot;</span>, sample) <span class="comment"># 4</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>代码输出结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">In __enter__()</span><br><span class="line">sample: Foo</span><br><span class="line">In __exit__()</span><br></pre></td></tr></table></figure>
-<p>代码执行过程：</p>
-<ul>
-<li>1.with as语句中sample=get_sample()，调用get_sample()方法；</li>
-<li>2.返回一个Sample()对象；</li>
-<li>3.调用Sample()对象的<code>__enter__()</code>方法，输出<code>In __enter__()</code>，并return “Foo”；</li>
-<li>4.执行with下面代码块的语句，<code>print(&quot;sample:&quot;, sample)</code>；</li>
-<li>5.with执行完后，调用Sample()对象的<code>__exit__()</code>方法，输出<code>In __exit__()</code>。</li>
-</ul>
-<p>exit()方法中有3个参数：<code>exc_type</code>，<code>exc_value</code>，<code>exc_trace</code>，是在异常处理中用的。</p>
-<blockquote>
-<p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 对图片进行文字识别</title>
     <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
     <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
@@ -1719,6 +1675,69 @@
       </tags>
   </entry>
   <entry>
+    <title>Python中with - as用法</title>
+    <url>/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<p>最常见到的用到with as的地方，比如打开文件的时候：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+<p>为什么要用with as，可以理解为是简化版的 try except语句，可以处理异常。</p>
+<a id="more"></a>
+
+<h2 id="为什么要用with-as"><a href="#为什么要用with-as" class="headerlink" title="为什么要用with as"></a>为什么要用with as</h2><p>比如，上面的代码，不用with as 写法，一般这样写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>)</span><br><span class="line">data = file.read()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">file.close</span><br></pre></td></tr></table></figure>
+<p>这样就会有个问题：当”1.txt”文件不存在的时候，就会报异常，就需要处理异常，或者先判断文件是否存在。你就可能需要这样写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    file = <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>)</span><br><span class="line">    data = file.read()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    file.close()</span><br></pre></td></tr></table></figure>
+<p>而用with as就不需要这么麻烦了，能自动处理异常。</p>
+<p><strong>with as</strong>语句结构如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> expression <span class="keyword">as</span> [variable]:</span><br><span class="line">    <span class="comment"># 代码块，对[variable]的操作等</span></span><br></pre></td></tr></table></figure>
+<h2 id="with-工作原理"><a href="#with-工作原理" class="headerlink" title="with 工作原理"></a>with 工作原理</h2><p>with所求值的对象必须有一个enter()方法，一个exit()方法。</p>
+<ul>
+<li>1.紧跟with后面的语句被求值后，返回对象的<code>__enter__()</code>方法被调用，这个方法的返回值将被赋值给as后面的变量；</li>
+<li>2.当with后面的代码块全部被执行完之后，将调用前面返回对象的<code>__exit__()</code>方法。所以也不用close()了。</li>
+</ul>
+<p>比如下面的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sample</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span> <span class="comment"># 3</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __enter__()&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Foo&quot;</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exc_type, exc_value, exc_trace</span>):</span> <span class="comment"># 5</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;In __exit__()&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_sample</span>():</span><span class="comment"># 2</span></span><br><span class="line">    <span class="keyword">return</span> Sample()</span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> get_sample() <span class="keyword">as</span> sample: <span class="comment"># 1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;sample:&quot;</span>, sample) <span class="comment"># 4</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>代码输出结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">In __enter__()</span><br><span class="line">sample: Foo</span><br><span class="line">In __exit__()</span><br></pre></td></tr></table></figure>
+<p>代码执行过程：</p>
+<ul>
+<li>1.with as语句中sample=get_sample()，调用get_sample()方法；</li>
+<li>2.返回一个Sample()对象；</li>
+<li>3.调用Sample()对象的<code>__enter__()</code>方法，输出<code>In __enter__()</code>，并return “Foo”；</li>
+<li>4.执行with下面代码块的语句，<code>print(&quot;sample:&quot;, sample)</code>；</li>
+<li>5.with执行完后，调用Sample()对象的<code>__exit__()</code>方法，输出<code>In __exit__()</code>。</li>
+</ul>
+<p>exit()方法中有3个参数：<code>exc_type</code>，<code>exc_value</code>，<code>exc_trace</code>，是在异常处理中用的。</p>
+<blockquote>
+<p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SQLite 清空表数据并将自增量归0</title>
     <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
     <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
@@ -1767,25 +1786,6 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1895,8 +1895,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
       </tags>
@@ -2081,45 +2081,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 安装Selenium自动化测试</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 定时执行 python脚本</title>
     <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
@@ -2225,6 +2186,45 @@
         <tag>Linux</tag>
         <tag>Python</tag>
         <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 安装Selenium自动化测试</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
+<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<a id="more"></a>
+<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
+<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
+<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
+<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
+<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
+<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
+<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
+<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Ubuntu</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -2441,6 +2441,40 @@
       </categories>
       <tags>
         <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -2704,40 +2738,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -2814,6 +2814,51 @@
       </tags>
   </entry>
   <entry>
+    <title>【行政办公系列】Python批量创建文件夹</title>
+    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：</p>
+<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
+<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
+<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
+<a id="more"></a>
+
+<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
+<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
+<p><strong>实现思路</strong>：</p>
+<ul>
+<li>读取Excel表中姓名列的数据</li>
+<li>循环一下姓名列表（List），依次创建文件夹</li>
+</ul>
+<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
+<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
+<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
+                     
+                ></p>
+<p>所以，我们只需要把D列的数据读出来就可以了。</p>
+<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
+<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
+<p>运行后结果如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -2876,7 +2921,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;" >&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -2943,54 +2988,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【行政办公系列】Python批量创建文件夹</title>
-    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：</p>
-<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
-<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
-<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
-<a id="more"></a>
-
-<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
-<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
-<p><strong>实现思路</strong>：</p>
-<ul>
-<li>读取Excel表中姓名列的数据</li>
-<li>循环一下姓名列表（List），依次创建文件夹</li>
-</ul>
-<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
-<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
-<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
-                     
-                ></p>
-<p>所以，我们只需要把D列的数据读出来就可以了。</p>
-<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
-<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
-<p>运行后结果如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
-                     
-                ></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -3024,7 +3024,7 @@
 <h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line">mkdir(<span class="string">&#x27;D:\107轨迹确认书&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <h2 id="三、复制文件并重命名"><a href="#三、复制文件并重命名" class="headerlink" title="三、复制文件并重命名"></a>三、复制文件并重命名</h2><p>用shutil库，实现对文件的复制操作，之前一篇文章专门讲了这个库的用法举例：<a href="/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python文件操作 shutil库使用举例">Python文件操作 shutil库使用举例</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">temp_file = <span class="string">r&#x27;D:\a.docx&#x27;</span> <span class="comment"># 模板文件</span></span><br><span class="line">houzhui = <span class="string">&#x27;.&#x27;</span> + temp_file.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>] <span class="comment"># 模板文件后缀 .docx</span></span><br><span class="line"></span><br><span class="line">dst_path = <span class="string">r&#x27;D:\107轨迹确认书&#x27;</span> <span class="comment"># 存放新文件的目录</span></span><br><span class="line">new_file_name = <span class="string">&#x27;1荀彧&#x27;</span></span><br><span class="line">dst = dst_path + <span class="string">&#x27;\\&#x27;</span> + new_file_name <span class="comment"># &#x27;D:\107轨迹确认书\1荀彧&#x27; 这个路径是windows下写法</span></span><br><span class="line"></span><br><span class="line">shutil.copy(temp_file, dst) <span class="comment"># 复制文件并重命名</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">temp_file = <span class="string">r&#x27;D:\a.docx&#x27;</span> <span class="comment"># 模板文件</span></span><br><span class="line">houzhui = <span class="string">&#x27;.&#x27;</span> + temp_file.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>] <span class="comment"># 模板文件后缀 .docx</span></span><br><span class="line"></span><br><span class="line">dst_path = <span class="string">r&#x27;D:\107轨迹确认书&#x27;</span> <span class="comment"># 存放新文件的目录</span></span><br><span class="line">new_file_name = <span class="string">&#x27;1荀彧&#x27;</span></span><br><span class="line">dst = dst_path + <span class="string">&#x27;\\&#x27;</span> + new_file_name + houzhui <span class="comment"># &#x27;D:\107轨迹确认书\1荀彧.docx&#x27; 这个路径是windows下写法</span></span><br><span class="line"></span><br><span class="line">shutil.copy(temp_file, dst) <span class="comment"># 复制文件并重命名</span></span><br></pre></td></tr></table></figure>
 <h2 id="四、完整代码举例"><a href="#四、完整代码举例" class="headerlink" title="四、完整代码举例"></a>四、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os, shutil</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\信息表.xlsx&#x27;</span></span><br><span class="line">    temp_file = <span class="string">r&#x27;C:\节假日离校返家师生员工行动轨迹确认书.doc&#x27;</span></span><br><span class="line">    houzhui = <span class="string">&#x27;.&#x27;</span> + temp_file.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>] <span class="comment"># .doc</span></span><br><span class="line">    <span class="comment"># print(houzhui)</span></span><br><span class="line"></span><br><span class="line">    dst_path = <span class="string">r&#x27;D:\107轨迹确认书&#x27;</span></span><br><span class="line">    mkdir(dst_path) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量复制文件并重命名</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        dst = dst_path + <span class="string">&#x27;\\&#x27;</span> + name + houzhui</span><br><span class="line">        shutil.copy(temp_file, dst)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;-------------fine!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
 <p>运行后结果如图：<br><img  
                      lazyload
@@ -3038,6 +3038,68 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_1.png"
+                      style="zoom: 50%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_2.png"
+                      style="zoom: 50%;"
+                >
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_3.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_4.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_5.png"
+                      style="zoom: 50%;"
+                >
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_6.png"
+                     
+                >]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -3116,68 +3178,6 @@
       </categories>
       <tags>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_1.png"
-                      style="zoom: 50%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_2.png"
-                      style="zoom: 50%;"
-                >
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_3.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_4.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_5.png"
-                      style="zoom: 50%;"
-                >
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_6.png"
-                     
-                >]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
