@@ -15,6 +15,34 @@
 ]]></content>
   </entry>
   <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -136,88 +164,65 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+    <title>Github 图床使用教程</title>
+    <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
 <a id="more"></a>
 
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
+<h2 id="1-Create-a-repository"><a href="#1-Create-a-repository" class="headerlink" title="1.Create a repository"></a>1.Create a repository</h2><p>创建一个仓库，专门准备用来放博客使用的图片。</p>
+<p><strong>repository 设置</strong></p>
+<p>名称只要是可用的都行，默认选择的是 Public，可以把 Add a README file勾选上。</p>
+<p>设置好之后，最后点击【Create repository】。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_1.png"
+                     data-src="/img/github_picbed_1.png"
                      
-                >
-<img  
+                ></p>
+<h2 id="2-创建-token"><a href="#2-创建-token" class="headerlink" title="2.创建 token"></a>2.创建 token</h2><p>右上角头像下面的【Settings】-&gt;【Developer settings】-&gt;【Personal access tokens】-&gt;点击【Generate new token】。</p>
+<ul>
+<li>Note：取个备注名</li>
+<li>勾选 repo</li>
+</ul>
+<p>最后拉到页面最下面点击【Generate token】就创建好了token。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_2.png"
+                     data-src="/img/github_picbed_2.png"
+                     
+                ></p>
+<p>完成之后有一长串字母+数字的token，复制下来就行了。</p>
+<h2 id="3-用-PicGo工具上传图片"><a href="#3-用-PicGo工具上传图片" class="headerlink" title="3.用 PicGo工具上传图片"></a>3.用 PicGo工具上传图片</h2><p>PicGo 官方下载：<a class="link"   href="https://github.com/Molunerfinn/PicGo/releases" >https://github.com/Molunerfinn/PicGo/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>PicGo 官方介绍页面：<a class="link"   href="https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo" >https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo<i class="fas fa-external-link-alt"></i></a></p>
+<p>下载之后安装运行。</p>
+<p>1).在PicGo设置中选择 Github图床</p>
+<p>2).图床设置</p>
+<ul>
+<li>仓库名为：h***n/Picbed_Go （[github用户名]/[图床仓库名]）创建的时候上面有；</li>
+<li>分支名：点进 repository就能看到，之前默认都是 master；</li>
+<li>Token：就是上面的token<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/github_picbed_3.png"
                      
                 >
 
 </li>
 </ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_3.png"
-                     
-                >
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_4.png"
-                     
-                ></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_5.png"
-                     
-                ></p>
-<p>这样就可以了。</p>
+<p>3).上传区上传图片</p>
+<p>把图片拖进去就能上传。</p>
+<p>4).在相册里面可以看到上传的图片，图片下方第一个按钮就是复制，把地址复制出来直接就能在markdown中用。</p>
+<p>地址示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="4-使用示例"><a href="#4-使用示例" class="headerlink" title="4.使用示例"></a>4.使用示例</h2><p>比如图片上传后的地址是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+<p>直接放在markdown的.md文件中，有预览效果的就能直接预览看到了。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Markdown</tag>
+        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -321,68 +326,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Github 图床使用教程</title>
-    <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
-<a id="more"></a>
-
-<h2 id="1-Create-a-repository"><a href="#1-Create-a-repository" class="headerlink" title="1.Create a repository"></a>1.Create a repository</h2><p>创建一个仓库，专门准备用来放博客使用的图片。</p>
-<p><strong>repository 设置</strong></p>
-<p>名称只要是可用的都行，默认选择的是 Public，可以把 Add a README file勾选上。</p>
-<p>设置好之后，最后点击【Create repository】。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_1.png"
-                     
-                ></p>
-<h2 id="2-创建-token"><a href="#2-创建-token" class="headerlink" title="2.创建 token"></a>2.创建 token</h2><p>右上角头像下面的【Settings】-&gt;【Developer settings】-&gt;【Personal access tokens】-&gt;点击【Generate new token】。</p>
-<ul>
-<li>Note：取个备注名</li>
-<li>勾选 repo</li>
-</ul>
-<p>最后拉到页面最下面点击【Generate token】就创建好了token。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_2.png"
-                     
-                ></p>
-<p>完成之后有一长串字母+数字的token，复制下来就行了。</p>
-<h2 id="3-用-PicGo工具上传图片"><a href="#3-用-PicGo工具上传图片" class="headerlink" title="3.用 PicGo工具上传图片"></a>3.用 PicGo工具上传图片</h2><p>PicGo 官方下载：<a class="link"   href="https://github.com/Molunerfinn/PicGo/releases" >https://github.com/Molunerfinn/PicGo/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>PicGo 官方介绍页面：<a class="link"   href="https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo" >https://picgo.github.io/PicGo-Doc/zh/guide/#%E5%90%AC%E8%AF%B4%E4%BD%A0%E4%B9%9F%E6%83%B3%E7%94%A8picgo<i class="fas fa-external-link-alt"></i></a></p>
-<p>下载之后安装运行。</p>
-<p>1).在PicGo设置中选择 Github图床</p>
-<p>2).图床设置</p>
-<ul>
-<li>仓库名为：h***n/Picbed_Go （[github用户名]/[图床仓库名]）创建的时候上面有；</li>
-<li>分支名：点进 repository就能看到，之前默认都是 master；</li>
-<li>Token：就是上面的token<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/github_picbed_3.png"
-                     
-                >
-
-</li>
-</ul>
-<p>3).上传区上传图片</p>
-<p>把图片拖进去就能上传。</p>
-<p>4).在相册里面可以看到上传的图片，图片下方第一个按钮就是复制，把地址复制出来直接就能在markdown中用。</p>
-<p>地址示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="4-使用示例"><a href="#4-使用示例" class="headerlink" title="4.使用示例"></a>4.使用示例</h2><p>比如图片上传后的地址是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;img src=<span class="string">&quot;/img/github_picbed_3.png&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
-<p>直接放在markdown的.md文件中，有预览效果的就能直接预览看到了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>Markdown</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo Keep主题添加归档页和标签页</title>
     <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
     <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
@@ -413,6 +356,63 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_1.png"
+                     
+                >
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_3.png"
+                     
+                >
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_4.png"
+                     
+                ></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_5.png"
+                     
+                ></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -472,6 +472,71 @@
       <tags>
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo创建sitemap站点地图向搜索引擎提交</title>
+    <url>/2022/05/14/Hexo%E5%88%9B%E5%BB%BAsitemap%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9B%BE%E5%90%91%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%8F%90%E4%BA%A4/</url>
+    <content><![CDATA[<p>站点地图是一种xml文件，可以通过该文件列出网站上的网页，从而将网站内容的组织架构告知Google和其他搜索引擎。Sitemap 可方便管理员通知搜索引擎他们网站上有哪些可供抓取的网页。搜索引擎网页抓取工具会读取此文件，以便更加智能地抓取您的网站。</p>
+<p>向搜索引擎提交自己hexo博客的sitemap，有助于让别人更好地通过搜索引擎搜索到自己的博客。</p>
+<a id="more"></a>
+
+<h2 id="一、生成Hexo博客的sitemap文件"><a href="#一、生成Hexo博客的sitemap文件" class="headerlink" title="一、生成Hexo博客的sitemap文件"></a>一、生成Hexo博客的sitemap文件</h2><p>Hexo有提供2个插件，用来自动生成sitemap文件。用以下命令安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
+<p>安装完后，每当执行 <code>hexo generate</code>命令后，就会在Hexo下的public目录下生成两个文件。</p>
+<ul>
+<li>sitemap.xml 这个用来提交给Google、Bing等搜索引擎</li>
+<li>baidusitemap.xml 这个是百度专用的</li>
+</ul>
+<p>运行 <code>hexo deploy</code>命令后，打开访问：<code>域名/sitemap.xml</code>，<code>域名/baidusitemap.xml</code>这两个文件都能访问，就没问题了。</p>
+<p>访问结果如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_1.png"
+                     
+                ></p>
+<h2 id="二、提交站点地图-sitemap-给搜索引擎"><a href="#二、提交站点地图-sitemap-给搜索引擎" class="headerlink" title="二、提交站点地图(sitemap)给搜索引擎"></a>二、提交站点地图(sitemap)给搜索引擎</h2><h3 id="1-提交给Google"><a href="#1-提交给Google" class="headerlink" title="1.提交给Google"></a>1.提交给Google</h3><p>网址：<a class="link"   href="https://search.google.com/search-console/" >https://search.google.com/search-console/<i class="fas fa-external-link-alt"></i></a><br>当然，前提是你能访问Google，并注册了Google的账号了。</p>
+<p>1).需要有个先验证你对网站的所有权</p>
+<ul>
+<li><p>首先，按操作提示下载提供的HTML验证文件（google2342fweklrljlj235423.html类型这样的文件）；</p>
+</li>
+<li><p>然后，要把这个文件放网站首页；</p>
+<p>（就直接放<code>Hexo/source</code>目录下，按<a href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/" title="Hexo 自定义页面 跳过渲染">Hexo 自定义页面 跳过渲染</a>这篇文章的跳过渲染方法，<code>hexo g</code>后就会生成在public目录下了）</p>
+</li>
+<li><p>最后，添加站点地图</p>
+<p>有两种方式，可以自己都试下。提交完后如下图所示就行了，回头再看：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h3 id="2-提交给Bing"><a href="#2-提交给Bing" class="headerlink" title="2.提交给Bing"></a>2.提交给Bing</h3><p>如果能提交给Google的话，先提交给Google后，再提交给Bing就很简单。因为可以直接授权通过。</p>
+<p>网址：<a class="link"   href="https://www.bing.com/webmasters" >https://www.bing.com/webmasters<i class="fas fa-external-link-alt"></i></a></p>
+<p>然后我就直接添加了下【网站地图】，就用sitemap.xml文件就行，把http和https的直接添加试了下。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_3.png"
+                     
+                ></p>
+<h3 id="3-提交给百度"><a href="#3-提交给百度" class="headerlink" title="3.提交给百度"></a>3.提交给百度</h3><p>百度原来叫站长平台吧，现在好像改名叫什么资源了。<br>网址：<a class="link"   href="https://ziyuan.baidu.com/linksubmit/index" >https://ziyuan.baidu.com/linksubmit/index<i class="fas fa-external-link-alt"></i></a></p>
+<p>百度是我最搞不懂的，明明<code>域名/baidusitemap.xml</code>文件都能访问，反正提交还是失败。<br>提示“主域校验失败”。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_4.png"
+                     
+                ></p>
+<p>难道文章里还不能出现别的站点了？？太奇怪了，什么玩意~ 遂放弃。</p>
+<p><strong>最后，顺便说一下可以怎么在搜索引擎上看结果</strong>：<br>可以过一两天，然后打开搜索引擎，直接搜索 <code>site:域名</code>或者前面再加个关键词，（比如我的搜索 <code>hexo site:hduzn.cn</code>）就可以看收录了多少了。<br>在搜索引擎中搜索时 ，加上site:域名，本来就可以搜索指定站点中的内容。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -562,7 +627,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#x6d;" >&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -583,80 +648,15 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Hexo</tag>
         <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo创建sitemap站点地图向搜索引擎提交</title>
-    <url>/2022/05/14/Hexo%E5%88%9B%E5%BB%BAsitemap%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9B%BE%E5%90%91%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%8F%90%E4%BA%A4/</url>
-    <content><![CDATA[<p>站点地图是一种xml文件，可以通过该文件列出网站上的网页，从而将网站内容的组织架构告知Google和其他搜索引擎。Sitemap 可方便管理员通知搜索引擎他们网站上有哪些可供抓取的网页。搜索引擎网页抓取工具会读取此文件，以便更加智能地抓取您的网站。</p>
-<p>向搜索引擎提交自己hexo博客的sitemap，有助于让别人更好地通过搜索引擎搜索到自己的博客。</p>
-<a id="more"></a>
-
-<h2 id="一、生成Hexo博客的sitemap文件"><a href="#一、生成Hexo博客的sitemap文件" class="headerlink" title="一、生成Hexo博客的sitemap文件"></a>一、生成Hexo博客的sitemap文件</h2><p>Hexo有提供2个插件，用来自动生成sitemap文件。用以下命令安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
-<p>安装完后，每当执行 <code>hexo generate</code>命令后，就会在Hexo下的public目录下生成两个文件。</p>
-<ul>
-<li>sitemap.xml 这个用来提交给Google、Bing等搜索引擎</li>
-<li>baidusitemap.xml 这个是百度专用的</li>
-</ul>
-<p>运行 <code>hexo deploy</code>命令后，打开访问：<code>域名/sitemap.xml</code>，<code>域名/baidusitemap.xml</code>这两个文件都能访问，就没问题了。</p>
-<p>访问结果如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_1.png"
-                     
-                ></p>
-<h2 id="二、提交站点地图-sitemap-给搜索引擎"><a href="#二、提交站点地图-sitemap-给搜索引擎" class="headerlink" title="二、提交站点地图(sitemap)给搜索引擎"></a>二、提交站点地图(sitemap)给搜索引擎</h2><h3 id="1-提交给Google"><a href="#1-提交给Google" class="headerlink" title="1.提交给Google"></a>1.提交给Google</h3><p>网址：<a class="link"   href="https://search.google.com/search-console/" >https://search.google.com/search-console/<i class="fas fa-external-link-alt"></i></a><br>当然，前提是你能访问Google，并注册了Google的账号了。</p>
-<p>1).需要有个先验证你对网站的所有权</p>
-<ul>
-<li><p>首先，按操作提示下载提供的HTML验证文件（google2342fweklrljlj235423.html类型这样的文件）；</p>
-</li>
-<li><p>然后，要把这个文件放网站首页；</p>
-<p>（就直接放<code>Hexo/source</code>目录下，按<a href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/" title="Hexo 自定义页面 跳过渲染">Hexo 自定义页面 跳过渲染</a>这篇文章的跳过渲染方法，<code>hexo g</code>后就会生成在public目录下了）</p>
-</li>
-<li><p>最后，添加站点地图</p>
-<p>有两种方式，可以自己都试下。提交完后如下图所示就行了，回头再看：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h3 id="2-提交给Bing"><a href="#2-提交给Bing" class="headerlink" title="2.提交给Bing"></a>2.提交给Bing</h3><p>如果能提交给Google的话，先提交给Google后，再提交给Bing就很简单。因为可以直接授权通过。</p>
-<p>网址：<a class="link"   href="https://www.bing.com/webmasters" >https://www.bing.com/webmasters<i class="fas fa-external-link-alt"></i></a></p>
-<p>然后我就直接添加了下【网站地图】，就用sitemap.xml文件就行，把http和https的直接添加试了下。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_3.png"
-                     
-                ></p>
-<h3 id="3-提交给百度"><a href="#3-提交给百度" class="headerlink" title="3.提交给百度"></a>3.提交给百度</h3><p>百度原来叫站长平台吧，现在好像改名叫什么资源了。<br>网址：<a class="link"   href="https://ziyuan.baidu.com/linksubmit/index" >https://ziyuan.baidu.com/linksubmit/index<i class="fas fa-external-link-alt"></i></a></p>
-<p>百度是我最搞不懂的，明明<code>域名/baidusitemap.xml</code>文件都能访问，反正提交还是失败。<br>提示“主域校验失败”。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_4.png"
-                     
-                ></p>
-<p>难道文章里还不能出现别的站点了？？太奇怪了，什么玩意~ 遂放弃。</p>
-<p><strong>最后，顺便说一下可以怎么在搜索引擎上看结果</strong>：<br>可以过一两天，然后打开搜索引擎，直接搜索 <code>site:域名</code>或者前面再加个关键词，（比如我的搜索 <code>hexo site:hduzn.cn</code>）就可以看收录了多少了。<br>在搜索引擎中搜索时 ，加上site:域名，本来就可以搜索指定站点中的内容。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -741,6 +741,37 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+<a id="more"></a>
+
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo 自定义页面 跳过渲染</title>
     <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
     <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
@@ -768,29 +799,20 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
 <a id="more"></a>
 
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -866,28 +888,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1255,6 +1255,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Python openpyxl.load_workbook excel file error</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python selenium 切换到新的窗口方法</title>
     <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
@@ -1287,35 +1316,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1412,36 +1412,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量转换图片格式</title>
-    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
-    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
-<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
-<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
-</ul>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量修改图片尺寸</title>
     <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
     <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
@@ -1471,6 +1441,36 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
 <p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量转换图片格式</title>
+    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
+    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
+<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
+<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
+</ul>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -1632,6 +1632,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python文件操作 shutil库使用举例</title>
     <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
     <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
@@ -1682,35 +1719,17 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
 <a id="more"></a>
 
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -1767,25 +1786,6 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1895,10 +1895,39 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Github</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1970,35 +1999,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 升级OpenSSL教程</title>
     <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
@@ -2056,6 +2056,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 安装Selenium自动化测试</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
@@ -2092,182 +2117,6 @@
         <tag>Python</tag>
         <tag>Ubuntu</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
-<a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 定时执行 python脚本</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
-<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
-<a id="more"></a>
-<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p>以上是缩写，全拼是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p><strong>含义</strong>：</p>
-<ul>
-<li>m: 每个小时的第几分钟执行，0-59</li>
-<li>h: 第天的第几个小时执行，0-23</li>
-<li>dom: 每月的第几天执行，1-31</li>
-<li>mon: 每年的第几个月执行，1-12</li>
-<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
-<li>command: 定时执行的命令</li>
-</ul>
-<p><strong>其它</strong>：</p>
-<ul>
-<li>*： 表示任何时间</li>
-<li>*/2: 表示每隔2分钟</li>
-<li>-：表示区间，比如1-3</li>
-<li>,：表示区间不连续，比如1,3,6</li>
-</ul>
-<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>含义</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>*  * * * * ifconfig</td>
-<td>每天第一分钟都在执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>1 * * * * ifconfig</td>
-<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
-<td>01:01, 02:01, 03:01, 04:01……</td>
-</tr>
-<tr>
-<td>0 9 * * * ifconfig</td>
-<td>每天 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 10 * * ifconfig</td>
-<td>每个月的10号 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 * * 1,2 ifconfig</td>
-<td>每周一、周二 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-</tbody></table>
-<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
-<ol>
-<li>/bin/nano</li>
-<li>/usr/bin/vim.basic</li>
-<li>/usr/bin/vim.tiny</li>
-<li>/bin/ed</li>
-</ol>
-<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
-<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
-<blockquote>
-<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
-</blockquote>
-<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
-<p>最后一行是命令格式：</p>
-<blockquote>
-<p># m h dom mon dow command</p>
-</blockquote>
-<p>在最下面添加自己的任务就可以了。</p>
-<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
-<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
-<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
-<p>得到结果比如是：<code>/usr/bin/python3</code></p>
-<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
-<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
-<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
-<p>所以，最终添加的这条定时任务记录是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
-<p>1.设计好自己想要执行的 python任务</p>
-<p>比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>2.打开定时任务编辑，添加任务记录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>3.重启 cron服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_1.png"
-                     
-                >
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_2.png"
-                     
-                >
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2395,6 +2244,157 @@
       </categories>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_1.png"
+                     
+                >
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_2.png"
+                     
+                >
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 定时执行 python脚本</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
+<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
+<a id="more"></a>
+<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p>以上是缩写，全拼是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>m: 每个小时的第几分钟执行，0-59</li>
+<li>h: 第天的第几个小时执行，0-23</li>
+<li>dom: 每月的第几天执行，1-31</li>
+<li>mon: 每年的第几个月执行，1-12</li>
+<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
+<li>command: 定时执行的命令</li>
+</ul>
+<p><strong>其它</strong>：</p>
+<ul>
+<li>*： 表示任何时间</li>
+<li>*/2: 表示每隔2分钟</li>
+<li>-：表示区间，比如1-3</li>
+<li>,：表示区间不连续，比如1,3,6</li>
+</ul>
+<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*  * * * * ifconfig</td>
+<td>每天第一分钟都在执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 * * * * ifconfig</td>
+<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
+<td>01:01, 02:01, 03:01, 04:01……</td>
+</tr>
+<tr>
+<td>0 9 * * * ifconfig</td>
+<td>每天 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 10 * * ifconfig</td>
+<td>每个月的10号 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 * * 1,2 ifconfig</td>
+<td>每周一、周二 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
+<ol>
+<li>/bin/nano</li>
+<li>/usr/bin/vim.basic</li>
+<li>/usr/bin/vim.tiny</li>
+<li>/bin/ed</li>
+</ol>
+<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
+<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
+<blockquote>
+<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
+</blockquote>
+<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
+<p>最后一行是命令格式：</p>
+<blockquote>
+<p># m h dom mon dow command</p>
+</blockquote>
+<p>在最下面添加自己的任务就可以了。</p>
+<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
+<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
+<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
+<p>得到结果比如是：<code>/usr/bin/python3</code></p>
+<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
+<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
+<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
+<p>所以，最终添加的这条定时任务记录是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
+<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
+<p>1.设计好自己想要执行的 python任务</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>2.打开定时任务编辑，添加任务记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>3.重启 cron服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Python</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2814,6 +2814,51 @@
       </tags>
   </entry>
   <entry>
+    <title>【行政办公系列】Python批量创建文件夹</title>
+    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：</p>
+<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
+<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
+<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
+<a id="more"></a>
+
+<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
+<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
+<p><strong>实现思路</strong>：</p>
+<ul>
+<li>读取Excel表中姓名列的数据</li>
+<li>循环一下姓名列表（List），依次创建文件夹</li>
+</ul>
+<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
+<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
+<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
+                     
+                ></p>
+<p>所以，我们只需要把D列的数据读出来就可以了。</p>
+<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
+<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
+<p>运行后结果如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -2876,7 +2921,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#109;" >&#x67;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -2943,54 +2988,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Github</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【行政办公系列】Python批量创建文件夹</title>
-    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：</p>
-<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
-<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
-<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
-<a id="more"></a>
-
-<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
-<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
-<p><strong>实现思路</strong>：</p>
-<ul>
-<li>读取Excel表中姓名列的数据</li>
-<li>循环一下姓名列表（List），依次创建文件夹</li>
-</ul>
-<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
-<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
-<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
-                     
-                ></p>
-<p>所以，我们只需要把D列的数据读出来就可以了。</p>
-<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
-<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
-<p>运行后结果如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
-                     
-                ></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -3038,6 +3038,96 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>服务器 Docker搭建Flask应用（一）</title>
+    <url>/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<p>用Python的Web框架——Flask写了应用，然后就可以放到服务器上。</p>
+<p>用Docker的话，贼方便。自己用的Flask项目的基础环境（安装需要的常用的库），可以打包成一个环境镜像。</p>
+<p>然后新建Flask项目的话，就在这个镜像的基础上建容器就行了。<br>需要MySQL的话，再建个MySQL的容器用就行。</p>
+<p>此文是一个最基础版，还没带数据库MySQL。用的服务器是CentOS8.2版本。</p>
+<a id="more"></a>
+
+<h2 id="一、创建Flask项目环境镜像（服务器）"><a href="#一、创建Flask项目环境镜像（服务器）" class="headerlink" title="一、创建Flask项目环境镜像（服务器）"></a>一、创建Flask项目环境镜像（服务器）</h2><h3 id="1-项目结构（样例）"><a href="#1-项目结构（样例）" class="headerlink" title="1.项目结构（样例）"></a>1.项目结构（样例）</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">book_isbn</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
+<h3 id="2-生成-requirements-txt（本地）"><a href="#2-生成-requirements-txt（本地）" class="headerlink" title="2.生成 requirements.txt（本地）"></a>2.生成 requirements.txt（本地）</h3><p>进入book_isbn项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong>requirements.txt 举例</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
+<p>可以看到如果带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，生成的requirements.txt文件中如果有多些用不着，也可以删除的。这个只要用到的库都装上了，其它的关系不大。</p>
+<h3 id="3-用Dockerfile-文件创建镜像"><a href="#3-用Dockerfile-文件创建镜像" class="headerlink" title="3.用Dockerfile 文件创建镜像"></a>3.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># 我这里app.py中run的port&#x3D;5020，所以开的是这个端口，你的看你自己的设置</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line">COPY app.py &#x2F;app</span><br><span class="line"># CMD python app.py</span><br></pre></td></tr></table></figure>
+<p><code>EXPOSE 5020</code>：这里需要改成你自己设置的端口号。<br>别的可以啥也不用改。</p>
+<p>当然，现在需要把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/book_isbn/app</code>目录。</p>
+<p>然后SSH连接服务器，进入到 /root/flask/book_isbn/app 目录，运行以下命令生成镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t book_isbn:v1.0 .</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-t 设置镜像名字和版本号</p>
+</blockquote>
+<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Python_Flask_interface_1.png"
+                     
+                ></p>
+<h2 id="二、创建Flask项目容器（服务器）"><a href="#二、创建Flask项目容器（服务器）" class="headerlink" title="二、创建Flask项目容器（服务器）"></a>二、创建Flask项目容器（服务器）</h2><p>直接根据刚创建的镜像：book_isbn:v1.0 创建一个容器。</p>
+<h3 id="1-创建容器（book-isbn）"><a href="#1-创建容器（book-isbn）" class="headerlink" title="1.创建容器（book_isbn）"></a>1.创建容器（book_isbn）</h3><p>后退（<code>cd ..</code>），回到book_isbn目录下。运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -dit --restart=always \</span><br><span class="line">-p 5020:5020 \</span><br><span class="line">-p 5022:22 \</span><br><span class="line">-v `<span class="built_in">pwd</span>`/docker_app/:/app/ \</span><br><span class="line">--name book_isbn book_isbn:v1.0 /bin/bash</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>pwd</code>/docker_app/：其中pwd是用的命令形式，表示当前目录。</p>
+</blockquote>
+<p>执行完后，用<code>docker ps -a</code>命令查看，就可以容器列表了。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Python_Flask_interface_2.png"
+                     
+                ></p>
+<p>同时，在book_isbn目录下也生成了一个 docker_app目录。</p>
+<h3 id="2-把app目录下的所有文件复制到docker-app目录中"><a href="#2-把app目录下的所有文件复制到docker-app目录中" class="headerlink" title="2.把app目录下的所有文件复制到docker_app目录中"></a>2.把app目录下的所有文件复制到docker_app目录中</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp -r app/. docker_app/</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>cp -r app docker_app/ ：表示将app目录及其目录下所有文件复制到docker_app目录下，就会有 docker_app/app目录</p>
+<p>cp -r app/. docker_app/ ：表示将app目录下所有文件复制到docker_app目录下，不包括app目录</p>
+</blockquote>
+<p>以后要改容器中的代码，就直接改这个目录下的代码就行了。<br>可以用VS Code远程连接，也可以用Cloud Studio，然后修改项目中的文件就行。</p>
+<p>而原来的book_isbn/app目录也不需要了，可以删除，不删除久了自己可能也会忘记、搞混。可以需要重新创建容器的时候再上传就行了。</p>
+<h2 id="三、后台一直运行app-py"><a href="#三、后台一直运行app-py" class="headerlink" title="三、后台一直运行app.py"></a>三、后台一直运行app.py</h2><p>这个用<code>nohup</code>命令，有文章写过介绍了：<a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a></p>
+<h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1.进入容器"></a>1.进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it book_isbn /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-后台运行Flask项目"><a href="#2-后台运行Flask项目" class="headerlink" title="2.后台运行Flask项目"></a>2.后台运行Flask项目</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<p>当后台运行app.py后，就可以通过服务器的ip地址访问了。比如我的服务器ip地址为：43.142.94.65，那在浏览器里就可以用以下地址访问了：<a class="link"   href="http://43.142.94.65:5020/" >http://43.142.94.65:5020/<i class="fas fa-external-link-alt"></i></a><br>如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Python_Flask_interface_3.png"
+                     
+                ></p>
+<h3 id="3-结束后台运行进程（容器内）"><a href="#3-结束后台运行进程（容器内）" class="headerlink" title="3.结束后台运行进程（容器内）"></a>3.结束后台运行进程（容器内）</h3><p>进程在后台运行，想要关闭就要查看进程的PID。想要修改代码，就需要先结束进程。</p>
+<p>可以通过搜索查找这个命令的PID。</p>
+<p><strong>1).用命令查找进程的PID</strong></p>
+<p>可以通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Python_Flask_interface_4.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=36。</p>
+<p>还可以用 <code>top -p 36</code>命令确认下471进程是不是这个app.py的进程。</p>
+<p><strong>2).结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 36</code>，就可以结束这个app.py的进程了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Flask</tag>
       </tags>
   </entry>
   <entry>
@@ -3178,96 +3268,6 @@
       </categories>
       <tags>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>服务器 Docker搭建Flask应用（一）</title>
-    <url>/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/</url>
-    <content><![CDATA[<p>用Python的Web框架——Flask写了应用，然后就可以放到服务器上。</p>
-<p>用Docker的话，贼方便。自己用的Flask项目的基础环境（安装需要的常用的库），可以打包成一个环境镜像。</p>
-<p>然后新建Flask项目的话，就在这个镜像的基础上建容器就行了。<br>需要MySQL的话，再建个MySQL的容器用就行。</p>
-<p>此文是一个最基础版，还没带数据库MySQL。用的服务器是CentOS8.2版本。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Flask项目环境镜像（服务器）"><a href="#一、创建Flask项目环境镜像（服务器）" class="headerlink" title="一、创建Flask项目环境镜像（服务器）"></a>一、创建Flask项目环境镜像（服务器）</h2><h3 id="1-项目结构（样例）"><a href="#1-项目结构（样例）" class="headerlink" title="1.项目结构（样例）"></a>1.项目结构（样例）</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">book_isbn</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
-<h3 id="2-生成-requirements-txt（本地）"><a href="#2-生成-requirements-txt（本地）" class="headerlink" title="2.生成 requirements.txt（本地）"></a>2.生成 requirements.txt（本地）</h3><p>进入book_isbn项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
-<p><strong>requirements.txt 举例</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
-<p>可以看到如果带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，生成的requirements.txt文件中如果有多些用不着，也可以删除的。这个只要用到的库都装上了，其它的关系不大。</p>
-<h3 id="3-用Dockerfile-文件创建镜像"><a href="#3-用Dockerfile-文件创建镜像" class="headerlink" title="3.用Dockerfile 文件创建镜像"></a>3.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># 我这里app.py中run的port&#x3D;5020，所以开的是这个端口，你的看你自己的设置</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line">COPY app.py &#x2F;app</span><br><span class="line"># CMD python app.py</span><br></pre></td></tr></table></figure>
-<p><code>EXPOSE 5020</code>：这里需要改成你自己设置的端口号。<br>别的可以啥也不用改。</p>
-<p>当然，现在需要把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/book_isbn/app</code>目录。</p>
-<p>然后SSH连接服务器，进入到 /root/flask/book_isbn/app 目录，运行以下命令生成镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t book_isbn:v1.0 .</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-t 设置镜像名字和版本号</p>
-</blockquote>
-<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Python_Flask_interface_1.png"
-                     
-                ></p>
-<h2 id="二、创建Flask项目容器（服务器）"><a href="#二、创建Flask项目容器（服务器）" class="headerlink" title="二、创建Flask项目容器（服务器）"></a>二、创建Flask项目容器（服务器）</h2><p>直接根据刚创建的镜像：book_isbn:v1.0 创建一个容器。</p>
-<h3 id="1-创建容器（book-isbn）"><a href="#1-创建容器（book-isbn）" class="headerlink" title="1.创建容器（book_isbn）"></a>1.创建容器（book_isbn）</h3><p>后退（<code>cd ..</code>），回到book_isbn目录下。运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -dit --restart=always \</span><br><span class="line">-p 5020:5020 \</span><br><span class="line">-p 5022:22 \</span><br><span class="line">-v `<span class="built_in">pwd</span>`/docker_app/:/app/ \</span><br><span class="line">--name book_isbn book_isbn:v1.0 /bin/bash</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p><code>pwd</code>/docker_app/：其中<code>pwd</code>表示当前目录。</p>
-</blockquote>
-<p>执行完后，用<code>docker ps -a</code>命令查看，就可以容器列表了。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Python_Flask_interface_2.png"
-                     
-                ></p>
-<p>同时，在book_isbn目录下也生成了一个 docker_app目录。</p>
-<h3 id="2-把app目录下的所有文件复制到docker-app目录中"><a href="#2-把app目录下的所有文件复制到docker-app目录中" class="headerlink" title="2.把app目录下的所有文件复制到docker_app目录中"></a>2.把app目录下的所有文件复制到docker_app目录中</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp -r app/. docker_app/</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>cp -r app docker_app/ ：表示将app目录及其目录下所有文件复制到docker_app目录下，就会有 docker_app/app目录</p>
-<p>cp -r app/. docker_app/ ：表示将app目录下所有文件复制到docker_app目录下，不包括app目录</p>
-</blockquote>
-<p>以后要改容器中的代码，就直接改这个目录下的代码就行了。<br>可以用VS Code远程连接，也可以用Cloud Studio，然后修改项目中的文件就行。</p>
-<p>而原来的book_isbn/app目录也不需要了，可以删除，不删除久了自己可能也会忘记、搞混。可以需要重新创建容器的时候再上传就行了。</p>
-<h2 id="三、后台一直运行app-py"><a href="#三、后台一直运行app-py" class="headerlink" title="三、后台一直运行app.py"></a>三、后台一直运行app.py</h2><p>这个用<code>nohup</code>命令，有文章写过介绍了：<a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a></p>
-<h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1.进入容器"></a>1.进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it book_isbn /bin/bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-后台运行Flask项目"><a href="#2-后台运行Flask项目" class="headerlink" title="2.后台运行Flask项目"></a>2.后台运行Flask项目</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<p>当后台运行app.py后，就可以通过服务器的ip地址访问了。比如我的服务器ip地址为：43.142.94.65，那在浏览器里就可以用以下地址访问了：<a class="link"   href="http://43.142.94.65:5020/" >http://43.142.94.65:5020/<i class="fas fa-external-link-alt"></i></a><br>如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Python_Flask_interface_3.png"
-                     
-                ></p>
-<h3 id="3-结束后台运行进程（容器内）"><a href="#3-结束后台运行进程（容器内）" class="headerlink" title="3.结束后台运行进程（容器内）"></a>3.结束后台运行进程（容器内）</h3><p>进程在后台运行，想要关闭就要查看进程的PID。想要修改代码，就需要先结束进程。</p>
-<p>可以通过搜索查找这个命令的PID。</p>
-<p><strong>1).用命令查找进程的PID</strong></p>
-<p>可以通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Python_Flask_interface_4.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=36。</p>
-<p>还可以用 <code>top -p 36</code>命令确认下471进程是不是这个app.py的进程。</p>
-<p><strong>2).结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 36</code>，就可以结束这个app.py的进程了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Flask</tag>
       </tags>
   </entry>
   <entry>
