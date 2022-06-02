@@ -274,6 +274,7 @@
                      data-src="/img/Docker_Python_Flask_interface_1.png"
                      
                 ></p>
+<p><strong>注意</strong>：有一点说明一下，如果你的Flask项目是做一个完整的项目，后续不修改代码，直接打包的一个Web项目。那requirements.txt 文件就不用都扔进去；这个Dockerfile文件也不能这样写简略，要把项目代码都copy进去，直接的CMD也要用起来，要运行app.py的。（我这只是搭基础环境的，都是后续在里面改项目代码的）</p>
 <h2 id="二、创建Flask项目容器（服务器）"><a href="#二、创建Flask项目容器（服务器）" class="headerlink" title="二、创建Flask项目容器（服务器）"></a>二、创建Flask项目容器（服务器）</h2><p>直接根据刚创建的镜像：book_isbn:v1.0 创建一个容器。</p>
 <h3 id="1-创建容器（book-isbn）"><a href="#1-创建容器（book-isbn）" class="headerlink" title="1.创建容器（book_isbn）"></a>1.创建容器（book_isbn）</h3><p>后退（<code>cd ..</code>），回到book_isbn目录下。运行以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -dit --restart=always \</span><br><span class="line">-p 5020:5020 \</span><br><span class="line">-p 5022:22 \</span><br><span class="line">-v `<span class="built_in">pwd</span>`/docker_app/:/app/ \</span><br><span class="line">--name book_isbn book_isbn:v1.0 /bin/bash</span><br></pre></td></tr></table></figure>
