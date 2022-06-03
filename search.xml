@@ -15,34 +15,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
     <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
     <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
@@ -127,6 +99,34 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
 <p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
 <p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -278,18 +278,14 @@
 <h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
 </ul>
 <h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
 </blockquote>
 <h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
 <p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
-
-
 <h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
-
-
 <h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
 <p>注释以下行：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
@@ -629,6 +625,51 @@
       </tags>
   </entry>
   <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Excel</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -935,7 +976,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#x6d;" >&#x67;&#x69;&#116;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#109;" >&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -956,7 +997,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;" >&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#111;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1248,6 +1289,55 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
+<a id="more"></a>
+
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
+<blockquote>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
+</blockquote>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/linux_nohup_1.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令小记（不断更新中）</title>
     <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
     <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
@@ -1302,7 +1392,7 @@
 <li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
 <li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
 <li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Ubuntu 定时执行 python脚本">Ubuntu 定时执行 python脚本</a></li>
+<li><a href="#">Post not found: Ubuntu定时执行python脚本</a></li>
 <li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
 <li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
 </li>
@@ -1316,103 +1406,116 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
+    <title>Linux 定时执行 python脚本</title>
+    <url>/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>Linux系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
+<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
+<p>CentOS如果没带的，用以下命令安装一下，一样的：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install crontabs</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
+<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p>以上是缩写，全拼是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>m: 每个小时的第几分钟执行，0-59</li>
+<li>h: 第天的第几个小时执行，0-23</li>
+<li>dom: 每月的第几天执行，1-31</li>
+<li>mon: 每年的第几个月执行，1-12</li>
+<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
+<li>command: 定时执行的命令</li>
+</ul>
+<p><strong>其它</strong>：</p>
+<ul>
+<li>*： 表示任何时间</li>
+<li>*/2: 表示每隔2分钟</li>
+<li>-：表示区间，比如1-3</li>
+<li>,：表示区间不连续，比如1,3,6</li>
+</ul>
+<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*  * * * * ifconfig</td>
+<td>每天第一分钟都在执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 * * * * ifconfig</td>
+<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
+<td>01:01, 02:01, 03:01, 04:01……</td>
+</tr>
+<tr>
+<td>0 9 * * * ifconfig</td>
+<td>每天 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 10 * * ifconfig</td>
+<td>每个月的10号 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 * * 1,2 ifconfig</td>
+<td>每周一、周二 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>运行以下命令进入编辑：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
+<ol>
+<li>/bin/nano</li>
+<li>/usr/bin/vim.basic</li>
+<li>/usr/bin/vim.tiny</li>
+<li>/bin/ed</li>
+</ol>
+<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 <a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a> 有介绍。</p>
+<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
 <blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
+<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
 </blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
+<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
+<p>最后一行是命令格式：</p>
 <blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+<p># m h dom mon dow command</p>
 </blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/linux_nohup_1.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
-]]></content>
+<p>在最下面添加自己的任务就可以了。</p>
+<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
+<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
+<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
+<p>得到结果比如是：<code>/usr/bin/python3</code></p>
+<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
+<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
+<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
+<p>所以，最终添加的这条定时任务记录是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
+<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
+<p>1.设计好自己想要执行的 python任务</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>2.打开定时任务编辑，添加任务记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>3.重启 cron服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>
+<p>PS.查看定时任务内容（非编辑状态）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python Selenium使用举例</title>
-    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
-<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
-<a id="more"></a>
-
-<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
-<p>如果不知道自己是否安装过，可以用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
-</blockquote>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
-<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
-<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>Chrome WebDriver下载举例</strong></p>
-<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
-<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
-<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
-<p><strong>Edge WebDriver下载举例</strong></p>
-<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
-<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
-<ul>
-<li>G:\Python\software\webdriver\chromedriver.exe、</li>
-<li>G:\Python\software\webdriver\msedgedriver.exe</li>
-</ul>
-<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
-<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
-<ul>
-<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
-<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
-<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
-<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
-</ul>
-<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
-<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
-<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Selenium</tag>
         <tag>Python</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -1467,6 +1570,84 @@
       <tags>
         <tag>MySQL</tag>
         <tag>Navicat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Failed to write executable - trying to use .deleteme logic 解决方法</title>
+    <url>/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/</url>
+    <content><![CDATA[<p>Python安装包的时候报错（下载完了，进入Installing的时候）：</p>
+<blockquote>
+<p>WARNING: Failed to write executable - trying to use .deleteme logic<br>ERROR: Could not install packages due to an EnvironmentError: [WinError 2] 系统找不到指定的文件。</p>
+</blockquote>
+<a id="more"></a>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_Failed_to_write_executable_1.png"
+                     
+                >
+
+<p>一看就是权限的问题。</p>
+<p><strong>解决方法：</strong><br>就打开【Windows PowerShell】（管理员）模式，再运行就行了。</p>
+<p>用【命令提示符】的话，反正右键用管理员身份运行，也是一样的。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Selenium使用举例</title>
+    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
+<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+<a id="more"></a>
+
+<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
+<p>如果不知道自己是否安装过，可以用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
+</blockquote>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
+<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
+<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>Chrome WebDriver下载举例</strong></p>
+<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
+<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
+<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
+<p><strong>Edge WebDriver下载举例</strong></p>
+<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
+<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
+<ul>
+<li>G:\Python\software\webdriver\chromedriver.exe、</li>
+<li>G:\Python\software\webdriver\msedgedriver.exe</li>
+</ul>
+<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
+<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
+<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
+<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2495,203 +2676,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 定时执行 python脚本</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<p>Ubuntu系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
-<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
-<a id="more"></a>
-<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p>以上是缩写，全拼是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
-<p><strong>含义</strong>：</p>
-<ul>
-<li>m: 每个小时的第几分钟执行，0-59</li>
-<li>h: 第天的第几个小时执行，0-23</li>
-<li>dom: 每月的第几天执行，1-31</li>
-<li>mon: 每年的第几个月执行，1-12</li>
-<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
-<li>command: 定时执行的命令</li>
-</ul>
-<p><strong>其它</strong>：</p>
-<ul>
-<li>*： 表示任何时间</li>
-<li>*/2: 表示每隔2分钟</li>
-<li>-：表示区间，比如1-3</li>
-<li>,：表示区间不连续，比如1,3,6</li>
-</ul>
-<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
-<thead>
-<tr>
-<th>命令</th>
-<th>含义</th>
-<th>举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>*  * * * * ifconfig</td>
-<td>每天第一分钟都在执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>1 * * * * ifconfig</td>
-<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
-<td>01:01, 02:01, 03:01, 04:01……</td>
-</tr>
-<tr>
-<td>0 9 * * * ifconfig</td>
-<td>每天 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 10 * * ifconfig</td>
-<td>每个月的10号 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-<tr>
-<td>0 9 * * 1,2 ifconfig</td>
-<td>每周一、周二 9:00 执行ifconfig 命令</td>
-<td>—</td>
-</tr>
-</tbody></table>
-<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
-<ol>
-<li>/bin/nano</li>
-<li>/usr/bin/vim.basic</li>
-<li>/usr/bin/vim.tiny</li>
-<li>/bin/ed</li>
-</ol>
-<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 【Linux vim/vi 命令简单使用】有介绍。</p>
-<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
-<blockquote>
-<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
-</blockquote>
-<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
-<p>最后一行是命令格式：</p>
-<blockquote>
-<p># m h dom mon dow command</p>
-</blockquote>
-<p>在最下面添加自己的任务就可以了。</p>
-<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
-<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
-<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
-<p>得到结果比如是：<code>/usr/bin/python3</code></p>
-<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
-<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
-<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
-<p>所以，最终添加的这条定时任务记录是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
-<p>1.设计好自己想要执行的 python任务</p>
-<p>比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
-<p>2.打开定时任务编辑，添加任务记录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p>3.重启 cron服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_1.png"
-                     
-                >
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_2.png"
-                     
-                >
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>U盘启动进入PE系统 快捷键</title>
     <url>/2022/04/09/u%E7%9B%98%E5%90%AF%E5%8A%A8%E8%BF%9B%E5%85%A5PE%E7%B3%BB%E7%BB%9F%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
     <content><![CDATA[<p>用U盘装系统的时候，我们要设置为从U盘启动，可以进入BIOS后，设置成优先从U盘启动。<br>还有个比较快捷的方法，我们一般都是直接用快捷键进入，选择进入U盘PE系统。</p>
@@ -2952,6 +2936,95 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_1.png"
+                     
+                >
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_2.png"
+                     
+                >
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>you-get 使用教程</title>
     <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
@@ -3062,36 +3135,6 @@
       </tags>
   </entry>
   <entry>
-    <title>【Windows疑难杂症】打不开网页 解决方法</title>
-    <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
-<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
-<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
-<p>那就是“疑难杂症”类问题了。</p>
-<a id="more"></a>
-
-<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
-<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
-<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
-<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
-<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
-<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
-<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
-<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
-]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -3154,7 +3197,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;" >&#103;&#105;&#116;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3269,6 +3312,36 @@
       <tags>
         <tag>Python</tag>
         <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【Windows疑难杂症】打不开网页 解决方法</title>
+    <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
+<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
+<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
+<p>那就是“疑难杂症”类问题了。</p>
+<a id="more"></a>
+
+<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
+<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
+<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
+<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
+<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
+<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
+<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
+<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
+<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
+<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
+]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>

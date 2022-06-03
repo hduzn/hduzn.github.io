@@ -9,7 +9,7 @@
     
     <title>
         
-            Docker 搭建开源邮件服务器 EwoMail |
+            Linux 定时执行 python脚本 |
         
         烟雨平生 - 我的学习空间
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Docker 搭建开源邮件服务器 EwoMail</span>
+            <span class="title-hover-animation">Linux 定时执行 python脚本</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-04-05 20:00:00</span>
-        <span class="mobile">2022-04-05 20:00</span>
+        <span class="pc">2021-02-08 22:10:00</span>
+        <span class="mobile">2021-02-08 22:10</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                        <a href="/categories/Linux/">Linux</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,11 +216,15 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                        <a href="/tags/Linux/">Linux</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/Linux/">Linux</a>&nbsp;
+                        | <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Ubuntu/">Ubuntu</a>&nbsp;
                     </li>
                 
             </ul>
@@ -243,123 +247,118 @@
         
 
         <div class="article-content markdown-body">
-            <p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
-<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
-<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
- <a id="more"></a>
+            <p>Linux系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
+<p>因为是一台Ubuntu的服务器，一直开机的状态，所以开着定时任务就等于一直开着了。</p>
+<p>CentOS如果没带的，用以下命令安装一下，一样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install crontabs</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 
-<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
-<li><p>1).搜索镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
-<li><p>2).pull ewomail 镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
-<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
+<h2 id="一、crontab命令格式详解"><a href="#一、crontab命令格式详解" class="headerlink" title="一、crontab命令格式详解"></a>一、crontab命令格式详解</h2><h3 id="1-命令格式："><a href="#1-命令格式：" class="headerlink" title="1.命令格式："></a>1.命令格式：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m h dom mon dow <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p>以上是缩写，全拼是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">minute(m), hour(h), day of month(dom), month(mon), day of week(dow), <span class="built_in">command</span></span><br></pre></td></tr></table></figure>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>m: 每个小时的第几分钟执行，0-59</li>
+<li>h: 第天的第几个小时执行，0-23</li>
+<li>dom: 每月的第几天执行，1-31</li>
+<li>mon: 每年的第几个月执行，1-12</li>
+<li>dow: 每周的第几天执行，0-6（0表示星期天）</li>
+<li>command: 定时执行的命令</li>
 </ul>
-<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>其它</strong>：</p>
+<ul>
+<li>*： 表示任何时间</li>
+<li>*/2: 表示每隔2分钟</li>
+<li>-：表示区间，比如1-3</li>
+<li>,：表示区间不连续，比如1,3,6</li>
+</ul>
+<h3 id="2-命令举例"><a href="#2-命令举例" class="headerlink" title="2.命令举例"></a>2.命令举例</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*  * * * * ifconfig</td>
+<td>每天第一分钟都在执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 * * * * ifconfig</td>
+<td>每天每个小时的第1分钟都在执行ifconfig 命令</td>
+<td>01:01, 02:01, 03:01, 04:01……</td>
+</tr>
+<tr>
+<td>0 9 * * * ifconfig</td>
+<td>每天 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 10 * * ifconfig</td>
+<td>每个月的10号 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0 9 * * 1,2 ifconfig</td>
+<td>每周一、周二 9:00 执行ifconfig 命令</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2 id="二、编辑定时任务crontab："><a href="#二、编辑定时任务crontab：" class="headerlink" title="二、编辑定时任务crontab："></a>二、编辑定时任务crontab：</h2><p>运行以下命令进入编辑：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>第一次输入这个命令，会让你选择一下编辑软件，有4种，就直接输入 2 回车，选择用 vim。</p>
+<ol>
+<li>/bin/nano</li>
+<li>/usr/bin/vim.basic</li>
+<li>/usr/bin/vim.tiny</li>
+<li>/bin/ed</li>
+</ol>
+<p>vim命令如果没用过不会用，也不用慌，会几个简单的命令就行了。上一篇文章 <a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a> 有介绍。</p>
+<p>打开了编辑定时任务后，里面有一堆前面带 # 的行，这些都是注释内容，不用管，其实也有关于定时任务设置的示例，有这么2行：</p>
 <blockquote>
-<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
+<p># at 5 a.m every week with:<br># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</p>
 </blockquote>
-<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
-<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
-<p>注释以下行：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
-<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th>记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>A</td>
-<td>mail</td>
-<td>127.0.0.1</td>
-</tr>
-<tr>
-<td>TXT</td>
-<td>@</td>
-<td>v=spf1 127.0.0.1 -all</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>imap</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>smtp</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop3</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>MX</td>
-<td>@</td>
-<td>mail.stephen520.cn | 10</td>
-</tr>
-</tbody></table>
-<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
-<p><strong>获取DKIM KEY</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
-<p>复制输出的信息，打开 <a class="link"   target="_blank" rel="noopener" href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th align="left">记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>TXT</td>
-<td>dkim._domainkey</td>
-<td align="left"><code>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</code></td>
-</tr>
-</tbody></table>
-<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
-<li>1).在云服务器控制台配置腾讯云<a class="link"   target="_blank" rel="noopener" href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
-<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
-</ul>
-<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<p><strong>邮箱管理后台</strong>：<br><a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
-<p><strong>Rainloop 管理端</strong>：<br><a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
-<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
-
-<p>进入容器：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
+<p>表示第2行的定时任务的意思是：在每周一的5:00 am 执行 tar 这条命令。</p>
+<p>最后一行是命令格式：</p>
+<blockquote>
+<p># m h dom mon dow command</p>
+</blockquote>
+<p>在最下面添加自己的任务就可以了。</p>
+<h2 id="三、定时执行python-脚本"><a href="#三、定时执行python-脚本" class="headerlink" title="三、定时执行python 脚本"></a>三、定时执行python 脚本</h2><p>注意，这里在定时任务中一定要用绝对路径。</p>
+<p>比如平常运行 pythone脚本，因为添加到PATH环境变量中了，所以直接运行以下命令就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 test.py</span><br></pre></td></tr></table></figure>
+<h3 id="1-python路径"><a href="#1-python路径" class="headerlink" title="1.python路径"></a>1.python路径</h3><p>所以首先要找到python3的路径，通过which命令就可以：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> python3</span><br></pre></td></tr></table></figure>
+<p>得到结果比如是：<code>/usr/bin/python3</code></p>
+<h3 id="2-python文件的绝对路径"><a href="#2-python文件的绝对路径" class="headerlink" title="2.python文件的绝对路径"></a>2.python文件的绝对路径</h3><p>比如我的 test.py 存放在 <code>/home/ubuntu/python/code/</code> 中。</p>
+<p>如果你不知道当前目录是什么，执行 <code>pwd</code> 命令就可以得到。</p>
+<p>最后想把 test.py 定时运行输出的内容存放到 log文件中：<code>/home/ubuntu/tmp/test.log</code></p>
+<p>所以，最终添加的这条定时任务记录是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>表示：每天17点将执行 test.py，把输出内容打印到 test.log文件中。</p>
+<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>一共3步。</p>
+<p>1.设计好自己想要执行的 python任务</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 17 * * * /usr/bin/python3 /home/ubuntu/python/code/test.py &gt;&gt; /home/ubuntu/tmp/test.log</span><br></pre></td></tr></table></figure>
+<p>2.打开定时任务编辑，添加任务记录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>3.重启 cron服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>
+<p>PS.查看定时任务内容（非编辑状态）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Docker 搭建开源邮件服务器 EwoMail</li>
+        <li>本文标题：Linux 定时执行 python脚本</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-04-05 20:00:00</li>
+        <li>创建时间：2021-02-08 22:10:00</li>
         <li>
-            本文链接：http://hduzn.cn/2022/04/05/Docker搭建开源邮件服务器 EwoMail/
+            本文链接：http://hduzn.cn/2021/02/08/Linux定时执行python脚本/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -374,11 +373,15 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                        <a href="/tags/Linux/">#Linux</a>&nbsp;
                     </li>
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Ubuntu/">#Ubuntu</a>&nbsp;
                     </li>
                 
             </ul>
@@ -390,13 +393,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/"
+                           href="/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Docker EwoMail修改MySQL密码</span>
+                                <span class="post-nav-title-item">SyntaxError EOL while scanning string literal</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -406,10 +409,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/"
+                           href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python 对图片进行文字识别</span>
+                                <span class="post-nav-title-item">Linux vim/vi 命令简单使用</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -620,7 +623,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD%EF%BC%88pull%EF%BC%89%E9%95%9C%E5%83%8F"><span class="nav-text">1、下载（pull）镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-text">2、构建容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%B9%E5%99%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">1).容器配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9E%84%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-text">2).构建容器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%85%B3%E9%97%AD10024%E7%AB%AF%E5%8F%A3"><span class="nav-text">3、关闭10024端口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-text">1).进入容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9-main-cf-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="nav-text">2).修改 main.cf 配置文件：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="nav-text">4、域名解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AE%BE%E7%BD%AEDNS%E7%B1%BB%E5%9E%8B"><span class="nav-text">1).设置DNS类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%BE%E7%BD%AEDKIM"><span class="nav-text">2).设置DKIM</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81%E9%85%8D%E7%BD%AE%E5%AE%89%E5%85%A8%E7%BB%84"><span class="nav-text">5、配置安全组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E5%AE%8C%E6%88%90"><span class="nav-text">6、完成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%81%E4%B9%A6"><span class="nav-text">7、自定义证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8%E3%80%81%E5%AE%B9%E5%99%A8%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-text">8、容器相关命令</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81crontab%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3"><span class="nav-text">一、crontab命令格式详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%EF%BC%9A"><span class="nav-text">1.命令格式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%91%BD%E4%BB%A4%E4%B8%BE%E4%BE%8B"><span class="nav-text">2.命令举例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BC%96%E8%BE%91%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1crontab%EF%BC%9A"><span class="nav-text">二、编辑定时任务crontab：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython-%E8%84%9A%E6%9C%AC"><span class="nav-text">三、定时执行python 脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-python%E8%B7%AF%E5%BE%84"><span class="nav-text">1.python路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-python%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="nav-text">2.python文件的绝对路径</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B0%8F%E7%BB%93"><span class="nav-text">四、小结</span></a></li></ol>
     </div>
 </div>
         </aside>
