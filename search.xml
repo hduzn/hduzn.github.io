@@ -263,6 +263,94 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker版Selenium使用方法</title>
+    <url>/2022/05/29/Docker%E7%89%88Selenium%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
+<p>此文用的就是Docker版Selenium Grid，用的环境是：服务器CentOS8.2。</p>
+<p><strong>Selenium Grid Docker</strong><br>官方文档：<a class="link"   href="https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md" >https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、pull需要的docker镜像"><a href="#一、pull需要的docker镜像" class="headerlink" title="一、pull需要的docker镜像"></a>一、pull需要的docker镜像</h2><p>使用到两个镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull selenium/hub</span><br><span class="line">docker pull selenium/node-chrome</span><br></pre></td></tr></table></figure>
+<p>selenium/node-chrome 是无界面的。</p>
+<p>拉取完镜像后，可以用 <code>docker images</code> 查看所有镜像。</p>
+<p>要想能看到实时运行界面，需要pull以下镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull selenium/standalone-chrome-debug</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建容器"><a href="#二、创建容器" class="headerlink" title="二、创建容器"></a>二、创建容器</h2><h3 id="1-创建一个新的-Docker-网络"><a href="#1-创建一个新的-Docker-网络" class="headerlink" title="1.创建一个新的 Docker 网络"></a>1.创建一个新的 Docker 网络</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create my-grid</span><br></pre></td></tr></table></figure>
+<p>可以通过 <code>docker network ls</code>命令查看结果。</p>
+<h3 id="1-Hub节点的容器"><a href="#1-Hub节点的容器" class="headerlink" title="1.Hub节点的容器"></a>1.Hub节点的容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -p 4442-4444:4442-4444 --net my-grid --name selen-hub selenium/hub</span><br></pre></td></tr></table></figure>
+<h3 id="2-Node节点的容器"><a href="#2-Node节点的容器" class="headerlink" title="2.Node节点的容器"></a>2.Node节点的容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --net my-grid -e SE_EVENT_BUS_HOST=selen-hub \</span><br><span class="line">	--shm-size=<span class="string">&quot;2g&quot;</span> \</span><br><span class="line">	-e SE_EVENT_BUS_PUBLISH_PORT=4442 \</span><br><span class="line">	-e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \</span><br><span class="line">	-p 5900:5900 \</span><br><span class="line">	-p 7900:7900 \</span><br><span class="line">	-v /dev/shm:/dev/shm \</span><br><span class="line">	--name selen-node-chrome1 selenium/node-chrome</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>5900 端口是给VNC客户端用的<br>7900 端口是给noVNC用的</p>
+</blockquote>
+<p>容器可以通过 <code>docker ps -a</code>命令查看 。</p>
+<p>服务起来了，可以在浏览器中查看（我的服务器ip为：43.142.94.65）：<br><a class="link"   href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a></p>
+<p>结果如下：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_1.png"
+                     
+                ></p>
+<p>点开版本号上面的1，可以看到有如下信息（这些信息有用的，记一下，代码里会用到这些参数）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-使用docker-compose创建"><a href="#3-使用docker-compose创建" class="headerlink" title="3. 使用docker-compose创建"></a>3. 使用docker-compose创建</h3><p>如果不想用上面这种依次创建容器的方法，就直接用docker-compose一起创建（内容对照上面的一样的）。</p>
+<p>docker-compose.yml 文件模板如下（Github上也有模板）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># To execute this docker-compose yml file use `docker-compose -f docker-compose-v3.yml up`</span></span><br><span class="line"><span class="comment"># Add the `-d` flag at the end for detached execution</span></span><br><span class="line"><span class="comment"># To stop the execution, hit Ctrl+C, and then `docker-compose -f docker-compose-v3.yml down`</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">chrome:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-chrome:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5900:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7900:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">firefox:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-firefox:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5901:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7901:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">selenium-hub:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/hub:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">selen-hub</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4442:4442&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4443:4443&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4444:4444&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">my-grid:</span></span><br></pre></td></tr></table></figure>
+<p>把docker-compose.yml 文件上传到服务器，然后进入文件所在目录下，执行以下命令运行容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-d ：后台运行</p>
+</blockquote>
+<p>如果文件名没用默认的 docker-compose.yml，就参考上面的提示，加上-f 的文件参数就行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml up -d</span><br></pre></td></tr></table></figure>
+<p>执行完后，通过<code>docker ps -a</code>查看容器列表，如图所示，添加了3个容器（容器需要加name的，自己添加一下container_name参数；还有个firefox不需要的就删除或者注释掉就行。）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_2.png"
+                     
+                ></p>
+<p>要删除这些容器也简单，可以一键删除：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml down</span><br></pre></td></tr></table></figure>
+<h2 id="三、使用Python调用Selenium-Grid"><a href="#三、使用Python调用Selenium-Grid" class="headerlink" title="三、使用Python调用Selenium Grid"></a>三、使用Python调用Selenium Grid</h2><p>这反正跟平常的Selenium WebDriver一样的，参考之前的文章：<a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
+<p>主要就是开头设置有些不一样。这里就需要用到 <a class="link"   href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a> 运行后的这些信息。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<p>代码举例（test.py）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">selenium_grid_url = <span class="string">&#x27;http://43.142.94.65:4444/wd/hub&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># selenium</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.set_capability(<span class="string">&quot;browserName&quot;</span>, <span class="string">&quot;chrome&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;browserVersion&quot;</span>, <span class="string">&quot;102.0&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;platformName&quot;</span>, <span class="string">&quot;Linux&quot;</span>)</span><br><span class="line">wd = webdriver.Remote(command_executor=selenium_grid_url, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>
+<p>用命令运行这个Python文件，<code>python test.py</code>就可以看到运行结果了。也可以用下面远程观看的方式看到运行过程。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_3.png"
+                     
+                ></p>
+<h2 id="四、远程观看"><a href="#四、远程观看" class="headerlink" title="四、远程观看"></a>四、远程观看</h2><p>Selenium 提示VNC客户端和浏览器两种远程方法。</p>
+<h3 id="1-VNC客户端"><a href="#1-VNC客户端" class="headerlink" title="1.VNC客户端"></a>1.VNC客户端</h3><p>vnc viewer是一款优秀的远程控制工具软件。<br>官网下载地址：<a class="link"   href="https://www.realvnc.com/en/connect/download/viewer/" >https://www.realvnc.com/en/connect/download/viewer/<i class="fas fa-external-link-alt"></i></a></p>
+<p>安装好以后 File-&gt;New connection，在弹出的界面中输入node的ip和端口号（比如我这就是43.142.94.65:5900，Name随意），保存后双击启动。<br>连接，会要求输入密码，默认密码：secret</p>
+<p>连接上后，再运行Python selenium的代码，就能看到运行过程了。（结果就像上面那张图一样）</p>
+<h3 id="2-使用浏览器（noVNC）"><a href="#2-使用浏览器（noVNC）" class="headerlink" title="2.使用浏览器（noVNC）"></a>2.使用浏览器（noVNC）</h3><p>我的服务器ip为：43.142.94.65，映射出来的端口也是7900，那打开地址就是：</p>
+<p><a class="link"   href="http://43.142.94.65:7900/vnc.html" >http://43.142.94.65:7900/vnc.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>默认密码：secret</p>
+<p>效果跟上面也是一样的。</p>
+<p>PS.注意服务器防火墙设置里这几个用到的端口开一下。（docker-compose.yml 文件里那些个端口）</p>
+<h2 id="小结的话"><a href="#小结的话" class="headerlink" title="小结的话"></a>小结的话</h2><p>有了这些可以做些什么呢？</p>
+<p>加上前面一篇文章：<a href="/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/" title="服务器 Docker搭建Flask应用（一）">服务器 Docker搭建Flask应用（一）</a>，就在服务器上用Docker创建了3个容器，分别是：</p>
+<ul>
+<li>Flask应用的容器</li>
+<li>selenium hub的容器</li>
+<li>selenium node-chrome的容器</li>
+</ul>
+<p>这样就可以在Flask应用的容器中，代码用selenium爬取数据，写一个get接口，返回json数据；或者做自动化测试。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Selenium</tag>
+        <tag>Python</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -381,94 +469,6 @@
       <tags>
         <tag>Docker</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker版Selenium使用方法</title>
-    <url>/2022/05/29/Docker%E7%89%88Selenium%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
-<p>此文用的就是Docker版Selenium Grid，用的环境是：服务器CentOS8.2。</p>
-<p><strong>Selenium Grid Docker</strong><br>官方文档：<a class="link"   href="https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md" >https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="一、pull需要的docker镜像"><a href="#一、pull需要的docker镜像" class="headerlink" title="一、pull需要的docker镜像"></a>一、pull需要的docker镜像</h2><p>使用到两个镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull selenium/hub</span><br><span class="line">docker pull selenium/node-chrome</span><br></pre></td></tr></table></figure>
-<p>selenium/node-chrome 是无界面的。</p>
-<p>拉取完镜像后，可以用 <code>docker images</code> 查看所有镜像。</p>
-<p>要想能看到实时运行界面，需要pull以下镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull selenium/standalone-chrome-debug</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建容器"><a href="#二、创建容器" class="headerlink" title="二、创建容器"></a>二、创建容器</h2><h3 id="1-创建一个新的-Docker-网络"><a href="#1-创建一个新的-Docker-网络" class="headerlink" title="1.创建一个新的 Docker 网络"></a>1.创建一个新的 Docker 网络</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create my-grid</span><br></pre></td></tr></table></figure>
-<p>可以通过 <code>docker network ls</code>命令查看结果。</p>
-<h3 id="1-Hub节点的容器"><a href="#1-Hub节点的容器" class="headerlink" title="1.Hub节点的容器"></a>1.Hub节点的容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -p 4442-4444:4442-4444 --net my-grid --name selen-hub selenium/hub</span><br></pre></td></tr></table></figure>
-<h3 id="2-Node节点的容器"><a href="#2-Node节点的容器" class="headerlink" title="2.Node节点的容器"></a>2.Node节点的容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --net my-grid -e SE_EVENT_BUS_HOST=selen-hub \</span><br><span class="line">	--shm-size=<span class="string">&quot;2g&quot;</span> \</span><br><span class="line">	-e SE_EVENT_BUS_PUBLISH_PORT=4442 \</span><br><span class="line">	-e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \</span><br><span class="line">	-p 5900:5900 \</span><br><span class="line">	-p 7900:7900 \</span><br><span class="line">	-v /dev/shm:/dev/shm \</span><br><span class="line">	--name selen-node-chrome1 selenium/node-chrome</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>5900 端口是给VNC客户端用的<br>7900 端口是给noVNC用的</p>
-</blockquote>
-<p>容器可以通过 <code>docker ps -a</code>命令查看 。</p>
-<p>服务起来了，可以在浏览器中查看（我的服务器ip为：43.142.94.65）：<br><a class="link"   href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a></p>
-<p>结果如下：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Selenium_1.png"
-                     
-                ></p>
-<p>点开版本号上面的1，可以看到有如下信息（这些信息有用的，记一下，代码里会用到这些参数）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-使用docker-compose创建"><a href="#3-使用docker-compose创建" class="headerlink" title="3. 使用docker-compose创建"></a>3. 使用docker-compose创建</h3><p>如果不想用上面这种依次创建容器的方法，就直接用docker-compose一起创建（内容对照上面的一样的）。</p>
-<p>docker-compose.yml 文件模板如下（Github上也有模板）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># To execute this docker-compose yml file use `docker-compose -f docker-compose-v3.yml up`</span></span><br><span class="line"><span class="comment"># Add the `-d` flag at the end for detached execution</span></span><br><span class="line"><span class="comment"># To stop the execution, hit Ctrl+C, and then `docker-compose -f docker-compose-v3.yml down`</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">chrome:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-chrome:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5900:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7900:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">firefox:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-firefox:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5901:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7901:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">selenium-hub:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/hub:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">selen-hub</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4442:4442&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4443:4443&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4444:4444&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">my-grid:</span></span><br></pre></td></tr></table></figure>
-<p>把docker-compose.yml 文件上传到服务器，然后进入文件所在目录下，执行以下命令运行容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-d ：后台运行</p>
-</blockquote>
-<p>如果文件名没用默认的 docker-compose.yml，就参考上面的提示，加上-f 的文件参数就行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml up -d</span><br></pre></td></tr></table></figure>
-<p>执行完后，通过<code>docker ps -a</code>查看容器列表，如图所示，添加了3个容器（容器需要加name的，自己添加一下container_name参数；还有个firefox不需要的就删除或者注释掉就行。）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Selenium_2.png"
-                     
-                ></p>
-<p>要删除这些容器也简单，可以一键删除：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml down</span><br></pre></td></tr></table></figure>
-<h2 id="三、使用Python调用Selenium-Grid"><a href="#三、使用Python调用Selenium-Grid" class="headerlink" title="三、使用Python调用Selenium Grid"></a>三、使用Python调用Selenium Grid</h2><p>这反正跟平常的Selenium WebDriver一样的，参考之前的文章：<a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
-<p>主要就是开头设置有些不一样。这里就需要用到 <a class="link"   href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a> 运行后的这些信息。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
-<p>代码举例（test.py）：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">selenium_grid_url = <span class="string">&#x27;http://43.142.94.65:4444/wd/hub&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># selenium</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.set_capability(<span class="string">&quot;browserName&quot;</span>, <span class="string">&quot;chrome&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;browserVersion&quot;</span>, <span class="string">&quot;102.0&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;platformName&quot;</span>, <span class="string">&quot;Linux&quot;</span>)</span><br><span class="line">wd = webdriver.Remote(command_executor=selenium_grid_url, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>
-<p>用命令运行这个Python文件，<code>python test.py</code>就可以看到运行结果了。也可以用下面远程观看的方式看到运行过程。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_Selenium_3.png"
-                     
-                ></p>
-<h2 id="四、远程观看"><a href="#四、远程观看" class="headerlink" title="四、远程观看"></a>四、远程观看</h2><p>Selenium 提示VNC客户端和浏览器两种远程方法。</p>
-<h3 id="1-VNC客户端"><a href="#1-VNC客户端" class="headerlink" title="1.VNC客户端"></a>1.VNC客户端</h3><p>vnc viewer是一款优秀的远程控制工具软件。<br>官网下载地址：<a class="link"   href="https://www.realvnc.com/en/connect/download/viewer/" >https://www.realvnc.com/en/connect/download/viewer/<i class="fas fa-external-link-alt"></i></a></p>
-<p>安装好以后 File-&gt;New connection，在弹出的界面中输入node的ip和端口号（比如我这就是43.142.94.65:5900，Name随意），保存后双击启动。<br>连接，会要求输入密码，默认密码：secret</p>
-<p>连接上后，再运行Python selenium的代码，就能看到运行过程了。（结果就像上面那张图一样）</p>
-<h3 id="2-使用浏览器（noVNC）"><a href="#2-使用浏览器（noVNC）" class="headerlink" title="2.使用浏览器（noVNC）"></a>2.使用浏览器（noVNC）</h3><p>我的服务器ip为：43.142.94.65，映射出来的端口也是7900，那打开地址就是：</p>
-<p><a class="link"   href="http://43.142.94.65:7900/vnc.html" >http://43.142.94.65:7900/vnc.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>默认密码：secret</p>
-<p>效果跟上面也是一样的。</p>
-<p>PS.注意服务器防火墙设置里这几个用到的端口开一下。（docker-compose.yml 文件里那些个端口）</p>
-<h2 id="小结的话"><a href="#小结的话" class="headerlink" title="小结的话"></a>小结的话</h2><p>有了这些可以做些什么呢？</p>
-<p>加上前面一篇文章：<a href="/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/" title="服务器 Docker搭建Flask应用（一）">服务器 Docker搭建Flask应用（一）</a>，就在服务器上用Docker创建了3个容器，分别是：</p>
-<ul>
-<li>Flask应用的容器</li>
-<li>selenium hub的容器</li>
-<li>selenium node-chrome的容器</li>
-</ul>
-<p>这样就可以在Flask应用的容器中，代码用selenium爬取数据，写一个get接口，返回json数据；或者做自动化测试。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Linux</tag>
-        <tag>Selenium</tag>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -724,61 +724,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 主题添加 Valine 评论功能</title>
-    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
-    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
-<ul>
-<li>快速、安全</li>
-<li>Emoji</li>
-<li>无后端实现<a id="more"></a></li>
-<li>MarkDown 全语法支持</li>
-<li>轻量易用(~15kb gzipped)</li>
-<li>文章阅读量统计 v1.2.0+</li>
-</ul>
-<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
-<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
-<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
-<blockquote>
-<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
-</blockquote>
-<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
-<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
-<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
-<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
-<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
-<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
-<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
-<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
-<p>有两个部分有添加，都在文件的最后面。</p>
-<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
-<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
-<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
-<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo SSH密钥配置</title>
     <url>/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>配置SSH密钥，可以让本地Git项目与远程的服务器建立联系，让我们在本地写了代码之后直接通过Git操作就可以实现本地代码库与服务器上的代码库同步。</p>
@@ -903,67 +848,57 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
+    <title>Hexo 主题添加 Valine 评论功能</title>
+    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
+    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
 <ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
+<li>快速、安全</li>
+<li>Emoji</li>
+<li>无后端实现<a id="more"></a></li>
+<li>MarkDown 全语法支持</li>
+<li>轻量易用(~15kb gzipped)</li>
+<li>文章阅读量统计 v1.2.0+</li>
 </ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;" >&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;" >&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
+<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
+<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
+<blockquote>
+<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
+<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
+<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
+<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
+<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
+<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
+<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
+<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
+<p>有两个部分有添加，都在文件的最后面。</p>
+<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
+<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
+<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
+<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -1049,6 +984,71 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+<a id="more"></a>
+
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo图片插入方式（兼容Typora）</title>
     <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
     <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
@@ -1072,28 +1072,6 @@
 <h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
 <p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
 <figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -1199,6 +1177,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 修改文件权限</title>
     <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
     <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
@@ -1239,55 +1239,6 @@
 <p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
 <h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
 <p>Readme.txt文件的所有者就变为testuser</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
-<a id="more"></a>
-
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
-<blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
-</blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/linux_nohup_1.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1419,54 +1370,52 @@
       </tags>
   </entry>
   <entry>
-    <title>Python Selenium使用举例</title>
-    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
-<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
 <a id="more"></a>
 
-<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
-<p>如果不知道自己是否安装过，可以用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
 <blockquote>
-<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
 </blockquote>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
-<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
-<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>Chrome WebDriver下载举例</strong></p>
-<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
-<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
-<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
-<p><strong>Edge WebDriver下载举例</strong></p>
-<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
-<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
-<ul>
-<li>G:\Python\software\webdriver\chromedriver.exe、</li>
-<li>G:\Python\software\webdriver\msedgedriver.exe</li>
-</ul>
-<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
-<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
-<ul>
-<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
-<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
-<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
-<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
-</ul>
-<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
-<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
-<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/linux_nohup_1.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
       <categories>
-        <category>Python</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Selenium</tag>
-        <tag>Python</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1563,6 +1512,57 @@
       </tags>
   </entry>
   <entry>
+    <title>Python Selenium使用举例</title>
+    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
+<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+<a id="more"></a>
+
+<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
+<p>如果不知道自己是否安装过，可以用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
+</blockquote>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
+<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
+<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>Chrome WebDriver下载举例</strong></p>
+<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
+<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
+<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
+<p><strong>Edge WebDriver下载举例</strong></p>
+<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
+<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
+<ul>
+<li>G:\Python\software\webdriver\chromedriver.exe、</li>
+<li>G:\Python\software\webdriver\msedgedriver.exe</li>
+</ul>
+<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
+<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
+<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
+<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Selenium</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python openpyxl.load_workbook excel file error</title>
     <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
     <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
@@ -1623,43 +1623,6 @@
       </categories>
       <tags>
         <tag>Selenium</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
-</ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -1753,6 +1716,43 @@
       </categories>
       <tags>
         <tag>Selenium</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -2014,6 +2014,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 生成二维码图片</title>
+    <url>/2022/06/01/Python%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9B%BE%E7%89%87/</url>
+    <content><![CDATA[<p>直接有第三方的库：qrcode<br>地址：<a class="link"   href="https://pypi.org/project/qrcode/" >https://pypi.org/project/qrcode/<i class="fas fa-external-link-alt"></i></a></p>
+<p>生成简单二维码是特别简单，就两步。带logo的麻烦一点，主要是要考虑logo图片的大小啥的。</p>
+<a id="more"></a>
+
+<h2 id="安装qrcode包和PIL包"><a href="#安装qrcode包和PIL包" class="headerlink" title="安装qrcode包和PIL包"></a>安装qrcode包和PIL包</h2><h3 id="1-安装qrcode包"><a href="#1-安装qrcode包" class="headerlink" title="1.安装qrcode包"></a>1.安装qrcode包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install qrcode</span><br></pre></td></tr></table></figure>
+<h3 id="2-安装PIL包"><a href="#2-安装PIL包" class="headerlink" title="2.安装PIL包"></a>2.安装PIL包</h3><p>如果还没有安装PIL的库，运行的时候也会报错，所以也需要安装PIL的库的；而且要用到带Logo的二维码还是要用到图片，要用到PIL的Image对象，所以还是一起安装了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<h2 id="生成普通二维码"><a href="#生成普通二维码" class="headerlink" title="生成普通二维码"></a>生成普通二维码</h2><p>就简单的两步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qrcode.make(<span class="built_in">str</span>)：<span class="built_in">str</span>为二维码包含的文字信息,也可以是网页链接，返回二维码对象</span><br><span class="line">qrcode.save(<span class="built_in">str</span>)：将二维码以<span class="built_in">str</span>为名保存到本地目录（注意文件的扩展名）</span><br><span class="line">qrcode.show()：运行时展示二维码图案</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> qrcode, os</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string"># pip install qrcode 二维码库</span></span><br><span class="line"><span class="string"># pip install Pillow 如果报没有这个PIL库，需要安装一下</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成普通二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode</span>(<span class="params">content, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># 创建包含信息的二维码对象</span></span><br><span class="line">    img = qrcode.make(content)</span><br><span class="line">    img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">    <span class="comment"># img.show() # 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    content = <span class="string">&#x27;https://www.hduzn.cn/&#x27;</span></span><br><span class="line">    qcode_pic_path = <span class="string">&#x27;hello.png&#x27;</span> <span class="comment"># 生成二维码保存的图片</span></span><br><span class="line">    generate_qrcode(content, qcode_pic_path) <span class="comment"># 生成普通二维码</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 返回当前工作目录</span></span><br></pre></td></tr></table></figure>
+<h2 id="生成带logo的二维码"><a href="#生成带logo的二维码" class="headerlink" title="生成带logo的二维码"></a>生成带logo的二维码</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> qrcode, os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成普通二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode</span>(<span class="params">content, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># 创建包含信息的二维码对象</span></span><br><span class="line">    img = qrcode.make(content)</span><br><span class="line">    img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">    <span class="comment"># img.show() # 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成带Logo的二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode_logo</span>(<span class="params">content, logo_pic, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># QRCode() 创建对象</span></span><br><span class="line">    <span class="comment"># version：值为1~40的整数，控制二维码的大小（最小值是1，是个21×21的矩阵）</span></span><br><span class="line">    <span class="comment"># box_size：控制二维码中每个小格子包含的像素数</span></span><br><span class="line">    <span class="comment"># border：控制边框（二维码与图片边界的距离）包含的格子数（默认为4)</span></span><br><span class="line">    <span class="comment"># error_correction：控制二维码的错误纠正功能。可取值下列4个常量： </span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    qrcode.constants.ERROR_CORRECT_X：</span></span><br><span class="line"><span class="string">        1. X=L时，大约7%或更少的错误能被纠正。 </span></span><br><span class="line"><span class="string">        2. X=M（默认）时，大约15%或更少的错误能被纠正。</span></span><br><span class="line"><span class="string">        3. X=Q时，25%以下的错误会被纠正。</span></span><br><span class="line"><span class="string">        4. X=H时，大约30%或更少的错误能被纠正。</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    qr = qrcode.QRCode(</span><br><span class="line">        version=<span class="number">5</span>,</span><br><span class="line">        error_correction=qrcode.constants.ERROR_CORRECT_H,</span><br><span class="line">        box_size=<span class="number">8</span>,</span><br><span class="line">        border=<span class="number">4</span> )</span><br><span class="line">    qr.add_data(content) <span class="comment"># 向二维码中添加信息</span></span><br><span class="line">    qr.make(fit=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    img = qr.make_image()</span><br><span class="line">    img = img.convert(<span class="string">&#x27;RGBA&#x27;</span>) <span class="comment"># 二维码设置为彩色</span></span><br><span class="line">    <span class="comment"># 二维码尺寸</span></span><br><span class="line">    img_w, img_h = img.size</span><br><span class="line">    factor = <span class="number">4</span> <span class="comment"># 默认LOGO最大设为图片的1/4</span></span><br><span class="line">    <span class="comment"># 最大logo尺寸</span></span><br><span class="line">    size_w = <span class="built_in">int</span>(img_w/factor)</span><br><span class="line">    size_h = <span class="built_in">int</span>(img_h/factor)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> Image.<span class="built_in">open</span>(logo_pic) <span class="keyword">as</span> logo:</span><br><span class="line">        logo_w,logo_h = logo.size</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> logo_w &gt; size_w <span class="keyword">or</span> logo_h &gt; size_h:</span><br><span class="line">            logo_w = size_w</span><br><span class="line">            logo_h = size_h</span><br><span class="line">        </span><br><span class="line">        logo = logo.resize((logo_w, logo_h),Image.ANTIALIAS).convert(<span class="string">&#x27;RGBA&#x27;</span>)</span><br><span class="line">        l_w = <span class="built_in">int</span>((img_w-logo_w)/<span class="number">2</span>)</span><br><span class="line">        l_h = <span class="built_in">int</span>((img_h-logo_h)/<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 替换指定位置</span></span><br><span class="line">        img.paste(logo,(l_w,l_h),logo)</span><br><span class="line">        img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">        img.show() <span class="comment"># 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    content = <span class="string">&#x27;https://www.hduzn.cn/&#x27;</span></span><br><span class="line">    logo_pic = <span class="string">&#x27;.\logo.png&#x27;</span></span><br><span class="line"></span><br><span class="line">    qcode_pic_path = <span class="string">&#x27;hello.png&#x27;</span> <span class="comment"># 生成二维码保存的图片</span></span><br><span class="line">    <span class="comment"># generate_qrcode(content, qcode_pic_path) # 生成普通二维码</span></span><br><span class="line">    generate_qrcode_logo(content, logo_pic, qcode_pic_path) <span class="comment"># 生成带Logo的二维码</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 返回当前工作目录</span></span><br></pre></td></tr></table></figure>
+<p>带logo的二维码效果如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_generate_qrcode.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python文件操作 shutil库使用举例</title>
     <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
     <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
@@ -2056,34 +2084,6 @@
 <li>把src文件或目录移动到dst目录</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 生成二维码图片</title>
-    <url>/2022/06/01/Python%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9B%BE%E7%89%87/</url>
-    <content><![CDATA[<p>直接有第三方的库：qrcode<br>地址：<a class="link"   href="https://pypi.org/project/qrcode/" >https://pypi.org/project/qrcode/<i class="fas fa-external-link-alt"></i></a></p>
-<p>生成简单二维码是特别简单，就两步。带logo的麻烦一点，主要是要考虑logo图片的大小啥的。</p>
-<a id="more"></a>
-
-<h2 id="安装qrcode包和PIL包"><a href="#安装qrcode包和PIL包" class="headerlink" title="安装qrcode包和PIL包"></a>安装qrcode包和PIL包</h2><h3 id="1-安装qrcode包"><a href="#1-安装qrcode包" class="headerlink" title="1.安装qrcode包"></a>1.安装qrcode包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install qrcode</span><br></pre></td></tr></table></figure>
-<h3 id="2-安装PIL包"><a href="#2-安装PIL包" class="headerlink" title="2.安装PIL包"></a>2.安装PIL包</h3><p>如果还没有安装PIL的库，运行的时候也会报错，所以也需要安装PIL的库的；而且要用到带Logo的二维码还是要用到图片，要用到PIL的Image对象，所以还是一起安装了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<h2 id="生成普通二维码"><a href="#生成普通二维码" class="headerlink" title="生成普通二维码"></a>生成普通二维码</h2><p>就简单的两步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qrcode.make(<span class="built_in">str</span>)：<span class="built_in">str</span>为二维码包含的文字信息,也可以是网页链接，返回二维码对象</span><br><span class="line">qrcode.save(<span class="built_in">str</span>)：将二维码以<span class="built_in">str</span>为名保存到本地目录（注意文件的扩展名）</span><br><span class="line">qrcode.show()：运行时展示二维码图案</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> qrcode, os</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string"># pip install qrcode 二维码库</span></span><br><span class="line"><span class="string"># pip install Pillow 如果报没有这个PIL库，需要安装一下</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成普通二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode</span>(<span class="params">content, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># 创建包含信息的二维码对象</span></span><br><span class="line">    img = qrcode.make(content)</span><br><span class="line">    img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">    <span class="comment"># img.show() # 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    content = <span class="string">&#x27;https://www.hduzn.cn/&#x27;</span></span><br><span class="line">    qcode_pic_path = <span class="string">&#x27;hello.png&#x27;</span> <span class="comment"># 生成二维码保存的图片</span></span><br><span class="line">    generate_qrcode(content, qcode_pic_path) <span class="comment"># 生成普通二维码</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 返回当前工作目录</span></span><br></pre></td></tr></table></figure>
-<h2 id="生成带logo的二维码"><a href="#生成带logo的二维码" class="headerlink" title="生成带logo的二维码"></a>生成带logo的二维码</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> qrcode, os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成普通二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode</span>(<span class="params">content, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># 创建包含信息的二维码对象</span></span><br><span class="line">    img = qrcode.make(content)</span><br><span class="line">    img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">    <span class="comment"># img.show() # 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成带Logo的二维码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_qrcode_logo</span>(<span class="params">content, logo_pic, qcode_pic_path</span>):</span></span><br><span class="line">    <span class="comment"># QRCode() 创建对象</span></span><br><span class="line">    <span class="comment"># version：值为1~40的整数，控制二维码的大小（最小值是1，是个21×21的矩阵）</span></span><br><span class="line">    <span class="comment"># box_size：控制二维码中每个小格子包含的像素数</span></span><br><span class="line">    <span class="comment"># border：控制边框（二维码与图片边界的距离）包含的格子数（默认为4)</span></span><br><span class="line">    <span class="comment"># error_correction：控制二维码的错误纠正功能。可取值下列4个常量： </span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    qrcode.constants.ERROR_CORRECT_X：</span></span><br><span class="line"><span class="string">        1. X=L时，大约7%或更少的错误能被纠正。 </span></span><br><span class="line"><span class="string">        2. X=M（默认）时，大约15%或更少的错误能被纠正。</span></span><br><span class="line"><span class="string">        3. X=Q时，25%以下的错误会被纠正。</span></span><br><span class="line"><span class="string">        4. X=H时，大约30%或更少的错误能被纠正。</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    qr = qrcode.QRCode(</span><br><span class="line">        version=<span class="number">5</span>,</span><br><span class="line">        error_correction=qrcode.constants.ERROR_CORRECT_H,</span><br><span class="line">        box_size=<span class="number">8</span>,</span><br><span class="line">        border=<span class="number">4</span> )</span><br><span class="line">    qr.add_data(content) <span class="comment"># 向二维码中添加信息</span></span><br><span class="line">    qr.make(fit=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    img = qr.make_image()</span><br><span class="line">    img = img.convert(<span class="string">&#x27;RGBA&#x27;</span>) <span class="comment"># 二维码设置为彩色</span></span><br><span class="line">    <span class="comment"># 二维码尺寸</span></span><br><span class="line">    img_w, img_h = img.size</span><br><span class="line">    factor = <span class="number">4</span> <span class="comment"># 默认LOGO最大设为图片的1/4</span></span><br><span class="line">    <span class="comment"># 最大logo尺寸</span></span><br><span class="line">    size_w = <span class="built_in">int</span>(img_w/factor)</span><br><span class="line">    size_h = <span class="built_in">int</span>(img_h/factor)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> Image.<span class="built_in">open</span>(logo_pic) <span class="keyword">as</span> logo:</span><br><span class="line">        logo_w,logo_h = logo.size</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> logo_w &gt; size_w <span class="keyword">or</span> logo_h &gt; size_h:</span><br><span class="line">            logo_w = size_w</span><br><span class="line">            logo_h = size_h</span><br><span class="line">        </span><br><span class="line">        logo = logo.resize((logo_w, logo_h),Image.ANTIALIAS).convert(<span class="string">&#x27;RGBA&#x27;</span>)</span><br><span class="line">        l_w = <span class="built_in">int</span>((img_w-logo_w)/<span class="number">2</span>)</span><br><span class="line">        l_h = <span class="built_in">int</span>((img_h-logo_h)/<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 替换指定位置</span></span><br><span class="line">        img.paste(logo,(l_w,l_h),logo)</span><br><span class="line">        img.save(qcode_pic_path) <span class="comment"># 二维码保存</span></span><br><span class="line">        img.show() <span class="comment"># 展示二维码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    content = <span class="string">&#x27;https://www.hduzn.cn/&#x27;</span></span><br><span class="line">    logo_pic = <span class="string">&#x27;.\logo.png&#x27;</span></span><br><span class="line"></span><br><span class="line">    qcode_pic_path = <span class="string">&#x27;hello.png&#x27;</span> <span class="comment"># 生成二维码保存的图片</span></span><br><span class="line">    <span class="comment"># generate_qrcode(content, qcode_pic_path) # 生成普通二维码</span></span><br><span class="line">    generate_qrcode_logo(content, logo_pic, qcode_pic_path) <span class="comment"># 生成带Logo的二维码</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 返回当前工作目录</span></span><br></pre></td></tr></table></figure>
-<p>带logo的二维码效果如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_generate_qrcode.png"
-                     
-                ></p>
-]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2552,9 +2552,9 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -2661,8 +2661,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -2753,6 +2753,40 @@
       </categories>
       <tags>
         <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -3016,40 +3050,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3126,6 +3126,141 @@
       </tags>
   </entry>
   <entry>
+    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
+    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
+    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
+<a id="more"></a>
+
+<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>为什么要使用Github Pages？</p>
+<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
+<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
+<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
+<p>（怕有问题，直接搜索安装教程照着来就行）</p>
+<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
+<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
+<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
+<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
+<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
+<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
+<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
+<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_1.png"
+                     
+                >
+
+<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
+<p>操作如下：</p>
+<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
+<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
+<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入完成之后，屏幕会显示如下信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
+<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1).登陆GitHub，进入你的Account Settings</li>
+<li>2).选择SSH Keys</li>
+<li>3).粘贴密钥，添加即可<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#x6f;&#x6d;" >&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果是下面的反馈：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
+<p>不要紧张，输入yes就好，然后会看到：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_3.png"
+                     
+                ></p>
+<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
+<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
+<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_4.png"
+                     
+                >
+
+<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_5.png"
+                     
+                >
+
+<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_6.png"
+                     
+                >
+
+<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_7.png"
+                     
+                ></p>
+<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>或者直接执行 <code>hexo g -d</code></p>
+<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
+<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
+<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
+<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
+<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
+<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
+<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
+<p>2).部署到Github上</p>
+<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
+<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
+<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
+<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
+<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【Windows疑难杂症】打不开网页 解决方法</title>
     <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
@@ -3198,141 +3333,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
-    <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
-    <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
-<a id="more"></a>
-
-<h2 id="一、前期准备（软件安装）"><a href="#一、前期准备（软件安装）" class="headerlink" title="一、前期准备（软件安装）"></a>一、前期准备（软件安装）</h2><h3 id="1-注册Github账号"><a href="#1-注册Github账号" class="headerlink" title="1.注册Github账号"></a>1.注册Github账号</h3><p>【前提】：能上Github网站（<a class="link"   href="https://github.com/" >https://github.com/<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>为什么要使用Github Pages？</p>
-<p>简单快捷，使用Github Pages可以为你提供一个免费的服务器，免去了自己搭建服务器和写数据库的麻烦。可以绑定自己的域名(但只能绑定一个)。</p>
-<p>PS.Github Pages可以被认为是用户编写的、托管在github上的静态网页。</p>
-<h3 id="2-下载安装Node-js"><a href="#2-下载安装Node-js" class="headerlink" title="2.下载安装Node.js"></a>2.下载安装Node.js</h3><p>官网（<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ）下载对应版本安装就行。</p>
-<p>（怕有问题，直接搜索安装教程照着来就行）</p>
-<h3 id="3-下载安装Git"><a href="#3-下载安装Git" class="headerlink" title="3.下载安装Git"></a>3.下载安装Git</h3><p>官网（<a class="link"   href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a> ）会根据你电脑参数，直接跳出对应版本让你下载。</p>
-<p>官网下载很慢，可以到以下地址中下载git安装包（速度贼快）：<br><a class="link"   href="https://npm.taobao.org/mirrors/git-for-windows/" >https://npm.taobao.org/mirrors/git-for-windows/<i class="fas fa-external-link-alt"></i></a></p>
-<p>拉到页面最下面是最新版本，比如windows 64位的系列就下载：<br>Git-2.30.0.2-64-bit.exe</p>
-<p>安装完成后，在命令行输入<code>git version</code>查看是否安装成功。</p>
-<p>也可以在桌面、右键，选择【Git Bash Here】，输入<code>git version</code>命令进行查看安装的git版本。</p>
-<h2 id="二-、安装Hexo"><a href="#二-、安装Hexo" class="headerlink" title="二 、安装Hexo"></a>二 、安装Hexo</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h3><p>安装完了Git后，在桌面、右键，选择【Git Bash Here】，输入以下命令安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>第一句是安装hexo；<br>第二句是安装hexo部署到git page的deployer，两个都需要安装。</p>
-<h3 id="2-Hexo初始化配置（创建Hexo文件夹）"><a href="#2-Hexo初始化配置（创建Hexo文件夹）" class="headerlink" title="2.Hexo初始化配置（创建Hexo文件夹）"></a>2.Hexo初始化配置（创建Hexo文件夹）</h3><p>安装完成后，根据自己喜好建立目录（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，点击【Git Bash Here】，进入Git命令框，输入以下命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<p>安装 Hexo 完成后，Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<h3 id="3-本地运行（服务器）"><a href="#3-本地运行（服务器）" class="headerlink" title="3.本地运行（服务器）"></a>3.本地运行（服务器）</h3><p>依次执行下面命令，执行完即可登录网页 localhost:4000 查看效果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<h2 id="三、将博客部署到Github-Pages上"><a href="#三、将博客部署到Github-Pages上" class="headerlink" title="三、将博客部署到Github Pages上"></a>三、将博客部署到Github Pages上</h2><p>现在本地的博客已经搭建起来了，那么需要做的就是把本地的博客发布到服务器上，让别人也可以连接我们的博客，而Github Pages就帮我完成了这件事情。但是Github Pages的代码就是寄存在Github上面的。所以接下来我们需要在Github上面创建一个新的项目。</p>
-<h3 id="1-登录Github账户"><a href="#1-登录Github账户" class="headerlink" title="1.登录Github账户"></a>1.登录Github账户</h3><h3 id="2-创建Github-Pages项目"><a href="#2-创建Github-Pages项目" class="headerlink" title="2.创建Github Pages项目"></a>2.创建Github Pages项目</h3><p>点击New repository</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_1.png"
-                     
-                >
-
-<h3 id="3-配置SSH密钥"><a href="#3-配置SSH密钥" class="headerlink" title="3.配置SSH密钥"></a>3.配置SSH密钥</h3><p>配置Github的SSH密钥可以让本地git项目与远程的github建立联系，让我们在本地写了代码之后直接通过git操作就可以实现本地代码库与Github代码库同步。</p>
-<p>操作如下：</p>
-<h4 id="第一步、看看是否存在SSH密钥-keys"><a href="#第一步、看看是否存在SSH密钥-keys" class="headerlink" title="第一步、看看是否存在SSH密钥(keys)"></a>第一步、看看是否存在SSH密钥(keys)</h4><p>首先，我们需要看看是否看看本机是否存在SSH keys，打开【Git Bash】，并运行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/. ssh</span><br></pre></td></tr></table></figure>
-<p>检查你本机用户home目录下是否存在.ssh目录，如果，不存在此目录，则进行第二步操作；<br>否则，你本机已经存在ssh公钥和私钥，可以略过第二步，直接进入第三步操作。</p>
-<h4 id="第二步、创建一对新的SSH密钥-keys"><a href="#第二步、创建一对新的SSH密钥-keys" class="headerlink" title="第二步、创建一对新的SSH密钥(keys)"></a>第二步、创建一对新的SSH密钥(keys)</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>#注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，则将密钥按默认文件进行存储。此时也可以输入特定的文件名，比如/c/Users/yourusername/.ssh/github_rsa</p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>（说到这里，如果你很放心，其实可以不用密码，就是到输密码的地方，都直接回车，所以每次push就只管回车就行了。所谓的最安全的密码，就是没有密码 哈哈）。相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入完成之后，屏幕会显示如下信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /c/Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
-<h4 id="第三步、在GitHub账户中添加你的公钥"><a href="#第三步、在GitHub账户中添加你的公钥" class="headerlink" title="第三步、在GitHub账户中添加你的公钥"></a>第三步、在GitHub账户中添加你的公钥</h4><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>1).登陆GitHub，进入你的Account Settings</li>
-<li>2).选择SSH Keys</li>
-<li>3).粘贴密钥，添加即可<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#111;&#x6d;" >&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果是下面的反馈：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
-<p>不要紧张，输入yes就好，然后会看到：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_3.png"
-                     
-                ></p>
-<h4 id="第五步、设置用户信息"><a href="#第五步、设置用户信息" class="headerlink" title="第五步、设置用户信息"></a>第五步、设置用户信息</h4><p>现在你已经可以通过SSH链接到GitHub了，还有一些个人信息需要完善的。 Git会根据用户的名字和邮箱来记录提交。GitHub也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的，名字根据自己的喜好自己取，而不是GitHub的昵称。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;ryanlijianchang&quot;</span> //用户名</span><br><span class="line">git config --global user.email <span class="string">&quot;liji.anchang@163.com&quot;</span> //填写自己的邮箱</span><br></pre></td></tr></table></figure>
-<h4 id="第六步、SSH-Key配置成功"><a href="#第六步、SSH-Key配置成功" class="headerlink" title="第六步、SSH Key配置成功"></a>第六步、SSH Key配置成功</h4><p>本机已成功连接到github。</p>
-<h2 id="四、将本地的Hexo文件更新到Github的库中"><a href="#四、将本地的Hexo文件更新到Github的库中" class="headerlink" title="四、将本地的Hexo文件更新到Github的库中"></a>四、将本地的Hexo文件更新到Github的库中</h2><h4 id="1、登录Github打开自己的项目-username-github-io"><a href="#1、登录Github打开自己的项目-username-github-io" class="headerlink" title="1、登录Github打开自己的项目 username.github.io"></a>1、登录Github打开自己的项目 username.github.io</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_4.png"
-                     
-                >
-
-<h4 id="2、点击SSH，选择SSH类型地址"><a href="#2、点击SSH，选择SSH类型地址" class="headerlink" title="2、点击SSH，选择SSH类型地址"></a>2、点击SSH，选择SSH类型地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_5.png"
-                     
-                >
-
-<h4 id="3、复制仓库对应的SSH地址"><a href="#3、复制仓库对应的SSH地址" class="headerlink" title="3、复制仓库对应的SSH地址"></a>3、复制仓库对应的SSH地址</h4><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_6.png"
-                     
-                >
-
-<h4 id="4、修改Hexo配置文件-config-ylml"><a href="#4、修改Hexo配置文件-config-ylml" class="headerlink" title="4、修改Hexo配置文件 _config.ylml"></a>4、修改Hexo配置文件 _config.ylml</h4><p>打开一开始创建的Hexo文件夹（如F:\Blog\Hexo），用记事本打开文件夹下的 <strong>_config.yml</strong> 文件。<br>在配置文件里作如下修改，保存。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_7.png"
-                     
-                ></p>
-<h4 id="5、在Hexo文件夹下用Git-Bash依次执行以下命令："><a href="#5、在Hexo文件夹下用Git-Bash依次执行以下命令：" class="headerlink" title="5、在Hexo文件夹下用Git Bash依次执行以下命令："></a>5、在Hexo文件夹下用Git Bash依次执行以下命令：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>或者直接执行 <code>hexo g -d</code></p>
-<p>执行完之后会让你输入github的账号和密码，输入完后就可以登录我们自己的部署在Github Pages服务器上的博客了。对应的地址是 username.github.io(例如：ryanlijianchang.github.io)。</p>
-<p>假如这时候，报错 ERROR Deployer not found: git，那么就是你的deployer没有安装成功，你需要执行如下命令再安装一次：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p>这样，你再执行hexo g -d，你的博客就部署到Github上了。</p>
-<h4 id="6、在浏览器上输入自己的主页地址"><a href="#6、在浏览器上输入自己的主页地址" class="headerlink" title="6、在浏览器上输入自己的主页地址"></a>6、在浏览器上输入自己的主页地址</h4><p>在浏览器上输入Github Pager为我们生成的外链（例如：<a class="link"   href="https://ryanlijianchang.github.io/" >https://ryanlijianchang.github.io/<i class="fas fa-external-link-alt"></i></a> ，而ryanlijianchang为Github账号，专属博客地址就是：https://[githu的用户名].github.io/ ）即可看到自己的博客了。当然，每一个人都可以通过这个地址访问到你的博客了。</p>
-<h2 id="五、美化博客"><a href="#五、美化博客" class="headerlink" title="五、美化博客"></a>五、美化博客</h2><h4 id="1、下载喜欢的Hexo主题"><a href="#1、下载喜欢的Hexo主题" class="headerlink" title="1、下载喜欢的Hexo主题"></a>1、下载喜欢的Hexo主题</h4><p>Hexo主题官网：<a class="link"   href="https://hexo.io/themes/" >https://hexo.io/themes/<i class="fas fa-external-link-alt"></i></a><br>下载自己喜欢的主题，比如：hexo-theme-next 主题。</p>
-<h4 id="2、放到themes目录下"><a href="#2、放到themes目录下" class="headerlink" title="2、放到themes目录下"></a>2、放到themes目录下</h4><p>把解压后得到的主题文件夹放到Hexo文件夹下的themes目录下，如：F:\Blog\hexo\themes。</p>
-<h4 id="3、修改Hexo配置文件"><a href="#3、修改Hexo配置文件" class="headerlink" title="3、修改Hexo配置文件"></a>3、修改Hexo配置文件</h4><p>打开Hexo文件夹下的配置文件_config.yml<br>修改参数为：theme: hexo-theme-next</p>
-<h4 id="4、部署主题"><a href="#4、部署主题" class="headerlink" title="4、部署主题"></a>4、部署主题</h4><p>1).先本地部署，返回Hexo目录，右键  Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 即可看见我们的主题已经更换了。</p>
-<p>2).部署到Github上</p>
-<p>打开Hexo文件夹，右键Git Bash，依次输入命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate -deploy</span><br></pre></td></tr></table></figure>
-<p>(第一条clean命令必须要，不然有时因为缓存问题，服务器更新不了主题；<br>第二条可简写成 hexo g -d，也可以分开写)</p>
-<h2 id="六、小结"><a href="#六、小结" class="headerlink" title="六、小结"></a>六、小结</h2><p>在F:\blog\Hexo\source_posts 目录下添加.md的文章后，需要做的是：</p>
-<p>回到 Hexo文件夹，右键，Git Bash，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>执行 <code>hexo server</code> 后，可以打开浏览器，输入 <a class="link"   href="http://localhost:4000/" >http://localhost:4000/<i class="fas fa-external-link-alt"></i></a> 本地查看。</p>
-<p>PS.图片上传用图床（用PicGo工具使用Github图床，教程：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a>）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
