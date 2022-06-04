@@ -15,6 +15,34 @@
 ]]></content>
   </entry>
   <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
     <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
     <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
@@ -105,151 +133,6 @@
       </categories>
       <tags>
         <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker 搭建开源邮件服务器 EwoMail</title>
-    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
-    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
-<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
-<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
- <a id="more"></a>
-
-<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
-<li><p>1).搜索镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
-<li><p>2).pull ewomail 镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
-<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
-</ul>
-<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
-</blockquote>
-<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
-<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
-<p>注释以下行：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
-<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th>记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>A</td>
-<td>mail</td>
-<td>127.0.0.1</td>
-</tr>
-<tr>
-<td>TXT</td>
-<td>@</td>
-<td>v=spf1 127.0.0.1 -all</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>imap</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>smtp</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>CNAME</td>
-<td>pop3</td>
-<td>mail.stephen520.cn</td>
-</tr>
-<tr>
-<td>MX</td>
-<td>@</td>
-<td>mail.stephen520.cn | 10</td>
-</tr>
-</tbody></table>
-<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
-<p><strong>获取DKIM KEY</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
-<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>主机</th>
-<th align="left">记录值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>TXT</td>
-<td>dkim._domainkey</td>
-<td align="left"><code>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</code></td>
-</tr>
-</tbody></table>
-<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
-<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
-<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
-</ul>
-<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
-<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
-<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
-<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
-
-<p>进入容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -462,9 +345,126 @@
       </categories>
       <tags>
         <tag>Docker</tag>
-        <tag>Linux</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker 搭建开源邮件服务器 EwoMail</title>
+    <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
+    <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
+<p>然后装个git，直接就可以下载EwoMail。然后安装的时候发现装 EwoMail 需要干净的系统，没有安装 mysql、nginx。<br>然后发现压根不行，这些不管直接的官方系统，还是别的，反正都带了mysql的。</p>
+<p>于是，索性直接选个带 Docker的Centos系统，用Docker来装EwoMail，因为发现有这个镜像的。</p>
+ <a id="more"></a>
+
+<h2 id="1、下载（pull）镜像"><a href="#1、下载（pull）镜像" class="headerlink" title="1、下载（pull）镜像"></a>1、下载（pull）镜像</h2><ul>
+<li><p>1).搜索镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker search ewomail</span><br></pre></td></tr></table></figure></li>
+<li><p>2).pull ewomail 镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull bestwu/ewomail</span><br></pre></td></tr></table></figure>
+<h2 id="2、构建容器"><a href="#2、构建容器" class="headerlink" title="2、构建容器"></a>2、构建容器</h2></li>
+</ul>
+<h3 id="1-容器配置文件"><a href="#1-容器配置文件" class="headerlink" title="1).容器配置文件"></a>1).容器配置文件</h3><p>创建 <em>docker-compose.yml</em></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">bestwu/ewomail</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">mail.szxx.fun</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ewomail</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;25:25&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;143:143&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;587:587&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;993:993&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;109:109&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;110:110&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;465:465&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;995:995&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3307:3306&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/mysql:/ewomail/mysql/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/vmail:/ewomail/mail</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/rainloop:/ewomail/www/rainloop/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/certs/:/etc/ssl/certs/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/private/:/etc/ssl/private/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/root/ewomail/ssl/dkim/:/ewomail/dkim/</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_ROOT_PASSWORD=123MYSQL456&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;MYSQL_MAIL_PASSWORD=111111MYSQL&quot;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可配置参数<br>MYSQL_ROOT_PASSWORD：mysql数据库root密码，默认：mysql<br>MYSQL_MAIL_PASSWORD：mysql数据库ewomail密码，默认：123456<br>URL：网站链接，后面不要加/线<br>WEBMAIL_URL：邮件系统链接，后面不要加/线<br>TITLE：用户邮箱标题<br>COPYRIGHT： 邮箱管理后台网站版权<br>ICP：邮箱管理后台网站备案号<br>LANGUAGE：语言选择，默认:zh_CN</p>
+</blockquote>
+<h3 id="2-构建容器"><a href="#2-构建容器" class="headerlink" title="2).构建容器"></a>2).构建容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>注：如果容器启动失败，发现25端口被占用，执行以下命令(被postfix进程占用)：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop postfix</span><br></pre></td></tr></table></figure>
+<h2 id="3、关闭10024端口"><a href="#3、关闭10024端口" class="headerlink" title="3、关闭10024端口"></a>3、关闭10024端口</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-修改-main-cf-配置文件："><a href="#2-修改-main-cf-配置文件：" class="headerlink" title="2).修改 main.cf 配置文件："></a>2).修改 main.cf 配置文件：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
+<p>注释以下行：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"># content_filter = smtp-amavis:[127.0.0.1]:10024</span><br></pre></td></tr></table></figure>
+<h2 id="4、域名解析"><a href="#4、域名解析" class="headerlink" title="4、域名解析"></a>4、域名解析</h2><h3 id="1-设置DNS类型"><a href="#1-设置DNS类型" class="headerlink" title="1).设置DNS类型"></a>1).设置DNS类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>mail</td>
+<td>127.0.0.1</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>@</td>
+<td>v=spf1 127.0.0.1 -all</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>imap</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>smtp</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>pop3</td>
+<td>mail.stephen520.cn</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>@</td>
+<td>mail.stephen520.cn | 10</td>
+</tr>
+</tbody></table>
+<p><em>将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<h3 id="2-设置DKIM"><a href="#2-设置DKIM" class="headerlink" title="2).设置DKIM"></a>2).设置DKIM</h3><p>DKIM是电子邮件验证标准，域名密钥识别邮件标准，主要是用来防止被判定为垃圾邮件。<br>每个域名都需要添加一个dkim的key，EwoMail默认安装后已自动添加主域名dkim，只需要设置好dkim的dns即可。</p>
+<p><strong>获取DKIM KEY</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> ewomail amavisd showkeys</span><br></pre></td></tr></table></figure>
+<p>复制输出的信息，打开 <a class="link"   href="http://www.ewomail.com/list-20.html" >http://www.ewomail.com/list-20.html<i class="fas fa-external-link-alt"></i></a> ，整理DKIM，得到：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主机</th>
+<th align="left">记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TXT</td>
+<td>dkim._domainkey</td>
+<td align="left"><code>v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+GgBqnWRl/beLZeVBcz+iu8zB1Cl/mNf2rwVgj/qz0lMo+EFrJWtKE4GBbTzGzdkqksqPZ0Vjoh/P5o0YSGSFgr3GmLidAqCAelJ/sP36Kup9vkl4hprlFb0yjtyFVUtB2GOOFpME/JQdQ8exzY4gnt5bt3CbmMMnilPtOMgD5wIDAQAB</code></td>
+</tr>
+</tbody></table>
+<h2 id="5、配置安全组"><a href="#5、配置安全组" class="headerlink" title="5、配置安全组"></a>5、配置安全组</h2><ul>
+<li>1).在云服务器控制台配置腾讯云<a class="link"   href="https://console.cloud.tencent.com/vpc/securitygroup?rid=1&rid=1" >安全组<i class="fas fa-external-link-alt"></i></a>，打开以上容器监听的端口，并关闭防火墙。</li>
+<li>2).服务器【防火墙】添加规则，允许端口，添加<strong>允许3307端口（映射的MySQL端口）</strong>。</li>
+</ul>
+<h2 id="6、完成"><a href="#6、完成" class="headerlink" title="6、完成"></a>6、完成</h2><p><em>以下将 127.0.0.1 改为自己的服务器 IP地址</em></p>
+<p><strong>邮箱管理后台</strong>：<br><a class="link"   href="http://127.0.0.1:8080/" >http://127.0.0.1:8080/<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/ewomail123</p>
+<p><strong>Rainloop 管理端</strong>：<br><a class="link"   href="http://127.0.0.1/?admin" >http://127.0.0.1/?admin<i class="fas fa-external-link-alt"></i></a><br>默认账号：admin/12345</p>
+<p><strong>Rainloop用户端（前端）</strong>：<br><a class="link"   href="http://127.0.0.1/" >http://127.0.0.1/<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="7、自定义证书"><a href="#7、自定义证书" class="headerlink" title="7、自定义证书"></a>7、自定义证书</h2><p><strong>映射路径</strong></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">/etc/ssl/certs/dovecot.pem</span></span><br><span class="line"><span class="string">/etc/ssl/private/dovecot.pem</span></span><br><span class="line"><span class="string">/ewomail/dkim/mail.pem</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="8、容器相关命令"><a href="#8、容器相关命令" class="headerlink" title="8、容器相关命令"></a>8、容器相关命令</h2><p>查看docker容器是否启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>进入容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1035,71 +1035,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#x69;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#x74;&#64;&#103;&#x69;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;" >&#x67;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo博客部署到云服务器（Ubuntu）上</title>
     <url>/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/</url>
     <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -1181,29 +1116,67 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 自定义页面 跳过渲染</title>
-    <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
-    <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
-<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
-<p><strong>Hexo跳过渲染 方法：</strong></p>
-<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
 <a id="more"></a>
 
-<p><strong>举例</strong></p>
-<p>1.根目录下的a.html文件跳过渲染 配置：</p>
-<p>把a.html文件放在Hexo/source 目录下。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
-<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
-<p>2.source/test 文件夹内所有文件跳过渲染：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
-<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
-<p>4.跳过多个：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#103;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#111;&#109;" >&#103;&#x69;&#116;&#64;&#103;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#64;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -1231,6 +1204,33 @@
 <h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
 <p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
 <figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo 自定义页面 跳过渲染</title>
+    <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
+    <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
+<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
+<p><strong>Hexo跳过渲染 方法：</strong></p>
+<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
+<a id="more"></a>
+
+<p><strong>举例</strong></p>
+<p>1.根目录下的a.html文件跳过渲染 配置：</p>
+<p>把a.html文件放在Hexo/source 目录下。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
+<p>2.source/test 文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
+<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
+<p>4.跳过多个：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -1322,104 +1322,6 @@
 <li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
 <li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
 </ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 修改文件权限</title>
-    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
-    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
-<a id="more"></a>
-
-<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
-<ul>
-<li>read</li>
-<li>write</li>
-<li>execute</li>
-<li>none</li>
-</ul>
-<p>例如：运行命令 <code>ls -l</code> 后</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
-<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
-<ul>
-<li>r 代表read，可读</li>
-<li>w 代表write，可写入</li>
-<li>x 代表execute，可执行</li>
-<li>-代表none</li>
-</ul>
-<p>这里就代表什么样的人对文件有什么样的权限。</p>
-<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
-<ul>
-<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
-<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
-<li>最后3位(r–)表示：其它人，只读</li>
-</ul>
-<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
-<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
-<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
-<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
-<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
-<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
-</ul>
-<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
-<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
-<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
-<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
-<p>Readme.txt文件的所有者就变为testuser</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
-<a id="more"></a>
-
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
-<blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
-</blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/linux_nohup_1.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1536,60 +1438,107 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
-    <title>Python Selenium使用举例</title>
-    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
-<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+    <title>Linux 修改文件权限</title>
+    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
+    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
 <a id="more"></a>
 
-<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
-<p>如果不知道自己是否安装过，可以用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
-</blockquote>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
-<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
-<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>Chrome WebDriver下载举例</strong></p>
-<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
-<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
-<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
-<p><strong>Edge WebDriver下载举例</strong></p>
-<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
-<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
+<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
 <ul>
-<li>G:\Python\software\webdriver\chromedriver.exe、</li>
-<li>G:\Python\software\webdriver\msedgedriver.exe</li>
+<li>read</li>
+<li>write</li>
+<li>execute</li>
+<li>none</li>
 </ul>
-<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
-<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
+<p>例如：运行命令 <code>ls -l</code> 后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
+<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
 <ul>
-<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
-<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
-<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
-<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+<li>r 代表read，可读</li>
+<li>w 代表write，可写入</li>
+<li>x 代表execute，可执行</li>
+<li>-代表none</li>
 </ul>
-<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
-<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
-<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
+<p>这里就代表什么样的人对文件有什么样的权限。</p>
+<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
+<ul>
+<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
+<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
+<li>最后3位(r–)表示：其它人，只读</li>
+</ul>
+<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
+<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
+<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
+<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
+<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
+<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
+</ul>
+<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
+<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
+<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
+<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
+<p>Readme.txt文件的所有者就变为testuser</p>
+]]></content>
       <categories>
-        <category>Python</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Selenium</tag>
-        <tag>Python</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
+<a id="more"></a>
+
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
+<blockquote>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
+</blockquote>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/linux_nohup_1.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1670,6 +1619,57 @@
         <category>Python</category>
       </categories>
       <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Selenium使用举例</title>
+    <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
+<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+<a id="more"></a>
+
+<p>Selenium with Python中文文档：<a class="link"   href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
+<p>如果不知道自己是否安装过，可以用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
+</blockquote>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
+<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>2).Edge WebDriver下载：<br><a class="link"   href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
+<p>3).Firefox WebDriver下载：<br><a class="link"   href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>4).Safari WebDriver下载：<br><a class="link"   href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>Chrome WebDriver下载举例</strong></p>
+<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
+<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
+<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
+<p><strong>Edge WebDriver下载举例</strong></p>
+<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
+<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
+<ul>
+<li>G:\Python\software\webdriver\chromedriver.exe、</li>
+<li>G:\Python\software\webdriver\msedgedriver.exe</li>
+</ul>
+<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
+<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
+<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
+<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Selenium</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -1767,7 +1767,29 @@
       </tags>
   </entry>
   <entry>
-    <title>Python openpyxl.load_workbook excel file error</title>
+    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
+    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
+<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
+<p>但其实我并不想管这个Alert。</p>
+<p><strong>解决方法</strong>：</p>
+<p>就直接把异常捕获一下，pass就行了。</p>
+<a id="more"></a>
+
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error 解决方法</title>
     <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
     <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
 <p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
@@ -1792,6 +1814,41 @@
         <category>Python</category>
       </categories>
       <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python selenium 切换到新的窗口方法</title>
+    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
+<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+<a id="more"></a>
+
+<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
+<p>运行后的结果是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
+<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
+<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+</ul>
+<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
+<p>运行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
+<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Selenium</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -1889,37 +1946,39 @@
       </tags>
   </entry>
   <entry>
-    <title>Python selenium 切换到新的窗口方法</title>
-    <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
 <a id="more"></a>
 
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
 <p><strong>解决思路</strong>：</p>
 <ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
 </ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
 ]]></content>
       <categories>
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Selenium</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -1961,43 +2020,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
-</ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量图片合成pdf文件</title>
     <url>/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
@@ -2019,6 +2041,36 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
 <p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量转换图片格式</title>
+    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
+    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
+<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
+<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
+</ul>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2104,36 +2156,6 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 批量转换图片格式</title>
-    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
-    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
-<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
-<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
-</ul>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2401,6 +2423,25 @@
       </tags>
   </entry>
   <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>TPLink路由器无线桥接、无线中继</title>
     <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
     <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
@@ -2476,25 +2517,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2602,6 +2624,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 升级OpenSSL教程</title>
     <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
@@ -2650,35 +2701,6 @@
 <h3 id="7-检查OpenSSL-版本"><a href="#7-检查OpenSSL-版本" class="headerlink" title="7.检查OpenSSL 版本"></a>7.检查OpenSSL 版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
 <p>我这的运行结果是：<br>OpenSSL 1.1.1i  8 Dec 2020</p>
 ]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
@@ -2746,56 +2768,10 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
       </tags>
   </entry>
   <entry>
@@ -2842,54 +2818,43 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
 </ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
-    <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
-<p>正常情况下，iphone手机连接电脑后，都能看到个Apple iphone的盘符。可以像U盘一样进行操作。<br>可以直接复制手机里的文件，也可以剪切出来。</p>
-<p>于是，我正在清理手机相册，清着清着，突然跳出了错误提示，再然后这个Apple的盘符就不出现了，可以充电，打开itunes也能正常连接。</p>
 <a id="more"></a>
 
-<p><strong>解决方法</strong>：</p>
-<p>去【服务】里面，把【Apple Mobile Device Service】这项服务停止一下，重新启动一下。然后手机重新连上电脑就有盘符了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/iphone_connect_pc_not_see_drive.png"
-                     
-                ></p>
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
 ]]></content>
       <categories>
         <category>iphone</category>
@@ -3159,6 +3124,29 @@
       </tags>
   </entry>
   <entry>
+    <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
+    <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
+<p>正常情况下，iphone手机连接电脑后，都能看到个Apple iphone的盘符。可以像U盘一样进行操作。<br>可以直接复制手机里的文件，也可以剪切出来。</p>
+<p>于是，我正在清理手机相册，清着清着，突然跳出了错误提示，再然后这个Apple的盘符就不出现了，可以充电，打开itunes也能正常连接。</p>
+<a id="more"></a>
+
+<p><strong>解决方法</strong>：</p>
+<p>去【服务】里面，把【Apple Mobile Device Service】这项服务停止一下，重新启动一下。然后手机重新连上电脑就有盘符了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/iphone_connect_pc_not_see_drive.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3235,6 +3223,40 @@
       </tags>
   </entry>
   <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【Windows疑难杂症】打不开网页 解决方法</title>
     <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5/</url>
     <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
@@ -3262,74 +3284,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【不断更新系列】Linux命令小记</title>
-    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>Ubuntu命令</th>
-<th>CentOS命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安装软件</td>
-<td><code>apt-get install package</code></td>
-<td><code>yum install package</code></td>
-</tr>
-<tr>
-<td>删除/卸载软件</td>
-<td><code>apt-get remove package</code></td>
-<td><code>yum remove package</code></td>
-</tr>
-<tr>
-<td>升级软件包</td>
-<td><code>apt-get upgrade</code></td>
-<td><code>yum update</code></td>
-</tr>
-<tr>
-<td>软件包后缀</td>
-<td>*.deb</td>
-<td>*.rpm</td>
-</tr>
-<tr>
-<td>安装已下载的软件包</td>
-<td><code>dpkg -i package.deb</code></td>
-<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
-</tr>
-</tbody></table>
-<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
-<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3395,7 +3349,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#111;&#109;" >&#x67;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#x6d;" >&#103;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3561,68 +3515,6 @@
       </tags>
   </entry>
   <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_1.png"
-                      style="zoom: 50%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_2.png"
-                      style="zoom: 50%;"
-                >
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_3.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_4.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_5.png"
-                      style="zoom: 50%;"
-                >
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_6.png"
-                     
-                >]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>服务器 Docker搭建Flask应用（一）</title>
     <url>/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<p>用Python的Web框架——Flask写了应用，然后就可以放到服务器上。</p>
@@ -3715,6 +3607,68 @@
       </tags>
   </entry>
   <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_1.png"
+                      style="zoom: 50%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_2.png"
+                      style="zoom: 50%;"
+                >
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_3.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_4.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_5.png"
+                      style="zoom: 50%;"
+                >
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_6.png"
+                     
+                >]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>浏览器记住密码后无法查看 解决方法</title>
     <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
     <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
@@ -3751,41 +3705,6 @@
       </categories>
       <tags>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
-    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
-    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
-<a id="more"></a>
-
-<p>如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_1.png"
-                     
-                ></p>
-<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
-<ul>
-<li>1.使用管理员权限登录DSM；</li>
-<li>2.打开【控制面板】；</li>
-<li>3.找到“共享文件夹”；</li>
-<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
-<li>5.切换到“高级权限”标签页；</li>
-<li>6.勾选“启用高级共享权限”后点击确定。</li>
-</ul>
-<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_2.png"
-                     
-                ></p>
-]]></content>
-      <categories>
-        <category>NAS</category>
-      </categories>
-      <tags>
-        <tag>NAS</tag>
       </tags>
   </entry>
   <entry>
@@ -3867,6 +3786,41 @@
       </tags>
   </entry>
   <entry>
+    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
+    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
+    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
+<a id="more"></a>
+
+<p>如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_1.png"
+                     
+                ></p>
+<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
+<ul>
+<li>1.使用管理员权限登录DSM；</li>
+<li>2.打开【控制面板】；</li>
+<li>3.找到“共享文件夹”；</li>
+<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
+<li>5.切换到“高级权限”标签页；</li>
+<li>6.勾选“启用高级共享权限”后点击确定。</li>
+</ul>
+<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>NAS</category>
+      </categories>
+      <tags>
+        <tag>NAS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>重装系统时U盘PE系统进去看不到硬盘 解决方法</title>
     <url>/2022/06/04/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E6%97%B6U%E7%9B%98PE%E7%B3%BB%E7%BB%9F%E8%BF%9B%E5%8E%BB%E7%9C%8B%E4%B8%8D%E5%88%B0%E7%A1%AC%E7%9B%98/</url>
     <content><![CDATA[<p><strong>问题描述</strong>：<br>戴尔灵越7400（inspiron 7400），重装系统时碰到的。<br>用U盘的PE系统进去，想重新分区，看不到硬盘。</p>
@@ -3890,6 +3844,74 @@
       </categories>
       <tags>
         <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【不断更新系列】Linux命令小记</title>
+    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Ubuntu命令</th>
+<th>CentOS命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装软件</td>
+<td><code>apt-get install package</code></td>
+<td><code>yum install package</code></td>
+</tr>
+<tr>
+<td>删除/卸载软件</td>
+<td><code>apt-get remove package</code></td>
+<td><code>yum remove package</code></td>
+</tr>
+<tr>
+<td>升级软件包</td>
+<td><code>apt-get upgrade</code></td>
+<td><code>yum update</code></td>
+</tr>
+<tr>
+<td>软件包后缀</td>
+<td>*.deb</td>
+<td>*.rpm</td>
+</tr>
+<tr>
+<td>安装已下载的软件包</td>
+<td><code>dpkg -i package.deb</code></td>
+<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
+</tr>
+</tbody></table>
+<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
