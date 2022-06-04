@@ -9,7 +9,7 @@
     
     <title>
         
-            H5视频加倍速播放方法 |
+            Python 批量图片合成pdf文件 |
         
         烟雨平生 - 我的学习空间
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">H5视频加倍速播放方法</span>
+            <span class="title-hover-animation">Python 批量图片合成pdf文件</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-06-04 21:51:30</span>
-        <span class="mobile">2022-06-04 21:51</span>
+        <span class="pc">2022-06-04 22:10:43</span>
+        <span class="mobile">2022-06-04 22:10</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/JavaScript/">JavaScript</a>&nbsp;
+                        <a href="/categories/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/JavaScript/">JavaScript</a>&nbsp;
+                        <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,24 +239,24 @@
         
 
         <div class="article-content markdown-body">
-            <p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
-<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
-<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
+            <p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
+<p>Python处理的方法的好处是：效率更快，然后同样的图片内容，合成pdf文件不到20M，而用Photoshop处理出来都50M+。</p>
 <a id="more"></a>
 
-<p><strong>倍速播放方法</strong>：</p>
-<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
-<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
-<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/h5_video_playbackrate.png"
-                      style="zoom: 70%;"
-                >
-
-<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
+<h2 id="一、批量图片设置成一样的大小尺寸和dpi"><a href="#一、批量图片设置成一样的大小尺寸和dpi" class="headerlink" title="一、批量图片设置成一样的大小尺寸和dpi"></a>一、批量图片设置成一样的大小尺寸和dpi</h2><p><strong>如果对图片没有统一大小要求的，可以跳过这一步。</strong></p>
+<p>如果需要图片统一处理的，可以修改尺寸大小这些，这个用PIL库就行。</p>
+<p>安装库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>怎么批量修改的，有文章写了具体介绍：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> ，这里就不详细说了。</p>
+<p>最后反正整好一个处理好图片的文件夹。</p>
+<h2 id="二、把批量图片合成-pdf"><a href="#二、把批量图片合成-pdf" class="headerlink" title="二、把批量图片合成 pdf"></a>二、把批量图片合成 pdf</h2><p>为了pdf文件中图片能按照想要的顺序排序，图片名称直接用：01.jpg,，02.jpg，类似这样的就行。</p>
+<p>需要用到img2pdf 的库。</p>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install img2pdf</span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://pypi.org/project/img2pdf" >https://pypi.org/project/img2pdf<i class="fas fa-external-link-alt"></i></a><br>看一下示例就会用了，有多种情况适用</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
+<p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
 
         </div>
 
@@ -264,11 +264,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：H5视频加倍速播放方法</li>
+        <li>本文标题：Python 批量图片合成pdf文件</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-06-04 21:51:30</li>
+        <li>创建时间：2022-06-04 22:10:43</li>
         <li>
-            本文链接：http://hduzn.cn/2022/06/04/H5视频加倍速播放方法/
+            本文链接：http://hduzn.cn/2022/06/04/Python-批量图片合成pdf文件/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -283,7 +283,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/JavaScript/">#JavaScript</a>&nbsp;
+                        <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -292,29 +292,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Python 批量图片合成pdf文件</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/"
+                           href="/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">iphone连接电脑后不显示Apple iphone盘符 解决方法</span>
+                                <span class="post-nav-title-item">H5视频加倍速播放方法</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -525,7 +510,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E8%AE%BE%E7%BD%AE%E6%88%90%E4%B8%80%E6%A0%B7%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%B0%BA%E5%AF%B8%E5%92%8Cdpi"><span class="nav-text">一、批量图片设置成一样的大小尺寸和dpi</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%8A%8A%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90-pdf"><span class="nav-text">二、把批量图片合成 pdf</span></a></li></ol>
     </div>
 </div>
         </aside>
