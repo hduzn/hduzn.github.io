@@ -1,113 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>2022年，继续重新开始</title>
-    <url>/2021/02/05/2021start/</url>
-    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
-<a id="more"></a>
-
-<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
-<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
-<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
-<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
-<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
-<p>更新于【2022-05-01】</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
-    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
-    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
-<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
-<a id="more"></a>
-
-<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
-<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
-<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
-<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
-<p><strong>Flask项目结构（样例）</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
-<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
-<p><strong>requirements.txt 举例</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
-<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
-<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
-<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
-<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-t 设置镜像名字和版本号</p>
-</blockquote>
-<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
-<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
-<blockquote>
-<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
-</blockquote>
-<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
-<p>COPY指令复制，源文件的各种元数据都会保留。</p>
-<p>例子：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
-<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
-<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
-<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
-<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
-<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
-<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
-<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
-<p>1).格式</p>
-<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
-<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
-<p>2).举例</p>
-<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
-<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
-<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
-<p>3).容器中应用在前台执行（重点）</p>
-<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
-<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
-<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
-<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
-<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
-<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
-<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
-<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
-<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
-<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
-<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
-<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
-<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
-<p>比如举个简单的例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
-<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
-<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
-<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
-<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
-<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
-<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
-<p>举个例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
-<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
-<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
-<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
-<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker EwoMail修改MySQL密码</title>
     <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
@@ -263,6 +156,20 @@
       </tags>
   </entry>
   <entry>
+    <title>2022年，继续重新开始</title>
+    <url>/2021/02/05/2021start/</url>
+    <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
+<a id="more"></a>
+
+<p>N多年前开始，写笔记从百度空间、CSDN空间，到自建的Wordpress、Typecho博客，这些都是动态博客，都是在管理后台，发布文章，前端显示。</p>
+<p>再到后来，用上Hexo这个静态博客后，真香！~ 静态博客，真是太香了！~</p>
+<p>原来用的是免费的Github pages，在上面部署了Hexo博客，文章中的图片也是用的Github的图床。</p>
+<p>但是考虑到Github的问题，动不动不能访问了，访问速度慢了，图片打开不了之类，就想着从Github 迁移回 Gitee上，结果这个Gitee还不支持域名绑定之类，然后反正问题太多，各种麻烦~</p>
+<p>于是，最后的最后，还是选择把Hexo放到自己的云服务器上吧，重新“收拾”了下 ，换了个新主题，好好看呀~ 等域名备案后，就正式可以用了。</p>
+<p>更新于【2022-05-01】</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -380,6 +287,99 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
+    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
+    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
+<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+<a id="more"></a>
+
+<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
+<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
+<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
+<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
+<p><strong>Flask项目结构（样例）</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
+<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong>requirements.txt 举例</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
+<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
+<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
+<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
+<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-t 设置镜像名字和版本号</p>
+</blockquote>
+<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
+<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
+<blockquote>
+<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
+</blockquote>
+<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
+<p>COPY指令复制，源文件的各种元数据都会保留。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
+<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
+<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
+<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
+<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
+<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
+<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
+<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
+<p>1).格式</p>
+<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
+<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
+<p>2).举例</p>
+<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
+<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
+<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
+<p>3).容器中应用在前台执行（重点）</p>
+<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
+<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
+<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
+<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
+<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
+<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
+<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
+<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
+<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
+<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
+<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
+<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
+<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
+<p>比如举个简单的例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
+<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
+<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
+<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
+<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
+<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
+<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
+<p>举个例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
+<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
+<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
+<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
+<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker版Selenium使用方法</title>
     <url>/2022/05/29/Docker%E7%89%88Selenium%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
@@ -465,6 +465,113 @@
         <tag>Linux</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Excel中对ip地址进行排序</title>
+    <url>/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
+    <content><![CDATA[<p>因为ip地址是一个文本，没办法直接用Excel排序。比如：192.168.0.100<br>所以要对ip地址的排序，需要进行一些处理，其实是对ip地址的最后一位进行排序。</p>
+<p><strong>思路</strong>：</p>
+<ul>
+<li>1.用公式获取ip地址的最后一部分，比如ip地址192.168.0.22，获取到22；</li>
+<li>2.以ip地址最后一部分的列为主要关键字进行自定义排序；</li>
+<li>3.删除辅助列，就ok了。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="获取ip地址的最后一部分"><a href="#获取ip地址的最后一部分" class="headerlink" title="获取ip地址的最后一部分"></a>获取ip地址的最后一部分</h2><h3 id="1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号"><a href="#1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号" class="headerlink" title="1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号"></a>1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号</h3><p>这里替换成啥符号都行，只要不是点。主要方便用查找的函数搜索的时候，准确找到最后一部分的起始位置。</p>
+<p><strong>SUBSTITUTE函数</strong>：替换指定文本，在text字符串中用 new_text 替换 old_text。<br><strong>语法</strong>：SUBSTITUTE(text, old_text, new_text, [instance_num])</p>
+<ul>
+<li>instance_num：可选。指定要将第几个old_text 替换为 new_text。否则是全部替换。</li>
+</ul>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号。公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3) </span><br></pre></td></tr></table></figure>
+<p>返回结果如：10.95.22@44</p>
+<h3 id="2-用FIND函数找到-号的位置"><a href="#2-用FIND函数找到-号的位置" class="headerlink" title="2.用FIND函数找到@号的位置"></a>2.用FIND函数找到@号的位置</h3><p>我们要获取的ip地址最后一部分的起始位置就是@符号的后1位。</p>
+<p><strong>FIND函数</strong>：查找在within_text字符串中，第1个出现find_text字符串的起始位置的值，该值从within_text的第1个字符算起。<br><strong>语法</strong>：FIND(find_text, within_text, [start_num])</p>
+<ul>
+<li>start_num：可选。指定find_text中开始进行查找within_text字符串的位置，默认是1。</li>
+</ul>
+<p>公式<code>=FIND(&quot;@&quot;,&quot;192.168.0@44&quot;)</code>返回的结果是：10</p>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号后，获取@符号的位置。结合起来，公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))</span><br></pre></td></tr></table></figure>
+<h3 id="3-用MID函数截取ip地址最后部分"><a href="#3-用MID函数截取ip地址最后部分" class="headerlink" title="3.用MID函数截取ip地址最后部分"></a>3.用MID函数截取ip地址最后部分</h3><p><strong>MID函数</strong>：截取text字符串，从中间截取，可以选择开始和结束的位置。<br><strong>语法</strong>：MID(text, start_num, num_chars)</p>
+<ul>
+<li>num_chars：取几个。</li>
+</ul>
+<p>公式<code>=MID(&quot;192.168.0@44&quot;,10+1,3)</code>返回的结果是：44（文本字符串）</p>
+<p>把A2单元格中的ip地址最后一部分截取出来。结合前面的公式，完整公式为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))+1,3)</span><br></pre></td></tr></table></figure>
+<p>效果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_ip_sort_1.png"
+                     
+                ></p>
+<h2 id="自定义排序"><a href="#自定义排序" class="headerlink" title="自定义排序"></a>自定义排序</h2><p>以ip地址最后一部分为关键字进行自定义排序。</p>
+<p>因为刚才取出来的ip地址的最后一部分这一列（B列）是文本的，所以先复制一列出来，粘贴的时候只粘贴文本，然后格式全部一起转换成数字，就有了C列。</p>
+<p>最后，以C列为关键字进行自定义排序。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_ip_sort_2.png"
+                     
+                ></p>
+<p>最后，把不需要的辅助列都删除即可。</p>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -625,51 +732,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Excel中提取身份证的出生日期和性别</title>
-    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
-    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
-<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
-<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
-<a id="more"></a>
-
-<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
-<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_1.png"
-                     
-                ></p>
-<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_2.png"
-                     
-                ></p>
-<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_3.png"
-                     
-                ></p>
-<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
-<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
-<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
-<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
-<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
-<p>所以把取出的身份证第17位除2取余数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
-<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
-<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Excel</category>
-      </categories>
-      <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -729,6 +791,35 @@
         <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>Markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>H5视频加倍速播放方法</title>
+    <url>/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
+<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
+<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
+<a id="more"></a>
+
+<p><strong>倍速播放方法</strong>：</p>
+<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
+<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/h5_video_playbackrate.png"
+                      style="zoom: 70%;"
+                >
+
+<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -976,7 +1067,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#109;" >&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#104;&#117;&#x62;&#46;&#x63;&#111;&#109;" >&#103;&#105;&#x74;&#64;&#x67;&#x69;&#116;&#104;&#117;&#x62;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -997,7 +1088,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#111;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1338,71 +1429,57 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux命令小记（不断更新中）</title>
-    <url>/2022/05/02/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0%EF%BC%88%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E4%B8%AD%EF%BC%89/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
+    <title>Navicat连接MySQL数据库不成功 解决方法</title>
+    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
+    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
+<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
 <a id="more"></a>
 
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>Ubuntu命令</th>
-<th>CentOS命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安装软件</td>
-<td><code>apt-get install package</code></td>
-<td><code>yum install package</code></td>
-</tr>
-<tr>
-<td>删除/卸载软件</td>
-<td><code>apt-get remove package</code></td>
-<td><code>yum remove package</code></td>
-</tr>
-<tr>
-<td>升级软件包</td>
-<td><code>apt-get upgrade</code></td>
-<td><code>yum update</code></td>
-</tr>
-<tr>
-<td>软件包后缀</td>
-<td>*.deb</td>
-<td>*.rpm</td>
-</tr>
-<tr>
-<td>安装已下载的软件包</td>
-<td><code>dpkg -i package.deb</code></td>
-<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
-</tr>
-</tbody></table>
-<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
-<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="#">Post not found: Ubuntu定时执行python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_1.png"
+                     
+                >
+
+<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>输入密码：123MYSQL456</p>
+<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_2.png"
+                     
+                >
+
+<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
+<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
+<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<blockquote>
+<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+</blockquote>
+<p>然后再查询user表，结果就如上所示。</p>
+<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
+<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+<p>再用Navicat连接MySQL服务器，提示成功！</p>
+<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Linux</category>
+        <category>MySQL</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
+        <tag>MySQL</tag>
+        <tag>Navicat</tag>
       </tags>
   </entry>
   <entry>
@@ -1516,60 +1593,6 @@
         <tag>Linux</tag>
         <tag>Python</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Navicat连接MySQL数据库不成功</title>
-    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
-    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
-<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
-<a id="more"></a>
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_1.png"
-                     
-                >
-
-<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>输入密码：123MYSQL456</p>
-<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_2.png"
-                     
-                >
-
-<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
-<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
-<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<blockquote>
-<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
-</blockquote>
-<p>然后再查询user表，结果就如上所示。</p>
-<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
-<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
-<p>再用Navicat连接MySQL服务器，提示成功！</p>
-<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>Navicat</tag>
       </tags>
   </entry>
   <entry>
@@ -1975,36 +1998,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量转换图片格式</title>
-    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
-    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
-<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
-<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
-</ul>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 数据库（SQLite）教程</title>
     <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
@@ -2085,6 +2078,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 批量转换图片格式</title>
+    <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
+    <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
+<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量转换图片格式"><a href="#批量转换图片格式" class="headerlink" title="批量转换图片格式"></a>批量转换图片格式</h2><p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放转换好格式的图片（比如直接在目录后面加个格式类型）</li>
+<li>第二步，用os.listdir(path) 方法获取path目录下所有的图片文件名，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片，把文件名原来的后缀去掉，保存的时候把新的后缀（格式类型）加上。</li>
+</ul>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 正则表达式</title>
     <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
     <content><![CDATA[<p>正则表达式是什么？</p>
@@ -2106,6 +2129,43 @@
 <h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
 <h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2150,43 +2210,6 @@
 <p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
 </blockquote>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2273,54 +2296,28 @@
       </tags>
   </entry>
   <entry>
-    <title>SQLite 清空表数据并将自增量归0</title>
-    <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
-    <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
-<p>比如要<strong>清空test表中的所有记录数据</strong>。</p>
+    <title>Python用 Mysqldb时报错：MySQLdb._exceptions.OperationalError 解决方法</title>
+    <url>/2022/06/04/Python%E7%94%A8Mysqldb%E6%97%B6%E6%8A%A5%E9%94%99OperationalError/</url>
+    <content><![CDATA[<p>在Python里，用Mysqldb的时候，报错：<code>MySQLdb._exceptions.OperationalError: (2059, &lt;NULL&gt;)</code></p>
+<p>网上查了下 ，说这是将数据迁移至mysql8.0时遇到的问题。</p>
+<p>因为mysql8.0密码加密的问题，mysql8.0对用户密码的加密方式为 <code>caching_sha2_password</code>，然后看了MySQL Workbench的加密方式果然都是这个。</p>
 <a id="more"></a>
-<p>test表中数据如下（其中id是自动增加的）：</p>
-<table>
-<thead>
-<tr>
-<th>id</th>
-<th>code</th>
-<th>name</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>213122</td>
-<td>张三</td>
-</tr>
-<tr>
-<td>2</td>
-<td>213124</td>
-<td>李四</td>
-</tr>
-<tr>
-<td>3</td>
-<td>213125</td>
-<td>王五</td>
-</tr>
-</tbody></table>
-<h3 id="1、清空表数据"><a href="#1、清空表数据" class="headerlink" title="1、清空表数据"></a>1、清空表数据</h3><p>清空test表的SQL语句是：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test</span><br></pre></td></tr></table></figure>
-<h3 id="2、自增量归0"><a href="#2、自增量归0" class="headerlink" title="2、自增量归0"></a>2、自增量归0</h3><p>当SQLite数据库中 表中包含自动增加类型的字段后，会自动建立一个名为 sqlite_sequence 的表。这个表包含两个字段：name 和 seq。</p>
-<ul>
-<li>name：表示记录自增的表名（即 tablename）；</li>
-<li>seq：记录当前的序号（下一条记录就是当前序号+1）</li>
-</ul>
-<p>所以，当清空表中记录后，如果没有把这个自增的序号归0，添加下一条记录的时候，序号会从之前的数+1。</p>
-<p>自增量归0的SQL语句是：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">update sqlite_sequence <span class="keyword">set</span> seq <span class="operator">=</span> <span class="number">0</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;test&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="3、python代码实现"><a href="#3、python代码实现" class="headerlink" title="3、python代码实现"></a>3、python代码实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">sql1 = <span class="string">&#x27;delete from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql1)</span><br><span class="line">sql2 = <span class="string">&#x27;update sqlite_sequence set seq = 0 where name = &#x27;</span> + <span class="string">&quot;&#x27;&quot;</span> + table_name + <span class="string">&quot;&#x27;&quot;</span></span><br><span class="line">cursor.execute(sql2)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>]]></content>
+<p>我在Python里用的时候，可能还不支持这种新增的加密方式，所以要改一下用的root账号的加密方式。</p>
+<p><strong>解决方法</strong>：</p>
+<p>1.在mysql中执行以下命令修改加密方式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; alter user &#39;root&#39;@&#39;localhost&#39; identified with mysql_native_password by &#39;yourpassword&#39;</span><br></pre></td></tr></table></figure>
+<p>yourpassword：你自己mysql root账号的密码</p>
+<p>2.再运行以下命令让其生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; flush privileges</span><br></pre></td></tr></table></figure>
+<p>然后就行了。</p>
+]]></content>
       <categories>
-        <category>Python</category>
+        <category>MySQL</category>
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>SQLite</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -2453,6 +2450,57 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQLite 清空表数据并将自增量归0</title>
+    <url>/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/</url>
+    <content><![CDATA[<p>在普通的SQL中，实现如题这个只需要通过truncate [tablename]就能实现，但在SQLite中，没有truncate，所以需要分2步实现。</p>
+<p>比如要<strong>清空test表中的所有记录数据</strong>。</p>
+<a id="more"></a>
+<p>test表中数据如下（其中id是自动增加的）：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>code</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>213122</td>
+<td>张三</td>
+</tr>
+<tr>
+<td>2</td>
+<td>213124</td>
+<td>李四</td>
+</tr>
+<tr>
+<td>3</td>
+<td>213125</td>
+<td>王五</td>
+</tr>
+</tbody></table>
+<h3 id="1、清空表数据"><a href="#1、清空表数据" class="headerlink" title="1、清空表数据"></a>1、清空表数据</h3><p>清空test表的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test</span><br></pre></td></tr></table></figure>
+<h3 id="2、自增量归0"><a href="#2、自增量归0" class="headerlink" title="2、自增量归0"></a>2、自增量归0</h3><p>当SQLite数据库中 表中包含自动增加类型的字段后，会自动建立一个名为 sqlite_sequence 的表。这个表包含两个字段：name 和 seq。</p>
+<ul>
+<li>name：表示记录自增的表名（即 tablename）；</li>
+<li>seq：记录当前的序号（下一条记录就是当前序号+1）</li>
+</ul>
+<p>所以，当清空表中记录后，如果没有把这个自增的序号归0，添加下一条记录的时候，序号会从之前的数+1。</p>
+<p>自增量归0的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">update sqlite_sequence <span class="keyword">set</span> seq <span class="operator">=</span> <span class="number">0</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;test&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3、python代码实现"><a href="#3、python代码实现" class="headerlink" title="3、python代码实现"></a>3、python代码实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">sql1 = <span class="string">&#x27;delete from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql1)</span><br><span class="line">sql2 = <span class="string">&#x27;update sqlite_sequence set seq = 0 where name = &#x27;</span> + <span class="string">&quot;&#x27;&quot;</span> + table_name + <span class="string">&quot;&#x27;&quot;</span></span><br><span class="line">cursor.execute(sql2)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>SQLite</tag>
       </tags>
   </entry>
   <entry>
@@ -2611,31 +2659,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
-<a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 安装Selenium自动化测试</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
@@ -2673,6 +2696,177 @@
         <tag>Selenium</tag>
         <tag>Python</tag>
         <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_1.png"
+                     
+                >
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_2.png"
+                     
+                >
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone进入DFU模式方法</title>
+    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
+<ul>
+<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
+<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
+<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
+<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
+<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
+<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
+<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
+</ul>
+<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
+<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
+<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
+<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
+</ul>
+<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
+<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
+<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
+<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
+<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
+<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
+</ul>
+<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
+<li>1、进入DFU模式</li>
+<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
+<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
+</ul>
+<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
+    <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
+<p>正常情况下，iphone手机连接电脑后，都能看到个Apple iphone的盘符。可以像U盘一样进行操作。<br>可以直接复制手机里的文件，也可以剪切出来。</p>
+<p>于是，我正在清理手机相册，清着清着，突然跳出了错误提示，再然后这个Apple的盘符就不出现了，可以充电，打开itunes也能正常连接。</p>
+<a id="more"></a>
+
+<p><strong>解决方法</strong>：</p>
+<p>去【服务】里面，把【Apple Mobile Device Service】这项服务停止一下，重新启动一下。然后手机重新连上电脑就有盘符了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/iphone_connect_pc_not_see_drive.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -2936,129 +3130,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_1.png"
-                     
-                >
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_2.png"
-                     
-                >
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone进入DFU模式方法</title>
-    <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
-<ul>
-<li>1.比如系统升级不小心中断了导致白苹果，无法开机了；</li>
-<li>2.重刷系统（就是重装系统，忘记appid密码也可以重刷系统）。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、没有Home键的苹果手机"><a href="#一、没有Home键的苹果手机" class="headerlink" title="一、没有Home键的苹果手机"></a>一、没有Home键的苹果手机</h2><p>iphone X 开始之后的手机，全面屏，没有Home键了。</p>
-<h3 id="进入DFU模式方法"><a href="#进入DFU模式方法" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes/ Finder</li>
-<li>2.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>3.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>4.长按「侧边电源键」约10秒，直到iPhone出现强制关机屏幕变黑</li>
-<li>5.快速长按「音量键降低（-）」（电源键不要放开继续压住）约5秒后松开「侧边电源键」</li>
-<li>6.继续长按「音量键降低（-）」约10秒会进入DFU模式，此时画面会是呈现黑色没信息画面</li>
-<li>7.iTunes/ Finder上就会出现要为设备更新或恢复iPhone的提示画面</li>
-</ul>
-<h3 id="退出DFU模式方法"><a href="#退出DFU模式方法" class="headerlink" title="退出DFU模式方法"></a>退出DFU模式方法</h3><ul>
-<li>1.按压一下「音量键增加（+）」（不用持续压住）</li>
-<li>2.按压一下「音量键降低（-）」（不用持续压住）</li>
-<li>3.最后长按「侧边电源键」约10秒后，直到屏幕变暗，出现Apple Logo再放开。</li>
-</ul>
-<h2 id="二、有Home键的苹果手机"><a href="#二、有Home键的苹果手机" class="headerlink" title="二、有Home键的苹果手机"></a>二、有Home键的苹果手机</h2><p>iphone X 之前的旧型号的苹果手机，都有 Home键。</p>
-<h3 id="进入DFU模式方法-1"><a href="#进入DFU模式方法-1" class="headerlink" title="进入DFU模式方法"></a>进入DFU模式方法</h3><ul>
-<li>1.将手机用原装数据线连接上电脑，打开 iTunes</li>
-<li>2.同时按住顶部的「电源键」+「HOME键」10秒（直到屏幕变黑）</li>
-<li>3.仅仅松开「电源键」，继续按住「HOME键」，再等待15秒</li>
-<li>4.iTunes识别出现，DFU模式驱动成功，但是屏幕始终是黑的！这时成功进入DFU模式。</li>
-</ul>
-<h2 id="三、重刷系统"><a href="#三、重刷系统" class="headerlink" title="三、重刷系统"></a>三、重刷系统</h2><ul>
-<li>1、进入DFU模式</li>
-<li>2、打开itunes时会提示检测到一个处于恢复模式的iPhone，点击确定</li>
-<li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
-</ul>
-<p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3135,6 +3206,104 @@
       </tags>
   </entry>
   <entry>
+    <title>【Windows疑难杂症】打不开网页 解决方法</title>
+    <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5/</url>
+    <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
+<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
+<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
+<p>那就是“疑难杂症”类问题了。</p>
+<a id="more"></a>
+
+<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
+<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
+<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
+<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
+<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
+<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
+<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
+<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
+<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
+<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
+]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【不断更新系列】Linux命令小记</title>
+    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Ubuntu命令</th>
+<th>CentOS命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装软件</td>
+<td><code>apt-get install package</code></td>
+<td><code>yum install package</code></td>
+</tr>
+<tr>
+<td>删除/卸载软件</td>
+<td><code>apt-get remove package</code></td>
+<td><code>yum remove package</code></td>
+</tr>
+<tr>
+<td>升级软件包</td>
+<td><code>apt-get upgrade</code></td>
+<td><code>yum update</code></td>
+</tr>
+<tr>
+<td>软件包后缀</td>
+<td>*.deb</td>
+<td>*.rpm</td>
+</tr>
+<tr>
+<td>安装已下载的软件包</td>
+<td><code>dpkg -i package.deb</code></td>
+<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
+</tr>
+</tbody></table>
+<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【小白教程】免费建立静态博客网站（Github+Hexo）</title>
     <url>/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/</url>
     <content><![CDATA[<p>这是一篇有关如何使用Github Pages和Hexo搭建自己独立博客的详尽教程。里面介绍了如何使用和配置Hexo框架，如何将Hexo部署到自己的Github项目中。</p>
@@ -3197,7 +3366,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;" >&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3315,36 +3484,6 @@
       </tags>
   </entry>
   <entry>
-    <title>【Windows疑难杂症】打不开网页 解决方法</title>
-    <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
-<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
-<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
-<p>那就是“疑难杂症”类问题了。</p>
-<a id="more"></a>
-
-<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
-<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
-<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
-<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
-<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
-<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
-<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
-<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
-]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【行政办公系列】Python批量复制文件并重命名</title>
     <url>/2022/05/28/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%B9%B6%E9%87%8D%E5%91%BD%E5%90%8D/</url>
     <content><![CDATA[<p><strong>问题描述</strong>：</p>
@@ -3390,6 +3529,220 @@
       <tags>
         <tag>Python</tag>
         <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_1.png"
+                      style="zoom: 50%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_2.png"
+                      style="zoom: 50%;"
+                >
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_3.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_4.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_5.png"
+                      style="zoom: 50%;"
+                >
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_6.png"
+                     
+                >]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器记住密码后无法查看 解决方法</title>
+    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
+    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
+<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
+<a id="more"></a>
+
+<p>如图所示（就这个鬼样）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_1.png"
+                     
+                ></p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
+<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
+</ul>
+<p>修改type类型前是这样的：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_2.png"
+                     
+                ></p>
+<p>修改type类型后（已经能看到密码）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_3.png"
+                     
+                ></p>
+<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
+]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用FFmpeg下载m3u8格式视频</title>
+    <url>/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/</url>
+    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
+<p>反正FFmpeg很强大的，功能也很多。这篇文章，主要介绍下载m3u8视频。</p>
+<a id="more"></a>
+
+<p>之前有两篇文章介绍了下载视频的工具，即：</p>
+<ul>
+<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a></li>
+<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a>
+
+</li>
+</ul>
+<p>you-get 和 youtube-dl 这两差不多，youtube-dl 能下载包括油管视频在内的不少视频了。这两都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。而且也都用到了FFmpeg的功能，所以都已经安装了。</p>
+<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
+<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_1.png"
+                      style="zoom: 50%;"
+                ></p>
+<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
+<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
+<h2 id="二、下载m3u8格式视频"><a href="#二、下载m3u8格式视频" class="headerlink" title="二、下载m3u8格式视频"></a>二、下载m3u8格式视频</h2><p>比如，有如下视频想要下载：<br><a class="link"   href="https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a" >https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a<i class="fas fa-external-link-alt"></i></a></p>
+<p>用别的插件一看就能看到是m3u8的。</p>
+<p>这个站点的，先试了下，用 VLC media player 这个播放器软件也可以下载，以前碰到过m3u8格式的无法用这个下载的。<br>如果你没装ffmpeg的话，也可以搜一下“<strong>VLC media player 下载m3u8视频方式</strong>”，这个也简单的。</p>
+<p>不管是用VLC media player 下载，还是用ffmpeg下载，首先都需要找到这个视频的m3u8的地址。</p>
+<h3 id="1-找到视频对应的m3u8地址"><a href="#1-找到视频对应的m3u8地址" class="headerlink" title="1.找到视频对应的m3u8地址"></a>1.找到视频对应的m3u8地址</h3><p>1).直接用浏览器F12开发者工具找m3u8地址</p>
+<p>这个不管Chrome浏览器，还是Edge、Firefox这些基本上所有浏览器都有了。操作如下：</p>
+<ul>
+<li>按<strong>F12</strong>打开浏览器的开发者工具，选择【网络】项；</li>
+<li>在【Name】中找到.m3u8后单击（按Name排序一下，很容易找到的）；</li>
+<li>复制右侧的【请求网址】，网址最后应该都是 .m3u8。</li>
+</ul>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_2.png"
+                      style="zoom: 50%;"
+                >
+
+<p>比如我复制出来为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;r1-ndr.ykt.cbern.com.cn&#x2F;edu_product&#x2F;65&#x2F;video&#x2F;17b9d867547a11eb96b8fa20200c3759&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.false&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8</span><br></pre></td></tr></table></figure>
+<p>2).直接用浏览器插件找m3u8地址</p>
+<p>比如这里直接用“猫抓”的插件：</p>
+<ul>
+<li>播放视频，点击猫抓插件；</li>
+<li>直接复制最上面的m3u8地址。</li>
+</ul>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_3.png"
+                      style="zoom: 50%;"
+                >
+
+<p>复制出来和上面的方法是一样的。</p>
+<h3 id="2-用ffmpeg下载m3u8视频"><a href="#2-用ffmpeg下载m3u8视频" class="headerlink" title="2.用ffmpeg下载m3u8视频"></a>2.用ffmpeg下载m3u8视频</h3><p>添加好环境变量后，直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
+<p>输入命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i 你要下载的m3u8地址 -c copy -bsf:a aac_adtstoasc ./保存视频的名字.mp4</span><br></pre></td></tr></table></figure>
+<p>比如我要下载上面的视频，就输入以下命令后，回车：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i https://r1-ndr.ykt.cbern.com.cn/edu_product/65/video/17b9d867547a11eb96b8fa20200c3759/e6d5486a49d609bfca30e0f3a328f031.1280.720.false/e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8 -c copy -bsf:a aac_adtstoasc ./1234.mp4</span><br></pre></td></tr></table></figure>
+<p>等完成后，这个目录下就有了下载好的名为 1234.mp4的视频了。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_4.png"
+                      style="zoom: 50%;"
+                >]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
+    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
+    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
+<a id="more"></a>
+
+<p>如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_1.png"
+                     
+                ></p>
+<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
+<ul>
+<li>1.使用管理员权限登录DSM；</li>
+<li>2.打开【控制面板】；</li>
+<li>3.找到“共享文件夹”；</li>
+<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
+<li>5.切换到“高级权限”标签页；</li>
+<li>6.勾选“启用高级共享权限”后点击确定。</li>
+</ul>
+<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>NAS</category>
+      </categories>
+      <tags>
+        <tag>NAS</tag>
       </tags>
   </entry>
   <entry>
@@ -3485,143 +3838,29 @@
       </tags>
   </entry>
   <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+    <title>重装系统时U盘PE系统进去看不到硬盘-解决方法</title>
+    <url>/2022/06/04/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E6%97%B6U%E7%9B%98PE%E7%B3%BB%E7%BB%9F%E8%BF%9B%E5%8E%BB%E7%9C%8B%E4%B8%8D%E5%88%B0%E7%A1%AC%E7%9B%98/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：<br>戴尔灵越7400（inspiron 7400），重装系统时碰到的。<br>用U盘的PE系统进去，想重新分区，看不到硬盘。</p>
+<p>电脑原本的win10系统进去，打开分区软件，可以看到硬盘的信息。但看到硬盘的分区都显示BitLocker加密。</p>
 <a id="more"></a>
 
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_1.png"
-                      style="zoom: 50%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_2.png"
-                      style="zoom: 50%;"
-                >
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_3.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_4.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_5.png"
-                      style="zoom: 50%;"
-                >
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_6.png"
-                     
-                >]]></content>
+<p><strong>解决方法</strong>：</p>
+<p><strong>1.取消硬盘BitLocker加密</strong></p>
+<p>从系统的【设置】里搜一下【设备加密】，找到BitLocker加密项，取消就行了。（预装的是Win10的家庭版)<br>取消了BitLocker加密后，发现在U盘的PE系统里，还是看不到硬盘。</p>
+<p><strong>2.改硬盘模式为AHCI</strong></p>
+<p>大多数戴尔机器出厂BIOS默认硬盘模式为Raid On而非AHCI，WIN10纯净版镜像中自带NVME驱动，可以是被AHCI模式下的固态硬盘。<br>这个是官网上对于“安装系统时看不到固态硬盘的解决方案”的回答。</p>
+<p>具体方法如下：<br>开机时连续敲击F2进入BIOS，接下来根据BIOS版本操作，找到SATA Operation选项，选择为AHCI，再保存后重启就可以了。（现在新的BIOS直接搜索一下这个就能找出来了）</p>
+<blockquote>
+<p>①竖版BIOS用户：选择System Configuration=&gt;SATA Operation选择为AHCI<br>②横版BIOS用户：Advance选项下，将SATA Operation选择为AHCI</p>
+</blockquote>
+<p>官网回答地址：<a class="link"   href="https://www.dell.com/support/kbdoc/zh-cn/000149444/%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%9C%8B%E4%B8%8D%E5%88%B0%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88" >安装系统时看不到固态硬盘的解决方案<i class="fas fa-external-link-alt"></i></a></p>
+<p>再进入U盘的PE系统，就可以删除分区，重装再分区啦。</p>
+]]></content>
       <categories>
-        <category>Hexo</category>
+        <category>Windows</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用FFmpeg下载m3u8格式视频</title>
-    <url>/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/</url>
-    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
-<p>反正FFmpeg很强大的，功能也很多。这篇文章，主要介绍下载m3u8视频。</p>
-<a id="more"></a>
-
-<p>之前有两篇文章介绍了下载视频的工具，即：</p>
-<ul>
-<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a></li>
-<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a>
-
-</li>
-</ul>
-<p>you-get 和 youtube-dl 这两差不多，youtube-dl 能下载包括油管视频在内的不少视频了。这两都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。而且也都用到了FFmpeg的功能，所以都已经安装了。</p>
-<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
-<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ffmpeg_download_m3u8_1.png"
-                      style="zoom: 50%;"
-                ></p>
-<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
-<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
-<h2 id="二、下载m3u8格式视频"><a href="#二、下载m3u8格式视频" class="headerlink" title="二、下载m3u8格式视频"></a>二、下载m3u8格式视频</h2><p>比如，有如下视频想要下载：<br><a class="link"   href="https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a" >https://www.zxx.edu.cn/syncClassroom/classActivity?activityId=4cb86b98-b253-4884-b015-fe674f1c0c8a<i class="fas fa-external-link-alt"></i></a></p>
-<p>用别的插件一看就能看到是m3u8的。</p>
-<p>这个站点的，先试了下，用 VLC media player 这个播放器软件也可以下载，以前碰到过m3u8格式的无法用这个下载的。<br>如果你没装ffmpeg的话，也可以搜一下“<strong>VLC media player 下载m3u8视频方式</strong>”，这个也简单的。</p>
-<p>不管是用VLC media player 下载，还是用ffmpeg下载，首先都需要找到这个视频的m3u8的地址。</p>
-<h3 id="1-找到视频对应的m3u8地址"><a href="#1-找到视频对应的m3u8地址" class="headerlink" title="1.找到视频对应的m3u8地址"></a>1.找到视频对应的m3u8地址</h3><p>1).直接用浏览器F12开发者工具找m3u8地址</p>
-<p>这个不管Chrome浏览器，还是Edge、Firefox这些基本上所有浏览器都有了。操作如下：</p>
-<ul>
-<li>按<strong>F12</strong>打开浏览器的开发者工具，选择【网络】项；</li>
-<li>在【Name】中找到.m3u8后单击（按Name排序一下，很容易找到的）；</li>
-<li>复制右侧的【请求网址】，网址最后应该都是 .m3u8。</li>
-</ul>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ffmpeg_download_m3u8_2.png"
-                      style="zoom: 50%;"
-                >
-
-<p>比如我复制出来为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;r1-ndr.ykt.cbern.com.cn&#x2F;edu_product&#x2F;65&#x2F;video&#x2F;17b9d867547a11eb96b8fa20200c3759&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.false&#x2F;e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8</span><br></pre></td></tr></table></figure>
-<p>2).直接用浏览器插件找m3u8地址</p>
-<p>比如这里直接用“猫抓”的插件：</p>
-<ul>
-<li>播放视频，点击猫抓插件；</li>
-<li>直接复制最上面的m3u8地址。</li>
-</ul>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ffmpeg_download_m3u8_3.png"
-                      style="zoom: 50%;"
-                >
-
-<p>复制出来和上面的方法是一样的。</p>
-<h3 id="2-用ffmpeg下载m3u8视频"><a href="#2-用ffmpeg下载m3u8视频" class="headerlink" title="2.用ffmpeg下载m3u8视频"></a>2.用ffmpeg下载m3u8视频</h3><p>添加好环境变量后，直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
-<p>输入命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i 你要下载的m3u8地址 -c copy -bsf:a aac_adtstoasc ./保存视频的名字.mp4</span><br></pre></td></tr></table></figure>
-<p>比如我要下载上面的视频，就输入以下命令后，回车：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i https://r1-ndr.ykt.cbern.com.cn/edu_product/65/video/17b9d867547a11eb96b8fa20200c3759/e6d5486a49d609bfca30e0f3a328f031.1280.720.false/e6d5486a49d609bfca30e0f3a328f031.1280.720.m3u8 -c copy -bsf:a aac_adtstoasc ./1234.mp4</span><br></pre></td></tr></table></figure>
-<p>等完成后，这个目录下就有了下载好的名为 1234.mp4的视频了。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ffmpeg_download_m3u8_4.png"
-                      style="zoom: 50%;"
-                >]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
+        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>

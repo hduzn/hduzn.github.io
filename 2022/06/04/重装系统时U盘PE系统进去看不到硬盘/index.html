@@ -9,7 +9,7 @@
     
     <title>
         
-            【Windows疑难杂症】打不开网页 解决方法 |
+            重装系统时U盘PE系统进去看不到硬盘-解决方法 |
         
         烟雨平生 - 我的学习空间
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">【Windows疑难杂症】打不开网页 解决方法</span>
+            <span class="title-hover-animation">重装系统时U盘PE系统进去看不到硬盘-解决方法</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-06-03 15:39:07</span>
-        <span class="mobile">2022-06-03 15:39</span>
+        <span class="pc">2022-06-04 21:18:53</span>
+        <span class="mobile">2022-06-04 21:18</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -239,25 +239,21 @@
         
 
         <div class="article-content markdown-body">
-            <p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
-<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
-<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
-<p>那就是“疑难杂症”类问题了。</p>
+            <p><strong>问题描述</strong>：<br>戴尔灵越7400（inspiron 7400），重装系统时碰到的。<br>用U盘的PE系统进去，想重新分区，看不到硬盘。</p>
+<p>电脑原本的win10系统进去，打开分区软件，可以看到硬盘的信息。但看到硬盘的分区都显示BitLocker加密。</p>
 <a id="more"></a>
 
-<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
-<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
-<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
-<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
-<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
-<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
-<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
-<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
+<p><strong>解决方法</strong>：</p>
+<p><strong>1.取消硬盘BitLocker加密</strong></p>
+<p>从系统的【设置】里搜一下【设备加密】，找到BitLocker加密项，取消就行了。（预装的是Win10的家庭版)<br>取消了BitLocker加密后，发现在U盘的PE系统里，还是看不到硬盘。</p>
+<p><strong>2.改硬盘模式为AHCI</strong></p>
+<p>大多数戴尔机器出厂BIOS默认硬盘模式为Raid On而非AHCI，WIN10纯净版镜像中自带NVME驱动，可以是被AHCI模式下的固态硬盘。<br>这个是官网上对于“安装系统时看不到固态硬盘的解决方案”的回答。</p>
+<p>具体方法如下：<br>开机时连续敲击F2进入BIOS，接下来根据BIOS版本操作，找到SATA Operation选项，选择为AHCI，再保存后重启就可以了。（现在新的BIOS直接搜索一下这个就能找出来了）</p>
+<blockquote>
+<p>①竖版BIOS用户：选择System Configuration=&gt;SATA Operation选择为AHCI<br>②横版BIOS用户：Advance选项下，将SATA Operation选择为AHCI</p>
+</blockquote>
+<p>官网回答地址：<a class="link"   target="_blank" rel="noopener" href="https://www.dell.com/support/kbdoc/zh-cn/000149444/%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%9C%8B%E4%B8%8D%E5%88%B0%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88" >安装系统时看不到固态硬盘的解决方案<i class="fas fa-external-link-alt"></i></a></p>
+<p>再进入U盘的PE系统，就可以删除分区，重装再分区啦。</p>
 
         </div>
 
@@ -265,11 +261,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：【Windows疑难杂症】打不开网页 解决方法</li>
+        <li>本文标题：重装系统时U盘PE系统进去看不到硬盘-解决方法</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-06-03 15:39:07</li>
+        <li>创建时间：2022-06-04 21:18:53</li>
         <li>
-            本文链接：http://hduzn.cn/2022/06/03/【Windows疑难杂症】打不开网页-解决方法/
+            本文链接：http://hduzn.cn/2022/06/04/重装系统时U盘PE系统进去看不到硬盘/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -296,13 +292,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/"
+                           href="/2022/06/04/Python%E7%94%A8Mysqldb%E6%97%B6%E6%8A%A5%E9%94%99OperationalError/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python Failed to write executable - trying to use .deleteme logic 解决方法</span>
+                                <span class="post-nav-title-item">Python用 Mysqldb时报错：MySQLdb._exceptions.OperationalError 解决方法</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -312,10 +308,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/"
+                           href="/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Excel中提取身份证的出生日期和性别</span>
+                                <span class="post-nav-title-item">Excel中对ip地址进行排序</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -526,7 +522,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#v2rayN%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98"><span class="nav-text">v2rayN使用问题</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
