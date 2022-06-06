@@ -249,7 +249,7 @@
 <p>其中常用的就这3个参数：</p>
 <ul>
 <li>file：打开文件的路径，可以是相对路径，也可以是绝对路径。</li>
-<li>mode：打开文件的模式，常用就3种，’r’表示只读，’w’表示只写，’a’表示追加；默认是’r’。</li>
+<li>mode：打开文件的模式，常用就3种，<code>&#39;r&#39;</code>表示只读，<code>&#39;w&#39;</code>表示只写，<code>&#39;a&#39;</code>表示追加；默认是’r’。</li>
 <li>encoding：字符编码。最常用的就’utf-8’，’gb2312’。</li>
 </ul>
 <h2 id="读取文本文件"><a href="#读取文本文件" class="headerlink" title="读取文本文件"></a>读取文本文件</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文本文件内容</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># s = f.read() # 读取全部文件内容</span></span><br><span class="line">        <span class="comment"># 一行一行读取，存入List</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            data.append(line.strip(<span class="string">&#x27;\n&#x27;</span>)) <span class="comment"># 读取一行</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># f.close()</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data</span><br></pre></td></tr></table></figure>
@@ -258,11 +258,11 @@
 <p>这里为啥用的with as 方法打开文件，而不是直接用 <code>f = open(txt_file, &#39;r&#39;, encoding=&#39;utf-8&#39;)</code> ，好处在之前一篇文章里写了：<a href="/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/" title="Python中with - as用法">Python中with - as用法</a></p>
 <h2 id="写入文本文件"><a href="#写入文本文件" class="headerlink" title="写入文本文件"></a>写入文本文件</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写入文本文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = [<span class="string">&#x27;aaaa&#x27;</span>, <span class="string">&#x27;bbbb&#x27;</span>]</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 一行一行写入</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> data:</span><br><span class="line">            f.write(line+<span class="string">&#x27;\n&#x27;</span>) <span class="comment"># 写入一行</span></span><br></pre></td></tr></table></figure>
 <p>读取文件也一样，一般我们写入一个List的数据，write的时候，后面加个<code>&#39;\n&#39;</code>，就可以换行、一行一行写入了。</p>
-<p>追加写入跟写入文件一样的，就把open函数中，参数mode的’w’改成’a’就行了。</p>
+<p>追加写入跟写入文件一样的，就把open函数中，参数mode的<code>&#39;w&#39;</code>改成<code>&#39;a&#39;</code>就行了。</p>
 <p><strong>关于open函数的mode参数：</strong></p>
 <ul>
-<li>‘rb’：表示二进制方式读</li>
-<li>‘rw’：表示二进制方式写</li>
+<li><code>&#39;rb&#39;</code>：表示二进制方式读</li>
+<li><code>&#39;rw&#39;</code>：表示二进制方式写</li>
 </ul>
 
         </div>
