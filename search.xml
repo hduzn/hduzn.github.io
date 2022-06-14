@@ -136,130 +136,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker常用命令</title>
-    <url>/2022/05/09/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<p>Docker 是一个开源的应用容器引擎。<br>也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要；而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。</p>
-<p>Docker 入门教程：<br><a class="link"   href="https://www.runoob.com/docker/docker-tutorial.html" >https://www.runoob.com/docker/docker-tutorial.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP" >https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p><strong>Docker使用也很简单，一般步骤</strong>：</p>
-<ul>
-<li>拉取一个镜像（<code>docker pull</code>）</li>
-<li>创建一个容器（<code>docker run</code>）</li>
-<li>在容器中运行命令（<code>docker exec </code>）</li>
-</ul>
-<p>简单说，比如我（Centos系统）安装了Docker，可以下载一个ubuntu镜像（image）；<br>然后根据这个镜像，我可以创建容器叫 ubuntu1，ubuntu2，ubuntu3，这样就创建了3个容器；<br>然后进入容器ubuntu1，可以在容器里操作，比如安装mysql；<br>进入ubuntu2，安装sqlserver；<br>……<br>在不同的容器里可以做不同的测试。当不需要第1个容器，就删除第1个就行。</p>
-<h2 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h2><p><code>docker [command] --help</code>可以查看command命令的使用方法</p>
-<p>比如：<code>docker ps --help</code>：就可以查看<code>docker ps</code>这个命令的options（参数选项）。</p>
-<h3 id="1-镜像"><a href="#1-镜像" class="headerlink" title="1.镜像"></a>1.镜像</h3><table>
-<thead>
-<tr>
-<th>docker 命令</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>docker pull</td>
-<td>拉取（下载）镜像</td>
-</tr>
-<tr>
-<td>docker images</td>
-<td>列出镜像</td>
-</tr>
-<tr>
-<td>docker rmi</td>
-<td>删除镜像</td>
-</tr>
-<tr>
-<td>docker image prune</td>
-<td>删除未被容器使用的镜像</td>
-</tr>
-<tr>
-<td>docker build</td>
-<td>创建新镜像（需要Dockerfile）</td>
-</tr>
-<tr>
-<td>docker tag</td>
-<td>标记镜像</td>
-</tr>
-<tr>
-<td>docker save/load</td>
-<td>镜像保存</td>
-</tr>
-</tbody></table>
-<p><strong>查找镜像</strong>两种方法：</p>
-<ul>
-<li>方法一：官方镜像：<a class="link"   href="https://hub.docker.com/search?image_filter=official&amp;q=" >https://hub.docker.com/search?image_filter=official&amp;q=<i class="fas fa-external-link-alt"></i></a> 直接找到对应版本</li>
-<li>方法二：<code>docker search [镜像名称]</code> # <code>docker search mysql</code>，搜索ubuntu镜像，搜索出来OFFICIAL标[OK]的表示官方发布的</li>
-</ul>
-<p><strong>最常用的命令：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull [image name] <span class="comment"># docker pull mysql:8.0 拉取mysql:8.0版本的镜像</span></span><br><span class="line">docker images <span class="comment"># 列出镜像列表</span></span><br><span class="line">docker rmi -f [image name] <span class="comment"># docker rmi -f mysql 强制删除mysql镜像</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-容器"><a href="#2-容器" class="headerlink" title="2.容器"></a>2.容器</h3><table>
-<thead>
-<tr>
-<th>docker 命令</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>docker run</td>
-<td>创建容器</td>
-</tr>
-<tr>
-<td>docker ps</td>
-<td>列出运行中的容器</td>
-</tr>
-<tr>
-<td>docker start/stop</td>
-<td>启动/停止</td>
-</tr>
-<tr>
-<td>docker rm</td>
-<td>删除容器</td>
-</tr>
-<tr>
-<td>docker rename</td>
-<td>重命名</td>
-</tr>
-<tr>
-<td>docker cp</td>
-<td>复制</td>
-</tr>
-<tr>
-<td>docker container prune</td>
-<td>删除停止的容器</td>
-</tr>
-<tr>
-<td>docker exec</td>
-<td>运行命令</td>
-</tr>
-<tr>
-<td>docker commit</td>
-<td>从容器创建新镜像</td>
-</tr>
-</tbody></table>
-<p><strong>最常用的命令：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it ubuntu /bin/bash <span class="comment"># 创建容器后，进入容器，输入`exit`回车退出</span></span><br><span class="line">docker run -itd --name u-test ubuntu /bin/bash <span class="comment"># -d表示后台运行 --name添加名称</span></span><br><span class="line"></span><br><span class="line">docker ps <span class="comment"># 列出运行中的容器</span></span><br><span class="line">docker ps -a <span class="comment"># 列出所有容器（包括停止的容器）</span></span><br><span class="line">docker stop &lt;container ID&gt; <span class="comment"># 停止容器（根据容器ID）</span></span><br><span class="line">docker start &lt;container ID&gt; <span class="comment"># 启动容器（根据容器ID）</span></span><br><span class="line">docker restart &lt;container ID&gt; <span class="comment"># 重启容器（根据容器ID）</span></span><br><span class="line">docker rm -f &lt;container ID&gt; <span class="comment"># 强制（-f参数）删除容器（根据容器ID）</span></span><br><span class="line"></span><br><span class="line">docker <span class="built_in">exec</span> -it &lt;container ID&gt; /bin/bash <span class="comment"># 进入容器（根据容器ID），`exit`退出</span></span><br></pre></td></tr></table></figure>
-<p>Easy提供的一张Docker命令集的图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/docker_command_1.png"
-                      style="zoom: 50%;"
-                ></p>
-<h2 id="docker-常用举例"><a href="#docker-常用举例" class="headerlink" title="docker 常用举例"></a>docker 常用举例</h2><h3 id="1-创建mysql容器"><a href="#1-创建mysql容器" class="headerlink" title="1.创建mysql容器"></a>1.创建mysql容器</h3><p>步骤：</p>
-<ul>
-<li>拉取 mysql8.0版本镜像</li>
-<li>创建mysql容器（-p 把mysql3306的端口映射到主机的3308端口上，root password设置）</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:8.0</span><br><span class="line">docker run -p 3308:3306 --name mysql -e MYSQL_ROOT_PASSWORD=123MYSQL -d mysql:8.0</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -377,6 +253,53 @@
       </tags>
   </entry>
   <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker版Selenium使用方法</title>
     <url>/2022/05/29/Docker%E7%89%88Selenium%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
@@ -459,48 +382,61 @@
       </categories>
       <tags>
         <tag>Docker</tag>
-        <tag>Python</tag>
         <tag>Linux</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
-    <title>Excel中提取身份证的出生日期和性别</title>
-    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
-    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
-<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
-<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+    <title>Excel中对ip地址进行排序</title>
+    <url>/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
+    <content><![CDATA[<p>因为ip地址是一个文本，没办法直接用Excel排序。比如：192.168.0.100<br>所以要对ip地址的排序，需要进行一些处理，其实是对ip地址的最后一位进行排序。</p>
+<p><strong>思路</strong>：</p>
+<ul>
+<li>1.用公式获取ip地址的最后一部分，比如ip地址192.168.0.22，获取到22；</li>
+<li>2.以ip地址最后一部分的列为主要关键字进行自定义排序；</li>
+<li>3.删除辅助列，就ok了。</li>
+</ul>
 <a id="more"></a>
 
-<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
-<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+<h2 id="获取ip地址的最后一部分"><a href="#获取ip地址的最后一部分" class="headerlink" title="获取ip地址的最后一部分"></a>获取ip地址的最后一部分</h2><h3 id="1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号"><a href="#1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号" class="headerlink" title="1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号"></a>1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号</h3><p>这里替换成啥符号都行，只要不是点。主要方便用查找的函数搜索的时候，准确找到最后一部分的起始位置。</p>
+<p><strong>SUBSTITUTE函数</strong>：替换指定文本，在text字符串中用 new_text 替换 old_text。<br><strong>语法</strong>：SUBSTITUTE(text, old_text, new_text, [instance_num])</p>
+<ul>
+<li>instance_num：可选。指定要将第几个old_text 替换为 new_text。否则是全部替换。</li>
+</ul>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号。公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3) </span><br></pre></td></tr></table></figure>
+<p>返回结果如：10.95.22@44</p>
+<h3 id="2-用FIND函数找到-号的位置"><a href="#2-用FIND函数找到-号的位置" class="headerlink" title="2.用FIND函数找到@号的位置"></a>2.用FIND函数找到@号的位置</h3><p>我们要获取的ip地址最后一部分的起始位置就是@符号的后1位。</p>
+<p><strong>FIND函数</strong>：查找在within_text字符串中，第1个出现find_text字符串的起始位置的值，该值从within_text的第1个字符算起。<br><strong>语法</strong>：FIND(find_text, within_text, [start_num])</p>
+<ul>
+<li>start_num：可选。指定find_text中开始进行查找within_text字符串的位置，默认是1。</li>
+</ul>
+<p>公式<code>=FIND(&quot;@&quot;,&quot;192.168.0@44&quot;)</code>返回的结果是：10</p>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号后，获取@符号的位置。结合起来，公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))</span><br></pre></td></tr></table></figure>
+<h3 id="3-用MID函数截取ip地址最后部分"><a href="#3-用MID函数截取ip地址最后部分" class="headerlink" title="3.用MID函数截取ip地址最后部分"></a>3.用MID函数截取ip地址最后部分</h3><p><strong>MID函数</strong>：截取text字符串，从中间截取，可以选择开始和结束的位置。<br><strong>语法</strong>：MID(text, start_num, num_chars)</p>
+<ul>
+<li>num_chars：取几个。</li>
+</ul>
+<p>公式<code>=MID(&quot;192.168.0@44&quot;,10+1,3)</code>返回的结果是：44（文本字符串）</p>
+<p>把A2单元格中的ip地址最后一部分截取出来。结合前面的公式，完整公式为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))+1,3)</span><br></pre></td></tr></table></figure>
+<p>效果如图：<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_1.png"
+                     data-src="/img/Excel_ip_sort_1.png"
                      
                 ></p>
-<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+<h2 id="自定义排序"><a href="#自定义排序" class="headerlink" title="自定义排序"></a>自定义排序</h2><p>以ip地址最后一部分为关键字进行自定义排序。</p>
+<p>因为刚才取出来的ip地址的最后一部分这一列（B列）是文本的，所以先复制一列出来，粘贴的时候只粘贴文本，然后格式全部一起转换成数字，就有了C列。</p>
+<p>最后，以C列为关键字进行自定义排序。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_2.png"
+                     data-src="/img/Excel_ip_sort_2.png"
                      
                 ></p>
-<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_3.png"
-                     
-                ></p>
-<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
-<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
-<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
-<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
-<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
-<p>所以把取出的身份证第17位除2取余数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
-<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
-<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
+<p>最后，把不需要的辅助列都删除即可。</p>
 <p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
 ]]></content>
       <categories>
@@ -612,63 +548,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_1.png"
-                     
-                >
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_3.png"
-                     
-                >
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_4.png"
-                     
-                ></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_5.png"
-                     
-                ></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -725,9 +604,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>Markdown</tag>
+        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -757,6 +636,63 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_1.png"
+                     
+                >
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_3.png"
+                     
+                >
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_4.png"
+                     
+                ></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_5.png"
+                     
+                ></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -972,66 +908,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Excel中对ip地址进行排序</title>
-    <url>/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
-    <content><![CDATA[<p>因为ip地址是一个文本，没办法直接用Excel排序。比如：192.168.0.100<br>所以要对ip地址的排序，需要进行一些处理，其实是对ip地址的最后一位进行排序。</p>
-<p><strong>思路</strong>：</p>
-<ul>
-<li>1.用公式获取ip地址的最后一部分，比如ip地址192.168.0.22，获取到22；</li>
-<li>2.以ip地址最后一部分的列为主要关键字进行自定义排序；</li>
-<li>3.删除辅助列，就ok了。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="获取ip地址的最后一部分"><a href="#获取ip地址的最后一部分" class="headerlink" title="获取ip地址的最后一部分"></a>获取ip地址的最后一部分</h2><h3 id="1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号"><a href="#1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号" class="headerlink" title="1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号"></a>1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号</h3><p>这里替换成啥符号都行，只要不是点。主要方便用查找的函数搜索的时候，准确找到最后一部分的起始位置。</p>
-<p><strong>SUBSTITUTE函数</strong>：替换指定文本，在text字符串中用 new_text 替换 old_text。<br><strong>语法</strong>：SUBSTITUTE(text, old_text, new_text, [instance_num])</p>
-<ul>
-<li>instance_num：可选。指定要将第几个old_text 替换为 new_text。否则是全部替换。</li>
-</ul>
-<p>把A2单元格中的字符串中的第3个点（.）替换成@号。公式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3) </span><br></pre></td></tr></table></figure>
-<p>返回结果如：10.95.22@44</p>
-<h3 id="2-用FIND函数找到-号的位置"><a href="#2-用FIND函数找到-号的位置" class="headerlink" title="2.用FIND函数找到@号的位置"></a>2.用FIND函数找到@号的位置</h3><p>我们要获取的ip地址最后一部分的起始位置就是@符号的后1位。</p>
-<p><strong>FIND函数</strong>：查找在within_text字符串中，第1个出现find_text字符串的起始位置的值，该值从within_text的第1个字符算起。<br><strong>语法</strong>：FIND(find_text, within_text, [start_num])</p>
-<ul>
-<li>start_num：可选。指定find_text中开始进行查找within_text字符串的位置，默认是1。</li>
-</ul>
-<p>公式<code>=FIND(&quot;@&quot;,&quot;192.168.0@44&quot;)</code>返回的结果是：10</p>
-<p>把A2单元格中的字符串中的第3个点（.）替换成@号后，获取@符号的位置。结合起来，公式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))</span><br></pre></td></tr></table></figure>
-<h3 id="3-用MID函数截取ip地址最后部分"><a href="#3-用MID函数截取ip地址最后部分" class="headerlink" title="3.用MID函数截取ip地址最后部分"></a>3.用MID函数截取ip地址最后部分</h3><p><strong>MID函数</strong>：截取text字符串，从中间截取，可以选择开始和结束的位置。<br><strong>语法</strong>：MID(text, start_num, num_chars)</p>
-<ul>
-<li>num_chars：取几个。</li>
-</ul>
-<p>公式<code>=MID(&quot;192.168.0@44&quot;,10+1,3)</code>返回的结果是：44（文本字符串）</p>
-<p>把A2单元格中的ip地址最后一部分截取出来。结合前面的公式，完整公式为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))+1,3)</span><br></pre></td></tr></table></figure>
-<p>效果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_ip_sort_1.png"
-                     
-                ></p>
-<h2 id="自定义排序"><a href="#自定义排序" class="headerlink" title="自定义排序"></a>自定义排序</h2><p>以ip地址最后一部分为关键字进行自定义排序。</p>
-<p>因为刚才取出来的ip地址的最后一部分这一列（B列）是文本的，所以先复制一列出来，粘贴的时候只粘贴文本，然后格式全部一起转换成数字，就有了C列。</p>
-<p>最后，以C列为关键字进行自定义排序。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_ip_sort_2.png"
-                     
-                ></p>
-<p>最后，把不需要的辅助列都删除即可。</p>
-<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
-]]></content>
-      <categories>
-        <category>Office</category>
-      </categories>
-      <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo博客同步部署到Github Pages</title>
     <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
     <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
@@ -1064,7 +940,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#109;" >&#103;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#109;" >&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1085,15 +961,15 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;" >&#103;&#x69;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -1533,8 +1409,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Linux</tag>
+        <tag>Python</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -1666,8 +1542,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1781,8 +1657,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1845,8 +1721,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1938,8 +1814,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2076,35 +1952,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 正则表达式</title>
-    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-    <content><![CDATA[<p>正则表达式是什么？</p>
-<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
-<p>比如：</p>
-<ul>
-<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
-<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
-<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
-<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 数据库（SQLite）教程</title>
     <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
@@ -2185,6 +2032,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 正则表达式</title>
+    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p>正则表达式是什么？</p>
+<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
+<p>比如：</p>
+<ul>
+<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
+<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
+<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
+<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 读写文本文件</title>
     <url>/2022/06/06/Python-%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<p>文本文件，就是可以用记事本程序打开的纯文本内容的文件。</p>
@@ -2213,6 +2089,43 @@
 <li><code>&#39;rw&#39;</code>：表示二进制方式写</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2257,43 +2170,6 @@
 <p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
 </blockquote>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2645,8 +2521,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Github</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
       </tags>
@@ -2865,9 +2741,52 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Linux</tag>
         <tag>Selenium</tag>
+        <tag>Python</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_1.png"
+                     
+                >
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_2.png"
+                     
+                >
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -2918,49 +2837,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_1.png"
-                     
-                >
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_2.png"
-                     
-                >
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
     <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
     <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
@@ -2981,6 +2857,40 @@
       </categories>
       <tags>
         <tag>iphone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -3244,40 +3154,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3514,7 +3390,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;" >&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#x69;&#x74;&#x40;&#x67;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3581,8 +3457,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Github</tag>
         <tag>Hexo</tag>
+        <tag>Github</tag>
         <tag>PicGo</tag>
       </tags>
   </entry>
@@ -3627,8 +3503,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Office</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3675,8 +3551,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Office</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
