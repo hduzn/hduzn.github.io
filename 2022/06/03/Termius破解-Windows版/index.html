@@ -9,7 +9,7 @@
     
     <title>
         
-            【Windows疑难杂症】打不开网页 解决方法 |
+            Termius破解方法（Windows版） |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">【Windows疑难杂症】打不开网页 解决方法</span>
+            <span class="title-hover-animation">Termius破解方法（Windows版）</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-06-03 15:39:07</span>
-        <span class="mobile">2022-06-03 15:39</span>
+        <span class="pc">2022-06-03 11:15:15</span>
+        <span class="mobile">2022-06-03 11:15</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                        <a href="/categories/Software/">Software</a>&nbsp;
                     </li>
                 
             </ul>
@@ -217,6 +217,10 @@
                 
                     <li>
                         <a href="/tags/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Software/">Software</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,25 +243,58 @@
         
 
         <div class="article-content markdown-body">
-            <p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
-<p><strong>情况一</strong>：先看看QQ能不能上，能上QQ，不能打开网页，表示是DNS问题，修改下DNS就行了。<br>比如DNS用114.114.114.114或者8.8.8.8，这些公共的DNS试一下。就解决了。</p>
-<p><strong>情况二</strong>：QQ能上，DNS设置也没问题（修改过），ping外网也是通的，但是就是打不开网页。换了浏览器也不行，排除浏览器问题。</p>
-<p>那就是“疑难杂症”类问题了。</p>
+            <p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
+<p>软件有免费版和付费版，免费版就已经提供SSH功能，满足连接并操作Linux服务器的需求。</p>
+<p>免费版的缺点是不能用SFTP，也不能云同步。这不能用SFTP就挺麻烦的，现在用的都是XShell+Xftp的免费版，起码日常用用是够用的。然后收费还是订阅的制（更贵了），不是专门运维人员，自己用用，感觉太贵了。</p>
 <a id="more"></a>
 
-<p>别的也不管了，反正就重置Winsock目录以恢复默认网络状态。</p>
-<p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
-<p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
-<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
-<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
-<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
-<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
-<p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
+<p>所以，为了用用SFTP功能，看了下网上破解的方法。就试了下。</p>
+<p>提前说明一下：</p>
+<blockquote>
+<p>目前下载的最新版：7.41.3版本，里面文件的方法啥的都变了，所以不能用以下方便破解了。<br>看别人用7.26.2的版本还能找到这个js文件里破解的，于是下载了个旧版本，7.26.2之前的版本。（意思就是7.26.2之前的版本可以用此方便尝试破解，之后就不能保证了。）</p>
+</blockquote>
+<h2 id="一、工具准备"><a href="#一、工具准备" class="headerlink" title="一、工具准备"></a>一、工具准备</h2><h3 id="1-VS-Code（需安装Prettier插件）"><a href="#1-VS-Code（需安装Prettier插件）" class="headerlink" title="1.VS Code（需安装Prettier插件）"></a>1.VS Code（需安装Prettier插件）</h3><p>用来打开一个js文件，Prettier插件主要是让js文件格式化显示的，这样方便查看。</p>
+<p>我这原来就有VS Code，安装下插件就行了。<br>VS Code官方下载地址：<a class="link"   target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/?dv=win" >https://code.visualstudio.com/docs/?dv=win<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="2-Node-js"><a href="#2-Node-js" class="headerlink" title="2.Node.js"></a>2.Node.js</h3><p>用来安装asar，然后后面解压asar文件的。</p>
+<p>1).下载安装Node.js</p>
+<p>官网下载地址：<a class="link"   target="_blank" rel="noopener" href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ，下载对应版本安装就行。<br>（怕有问题，直接搜索安装教程照着来就行）</p>
+<p>2).安装asar</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g asar</span><br></pre></td></tr></table></figure>
+<p>Hexo博客的，原来也都有安装Node.js，所以直接安装一下asar就行了。</p>
+<h3 id="3-Termius安装包"><a href="#3-Termius安装包" class="headerlink" title="3.Termius安装包"></a>3.Termius安装包</h3><h2 id="二、破解Termius"><a href="#二、破解Termius" class="headerlink" title="二、破解Termius"></a>二、破解Termius</h2><p>看了下网上大佬的破解方法，就是：</p>
+<ul>
+<li>找到resources目录下有个app.asar的包，解压出来后修改里面有个ui-process.js文件；</li>
+<li>找到js文件里 isProUser（判断是否Pro收费用户）的地方，直接让方法返回True；</li>
+<li>最后再改一下用户名，直接定义个字符串。</li>
+</ul>
+<h3 id="1-安装Termius"><a href="#1-安装Termius" class="headerlink" title="1.安装Termius"></a>1.安装Termius</h3><p>直接【先断网】，再安装，这样也不会把老版本强制升级什么了。</p>
+<h3 id="2-解压app-asar"><a href="#2-解压app-asar" class="headerlink" title="2.解压app.asar"></a>2.解压app.asar</h3><p>在安装好的Termius快捷方式上，右键-&gt;属性，找到安装路径，然后进入resources目录。<br>一般默认路径为：<code>C:\Users\[user_name]\AppData\Local\Programs\Termius\resources</code></p>
+<p>这个目录下有一个app.asar，还有一个app-update.yml（看名字就是软件更新相关）文件先删除。</p>
+<p>在这个目录下，用命令行运行以下命令解压app.asar，得到一个app目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asar e app.asar app</span><br></pre></td></tr></table></figure>
+<h3 id="3-VS-Code打开ui-process-js并格式化"><a href="#3-VS-Code打开ui-process-js并格式化" class="headerlink" title="3.VS Code打开ui-process.js并格式化"></a>3.VS Code打开ui-process.js并格式化</h3><p>用VS Code（需安装Prettier插件）打开 <code>resources\app\js\ui-process.js</code>文件。</p>
+<p>然后按 Ctrl+Shift+P，输入format搜索，选择 Format Document（格式化文档）。</p>
+<h3 id="4-ui-process-js中修改isProUser相关处"><a href="#4-ui-process-js中修改isProUser相关处" class="headerlink" title="4.ui-process.js中修改isProUser相关处"></a>4.ui-process.js中修改isProUser相关处</h3><p>等完成格式化后，Ctrl+F，搜索字段<code>isProUser</code>，找到类似下图所示的地方，不同版本函数会有不一样的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_1.png"
+                     
+                ></p>
+<p>然后，按Ctrl加鼠标单击，跳转至该函数处，反正把内容直接改成<code>return true;</code>，如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_2.png"
+                     
+                ></p>
+<h3 id="5-ui-process-js中修改username"><a href="#5-ui-process-js中修改username" class="headerlink" title="5.ui-process.js中修改username"></a>5.ui-process.js中修改username</h3><p>搜索字段<code>user.username</code>，把这里return后面直接写个字符串，任意值，随便的。例如：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_3.png"
+                     
+                ></p>
+<p>最后保存一下。</p>
+<p>再打开Termius的时候，发现SFTP功能就可以用了。</p>
+<p>PS.ui-process.js是全平台通用的，只需要修改一次。如果是mac版本，反正同一个版本号的话，直接把这个文件覆盖原安装目录下的ui-process.js文件就行。</p>
 
         </div>
 
@@ -265,11 +302,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：【Windows疑难杂症】打不开网页 解决方法</li>
+        <li>本文标题：Termius破解方法（Windows版）</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-06-03 15:39:07</li>
+        <li>创建时间：2022-06-03 11:15:15</li>
         <li>
-            本文链接：http://hduzn.cn/2022/06/03/【Windows疑难杂症】打不开网页/
+            本文链接：http://hduzn.cn/2022/06/03/Termius破解-Windows版/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -287,6 +324,10 @@
                         <a href="/tags/Windows/">#Windows</a>&nbsp;
                     </li>
                 
+                    <li class="tag-item">
+                        <a href="/tags/Software/">#Software</a>&nbsp;
+                    </li>
+                
             </ul>
         
 
@@ -296,13 +337,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/"
+                           href="/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python Failed to write executable - trying to use .deleteme logic 解决方法</span>
+                                <span class="post-nav-title-item">Excel中提取身份证的出生日期和性别</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -312,10 +353,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/"
+                           href="/2022/06/01/Python%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9B%BE%E7%89%87/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Excel中提取身份证的出生日期和性别</span>
+                                <span class="post-nav-title-item">Python 生成二维码图片</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -526,7 +567,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#v2rayN%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98"><span class="nav-text">v2rayN使用问题</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%B7%A5%E5%85%B7%E5%87%86%E5%A4%87"><span class="nav-text">一、工具准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-VS-Code%EF%BC%88%E9%9C%80%E5%AE%89%E8%A3%85Prettier%E6%8F%92%E4%BB%B6%EF%BC%89"><span class="nav-text">1.VS Code（需安装Prettier插件）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Node-js"><span class="nav-text">2.Node.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Termius%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-text">3.Termius安装包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%A0%B4%E8%A7%A3Termius"><span class="nav-text">二、破解Termius</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85Termius"><span class="nav-text">1.安装Termius</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%A7%A3%E5%8E%8Bapp-asar"><span class="nav-text">2.解压app.asar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-VS-Code%E6%89%93%E5%BC%80ui-process-js%E5%B9%B6%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-text">3.VS Code打开ui-process.js并格式化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ui-process-js%E4%B8%AD%E4%BF%AE%E6%94%B9isProUser%E7%9B%B8%E5%85%B3%E5%A4%84"><span class="nav-text">4.ui-process.js中修改isProUser相关处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-ui-process-js%E4%B8%AD%E4%BF%AE%E6%94%B9username"><span class="nav-text">5.ui-process.js中修改username</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
