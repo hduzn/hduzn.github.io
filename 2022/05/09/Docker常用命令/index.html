@@ -9,7 +9,7 @@
     
     <title>
         
-            Python selenium 切换到新的窗口方法 |
+            Docker常用命令 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Python selenium 切换到新的窗口方法</span>
+            <span class="title-hover-animation">Docker常用命令</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-19 14:20:00</span>
-        <span class="mobile">2021-02-19 14:20</span>
+        <span class="pc">2022-05-09 10:37:56</span>
+        <span class="mobile">2022-05-09 10:37</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -219,10 +219,6 @@
                         <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
-                    <li>
-                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
-                    </li>
-                
             </ul>
         </span>
     
@@ -243,41 +239,131 @@
         
 
         <div class="article-content markdown-body">
-            <p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
-<p>然后会出现一个问题，新的窗口虽然打开了，但是 WebDriver对象对应的还是老窗口，自动化操作也还是在老窗口进行。那就无法在新窗口上进行自动化操作了。</p>
+            <p>Docker 是一个开源的应用容器引擎。<br>也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要；而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。</p>
+<p>Docker 入门教程：<br><a class="link"   target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-tutorial.html" >https://www.runoob.com/docker/docker-tutorial.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP" >https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP<i class="fas fa-external-link-alt"></i></a></p>
 <a id="more"></a>
 
-<h2 id="重现问题"><a href="#重现问题" class="headerlink" title="重现问题"></a>重现问题</h2><p>举个例子，比如我要打开下面代码中的 site的网址，然后点击最上面一排的【基金净值】，会打开一个新的网页。但我们通过打印 webdriver的标题(title)，就知道还是在原来的老窗口。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url) <span class="comment">#网址后面 # 后面的一串忽略</span></span><br></pre></td></tr></table></figure>
-<p>运行后的结果是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>可以使用Webdriver对象的switch_to属性的 window方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">driver.switch_to.window(handle)</span><br></pre></td></tr></table></figure>
-<p>其中，参数handle就是句柄，可以想象成对应网页窗口的一个ID。<br>WebDriver对象有window_handles 属性，这是一个列表对象， 里面包括了当前浏览器里面所有的窗口句柄。</p>
-<p><strong>解决思路</strong>：</p>
+<p><strong>Docker使用也很简单，一般步骤</strong>：</p>
 <ul>
-<li>我们可以通过循环这个handles列表，一个个handle对应的窗口找过去；</li>
-<li>当找到handle对应的窗口的current_url属性 和我们点击的链接url相同的时候，就找到了我们需要的窗口的handle，然后就跳出循环。</li>
+<li>拉取一个镜像（<code>docker pull</code>）</li>
+<li>创建一个容器（<code>docker run</code>）</li>
+<li>在容器中运行命令（<code>docker exec </code>）</li>
 </ul>
-<p>下面这段代码就放在 <code>fund_element.click()</code> 之后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle) <span class="comment"># 先切换到新的窗口</span></span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver_path = <span class="string">r&#x27;F:\python\chromedriver.exe&#x27;</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&quot;headless&quot;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://fund.eastmoney.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"></span><br><span class="line">fund_element = wd.find_element_by_css_selector(<span class="string">&#x27;.wrapper_min .jz a&#x27;</span>)</span><br><span class="line">element_name = fund_element.text</span><br><span class="line">element_site = fund_element.get_attribute(<span class="string">&#x27;href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;点击的链接为：&#x27;</span>, element_site)</span><br><span class="line"></span><br><span class="line">fund_element.click()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到新链接的窗口</span></span><br><span class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> wd.window_handles:</span><br><span class="line">    wd.switch_to.window(handle)</span><br><span class="line">    <span class="keyword">if</span>(wd.current_url == element_site):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口标题：&#x27;</span>, wd.title)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;当前窗口网址：&#x27;</span>, wd.current_url)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">当前窗口标题： 天天基金网(1234567.com.cn) --首批独立基金销售机构-- 东方财富网旗下基金平台!</span><br><span class="line">当前窗口网址： https://fund.eastmoney.com/</span><br><span class="line">点击的链接为： http://fund.eastmoney.com/fund.html</span><br><span class="line">当前窗口标题： 每日开放式基金净值表 _ 天天基金网</span><br><span class="line">当前窗口网址： http://fund.eastmoney.com/fund.html<span class="comment">#os_0;isall_0;ft_;pt_1</span></span><br></pre></td></tr></table></figure>
-<p>当前窗口网址后面 # 符号后面的一串可以忽略。</p>
-
+<p>简单说，比如我（Centos系统）安装了Docker，可以下载一个ubuntu镜像（image）；<br>然后根据这个镜像，我可以创建容器叫 ubuntu1，ubuntu2，ubuntu3，这样就创建了3个容器；<br>然后进入容器ubuntu1，可以在容器里操作，比如安装mysql；<br>进入ubuntu2，安装sqlserver；<br>……<br>在不同的容器里可以做不同的测试。当不需要第1个容器，就删除第1个就行。</p>
+<h2 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h2><p><code>docker [command] --help</code>可以查看command命令的使用方法</p>
+<p>比如：<code>docker ps --help</code>：就可以查看<code>docker ps</code>这个命令的options（参数选项）。</p>
+<h3 id="1-镜像"><a href="#1-镜像" class="headerlink" title="1.镜像"></a>1.镜像</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker pull</td>
+<td>拉取（下载）镜像</td>
+</tr>
+<tr>
+<td>docker images</td>
+<td>列出镜像</td>
+</tr>
+<tr>
+<td>docker rmi</td>
+<td>删除镜像</td>
+</tr>
+<tr>
+<td>docker image prune</td>
+<td>删除未被容器使用的镜像</td>
+</tr>
+<tr>
+<td>docker build</td>
+<td>创建新镜像（需要Dockerfile）</td>
+</tr>
+<tr>
+<td>docker tag</td>
+<td>标记镜像</td>
+</tr>
+<tr>
+<td>docker save/load</td>
+<td>镜像保存</td>
+</tr>
+</tbody></table>
+<p><strong>查找镜像</strong>两种方法：</p>
+<ul>
+<li>方法一：官方镜像：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/search?image_filter=official&amp;q=" >https://hub.docker.com/search?image_filter=official&amp;q=<i class="fas fa-external-link-alt"></i></a> 直接找到对应版本</li>
+<li>方法二：<code>docker search [镜像名称]</code> # <code>docker search mysql</code>，搜索ubuntu镜像，搜索出来OFFICIAL标[OK]的表示官方发布的</li>
+</ul>
+<p><strong>最常用的命令：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull [image name] <span class="comment"># docker pull mysql:8.0 拉取mysql:8.0版本的镜像</span></span><br><span class="line">docker images <span class="comment"># 列出镜像列表</span></span><br><span class="line">docker rmi -f [image name] <span class="comment"># docker rmi -f mysql 强制删除mysql镜像</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-容器"><a href="#2-容器" class="headerlink" title="2.容器"></a>2.容器</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker run</td>
+<td>创建容器</td>
+</tr>
+<tr>
+<td>docker ps</td>
+<td>列出运行中的容器</td>
+</tr>
+<tr>
+<td>docker start/stop</td>
+<td>启动/停止</td>
+</tr>
+<tr>
+<td>docker rm</td>
+<td>删除容器</td>
+</tr>
+<tr>
+<td>docker rename</td>
+<td>重命名</td>
+</tr>
+<tr>
+<td>docker cp</td>
+<td>复制</td>
+</tr>
+<tr>
+<td>docker container prune</td>
+<td>删除停止的容器</td>
+</tr>
+<tr>
+<td>docker exec</td>
+<td>运行命令</td>
+</tr>
+<tr>
+<td>docker commit</td>
+<td>从容器创建新镜像</td>
+</tr>
+</tbody></table>
+<p><strong>最常用的命令：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -it ubuntu /bin/bash <span class="comment"># 创建容器后，进入容器，输入`exit`回车退出</span></span><br><span class="line">docker run -itd --name u-test ubuntu /bin/bash <span class="comment"># -d表示后台运行 --name添加名称</span></span><br><span class="line"></span><br><span class="line">docker ps <span class="comment"># 列出运行中的容器</span></span><br><span class="line">docker ps -a <span class="comment"># 列出所有容器（包括停止的容器）</span></span><br><span class="line">docker stop &lt;container ID&gt; <span class="comment"># 停止容器（根据容器ID）</span></span><br><span class="line">docker start &lt;container ID&gt; <span class="comment"># 启动容器（根据容器ID）</span></span><br><span class="line">docker restart &lt;container ID&gt; <span class="comment"># 重启容器（根据容器ID）</span></span><br><span class="line">docker rm -f &lt;container ID&gt; <span class="comment"># 强制（-f参数）删除容器（根据容器ID）</span></span><br><span class="line"></span><br><span class="line">docker <span class="built_in">exec</span> -it &lt;container ID&gt; /bin/bash <span class="comment"># 进入容器（根据容器ID），`exit`退出</span></span><br></pre></td></tr></table></figure>
+<p>Easy提供的一张Docker命令集的图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/docker_command_1.png"
+                      style="zoom: 50%;"
+                ></p>
+<h2 id="docker-常用举例"><a href="#docker-常用举例" class="headerlink" title="docker 常用举例"></a>docker 常用举例</h2><h3 id="1-创建mysql容器"><a href="#1-创建mysql容器" class="headerlink" title="1.创建mysql容器"></a>1.创建mysql容器</h3><p>步骤：</p>
+<ul>
+<li>拉取 mysql8.0版本镜像</li>
+<li>创建mysql容器（-p 把mysql3306的端口映射到主机的3308端口上，root password设置）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull mysql:8.0</span><br><span class="line">docker run -p 3308:3306 --name mysql -e MYSQL_ROOT_PASSWORD=123MYSQL -d mysql:8.0</span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Python selenium 切换到新的窗口方法</li>
+        <li>本文标题：Docker常用命令</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-19 14:20:00</li>
+        <li>创建时间：2022-05-09 10:37:56</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/19/Python-selenium3-切换到新的窗口方法/
+            本文链接：http://hduzn.cn/2022/05/09/Docker常用命令/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -295,10 +381,6 @@
                         <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
-                    <li class="tag-item">
-                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
-                    </li>
-                
             </ul>
         
 
@@ -308,13 +390,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/"
+                           href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python 对图片进行文字识别</span>
+                                <span class="post-nav-title-item">Python 批量修改图片尺寸</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -324,10 +406,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/"
+                           href="/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python openpyxl.load_workbook excel file error 解决方法</span>
+                                <span class="post-nav-title-item">Python 正则表达式</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -538,7 +620,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="nav-text">重现问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">docker 常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%95%9C%E5%83%8F"><span class="nav-text">1.镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%B9%E5%99%A8"><span class="nav-text">2.容器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-%E5%B8%B8%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-text">docker 常用举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BAmysql%E5%AE%B9%E5%99%A8"><span class="nav-text">1.创建mysql容器</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
