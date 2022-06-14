@@ -15,6 +15,42 @@
 ]]></content>
   </entry>
   <entry>
+    <title>CentOS安装git</title>
+    <url>/2022/06/14/CentOS%E5%AE%89%E8%A3%85git/</url>
+    <content><![CDATA[<p>我有一台腾讯云的CentOS 7.6，不行，安装依赖库的时候直接对应的腾讯云的mirrors都空了，没有。</p>
+<p>于是又试了下，另一台CentOS 8.2版本的，正常可以安装。</p>
+<a id="more"></a>
+
+<p>Git官网对于Linux系统安装Git的说明：<br><a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a></p>
+<p>别的系统都很简单，直接一条命令就行。<br>但就是这个CentOS这几个，需要自己下载源码、编译才能安装。</p>
+<p>用<code>yum install git</code>命令安装的是老版本，反正都不行的。</p>
+<h2 id="CentOS安装git方法"><a href="#CentOS安装git方法" class="headerlink" title="CentOS安装git方法"></a>CentOS安装git方法</h2><h3 id="1-官网下载源码"><a href="#1-官网下载源码" class="headerlink" title="1.官网下载源码"></a>1.官网下载源码</h3><p>上面提供的官网（<a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a> ）最后CentOS部分，提供了源码下载的链接：<br><a class="link"   href="https://mirrors.edge.kernel.org/pub/software/scm/git/" >https://mirrors.edge.kernel.org/pub/software/scm/git/<i class="fas fa-external-link-alt"></i></a></p>
+<p>然后直接找一下对应的新版本，我这里下载的新版本是：git-2.36.0.tar.gz</p>
+<p>下载好了用ftp工具上传到centos服务器上。</p>
+<h3 id="2-安装依赖库和编译工具"><a href="#2-安装依赖库和编译工具" class="headerlink" title="2.安装依赖库和编译工具"></a>2.安装依赖库和编译工具</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install curl-devel expat-devel openssl-devel zlib-devel // 实测依赖</span><br><span class="line"><span class="comment">#yum -y install curl-devel expat-devel gettext-devel openssl-devel zlib-devel // 官网完整依赖</span></span><br><span class="line"></span><br><span class="line">yum -y install gcc</span><br></pre></td></tr></table></figure>
+<p>依赖库我反正用的第1个就行了。</p>
+<h3 id="3-解压-git-2-36-0-tar-gz-并进入目录"><a href="#3-解压-git-2-36-0-tar-gz-并进入目录" class="headerlink" title="3.解压 git-2.36.0.tar.gz 并进入目录"></a>3.解压 git-2.36.0.tar.gz 并进入目录</h3><p>解压文件，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxf git-2.36.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> git-2.36.0</span><br></pre></td></tr></table></figure>
+<h3 id="4-编译并安装"><a href="#4-编译并安装" class="headerlink" title="4.编译并安装"></a>4.编译并安装</h3><p>在git-2.36.0 目录下，运行以下命令，先编译，再安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make  //编译</span><br><span class="line">make install prefix=/usr/<span class="built_in">local</span>/git  //安装</span><br></pre></td></tr></table></figure>
+<h3 id="5-把git命令添加到环境变量"><a href="#5-把git命令添加到环境变量" class="headerlink" title="5.把git命令添加到环境变量"></a>5.把git命令添加到环境变量</h3><p>安装成功后，加入到环境变量。</p>
+<p>1).用vi或vim打开编辑/etc/profile 文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+<p>在文件末尾添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;git&#x2F;bin</span><br></pre></td></tr></table></figure>
+<p>2).执行以下命令使配置文件生效：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+<h3 id="6-查看git版本"><a href="#6-查看git版本" class="headerlink" title="6.查看git版本"></a>6.查看git版本</h3><p>安装成功后，查看版本（我这就是2.36.0版本）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker EwoMail修改MySQL密码</title>
     <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
@@ -372,8 +408,8 @@
         <category>Docker</category>
       </categories>
       <tags>
-        <tag>Docker</tag>
         <tag>Linux</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -458,57 +494,10 @@
         <category>Python</category>
       </categories>
       <tags>
+        <tag>Linux</tag>
         <tag>Docker</tag>
         <tag>Python</tag>
-        <tag>Linux</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Excel中提取身份证的出生日期和性别</title>
-    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
-    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
-<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
-<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
-<a id="more"></a>
-
-<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
-<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_1.png"
-                     
-                ></p>
-<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_2.png"
-                     
-                ></p>
-<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_3.png"
-                     
-                ></p>
-<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
-<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
-<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
-<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
-<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
-<p>所以把取出的身份证第17位除2取余数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
-<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
-<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
-<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
-]]></content>
-      <categories>
-        <category>Office</category>
-      </categories>
-      <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -561,6 +550,53 @@
                      
                 ></p>
 <p>最后，把不需要的辅助列都删除即可。</p>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
 <p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
 ]]></content>
       <categories>
@@ -853,6 +889,61 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo 主题添加 Valine 评论功能</title>
+    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
+    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
+<ul>
+<li>快速、安全</li>
+<li>Emoji</li>
+<li>无后端实现<a id="more"></a></li>
+<li>MarkDown 全语法支持</li>
+<li>轻量易用(~15kb gzipped)</li>
+<li>文章阅读量统计 v1.2.0+</li>
+</ul>
+<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
+<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
+<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
+<blockquote>
+<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
+<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
+<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
+<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
+<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
+<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
+<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
+<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
+<p>有两个部分有添加，都在文件的最后面。</p>
+<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
+<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
+<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
+<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo SSH密钥配置</title>
     <url>/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>配置SSH密钥，可以让本地Git项目与远程的服务器建立联系，让我们在本地写了代码之后直接通过Git操作就可以实现本地代码库与服务器上的代码库同步。</p>
@@ -909,61 +1000,6 @@
       <tags>
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo 主题添加 Valine 评论功能</title>
-    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
-    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
-<ul>
-<li>快速、安全</li>
-<li>Emoji</li>
-<li>无后端实现<a id="more"></a></li>
-<li>MarkDown 全语法支持</li>
-<li>轻量易用(~15kb gzipped)</li>
-<li>文章阅读量统计 v1.2.0+</li>
-</ul>
-<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
-<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
-<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
-<blockquote>
-<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
-</blockquote>
-<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
-<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
-<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
-<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
-<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
-<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
-<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
-<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
-<p>有两个部分有添加，都在文件的最后面。</p>
-<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
-<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
-<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
-<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1064,7 +1100,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;" >&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;" >&#103;&#105;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1085,7 +1121,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#105;&#116;&#64;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#111;&#109;" >&#103;&#105;&#116;&#64;&#x67;&#x69;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1533,8 +1569,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Linux</tag>
+        <tag>Python</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -1671,57 +1707,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
-    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
-<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
-<p>但其实我并不想管这个Alert。</p>
-<p><strong>解决方法</strong>：</p>
-<p>就直接把异常捕获一下，pass就行了。</p>
-<a id="more"></a>
-
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python openpyxl.load_workbook excel file error 解决方法</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python Selenium查找元素方法汇总</title>
     <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
     <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
@@ -1812,6 +1797,57 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
+    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
+<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
+<p>但其实我并不想管这个Alert。</p>
+<p><strong>解决方法</strong>：</p>
+<p>就直接把异常捕获一下，pass就行了。</p>
+<a id="more"></a>
+
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error 解决方法</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -1943,43 +1979,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
-    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
-    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
-<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
-<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
-<a id="more"></a>
-
-<p>这里涉及到一个 dpi 分辨率 的概念。</p>
-<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
-<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_1.png"
-                     
-                ></p>
-<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
-<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
-<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_2.png"
-                     
-                ></p>
-<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
-<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
-<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量修改图片尺寸</title>
     <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
     <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
@@ -2008,6 +2007,43 @@
 <p><strong>完整代码实现</strong>如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
 <p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
+    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
+    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
+<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
+<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
+<a id="more"></a>
+
+<p>这里涉及到一个 dpi 分辨率 的概念。</p>
+<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
+<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_1.png"
+                     
+                ></p>
+<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
+<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
+<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_2.png"
+                     
+                ></p>
+<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
+<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
+<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2221,6 +2257,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中with - as用法</title>
     <url>/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[<p>最常见到的用到with as的地方，比如打开文件的时候：</p>
@@ -2257,43 +2330,6 @@
 <p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
 </blockquote>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2456,84 +2492,6 @@
       </tags>
   </entry>
   <entry>
-    <title>TPLink路由器无线桥接、无线中继</title>
-    <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
-    <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
-<p>然后路由器在我房间，所以在我房间信号当然没啥问题，用了快2年了，然后爹妈反应现在在客厅有时候WiFi信号不行，压根用不了。（我自己基本上是在厨房信号的确不行，别的地方好像没啥问题）</p>
-<a id="more"></a>
-
-<p>于是，把旧的那台TPLink的路由器找出来了（原来也没坏，就是觉得不好用了吧），准备扔客厅，搭个无线桥接试一下。回头如果还是不好用，再买个新路由器做无线桥接看看。</p>
-<p>TPLink的路由器做无线桥接、设置很方便。</p>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
-<li>1.有一台正常使用的路由器（小米AC2100），作为主路由器。</li>
-<li>2.一台副路由器（TPLink）的连接上电源。</li>
-<li>3.用手机或平板进入副路由器（TPLink）的管理页面，进行操作。</li>
-</ul>
-<h2 id="TPLink路由器无线桥接设置"><a href="#TPLink路由器无线桥接设置" class="headerlink" title="TPLink路由器无线桥接设置"></a>TPLink路由器无线桥接设置</h2><h3 id="1-设备连接副路由器（TPLink）WiFI信号"><a href="#1-设备连接副路由器（TPLink）WiFI信号" class="headerlink" title="1.设备连接副路由器（TPLink）WiFI信号"></a>1.设备连接副路由器（TPLink）WiFI信号</h3><p>副路由器（TPLink）接上电源后，用手机或平板连接副路由器（TPLink）的WiFi信号。</p>
-<p>当然，你用电脑也可以，电脑有无线的直接连无线信号，没有无线的台式就需要网线连接了。</p>
-<h3 id="2-登录TPLink路由器管理页面"><a href="#2-登录TPLink路由器管理页面" class="headerlink" title="2.登录TPLink路由器管理页面"></a>2.登录TPLink路由器管理页面</h3><p>一般是”192.168.1.1” 或 “192.168.0.1”，以前用过的路由器就直接用密码登录就行。<br>如果忘记密码了，就把路由器重置一下（恢复之后，用默认的密码登录）。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_1.png"
-                     
-                >
-
-<p>名称设置不设置也无所谓，反正设置桥接后会设置的，只要登录成功了就行。</p>
-<h3 id="3-【无线桥接】设置"><a href="#3-【无线桥接】设置" class="headerlink" title="3.【无线桥接】设置"></a>3.【无线桥接】设置</h3><p>1).打开【应用管理】-&gt;【无线桥接】，进入<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_2.png"
-                     
-                ></p>
-<p>2).选择桥接的主路由器</p>
-<p>开始设置后，会扫出附近的无线名称，我这里选择主路由器（小米AC2100），选择之后会要输入主路由器设置的无线密码。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_3.png"
-                     
-                ></p>
-<p>连接成功后，然后会从主路由器自动获取IP地址，直接下一步。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_4.png"
-                     
-                ></p>
-<p><strong>注意</strong>：把这个ip记一下，因为下次再进入副路由器（TPLink）的管理页面，就不是 192.168.0.1了，而是这个ip地址了。（我这里是 192.168.31.201）</p>
-<p>3).副路由器的无线名称设置</p>
-<p>这里会有个提示：</p>
-<blockquote>
-<p>推荐将本路由器的无线名称和密码更改为与主路由器一致，请确认以下更改：</p>
-</blockquote>
-<p>然后看到无线名称和无线密码是跟主路由器设置的一样的。</p>
-<p>个人建议还是不要一致了，因为如果一致连上这个WiFi信号的时候就不清楚是哪个了。当然，后面也可以再修改（就是麻烦一点，要确认连上的是这个路由器的WiFi信号）。</p>
-<p>建议直接无线名称后面加上<code>-2</code>就行，密码可以一致。</p>
-<p>最后完成后路由器会重启。</p>
-<p>4).查看副路由器（TPLink）DHCP服器设置</p>
-<p>因为这个无线桥接是要关闭这个DHCP服务的，否则连接了TPLink的好像不能上网。</p>
-<p>TPLink的打开DHCP设置，看到直接变成【自动】选项了，那就是关闭了。不用再手动关了。</p>
-<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><p>所以TPLink的路由器无线桥接，作一个副路由器是很方便的。</p>
-<p>差不多直接下一步下一步就行，也不用设什么ip。<br>就是无线名称设置我觉得可以改一下，简单标识一下。这样哪个信号好，可以自己选择一下。密码反正设置的一样的，输过一次后也不用输入。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_5.png"
-                     
-                >
-
-<p>PS.效果咋样还不知道，看了一下订单，发现是15年买的TPLink了。别的路由器只要有这个设置选项的，应该都很简单。</p>
-<h2 id="小米路由器无线中继设置"><a href="#小米路由器无线中继设置" class="headerlink" title="小米路由器无线中继设置"></a>小米路由器无线中继设置</h2><p>设置基本上跟TPLink没啥区别，直接先连上一台主路由器后，再把副路由器（小米路由器）插上电源，登录管理地址（小米的默认是：192.168.31.1）。</p>
-<p>进入【常用设置】-&gt;【上网设置】-&gt;【工作模式切换】，选择“无线中继工作模式”就行了。</p>
-<p>后面的设置也是一样的，是否要双频合一（2.4G和5G合一），然后也一样会分配一个ip，这个就是之后这个作中继器的副路由器的管理地址了（而不是原来的192.163.31.1了）。这个地址进主路由器管理页面里也能查看的。</p>
-]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SyntaxError EOL while scanning string literal</title>
     <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
     <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
@@ -2617,6 +2575,84 @@
       </tags>
   </entry>
   <entry>
+    <title>TPLink路由器无线桥接、无线中继</title>
+    <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
+    <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
+<p>然后路由器在我房间，所以在我房间信号当然没啥问题，用了快2年了，然后爹妈反应现在在客厅有时候WiFi信号不行，压根用不了。（我自己基本上是在厨房信号的确不行，别的地方好像没啥问题）</p>
+<a id="more"></a>
+
+<p>于是，把旧的那台TPLink的路由器找出来了（原来也没坏，就是觉得不好用了吧），准备扔客厅，搭个无线桥接试一下。回头如果还是不好用，再买个新路由器做无线桥接看看。</p>
+<p>TPLink的路由器做无线桥接、设置很方便。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
+<li>1.有一台正常使用的路由器（小米AC2100），作为主路由器。</li>
+<li>2.一台副路由器（TPLink）的连接上电源。</li>
+<li>3.用手机或平板进入副路由器（TPLink）的管理页面，进行操作。</li>
+</ul>
+<h2 id="TPLink路由器无线桥接设置"><a href="#TPLink路由器无线桥接设置" class="headerlink" title="TPLink路由器无线桥接设置"></a>TPLink路由器无线桥接设置</h2><h3 id="1-设备连接副路由器（TPLink）WiFI信号"><a href="#1-设备连接副路由器（TPLink）WiFI信号" class="headerlink" title="1.设备连接副路由器（TPLink）WiFI信号"></a>1.设备连接副路由器（TPLink）WiFI信号</h3><p>副路由器（TPLink）接上电源后，用手机或平板连接副路由器（TPLink）的WiFi信号。</p>
+<p>当然，你用电脑也可以，电脑有无线的直接连无线信号，没有无线的台式就需要网线连接了。</p>
+<h3 id="2-登录TPLink路由器管理页面"><a href="#2-登录TPLink路由器管理页面" class="headerlink" title="2.登录TPLink路由器管理页面"></a>2.登录TPLink路由器管理页面</h3><p>一般是”192.168.1.1” 或 “192.168.0.1”，以前用过的路由器就直接用密码登录就行。<br>如果忘记密码了，就把路由器重置一下（恢复之后，用默认的密码登录）。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_1.png"
+                     
+                >
+
+<p>名称设置不设置也无所谓，反正设置桥接后会设置的，只要登录成功了就行。</p>
+<h3 id="3-【无线桥接】设置"><a href="#3-【无线桥接】设置" class="headerlink" title="3.【无线桥接】设置"></a>3.【无线桥接】设置</h3><p>1).打开【应用管理】-&gt;【无线桥接】，进入<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_2.png"
+                     
+                ></p>
+<p>2).选择桥接的主路由器</p>
+<p>开始设置后，会扫出附近的无线名称，我这里选择主路由器（小米AC2100），选择之后会要输入主路由器设置的无线密码。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_3.png"
+                     
+                ></p>
+<p>连接成功后，然后会从主路由器自动获取IP地址，直接下一步。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_4.png"
+                     
+                ></p>
+<p><strong>注意</strong>：把这个ip记一下，因为下次再进入副路由器（TPLink）的管理页面，就不是 192.168.0.1了，而是这个ip地址了。（我这里是 192.168.31.201）</p>
+<p>3).副路由器的无线名称设置</p>
+<p>这里会有个提示：</p>
+<blockquote>
+<p>推荐将本路由器的无线名称和密码更改为与主路由器一致，请确认以下更改：</p>
+</blockquote>
+<p>然后看到无线名称和无线密码是跟主路由器设置的一样的。</p>
+<p>个人建议还是不要一致了，因为如果一致连上这个WiFi信号的时候就不清楚是哪个了。当然，后面也可以再修改（就是麻烦一点，要确认连上的是这个路由器的WiFi信号）。</p>
+<p>建议直接无线名称后面加上<code>-2</code>就行，密码可以一致。</p>
+<p>最后完成后路由器会重启。</p>
+<p>4).查看副路由器（TPLink）DHCP服器设置</p>
+<p>因为这个无线桥接是要关闭这个DHCP服务的，否则连接了TPLink的好像不能上网。</p>
+<p>TPLink的打开DHCP设置，看到直接变成【自动】选项了，那就是关闭了。不用再手动关了。</p>
+<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><p>所以TPLink的路由器无线桥接，作一个副路由器是很方便的。</p>
+<p>差不多直接下一步下一步就行，也不用设什么ip。<br>就是无线名称设置我觉得可以改一下，简单标识一下。这样哪个信号好，可以自己选择一下。密码反正设置的一样的，输过一次后也不用输入。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_5.png"
+                     
+                >
+
+<p>PS.效果咋样还不知道，看了一下订单，发现是15年买的TPLink了。别的路由器只要有这个设置选项的，应该都很简单。</p>
+<h2 id="小米路由器无线中继设置"><a href="#小米路由器无线中继设置" class="headerlink" title="小米路由器无线中继设置"></a>小米路由器无线中继设置</h2><p>设置基本上跟TPLink没啥区别，直接先连上一台主路由器后，再把副路由器（小米路由器）插上电源，登录管理地址（小米的默认是：192.168.31.1）。</p>
+<p>进入【常用设置】-&gt;【上网设置】-&gt;【工作模式切换】，选择“无线中继工作模式”就行了。</p>
+<p>后面的设置也是一样的，是否要双频合一（2.4G和5G合一），然后也一样会分配一个ip，这个就是之后这个作中继器的副路由器的管理地址了（而不是原来的192.163.31.1了）。这个地址进主路由器管理页面里也能查看的。</p>
+]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Typora+PicGo无法显示Github图床图片问题</title>
     <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
@@ -2649,6 +2685,35 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2718,35 +2783,6 @@
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
         <tag>Nginx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2865,8 +2901,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>Linux</tag>
+        <tag>Python</tag>
         <tag>Selenium</tag>
         <tag>Ubuntu</tag>
       </tags>
@@ -3244,40 +3280,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3354,6 +3356,40 @@
       </tags>
   </entry>
   <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【Windows疑难杂症】打不开网页 解决方法</title>
     <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5/</url>
     <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
@@ -3381,74 +3417,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【不断更新系列】Linux命令小记</title>
-    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>Ubuntu命令</th>
-<th>CentOS命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安装软件</td>
-<td><code>apt-get install package</code></td>
-<td><code>yum install package</code></td>
-</tr>
-<tr>
-<td>删除/卸载软件</td>
-<td><code>apt-get remove package</code></td>
-<td><code>yum remove package</code></td>
-</tr>
-<tr>
-<td>升级软件包</td>
-<td><code>apt-get upgrade</code></td>
-<td><code>yum update</code></td>
-</tr>
-<tr>
-<td>软件包后缀</td>
-<td>*.deb</td>
-<td>*.rpm</td>
-</tr>
-<tr>
-<td>安装已下载的软件包</td>
-<td><code>dpkg -i package.deb</code></td>
-<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
-</tr>
-</tbody></table>
-<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
-<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3514,7 +3482,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3584,6 +3552,74 @@
         <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【不断更新系列】Linux命令小记</title>
+    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Ubuntu命令</th>
+<th>CentOS命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装软件</td>
+<td><code>apt-get install package</code></td>
+<td><code>yum install package</code></td>
+</tr>
+<tr>
+<td>删除/卸载软件</td>
+<td><code>apt-get remove package</code></td>
+<td><code>yum remove package</code></td>
+</tr>
+<tr>
+<td>升级软件包</td>
+<td><code>apt-get upgrade</code></td>
+<td><code>yum update</code></td>
+</tr>
+<tr>
+<td>软件包后缀</td>
+<td>*.deb</td>
+<td>*.rpm</td>
+</tr>
+<tr>
+<td>安装已下载的软件包</td>
+<td><code>dpkg -i package.deb</code></td>
+<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
+</tr>
+</tbody></table>
+<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3680,68 +3716,6 @@
       </tags>
   </entry>
   <entry>
-    <title>本博客使用的Hexo主题为：Keep</title>
-    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
-    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
-<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
-<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>选择这个主题的几个原因。</strong></p>
-<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_1.png"
-                      style="zoom: 50%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_2.png"
-                      style="zoom: 50%;"
-                >
-主题配置文件（`_config.yml`）中：
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-### 3.【代码高亮】不错
-
-<p>有2个样式可选，有一键复制代码功能。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_3.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
-<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_4.png"
-                      style="zoom: 70%;"
-                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_5.png"
-                      style="zoom: 50%;"
-                >
-
-<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_theme_Keep_6.png"
-                     
-                >]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>服务器 Docker搭建Flask应用（一）</title>
     <url>/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<p>用Python的Web框架——Flask写了应用，然后就可以放到服务器上。</p>
@@ -3831,6 +3805,68 @@
         <tag>Docker</tag>
         <tag>Python</tag>
         <tag>Flask</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本博客使用的Hexo主题为：Keep</title>
+    <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
+    <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
+<p>本博客采用的Hexo主题为：<strong>Keep</strong></p>
+<p>项目地址：<a class="link"   href="https://github.com/XPoet/hexo-theme-keep" >GitHub - XPoet/hexo-theme-keep<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>选择这个主题的几个原因。</strong></p>
+<h3 id="1-好看"><a href="#1-好看" class="headerlink" title="1.好看"></a>1.好看</h3><p>第一屏页看起来也很不错。可以自己换背景图。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_1.png"
+                      style="zoom: 50%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># First screen</span></span><br><span class="line">  <span class="attr">first_screen:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">background_img:</span> <span class="string">/images/bg.svg</span> <span class="comment"># You can use local image or image external link</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">不积跬步，无以至千里；不积小流，无以成江海。</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-【目录】效果不错"><a href="#2-【目录】效果不错" class="headerlink" title="2.【目录】效果不错"></a>2.【目录】效果不错</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_2.png"
+                      style="zoom: 50%;"
+                >
+主题配置文件（`_config.yml`）中：
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Automatically add list number to toc.</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+### 3.【代码高亮】不错
+
+<p>有2个样式可选，有一键复制代码功能。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_3.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">code_copy:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">mac</span> <span class="comment"># values: default | mac</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-【评论】功能"><a href="#4-【评论】功能" class="headerlink" title="4.【评论】功能"></a>4.【评论】功能</h3><p>有3个评论平台可选，valine、gitalk、twikoo，我正好原来用的就是valine。设置下直接就可以用了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_4.png"
+                      style="zoom: 70%;"
+                ><br>主题配置文件（<code>_config.yml</code>）中（我选了valine，就只贴这几句了）：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">comment:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">use:</span> <span class="string">valine</span> <span class="comment"># values: valine | gitalk | twikoo</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Valine</span></span><br><span class="line">  <span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line">  <span class="attr">valine:</span></span><br><span class="line">    <span class="attr">appid:</span> <span class="string">U****************************z</span></span><br><span class="line">    <span class="attr">appkey:</span> <span class="string">y*********************7</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-【站内搜索】功能"><a href="#5-【站内搜索】功能" class="headerlink" title="5.【站内搜索】功能"></a>5.【站内搜索】功能</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_5.png"
+                      style="zoom: 50%;"
+                >
+
+<h3 id="6-【夜间模式】"><a href="#6-【夜间模式】" class="headerlink" title="6.【夜间模式】"></a>6.【夜间模式】</h3><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_theme_Keep_6.png"
+                     
+                >]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
