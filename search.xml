@@ -413,6 +413,66 @@
       </tags>
   </entry>
   <entry>
+    <title>Excel中对ip地址进行排序</title>
+    <url>/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
+    <content><![CDATA[<p>因为ip地址是一个文本，没办法直接用Excel排序。比如：192.168.0.100<br>所以要对ip地址的排序，需要进行一些处理，其实是对ip地址的最后一位进行排序。</p>
+<p><strong>思路</strong>：</p>
+<ul>
+<li>1.用公式获取ip地址的最后一部分，比如ip地址192.168.0.22，获取到22；</li>
+<li>2.以ip地址最后一部分的列为主要关键字进行自定义排序；</li>
+<li>3.删除辅助列，就ok了。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="获取ip地址的最后一部分"><a href="#获取ip地址的最后一部分" class="headerlink" title="获取ip地址的最后一部分"></a>获取ip地址的最后一部分</h2><h3 id="1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号"><a href="#1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号" class="headerlink" title="1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号"></a>1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号</h3><p>这里替换成啥符号都行，只要不是点。主要方便用查找的函数搜索的时候，准确找到最后一部分的起始位置。</p>
+<p><strong>SUBSTITUTE函数</strong>：替换指定文本，在text字符串中用 new_text 替换 old_text。<br><strong>语法</strong>：SUBSTITUTE(text, old_text, new_text, [instance_num])</p>
+<ul>
+<li>instance_num：可选。指定要将第几个old_text 替换为 new_text。否则是全部替换。</li>
+</ul>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号。公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3) </span><br></pre></td></tr></table></figure>
+<p>返回结果如：10.95.22@44</p>
+<h3 id="2-用FIND函数找到-号的位置"><a href="#2-用FIND函数找到-号的位置" class="headerlink" title="2.用FIND函数找到@号的位置"></a>2.用FIND函数找到@号的位置</h3><p>我们要获取的ip地址最后一部分的起始位置就是@符号的后1位。</p>
+<p><strong>FIND函数</strong>：查找在within_text字符串中，第1个出现find_text字符串的起始位置的值，该值从within_text的第1个字符算起。<br><strong>语法</strong>：FIND(find_text, within_text, [start_num])</p>
+<ul>
+<li>start_num：可选。指定find_text中开始进行查找within_text字符串的位置，默认是1。</li>
+</ul>
+<p>公式<code>=FIND(&quot;@&quot;,&quot;192.168.0@44&quot;)</code>返回的结果是：10</p>
+<p>把A2单元格中的字符串中的第3个点（.）替换成@号后，获取@符号的位置。结合起来，公式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))</span><br></pre></td></tr></table></figure>
+<h3 id="3-用MID函数截取ip地址最后部分"><a href="#3-用MID函数截取ip地址最后部分" class="headerlink" title="3.用MID函数截取ip地址最后部分"></a>3.用MID函数截取ip地址最后部分</h3><p><strong>MID函数</strong>：截取text字符串，从中间截取，可以选择开始和结束的位置。<br><strong>语法</strong>：MID(text, start_num, num_chars)</p>
+<ul>
+<li>num_chars：取几个。</li>
+</ul>
+<p>公式<code>=MID(&quot;192.168.0@44&quot;,10+1,3)</code>返回的结果是：44（文本字符串）</p>
+<p>把A2单元格中的ip地址最后一部分截取出来。结合前面的公式，完整公式为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))+1,3)</span><br></pre></td></tr></table></figure>
+<p>效果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_ip_sort_1.png"
+                     
+                ></p>
+<h2 id="自定义排序"><a href="#自定义排序" class="headerlink" title="自定义排序"></a>自定义排序</h2><p>以ip地址最后一部分为关键字进行自定义排序。</p>
+<p>因为刚才取出来的ip地址的最后一部分这一列（B列）是文本的，所以先复制一列出来，粘贴的时候只粘贴文本，然后格式全部一起转换成数字，就有了C列。</p>
+<p>最后，以C列为关键字进行自定义排序。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_ip_sort_2.png"
+                     
+                ></p>
+<p>最后，把不需要的辅助列都删除即可。</p>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker版Selenium使用方法</title>
     <url>/2022/05/29/Docker%E7%89%88Selenium%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
@@ -498,66 +558,6 @@
         <tag>Docker</tag>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Excel中对ip地址进行排序</title>
-    <url>/2022/06/04/Excel%E4%B8%AD%E5%AF%B9ip%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
-    <content><![CDATA[<p>因为ip地址是一个文本，没办法直接用Excel排序。比如：192.168.0.100<br>所以要对ip地址的排序，需要进行一些处理，其实是对ip地址的最后一位进行排序。</p>
-<p><strong>思路</strong>：</p>
-<ul>
-<li>1.用公式获取ip地址的最后一部分，比如ip地址192.168.0.22，获取到22；</li>
-<li>2.以ip地址最后一部分的列为主要关键字进行自定义排序；</li>
-<li>3.删除辅助列，就ok了。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="获取ip地址的最后一部分"><a href="#获取ip地址的最后一部分" class="headerlink" title="获取ip地址的最后一部分"></a>获取ip地址的最后一部分</h2><h3 id="1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号"><a href="#1-用SUBSTITUTE函数把ip地址里的最后一个点（-）替换成-符号" class="headerlink" title="1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号"></a>1.用SUBSTITUTE函数把ip地址里的最后一个点（.）替换成@符号</h3><p>这里替换成啥符号都行，只要不是点。主要方便用查找的函数搜索的时候，准确找到最后一部分的起始位置。</p>
-<p><strong>SUBSTITUTE函数</strong>：替换指定文本，在text字符串中用 new_text 替换 old_text。<br><strong>语法</strong>：SUBSTITUTE(text, old_text, new_text, [instance_num])</p>
-<ul>
-<li>instance_num：可选。指定要将第几个old_text 替换为 new_text。否则是全部替换。</li>
-</ul>
-<p>把A2单元格中的字符串中的第3个点（.）替换成@号。公式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3) </span><br></pre></td></tr></table></figure>
-<p>返回结果如：10.95.22@44</p>
-<h3 id="2-用FIND函数找到-号的位置"><a href="#2-用FIND函数找到-号的位置" class="headerlink" title="2.用FIND函数找到@号的位置"></a>2.用FIND函数找到@号的位置</h3><p>我们要获取的ip地址最后一部分的起始位置就是@符号的后1位。</p>
-<p><strong>FIND函数</strong>：查找在within_text字符串中，第1个出现find_text字符串的起始位置的值，该值从within_text的第1个字符算起。<br><strong>语法</strong>：FIND(find_text, within_text, [start_num])</p>
-<ul>
-<li>start_num：可选。指定find_text中开始进行查找within_text字符串的位置，默认是1。</li>
-</ul>
-<p>公式<code>=FIND(&quot;@&quot;,&quot;192.168.0@44&quot;)</code>返回的结果是：10</p>
-<p>把A2单元格中的字符串中的第3个点（.）替换成@号后，获取@符号的位置。结合起来，公式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))</span><br></pre></td></tr></table></figure>
-<h3 id="3-用MID函数截取ip地址最后部分"><a href="#3-用MID函数截取ip地址最后部分" class="headerlink" title="3.用MID函数截取ip地址最后部分"></a>3.用MID函数截取ip地址最后部分</h3><p><strong>MID函数</strong>：截取text字符串，从中间截取，可以选择开始和结束的位置。<br><strong>语法</strong>：MID(text, start_num, num_chars)</p>
-<ul>
-<li>num_chars：取几个。</li>
-</ul>
-<p>公式<code>=MID(&quot;192.168.0@44&quot;,10+1,3)</code>返回的结果是：44（文本字符串）</p>
-<p>把A2单元格中的ip地址最后一部分截取出来。结合前面的公式，完整公式为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,FIND(&quot;@&quot;,SUBSTITUTE(A2,&quot;.&quot;,&quot;@&quot;,3))+1,3)</span><br></pre></td></tr></table></figure>
-<p>效果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_ip_sort_1.png"
-                     
-                ></p>
-<h2 id="自定义排序"><a href="#自定义排序" class="headerlink" title="自定义排序"></a>自定义排序</h2><p>以ip地址最后一部分为关键字进行自定义排序。</p>
-<p>因为刚才取出来的ip地址的最后一部分这一列（B列）是文本的，所以先复制一列出来，粘贴的时候只粘贴文本，然后格式全部一起转换成数字，就有了C列。</p>
-<p>最后，以C列为关键字进行自定义排序。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_ip_sort_2.png"
-                     
-                ></p>
-<p>最后，把不需要的辅助列都删除即可。</p>
-<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
-]]></content>
-      <categories>
-        <category>Office</category>
-      </categories>
-      <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -889,61 +889,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 主题添加 Valine 评论功能</title>
-    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
-    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
-<ul>
-<li>快速、安全</li>
-<li>Emoji</li>
-<li>无后端实现<a id="more"></a></li>
-<li>MarkDown 全语法支持</li>
-<li>轻量易用(~15kb gzipped)</li>
-<li>文章阅读量统计 v1.2.0+</li>
-</ul>
-<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
-<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
-<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
-<blockquote>
-<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
-</blockquote>
-<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
-<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
-<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
-<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
-<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
-<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
-<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
-<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
-<p>有两个部分有添加，都在文件的最后面。</p>
-<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
-<p>改成如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
-<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
-<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
-<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo SSH密钥配置</title>
     <url>/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>配置SSH密钥，可以让本地Git项目与远程的服务器建立联系，让我们在本地写了代码之后直接通过Git操作就可以实现本地代码库与服务器上的代码库同步。</p>
@@ -1000,6 +945,61 @@
       <tags>
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo 主题添加 Valine 评论功能</title>
+    <url>/2021/02/05/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/</url>
+    <content><![CDATA[<h1 id="一、关于Valine"><a href="#一、关于Valine" class="headerlink" title="一、关于Valine"></a>一、关于Valine</h1><p>Valine 诞生于2017年8月7日，是一款基于 Leancloud 的快速、简洁且高效的无后端评论系统，支持但不限于静态博客。<br>具有以下特性：</p>
+<ul>
+<li>快速、安全</li>
+<li>Emoji</li>
+<li>无后端实现<a id="more"></a></li>
+<li>MarkDown 全语法支持</li>
+<li>轻量易用(~15kb gzipped)</li>
+<li>文章阅读量统计 v1.2.0+</li>
+</ul>
+<h1 id="二、配置Leancloud账号"><a href="#二、配置Leancloud账号" class="headerlink" title="二、配置Leancloud账号"></a>二、配置Leancloud账号</h1><p>Valine 是基于 leancloud的评论模块，评论数据都存储在 Leancloud 平台，因此需要先在 leancloud 申请帐号。<br>官网：<a class="link"   href="https://leancloud.cn/" >https://leancloud.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>1.注册Leancloud 账号</strong><br><strong>2.创建应用</strong><br>【控制台】-&gt;【创建应用】<br>应用名称 自己填写，选择默认的【开发版】，应用描述自己写，直接【创建】。</p>
+<p><strong>3.获取应用的AppID和AppKey</strong><br>创建完成后，进入该应用。<br>【设置】-&gt;【应用Keys】，得到AppID和AppKey。这个后面配置博客主题文件时会用到。</p>
+<p><strong>4.配置安全域名</strong><br>【设置】-&gt;【安全中心】，在【Web安全域名】中填写自己博客的域名后保存。比如我这里是：</p>
+<blockquote>
+<p><a class="link"   href="http://i007it.com/" >http://i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://www.i007it.com/" >http://www.i007it.com/<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="http://localhost:4000/" >http://localhost:4000<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<h1 id="三、Hexo中添加Valine评论"><a href="#三、Hexo中添加Valine评论" class="headerlink" title="三、Hexo中添加Valine评论"></a>三、Hexo中添加Valine评论</h1><p>首先，看看你用的Hexo主题是否已添加Valine模块，如果添加了的话就很简单了。<br>查看地址：<a class="link"   href="https://valine.js.org/hexo.html" >https://valine.js.org/hexo.html<i class="fas fa-external-link-alt"></i></a><br>比如 <code>hexo-theme-landscape</code>，<code>hexo-theme-next</code> 就都已经添加了（当然要安装支持的版本，最新版）</p>
+<h2 id="（一）、主题已经添加了Valine模块"><a href="#（一）、主题已经添加了Valine模块" class="headerlink" title="（一）、主题已经添加了Valine模块"></a>（一）、主题已经添加了Valine模块</h2><p>只需要直接在主题下面的_config.yml 配置文件中填写valine相关内容就行。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># valine comment system. https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span> </span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># if you want use valine,please set this value is true</span></span><br><span class="line">  <span class="attr">appId:</span> <span class="string">U******************************z</span> <span class="comment"># leancloud application app id</span></span><br><span class="line">  <span class="attr">appKey:</span> <span class="string">y************************7</span> <span class="comment"># leancloud application app key</span></span><br><span class="line">  <span class="attr">notify:</span> <span class="literal">false</span> <span class="comment"># valine mail notify (true/false) https://github.com/xCss/Valine/wiki</span></span><br><span class="line">  <span class="attr">verify:</span> <span class="literal">false</span> <span class="comment"># valine verify code (true/false)</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># comment list page size</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># gravatar style https://valine.js.org/#/avatar</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-cn</span> <span class="comment"># i18n: zh-cn/en</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">Just</span> <span class="string">go</span> <span class="string">go</span> <span class="comment"># valine comment input placeholder(like: Please leave your footprints )</span></span><br><span class="line">  <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span> <span class="comment">#valine comment header info</span></span><br></pre></td></tr></table></figure>
+<p>enable设置为true；填写应用的appId和appKey就行了（注意填写的时候冒号后面有一个空格）。</p>
+<h2 id="（二）、主题未添加Valine模块"><a href="#（二）、主题未添加Valine模块" class="headerlink" title="（二）、主题未添加Valine模块"></a>（二）、主题未添加Valine模块</h2><p>我用的是paperbox主题，是landscape 的一个优化版本（作者几年也没更新了，所以也没更新评论系统，原来主题中配置的还是已经关闭了的duoshuo的评论系统），那就需要自己添加了。</p>
+<p>然后我也顺便删除了duoshuo评论的模块，如果你用的主题原来没有的，直接添加相关文件的valine部分内容就行，不用改别的地方。</p>
+<p>因为landscape 最新版本已经内置了 valine模块了，那我直接把 landscape 主题下载下来，查看一下里面的 valine相关内容，再复制到我自己的主题里就可以啦。</p>
+<p>所以几个文件的修改添加，都是直接参考 landscape主题那边搬过来的。</p>
+<h3 id="1-在主题的配置文件中添加valine内容"><a href="#1-在主题的配置文件中添加valine内容" class="headerlink" title="1.在主题的配置文件中添加valine内容"></a>1.在主题的配置文件中添加valine内容</h3><p><strong>hexo-theme-paperbox_config.yml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Valine.</span></span><br><span class="line"><span class="comment"># You can get your appid and appkey from https://leancloud.cn</span></span><br><span class="line"><span class="comment"># more info please open https://valine.js.org</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">appId:</span></span><br><span class="line">    <span class="attr">appKey:</span></span><br><span class="line">    <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line">    <span class="attr">notify:</span> <span class="literal">false</span>   <span class="comment"># 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span></span><br><span class="line">    <span class="attr">verify:</span> <span class="literal">false</span>   <span class="comment"># 是否需要验证，验证比较反人类建议false关闭</span></span><br><span class="line">    <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 默认头像</span></span><br><span class="line">    <span class="attr">lang:</span> <span class="string">zh-cn</span></span><br><span class="line">    <span class="attr">guest_info:</span> <span class="string">nick,mail,link</span>  <span class="comment"># 默认留言框的头部需要访问者输入的信息</span></span><br><span class="line">    <span class="attr">pageSize:</span> <span class="number">10</span>                <span class="comment"># 默认单页的留言条数</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-article-ejs文件中添加内容"><a href="#2-article-ejs文件中添加内容" class="headerlink" title="2.article.ejs文件中添加内容"></a>2.article.ejs文件中添加内容</h3><p><strong>hexo-theme-paperbox\layout_partial\article.ejs</strong></p>
+<p>有两个部分有添加，都在文件的最后面。</p>
+<h4 id="1-第一部分，-lt-footer-gt-部分修改"><a href="#1-第一部分，-lt-footer-gt-部分修改" class="headerlink" title="1).第一部分，&lt;footer&gt;部分修改"></a>1).第一部分，<code>&lt;footer&gt;</code>部分修改</h4><p>其实添加的就是valine有关的这一块，因为我paperbox主题原来还有duoshuo的部分，我也直接删掉了。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">footer</span> <span class="attr">class</span>=<span class="string">&quot;article-footer&quot;</span>&gt;</span>      </span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;article-footer-content&quot;</span>&gt;</span></span><br><span class="line">        &lt;%- partial(&#x27;post/tag&#x27;) %&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">data-url</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;&lt;%= post._id %&gt;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-share-link&quot;</span>&gt;</span>&lt;%= __(&#x27;share&#x27;) %&gt;&lt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% if (post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- post.permalink %&gt;#disqus_thread&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span>&lt;%= __(&#x27;comment&#x27;) %&gt;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">       &lt;% if (post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey )&#123; %&gt;</span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;#comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;article-comment-link&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-comments-count valine-comment-count&quot;</span> <span class="attr">data-xid</span>=<span class="string">&quot;&lt;%- url_for(post.path) %&gt;&quot;</span> <span class="attr">itemprop</span>=<span class="string">&quot;commentCount&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            &lt;%= __(&#x27;comment&#x27;) %&gt;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        &lt;% &#125; %&gt;</span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-第二部分，文件最下面"><a href="#2-第二部分，文件最下面" class="headerlink" title="2).第二部分，文件最下面"></a>2).第二部分，文件最下面</h4><p>添加的也就是最后valine相关的这一段。</p>
+<p>改成如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;disqus_thread&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">noscript</span>&gt;</span>Please enable JavaScript to view the <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//disqus.com/?ref_noscript&quot;</span>&gt;</span>comments powered by Disqus.<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">noscript</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% if (!index &amp;&amp; post.comments &amp;&amp; theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">section</span> <span class="attr">id</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">class</span>=<span class="string">&quot;vcomment&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">section</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-添加valine-ejs文件"><a href="#3-添加valine-ejs文件" class="headerlink" title="3.添加valine.ejs文件"></a>3.添加valine.ejs文件</h3><p>为了看着更方便，就直接把valine单独拎了个文件出来，当然，这部分内容直接写在 after-footer.ejs文件里也是一样的。</p>
+<p>添加 <strong>hexo-theme-paperbox\layout_partial\post\valine.ejs</strong> 文件，内容如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if(theme.valine.enable &amp;&amp; theme.valine.appId &amp;&amp; theme.valine.appKey)&#123; %&gt;</span><br><span class="line">    &lt;%- js(&#x27;https://unpkg.com/valine@latest/dist/Valine.min.js&#x27;) %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> GUEST_INFO = [<span class="string">&#x27;nick&#x27;</span>,<span class="string">&#x27;mail&#x27;</span>,<span class="string">&#x27;link&#x27;</span>];</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> guest_info = <span class="string">&#x27;&lt;%= theme.valine.guest_info %&gt;&#x27;</span>.split(<span class="string">&#x27;,&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="keyword">return</span> GUEST_INFO.indexOf(item) &gt; -<span class="number">1</span></span></span><br><span class="line">      &#125;);</span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">new</span> Valine(&#123;</span></span><br><span class="line"><span class="javascript">          el: <span class="string">&#x27;.vcomment&#x27;</span>,</span></span><br><span class="line">          notify: notify,</span><br><span class="line">          verify: verify,</span><br><span class="line"><span class="javascript">          appId: <span class="string">&quot;&lt;%= theme.valine.appId %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          appKey: <span class="string">&quot;&lt;%= theme.valine.appKey %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span></span><br><span class="line"><span class="javascript">          pageSize:<span class="string">&#x27;&lt;%= theme.valine.pageSize %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          avatar:<span class="string">&#x27;&lt;%= theme.valine.avatar %&gt;&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          lang:<span class="string">&#x27;&lt;%= theme.valine.lang %&gt;&#x27;</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="4-在after-footer-ejs文件中添加相关内容"><a href="#4-在after-footer-ejs文件中添加相关内容" class="headerlink" title="4.在after-footer.ejs文件中添加相关内容"></a>4.在after-footer.ejs文件中添加相关内容</h3><p>在 <strong>hexo-theme-paperbox\layout_partial\after-footer.ejs</strong> 文件中找一块内容添加如下代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- valine start --&gt;</span></span><br><span class="line">&lt;%- partial(&#x27;post/valine&#x27;) %&gt;</span><br><span class="line"><span class="comment">&lt;!-- valine end --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这段代码，第一句和和第三句都是注释，所以其实就是中间一句，调用post目录下的valine.ejs文件的内容。所以把文件的内容全部扔这里也行。</p>
+<p>因为删除duoshuo的评论模块，所以相关代码删掉后就改成了：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&lt;% if (config.disqus_shortname)&#123; %&gt;</span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_shortname = <span class="string">&#x27;&lt;%= config.disqus_shortname %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% if (page.permalink)&#123; %&gt;</span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> disqus_url = <span class="string">&#x27;&lt;%= page.permalink %&gt;&#x27;</span>;</span></span><br><span class="line">    &lt;% &#125; %&gt;</span><br><span class="line"><span class="javascript">    (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> dsq = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span></span><br><span class="line"><span class="javascript">      dsq.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">      dsq.src = <span class="string">&#x27;https://&#x27;</span> + disqus_shortname + <span class="string">&#x27;.disqus.com/&lt;% if (page.comments) &#123; %&gt;embed.js&lt;% &#125; else &#123; %&gt;count.js&lt;% &#125; %&gt;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">      (<span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;head&#x27;</span>)[<span class="number">0</span>] || <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;body&#x27;</span>)[<span class="number">0</span>]).appendChild(dsq);</span></span><br><span class="line">    &#125;)();</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  &lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>以上就成功使用了 Valine 模块最基本的评论功能。</p>
+<p>然后需要关于评论的更多功能的话，就用Valine Admin，这是 Valine 评论系统的扩展和增强，主要实现评论邮件通知、评论管理、垃圾评论过滤等功能。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1100,7 +1100,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;" >&#103;&#105;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1121,7 +1121,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;" >&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1462,6 +1462,50 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux使用v2ray</title>
+    <url>/2022/06/14/Linux%E4%BD%BF%E7%94%A8v2ray/</url>
+    <content><![CDATA[<p>因为在CentOS的服务器上装东西的，用到了github，直接访问不了。本地windows系统用的v2rayN的客户端，想到v2ray在Linux上也可以用，就装上试一下。</p>
+<p>v2ray本身是不区分服务端和客户端的，只要配置好相关文件，反正都可正常使用。（就是配置文件的区别）</p>
+<a id="more"></a>
+
+<h3 id="1-下载-v2ray-linux-64-zip"><a href="#1-下载-v2ray-linux-64-zip" class="headerlink" title="1.下载 v2ray-linux-64.zip"></a>1.下载 v2ray-linux-64.zip</h3><p>v2ray的Github地址：<br><a class="link"   href="https://github.com/v2ray/v2ray-core/releases/" >https://github.com/v2ray/v2ray-core/releases/<i class="fas fa-external-link-alt"></i></a></p>
+<p>目前最新的版本是v4.31.0，下面有Download页面：<br><a class="link"   href="https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0" >https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0<i class="fas fa-external-link-alt"></i></a></p>
+<p>在页面中找到 v2ray-linux-64.zip 文件下载（我的是64位的CentOS系统）。</p>
+<p>下载后解压出来是一个 v2ray-linux-64 目录，用ftp工具上传到linux的服务器上。</p>
+<p>当然，也可以直接把解压包上传后，再用unzip命令解压。</p>
+<h3 id="2-把文件复制到对应的目录中"><a href="#2-把文件复制到对应的目录中" class="headerlink" title="2.把文件复制到对应的目录中"></a>2.把文件复制到对应的目录中</h3><p>用复制(cp命令)或移动(mv命令)都可以。这里用cp举例。</p>
+<p>首先，进入 v2ray-linux-64 目录，可以用 <code>ls -l</code>查看目录下的文件。<br>目录中的几个文件需要修改下权限，需要添加下可执行的权限。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> v2ray-linux-64</span><br><span class="line"></span><br><span class="line">chmod 755 v2ray</span><br><span class="line">chmod 755 v2ctl</span><br><span class="line">chmod 755 systemd/system/v2ray.service</span><br><span class="line">chmod 755 systemd/system/v2ray@.service</span><br></pre></td></tr></table></figure>
+<p>然后复制目录中的文件到指定位置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp v2ray /usr/<span class="built_in">local</span>/bin/</span><br><span class="line">cp v2ctl /usr/<span class="built_in">local</span>/bin/</span><br><span class="line"></span><br><span class="line">cp systemd/system/v2ray.service /etc/systemd/system/</span><br><span class="line">cp systemd/system/v2ray@.service /etc/systemd/system/</span><br><span class="line"></span><br><span class="line">mkdir /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geoip.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geosite.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line"></span><br><span class="line">mkdir /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp access.log /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp error.log /var/<span class="built_in">log</span>/v2ray/</span><br></pre></td></tr></table></figure>
+<p>两个日志文件没有的话，自己新建一个就行，要保证所有人都有读写权限。<br>反正配置文件中不用的话，其实也无所谓，就先建着扔着。</p>
+<p>还有一个config.json配置文件，等配置完了再复制。</p>
+<h3 id="3-config-json配置文件"><a href="#3-config-json配置文件" class="headerlink" title="3.config.json配置文件"></a>3.config.json配置文件</h3><p>原生的V2ray并不支持订阅，反正我本来就在windows下用的，直接在v2rayN的客户端，服务器列表中中右键-&gt;【导出所选服务器为客户端配置】，保存成config.json文件。</p>
+<p>然后把这个config.json文件也上传到 v2ray-linux-64 目录中，再来复制。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /usr/<span class="built_in">local</span>/etc/v2ray/</span><br><span class="line">cp config.json /usr/<span class="built_in">local</span>/etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
+<p>以下配置文件仅为参考（需将outbounds处settings中改成自己的）：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;log&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;access&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;error&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;loglevel&quot;</span>: <span class="string">&quot;warning&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;inbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1080</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;auth&quot;</span>: <span class="string">&quot;noauth&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1081</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;outbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;vnext&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">&quot;address&quot;</span>: <span class="string">&quot;abc.abc.net&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;port&quot;</span>: <span class="number">30000</span>,</span><br><span class="line">            <span class="attr">&quot;users&quot;</span>: [</span><br><span class="line">              &#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;effffff6-fffffb-4aaa-8888-aaaaaaaaaa&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;alterId&quot;</span>: <span class="number">1</span>,</span><br><span class="line">                <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;t@t.tt&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;security&quot;</span>: <span class="string">&quot;chacha20-poly1305&quot;</span></span><br><span class="line">              &#125;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;network&quot;</span>: <span class="string">&quot;tcp&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;mux&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;concurrency&quot;</span>: <span class="number">8</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;blackhole&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;response&quot;</span>: &#123;</span><br><span class="line">          <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;http&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;routing&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;domainStrategy&quot;</span>: <span class="string">&quot;AsIs&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;domainMatcher&quot;</span>: <span class="string">&quot;linear&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;rules&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;inboundTag&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;api&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;api&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:google&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;domain:example-example.com&quot;</span>,</span><br><span class="line">          <span class="string">&quot;domain:example-example2.com&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:category-ads-all&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我这里就没把log文件配置写进去，需要的话再写上：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&quot;log&quot;: &#123;</span><br><span class="line">    &quot;access&quot;: &quot;/var/log/v2ray/access.log&quot;,</span><br><span class="line">    &quot;error&quot;: &quot;/var/log/v2ray/error.log&quot;,</span><br><span class="line">    &quot;loglevel&quot;: &quot;warning&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>记得这两个文件看一下，要有读写权限。</p>
+<h3 id="4-启动v2ray"><a href="#4-启动v2ray" class="headerlink" title="4.启动v2ray"></a>4.启动v2ray</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动V2ray</span></span><br><span class="line">sudo systemctl start v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查V2ray状态</span></span><br><span class="line">sudo systemctl status v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置V2ray开机自启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> v2ray</span><br></pre></td></tr></table></figure>
+<p>V2ray状态：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Linux_v2ray_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<h3 id="5-检验代码是否生效"><a href="#5-检验代码是否生效" class="headerlink" title="5.检验代码是否生效"></a>5.检验代码是否生效</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://127.0.0.1:1080 https://www.google.com -v</span><br></pre></td></tr></table></figure>
+<p>如果能返回google.com的源代码，即表示配置成功。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 定时执行 python脚本</title>
     <url>/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<p>Linux系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
@@ -1707,6 +1751,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
+    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
+<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
+<p>但其实我并不想管这个Alert。</p>
+<p><strong>解决方法</strong>：</p>
+<p>就直接把异常捕获一下，pass就行了。</p>
+<a id="more"></a>
+
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python Selenium查找元素方法汇总</title>
     <url>/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
     <content><![CDATA[<p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
@@ -1797,28 +1863,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
-    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
-<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
-<p>但其实我并不想管这个Alert。</p>
-<p><strong>解决方法</strong>：</p>
-<p>就直接把异常捕获一下，pass就行了。</p>
-<a id="more"></a>
-
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2112,6 +2156,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 正则表达式</title>
+    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p>正则表达式是什么？</p>
+<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
+<p>比如：</p>
+<ul>
+<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
+<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
+<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
+<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 数据库（SQLite）教程</title>
     <url>/2021/02/07/Python-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88SQLite%EF%BC%89%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
@@ -2192,35 +2265,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 正则表达式</title>
-    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-    <content><![CDATA[<p>正则表达式是什么？</p>
-<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
-<p>比如：</p>
-<ul>
-<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
-<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
-<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
-<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 读写文本文件</title>
     <url>/2022/06/06/Python-%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<p>文本文件，就是可以用记事本程序打开的纯文本内容的文件。</p>
@@ -2249,43 +2293,6 @@
 <li><code>&#39;rw&#39;</code>：表示二进制方式写</li>
 </ul>
 ]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 对图片进行文字识别</title>
-    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
-    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
-<a id="more"></a>
-
-<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
-<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>应用名称：自己取，比如：OCR识别；</li>
-<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
-<li>文字文字识别包名：不需要（默认）</li>
-<li>应用归属：个人</li>
-<li>应用描述：自己写</li>
-</ul>
-<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
-<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
-<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
-<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
-<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
-<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
-<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
-<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
-<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
-<p>返回示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
-<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
-<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2330,6 +2337,43 @@
 <p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
 </blockquote>
 ]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 对图片进行文字识别</title>
+    <url>/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/</url>
+    <content><![CDATA[<p>Python 文字识别，有个OCR 库——Tesseract，看网上评论说识别出来不精准，准确率不行。还是用百度的文字识别API精准得多。使用也很简单。</p>
+<a id="more"></a>
+
+<h1 id="一、在百度创建文字识别的应用"><a href="#一、在百度创建文字识别的应用" class="headerlink" title="一、在百度创建文字识别的应用"></a>一、在百度创建文字识别的应用</h1><h2 id="1-注册登录百度账号"><a href="#1-注册登录百度账号" class="headerlink" title="1.注册登录百度账号"></a>1.注册登录百度账号</h2><p>没有账号的，就注册一下。</p>
+<h2 id="2-创建文字识别应用"><a href="#2-创建文字识别应用" class="headerlink" title="2.创建文字识别应用"></a>2.创建文字识别应用</h2><p>网址：<a class="link"   href="https://console.bce.baidu.com/ai/#/ai/ocr/overview/index" >https://console.bce.baidu.com/ai/#/ai/ocr/overview/index<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>应用名称：自己取，比如：OCR识别；</li>
+<li>接口选择：默认已经勾选<strong>文字识别</strong>了；</li>
+<li>文字文字识别包名：不需要（默认）</li>
+<li>应用归属：个人</li>
+<li>应用描述：自己写</li>
+</ul>
+<p>然后就得到了这个应用的：<strong>AppID</strong>，<strong>API Key</strong>，<strong>Secret Key</strong>。（后面需要用到）</p>
+<h1 id="二、Python代码实现"><a href="#二、Python代码实现" class="headerlink" title="二、Python代码实现"></a>二、Python代码实现</h1><h2 id="1-安装百度的OCR库"><a href="#1-安装百度的OCR库" class="headerlink" title="1.安装百度的OCR库"></a>1.安装百度的OCR库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install baidu-aip</span><br></pre></td></tr></table></figure>
+<p>这上项目在Github上地址：<a class="link"   href="https://github.com/Baidu-AIP/python-sdk" >https://github.com/Baidu-AIP/python-sdk<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个库的目录结构：<br>├── aip                   // SDK目录<br>    │   ├── <strong>init</strong>.py       // 导出类<br>    │   ├── base.py           // aip基类<br>    │   ├── speech.py         // 语音<br>    │   ├── face.py           // 人脸<br>    │   ├── ocr.py            // OCR<br>    │   ├── nlp.py            // NLP<br>    │   ├── kg.py             // 知识图谱<br>    │   ├── imagecensor.py    // 图像审核<br>    │   ├── imageclassify.py  // 图像识别<br>    │   └── imagesearch.py    // 图像搜索<br>    └── setup.py              //setuptools安装</p>
+<p>文字识别OCR，就用到<code>ocr.py</code>这个。</p>
+<h2 id="2-文字识别应用的文档"><a href="#2-文字识别应用的文档" class="headerlink" title="2.文字识别应用的文档"></a>2.文字识别应用的文档</h2><p>官网：<a class="link"   href="https://ai.baidu.com/ai-doc/OCR/wkibizyjk" >https://ai.baidu.com/ai-doc/OCR/wkibizyjk<i class="fas fa-external-link-alt"></i></a></p>
+<p>HTTP-SDK文档下面有分Java语言、Python语言、PHP语言、C++语言、C#语言、Node.js语言、Android SDK、IOS SDK。反正各种语言都有，这里用的是Python。</p>
+<p>文档中 <strong>快速入门</strong>、<strong>接口说明</strong> 反正都写的很清楚了，看看就会用了。</p>
+<h2 id="3-代码实例"><a href="#3-代码实例" class="headerlink" title="3.代码实例"></a>3.代码实例</h2><p>主要看一下调用识别方法后，返回的示例有些什么，可以自己print出来看一下。</p>
+<p>返回示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">x-bce-request-<span class="built_in">id</span>: 73c4e74c-<span class="number">3101</span>-4a00-bf44-fe246959c05e</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Server: BWS</span><br><span class="line">Date: Tue, <span class="number">18</span> Oct <span class="number">2016</span> 02:<span class="number">21</span>:01 GMT</span><br><span class="line">Content-<span class="type">Type</span>: application/json;charset=UTF-<span class="number">8</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;log_id&quot;</span>: <span class="number">3523983603</span>,</span><br><span class="line"><span class="string">&quot;direction&quot;</span>: <span class="number">0</span>, //detect_direction=true时存在</span><br><span class="line"><span class="string">&quot;words_result_num&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="string">&quot;words_result&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;left&quot;</span>: <span class="number">35</span>,</span><br><span class="line">            <span class="string">&quot;top&quot;</span>: <span class="number">53</span>,</span><br><span class="line">            <span class="string">&quot;width&quot;</span>: <span class="number">193</span>,</span><br><span class="line">            <span class="string">&quot;height&quot;</span>: <span class="number">109</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;words&quot;</span>: <span class="string">&quot;感动&quot;</span>,</span><br><span class="line">        <span class="string">&quot;chars&quot;</span>: [    //recognize_granularity=small时存在</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">56</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">69</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;感&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;location&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;left&quot;</span>: <span class="number">140</span>,</span><br><span class="line">                    <span class="string">&quot;top&quot;</span>: <span class="number">65</span>,</span><br><span class="line">                    <span class="string">&quot;width&quot;</span>: <span class="number">70</span>,</span><br><span class="line">                    <span class="string">&quot;height&quot;</span>: <span class="number">88</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;char&quot;</span>: <span class="string">&quot;动&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要的文字内容就在：words_result 中的 <strong>words</strong> 内容。</p>
+<h3 id="3-1-识别单张本地图片"><a href="#3-1-识别单张本地图片" class="headerlink" title="3-1.识别单张本地图片"></a>3-1.识别单张本地图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_content</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pic_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_ocr</span>(<span class="params">pic_file</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    image = get_file_content(pic_file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（高精度版），提取图片中的文字内容</span></span><br><span class="line">    text = client.basicAccurate(image)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result) # result是一个列表，每一项是一个Dictionary，key为&#x27;words&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地单张图片文字识别</span></span><br><span class="line">pic_ocr(<span class="string">&#x27;ocr_test.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后结果直接print打印出来了，如果要写入文档就自己改成写入文档的方法就行。</p>
+<h3 id="3-2-识别网络图片"><a href="#3-2-识别网络图片" class="headerlink" title="3-2.识别网络图片"></a>3-2.识别网络图片</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">url_pic_ocr</span>(<span class="params">pic_url</span>):</span></span><br><span class="line">    app_id = <span class="string">&#x27;2******0&#x27;</span> <span class="comment"># 用自己的AppID</span></span><br><span class="line">    app_key = <span class="string">&#x27;6************a&#x27;</span></span><br><span class="line">    secret_key = <span class="string">&#x27;z************3&#x27;</span></span><br><span class="line"></span><br><span class="line">    client = AipOcr(app_id, app_key, secret_key)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用 通用文字识别（含位置信息版），提取图片中的文字内容</span></span><br><span class="line">    text = client.generalUrl(pic_url)</span><br><span class="line"></span><br><span class="line">    result = text[<span class="string">&#x27;words_result&#x27;</span>]</span><br><span class="line">    <span class="comment"># print(result)</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> result:</span><br><span class="line">        <span class="built_in">print</span>(line[<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络图片文字识别</span></span><br><span class="line">url_pic_ocr(<span class="string">r&#x27;http://n.sinaimg.cn/henan/transform/20160114/6sMt-fxnrahr8267165.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2511,70 +2555,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Termius破解方法（Windows版）</title>
-    <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
-    <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
-<p>软件有免费版和付费版，免费版就已经提供SSH功能，满足连接并操作Linux服务器的需求。</p>
-<p>免费版的缺点是不能用SFTP，也不能云同步。这不能用SFTP就挺麻烦的，现在用的都是XShell+Xftp的免费版，起码日常用用是够用的。然后收费还是订阅的制（更贵了），不是专门运维人员，自己用用，感觉太贵了。</p>
-<a id="more"></a>
-
-<p>所以，为了用用SFTP功能，看了下网上破解的方法。就试了下。</p>
-<p>提前说明一下：</p>
-<blockquote>
-<p>目前下载的最新版：7.41.3版本，里面文件的方法啥的都变了，所以不能用以下方便破解了。<br>看别人用7.26.2的版本还能找到这个js文件里破解的，于是下载了个旧版本，7.26.2之前的版本。（意思就是7.26.2之前的版本可以用此方便尝试破解，之后就不能保证了。）</p>
-</blockquote>
-<h2 id="一、工具准备"><a href="#一、工具准备" class="headerlink" title="一、工具准备"></a>一、工具准备</h2><h3 id="1-VS-Code（需安装Prettier插件）"><a href="#1-VS-Code（需安装Prettier插件）" class="headerlink" title="1.VS Code（需安装Prettier插件）"></a>1.VS Code（需安装Prettier插件）</h3><p>用来打开一个js文件，Prettier插件主要是让js文件格式化显示的，这样方便查看。</p>
-<p>我这原来就有VS Code，安装下插件就行了。<br>VS Code官方下载地址：<a class="link"   href="https://code.visualstudio.com/docs/?dv=win" >https://code.visualstudio.com/docs/?dv=win<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="2-Node-js"><a href="#2-Node-js" class="headerlink" title="2.Node.js"></a>2.Node.js</h3><p>用来安装asar，然后后面解压asar文件的。</p>
-<p>1).下载安装Node.js</p>
-<p>官网下载地址：<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ，下载对应版本安装就行。<br>（怕有问题，直接搜索安装教程照着来就行）</p>
-<p>2).安装asar</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g asar</span><br></pre></td></tr></table></figure>
-<p>Hexo博客的，原来也都有安装Node.js，所以直接安装一下asar就行了。</p>
-<h3 id="3-Termius安装包"><a href="#3-Termius安装包" class="headerlink" title="3.Termius安装包"></a>3.Termius安装包</h3><h2 id="二、破解Termius"><a href="#二、破解Termius" class="headerlink" title="二、破解Termius"></a>二、破解Termius</h2><p>看了下网上大佬的破解方法，就是：</p>
-<ul>
-<li>找到resources目录下有个app.asar的包，解压出来后修改里面有个ui-process.js文件；</li>
-<li>找到js文件里 isProUser（判断是否Pro收费用户）的地方，直接让方法返回True；</li>
-<li>最后再改一下用户名，直接定义个字符串。</li>
-</ul>
-<h3 id="1-安装Termius"><a href="#1-安装Termius" class="headerlink" title="1.安装Termius"></a>1.安装Termius</h3><p>直接【先断网】，再安装，这样也不会把老版本强制升级什么了。</p>
-<h3 id="2-解压app-asar"><a href="#2-解压app-asar" class="headerlink" title="2.解压app.asar"></a>2.解压app.asar</h3><p>在安装好的Termius快捷方式上，右键-&gt;属性，找到安装路径，然后进入resources目录。<br>一般默认路径为：<code>C:\Users\[user_name]\AppData\Local\Programs\Termius\resources</code></p>
-<p>这个目录下有一个app.asar，还有一个app-update.yml（看名字就是软件更新相关）文件先删除。</p>
-<p>在这个目录下，用命令行运行以下命令解压app.asar，得到一个app目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">asar e app.asar app</span><br></pre></td></tr></table></figure>
-<h3 id="3-VS-Code打开ui-process-js并格式化"><a href="#3-VS-Code打开ui-process-js并格式化" class="headerlink" title="3.VS Code打开ui-process.js并格式化"></a>3.VS Code打开ui-process.js并格式化</h3><p>用VS Code（需安装Prettier插件）打开 <code>resources\app\js\ui-process.js</code>文件。</p>
-<p>然后按 Ctrl+Shift+P，输入format搜索，选择 Format Document（格式化文档）。</p>
-<h3 id="4-ui-process-js中修改isProUser相关处"><a href="#4-ui-process-js中修改isProUser相关处" class="headerlink" title="4.ui-process.js中修改isProUser相关处"></a>4.ui-process.js中修改isProUser相关处</h3><p>等完成格式化后，Ctrl+F，搜索字段<code>isProUser</code>，找到类似下图所示的地方，不同版本函数会有不一样的。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_1.png"
-                     
-                ></p>
-<p>然后，按Ctrl加鼠标单击，跳转至该函数处，反正把内容直接改成<code>return true;</code>，如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_2.png"
-                     
-                ></p>
-<h3 id="5-ui-process-js中修改username"><a href="#5-ui-process-js中修改username" class="headerlink" title="5.ui-process.js中修改username"></a>5.ui-process.js中修改username</h3><p>搜索字段<code>user.username</code>，把这里return后面直接写个字符串，任意值，随便的。例如：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_3.png"
-                     
-                ></p>
-<p>最后保存一下。</p>
-<p>再打开Termius的时候，发现SFTP功能就可以用了。</p>
-<p>PS.ui-process.js是全平台通用的，只需要修改一次。如果是mac版本，反正同一个版本号的话，直接把这个文件覆盖原安装目录下的ui-process.js文件就行。</p>
-]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TPLink路由器无线桥接、无线中继</title>
     <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
     <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
@@ -2653,6 +2633,70 @@
       </tags>
   </entry>
   <entry>
+    <title>Termius破解方法（Windows版）</title>
+    <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
+    <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
+<p>软件有免费版和付费版，免费版就已经提供SSH功能，满足连接并操作Linux服务器的需求。</p>
+<p>免费版的缺点是不能用SFTP，也不能云同步。这不能用SFTP就挺麻烦的，现在用的都是XShell+Xftp的免费版，起码日常用用是够用的。然后收费还是订阅的制（更贵了），不是专门运维人员，自己用用，感觉太贵了。</p>
+<a id="more"></a>
+
+<p>所以，为了用用SFTP功能，看了下网上破解的方法。就试了下。</p>
+<p>提前说明一下：</p>
+<blockquote>
+<p>目前下载的最新版：7.41.3版本，里面文件的方法啥的都变了，所以不能用以下方便破解了。<br>看别人用7.26.2的版本还能找到这个js文件里破解的，于是下载了个旧版本，7.26.2之前的版本。（意思就是7.26.2之前的版本可以用此方便尝试破解，之后就不能保证了。）</p>
+</blockquote>
+<h2 id="一、工具准备"><a href="#一、工具准备" class="headerlink" title="一、工具准备"></a>一、工具准备</h2><h3 id="1-VS-Code（需安装Prettier插件）"><a href="#1-VS-Code（需安装Prettier插件）" class="headerlink" title="1.VS Code（需安装Prettier插件）"></a>1.VS Code（需安装Prettier插件）</h3><p>用来打开一个js文件，Prettier插件主要是让js文件格式化显示的，这样方便查看。</p>
+<p>我这原来就有VS Code，安装下插件就行了。<br>VS Code官方下载地址：<a class="link"   href="https://code.visualstudio.com/docs/?dv=win" >https://code.visualstudio.com/docs/?dv=win<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="2-Node-js"><a href="#2-Node-js" class="headerlink" title="2.Node.js"></a>2.Node.js</h3><p>用来安装asar，然后后面解压asar文件的。</p>
+<p>1).下载安装Node.js</p>
+<p>官网下载地址：<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ，下载对应版本安装就行。<br>（怕有问题，直接搜索安装教程照着来就行）</p>
+<p>2).安装asar</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g asar</span><br></pre></td></tr></table></figure>
+<p>Hexo博客的，原来也都有安装Node.js，所以直接安装一下asar就行了。</p>
+<h3 id="3-Termius安装包"><a href="#3-Termius安装包" class="headerlink" title="3.Termius安装包"></a>3.Termius安装包</h3><h2 id="二、破解Termius"><a href="#二、破解Termius" class="headerlink" title="二、破解Termius"></a>二、破解Termius</h2><p>看了下网上大佬的破解方法，就是：</p>
+<ul>
+<li>找到resources目录下有个app.asar的包，解压出来后修改里面有个ui-process.js文件；</li>
+<li>找到js文件里 isProUser（判断是否Pro收费用户）的地方，直接让方法返回True；</li>
+<li>最后再改一下用户名，直接定义个字符串。</li>
+</ul>
+<h3 id="1-安装Termius"><a href="#1-安装Termius" class="headerlink" title="1.安装Termius"></a>1.安装Termius</h3><p>直接【先断网】，再安装，这样也不会把老版本强制升级什么了。</p>
+<h3 id="2-解压app-asar"><a href="#2-解压app-asar" class="headerlink" title="2.解压app.asar"></a>2.解压app.asar</h3><p>在安装好的Termius快捷方式上，右键-&gt;属性，找到安装路径，然后进入resources目录。<br>一般默认路径为：<code>C:\Users\[user_name]\AppData\Local\Programs\Termius\resources</code></p>
+<p>这个目录下有一个app.asar，还有一个app-update.yml（看名字就是软件更新相关）文件先删除。</p>
+<p>在这个目录下，用命令行运行以下命令解压app.asar，得到一个app目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">asar e app.asar app</span><br></pre></td></tr></table></figure>
+<h3 id="3-VS-Code打开ui-process-js并格式化"><a href="#3-VS-Code打开ui-process-js并格式化" class="headerlink" title="3.VS Code打开ui-process.js并格式化"></a>3.VS Code打开ui-process.js并格式化</h3><p>用VS Code（需安装Prettier插件）打开 <code>resources\app\js\ui-process.js</code>文件。</p>
+<p>然后按 Ctrl+Shift+P，输入format搜索，选择 Format Document（格式化文档）。</p>
+<h3 id="4-ui-process-js中修改isProUser相关处"><a href="#4-ui-process-js中修改isProUser相关处" class="headerlink" title="4.ui-process.js中修改isProUser相关处"></a>4.ui-process.js中修改isProUser相关处</h3><p>等完成格式化后，Ctrl+F，搜索字段<code>isProUser</code>，找到类似下图所示的地方，不同版本函数会有不一样的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_1.png"
+                     
+                ></p>
+<p>然后，按Ctrl加鼠标单击，跳转至该函数处，反正把内容直接改成<code>return true;</code>，如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_2.png"
+                     
+                ></p>
+<h3 id="5-ui-process-js中修改username"><a href="#5-ui-process-js中修改username" class="headerlink" title="5.ui-process.js中修改username"></a>5.ui-process.js中修改username</h3><p>搜索字段<code>user.username</code>，把这里return后面直接写个字符串，任意值，随便的。例如：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_3.png"
+                     
+                ></p>
+<p>最后保存一下。</p>
+<p>再打开Termius的时候，发现SFTP功能就可以用了。</p>
+<p>PS.ui-process.js是全平台通用的，只需要修改一次。如果是mac版本，反正同一个版本号的话，直接把这个文件覆盖原安装目录下的ui-process.js文件就行。</p>
+]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Typora+PicGo无法显示Github图床图片问题</title>
     <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
@@ -2685,35 +2729,6 @@
         <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2783,6 +2798,35 @@
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
         <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -2908,6 +2952,49 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 查看CPU占用和使用情况</title>
+    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
+    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
+<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_1.png"
+                     
+                >
+
+<ul>
+<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
+<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
+<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
+<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
+<li>第5行：略</li>
+<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
+</ul>
+<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
+<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ubuntu_cpu_2.png"
+                     
+                >
+- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
+- 上方右侧：全部进程(Task)数为：33。
+- 下方一样的是全部进程的情况。
+
+<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>iphone进入DFU模式方法</title>
     <url>/2022/04/09/iphone%E8%BF%9B%E5%85%A5DFU%E6%A8%A1%E5%BC%8F%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>什么时候需要让 iphone 进入DFU模式？一般两种情况：</p>
@@ -2951,49 +3038,6 @@
       </categories>
       <tags>
         <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 查看CPU占用和使用情况</title>
-    <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
-    <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
-<h2 id="方法一：用自带的-top命令查看"><a href="#方法一：用自带的-top命令查看" class="headerlink" title="方法一：用自带的 top命令查看"></a>方法一：用自带的 top命令查看</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_1.png"
-                     
-                >
-
-<ul>
-<li>第1行：当前系统时间，系统已运行的时间，几个在线用户(user)；</li>
-<li>第2行 Tasks：总进程数(total)，正在运行的进程数(running)等；</li>
-<li>第3行 %Cpu：用户进程 CPU占用率(us)，系统进程 CPU占用率(sy)，CPU空闲率(id)；</li>
-<li>第4行 KiB Mem：内存总量(total) ，内存空闲(free)。单位都是KB。上图中内存约1.8 G。</li>
-<li>第5行：略</li>
-<li>第6行 PID：显示具体进程情况。%CPU是CPU情况，%MEM是内存使用情况。</li>
-</ul>
-<h2 id="方法二：使用-htop查看（推荐使用）"><a href="#方法二：使用-htop查看（推荐使用）" class="headerlink" title="方法二：使用 htop查看（推荐使用）"></a>方法二：使用 htop查看（推荐使用）</h2><h3 id="1-安装-htop"><a href="#1-安装-htop" class="headerlink" title="1.安装 htop"></a>1.安装 htop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install htop</span><br></pre></td></tr></table></figure>
-<h3 id="2-使用htop命令可以更直观的查看CPU使用信息"><a href="#2-使用htop命令可以更直观的查看CPU使用信息" class="headerlink" title="2.使用htop命令可以更直观的查看CPU使用信息"></a>2.使用htop命令可以更直观的查看CPU使用信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">htop</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ubuntu_cpu_2.png"
-                     
-                >
-- 上方左侧：CPU、Mem(内存) 看得更清楚明白。内存总共 1.79G，已使用 159M。
-- 上方右侧：全部进程(Task)数为：33。
-- 下方一样的是全部进程的情况。
-
-<p>如果想要结束进程，按上面的提示按F9(Kill) 就可以结束进程，需要再按回车键(Enter)确认。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -3280,6 +3324,40 @@
       </tags>
   </entry>
   <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -3356,40 +3434,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【Windows疑难杂症】打不开网页 解决方法</title>
     <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5/</url>
     <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
@@ -3417,6 +3461,74 @@
       </categories>
       <tags>
         <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【不断更新系列】Linux命令小记</title>
+    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Ubuntu命令</th>
+<th>CentOS命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装软件</td>
+<td><code>apt-get install package</code></td>
+<td><code>yum install package</code></td>
+</tr>
+<tr>
+<td>删除/卸载软件</td>
+<td><code>apt-get remove package</code></td>
+<td><code>yum remove package</code></td>
+</tr>
+<tr>
+<td>升级软件包</td>
+<td><code>apt-get upgrade</code></td>
+<td><code>yum update</code></td>
+</tr>
+<tr>
+<td>软件包后缀</td>
+<td>*.deb</td>
+<td>*.rpm</td>
+</tr>
+<tr>
+<td>安装已下载的软件包</td>
+<td><code>dpkg -i package.deb</code></td>
+<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
+</tr>
+</tbody></table>
+<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3482,7 +3594,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#116;&#64;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;" >&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -3552,74 +3664,6 @@
         <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【不断更新系列】Linux命令小记</title>
-    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>Ubuntu命令</th>
-<th>CentOS命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安装软件</td>
-<td><code>apt-get install package</code></td>
-<td><code>yum install package</code></td>
-</tr>
-<tr>
-<td>删除/卸载软件</td>
-<td><code>apt-get remove package</code></td>
-<td><code>yum remove package</code></td>
-</tr>
-<tr>
-<td>升级软件包</td>
-<td><code>apt-get upgrade</code></td>
-<td><code>yum update</code></td>
-</tr>
-<tr>
-<td>软件包后缀</td>
-<td>*.deb</td>
-<td>*.rpm</td>
-</tr>
-<tr>
-<td>安装已下载的软件包</td>
-<td><code>dpkg -i package.deb</code></td>
-<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
-</tr>
-</tbody></table>
-<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
-<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
