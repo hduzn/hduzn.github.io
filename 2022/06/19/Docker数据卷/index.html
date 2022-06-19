@@ -9,7 +9,7 @@
     
     <title>
         
-            Ubuntu 安装Selenium自动化测试 |
+            Docker 数据卷（volumes）介绍 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Ubuntu 安装Selenium自动化测试</span>
+            <span class="title-hover-animation">Docker 数据卷（volumes）介绍</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-08 14:40:00</span>
-        <span class="mobile">2021-02-08 14:40</span>
+        <span class="pc">2022-06-19 11:36:52</span>
+        <span class="mobile">2022-06-19 11:36</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,19 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Python/">Python</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Ubuntu/">Ubuntu</a>&nbsp;
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -251,44 +239,64 @@
         
 
         <div class="article-content markdown-body">
-            <p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+            <p>Docker 提供了三种不同的方式将数据从 Docker Host 挂载到 Docker 容器，并实现数据的读取和存储：volumes、bind mounts、tmpfs 。</p>
+<ul>
+<li>Volumes 存储在 Docker Host 文件系统的一个路径下，这个路径是由 Docker 来进行管理，路径默认是 /var/lib/docker/volumes/，非 Docker 的进程不能去修改这个路径下面的文件，所以说Volumes 是持久存储数据最好的一种方式。</li>
+<li>Bind mounts 可以存储在 Docker Host 文件系统的任何位置，它们甚至可能是重要的系统文件或目录，非 Docker 的进程或者 Docker 容器可能随时对其进行修改，存在潜在的安全风险。</li>
+<li>Tmpfs 只存储在 Docker Host 的系统内存中，不会写入到系统的文件系统中，不会持久存储。</li>
+</ul>
 <a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   target="_blank" rel="noopener" href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   target="_blank" rel="noopener" href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   target="_blank" rel="noopener" href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>
+
+<p>数据卷（volumes）是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：</p>
+<ul>
+<li>数据卷 可以在容器之间共享和重用；</li>
+<li>对 数据卷 的修改会立马生效；</li>
+<li>对 数据卷 的更新，不会影响镜像；</li>
+<li>数据卷 默认会一直存在，即使容器被删除。</li>
+</ul>
+<p>注意：数据卷 的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会复制到数据卷中（仅数据卷为空时会复制）。</p>
+<h2 id="数据卷"><a href="#数据卷" class="headerlink" title="数据卷"></a>数据卷</h2><h3 id="1-创建一个数据卷"><a href="#1-创建一个数据卷" class="headerlink" title="1.创建一个数据卷"></a>1.创建一个数据卷</h3><p>创建一个数据卷：my-vol</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume create my-vol</span><br></pre></td></tr></table></figure>
+<p>查看所有的数据卷：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume ls</span><br></pre></td></tr></table></figure>
+<p>查看指定 数据卷（my-vol） 的信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume inspect my-vol</span><br></pre></td></tr></table></figure>
+<h3 id="2-删除数据卷"><a href="#2-删除数据卷" class="headerlink" title="2.删除数据卷"></a>2.删除数据卷</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume rm my-vol</span><br></pre></td></tr></table></figure>
+<p>数据卷 是被设计用来持久化数据的，它的生命周期独立于容器，Docker 不会在容器被删除后自动删除 数据卷，并且也不存在垃圾回收这样的机制来处理没有任何容器引用的 数据卷。</p>
+<p>如果需要在删除容器的同时移除数据卷。可以在删除容器的时候使用 <code>docker rm -v</code> 这个命令。</p>
+<p>无主的数据卷可能会占据很多空间，要清理使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume prune</span><br></pre></td></tr></table></figure>
+<h2 id="挂载数据卷"><a href="#挂载数据卷" class="headerlink" title="挂载数据卷"></a>挂载数据卷</h2><p>启动容器的时候，可以先创建好数据卷，也可以直接设置（会创建新的数据卷）。</p>
+<p><strong>用法</strong>：</p>
+<ul>
+<li><code>-v</code>或<code>--volume</code>，<code>数据卷名称:容器中路径</code></li>
+<li><code>--mount</code>，由多个键值对组成，以逗号分隔，每个键=组由一个元组组成。<code>--mount</code>语法比<code>-v</code>或<code>--volume</code>更详细</li>
+</ul>
+<h3 id="1-docker-run使用数据卷"><a href="#1-docker-run使用数据卷" class="headerlink" title="1.docker run使用数据卷"></a>1.docker run使用数据卷</h3><p>在用 docker run 命令的时候，一般使用<code>-v</code>或 <code>--mount</code> 标记来将 数据卷 挂载到容器里。在一次 docker run 中可以挂载多个 数据卷。</p>
+<p>例如：创建一个名为 myweb 的容器，并加载一个 数据卷 到容器的 <code>/usr/share/nginx/html</code> 目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d -P \</span><br><span class="line">    --name myweb \</span><br><span class="line">    <span class="comment"># -v my-vol:/usr/share/nginx/html \</span></span><br><span class="line">    --mount <span class="built_in">source</span>=my-vol,target=/usr/share/nginx/html \</span><br><span class="line">    nginx:alpine</span><br></pre></td></tr></table></figure>
+<p><strong>查看容器中数据卷信息：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect myweb</span><br></pre></td></tr></table></figure>
+<p>以上命令可以查看 myweb 容器的信息，数据卷 信息在 “Mounts”下面。</p>
+<h3 id="2-docker-compose使用数据卷"><a href="#2-docker-compose使用数据卷" class="headerlink" title="2.docker-compose使用数据卷"></a>2.docker-compose使用数据卷</h3><p>例如：数据卷mysql_data所挂载的是容器中的/var/lib/mysql目录。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">my_src:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:8.0</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql_data:/var/lib/mysql</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mysql_data:</span></span><br></pre></td></tr></table></figure>
+<p>数据卷相关介绍 参考文章：</p>
+<ul>
+<li><a class="link"   target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/data_management/volume" >Docker从入门到实践-数据卷<i class="fas fa-external-link-alt"></i></a></li>
+<li><a class="link"   target="_blank" rel="noopener" href="http://docker.baoshu.red/data_management/volume.html" >数据卷详细介绍<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Ubuntu 安装Selenium自动化测试</li>
+        <li>本文标题：Docker 数据卷（volumes）介绍</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-08 14:40:00</li>
+        <li>创建时间：2022-06-19 11:36:52</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/08/Ubuntu安装Selenium自动化测试/
+            本文链接：http://hduzn.cn/2022/06/19/Docker数据卷/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -303,19 +311,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Python/">#Python</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Ubuntu/">#Ubuntu</a>&nbsp;
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -327,13 +323,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"
+                           href="/2022/06/19/Docker-Compose%E8%AF%A6%E8%A7%A3/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Github 图床使用教程</span>
+                                <span class="post-nav-title-item">Docker-Compose详解</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -343,10 +339,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/"
+                           href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu 命令行安装Chrome浏览器</span>
+                                <span class="post-nav-title-item">Docker搭建frp内网穿透服务器</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -557,7 +553,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85-Google-Chrome%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-text">一、安装 Google Chrome浏览器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD-Google-Chrome"><span class="nav-text">1.下载 Google Chrome</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85-Google-Chrome"><span class="nav-text">2.安装 Google Chrome</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9F%A5%E7%9C%8B-Google-Chrome%E7%89%88%E6%9C%AC"><span class="nav-text">3.查看 Google Chrome版本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85%E6%B5%8F%E8%A7%88%E5%99%A8%E9%A9%B1%E5%8A%A8"><span class="nav-text">二、安装浏览器驱动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E4%B8%8B%E8%BD%BD-Chrome-WebDriver"><span class="nav-text">1、下载 Chrome WebDriver</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%9C%A8%E6%9C%AC%E5%9C%B0Windows%E6%9C%BA%E4%B8%8B%E8%BD%BD"><span class="nav-text">方法一：在本地Windows机下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E7%9B%B4%E6%8E%A5%E5%9C%A8Ubuntu%E4%B8%AD%E7%9B%B4%E6%8E%A5%E4%B8%8B%E8%BD%BD"><span class="nav-text">方法二：直接在Ubuntu中直接下载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E7%BB%99chromedriver-%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-text">2、给chromedriver 文件添加可执行的权限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85-Selenium-%E5%8C%85"><span class="nav-text">三、安装 Selenium 包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81python%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-text">四、python代码示例</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">数据卷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">1.创建一个数据卷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">2.删除数据卷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">挂载数据卷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-docker-run%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">1.docker run使用数据卷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-docker-compose%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="nav-text">2.docker-compose使用数据卷</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
