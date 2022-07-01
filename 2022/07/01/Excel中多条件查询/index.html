@@ -9,7 +9,7 @@
     
     <title>
         
-            Python拆分Excel表 |
+            Excel中多条件查询 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Python拆分Excel表</span>
+            <span class="title-hover-animation">Excel中多条件查询</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-07-01 17:04:08</span>
-        <span class="mobile">2022-07-01 17:04</span>
+        <span class="pc">2022-07-01 21:30:39</span>
+        <span class="mobile">2022-07-01 21:30</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Python/">Python</a>&nbsp;
+                        <a href="/categories/Office/">Office</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,11 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Python/">Python</a>&nbsp;
+                        <a href="/tags/Excel/">Excel</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Office/">Office</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,29 +243,40 @@
         
 
         <div class="article-content markdown-body">
-            <p>因为有个系统导入数据的时候，有近2000条的数据，每次一导入就卡死了，得拆成几百条一张的表格才行。</p>
-<p>用Python的pandas拆分一下excel表很简单。而且会保留标题行。</p>
+            <p>一般，原来在Excel中查询用的最多的就是vlookup，后来有了xlookup，很多时候更方便就用xlookup了。</p>
+<p>不过 ，这都是针对一个条件的查询。</p>
+<p>举个例子，比如要查询表格中某个人的总分。</p>
+<p>因为，不同班级会有相同姓名的情况，所以不能直接按姓名来查询。<br>查询的时候需要两个条件：一个是班级，另一个是姓名，同时满足这两个条件才能查询到这个人。<br>（当然，假设同一个班级里没有相同姓名。如果同一个班级里都有相同姓名，多添加一列学号/序号就行了）</p>
 <a id="more"></a>
-
-<h2 id="安装pandas库"><a href="#安装pandas库" class="headerlink" title="安装pandas库"></a>安装pandas库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装pandas库：</span></span><br><span class="line">pip install pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当然，操作excel的库也要安装一下，一般操作.xlsx格式的，安装openpyxl：</span></span><br><span class="line">pip install openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果，最后保存文件是.xls格式的，需要安装xlwt：</span></span><br><span class="line">pip install xlwt</span><br></pre></td></tr></table></figure>
-<p>最后保存成<code>.xls</code>格式的时候，会有如下提示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">As the xlwt package is no longer maintained, the xlwt engine will be removed in a fuine will be removed in a future version of pandas.</span><br></pre></td></tr></table></figure>
-<p>这个东西在pandas中会被淘汰，不用管，等以后不能用了再说。<br>毕竟还是有些破系统的导入，只支持xls格式的。</p>
-<h2 id="拆分Excel表举例"><a href="#拆分Excel表举例" class="headerlink" title="拆分Excel表举例"></a>拆分Excel表举例</h2><p>比如：有个表格如下图所示，想按【年级】字段，拆分表，每个年级一个表。<br><img  
+<p>如下图所示：<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Python_split_excel_1.png"
+                     data-src="/img/Excel_more_condition_query_1.png"
                       style="zoom: 75%;"
                 ></p>
-<p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\split_名单.xlsx&#x27;</span></span><br><span class="line">    data = pd.read_excel(ex_file)</span><br><span class="line">    <span class="comment"># rows = data.shape[0] # 获取行数，不算标题行。shape[1]获取列数</span></span><br><span class="line">    <span class="comment"># print(rows)</span></span><br><span class="line"></span><br><span class="line">    type_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>] <span class="comment"># 年级列的所有值</span></span><br><span class="line">    <span class="keyword">for</span> grade <span class="keyword">in</span> type_list:</span><br><span class="line">        df = data.loc[data[<span class="string">&#x27;年级&#x27;</span>] == grade]</span><br><span class="line">        path = <span class="string">r&#x27;.\ex\split&#x27;</span> + <span class="string">&#x27;\\&#x27;</span> + <span class="built_in">str</span>(grade) + <span class="string">&#x27;.xlsx&#x27;</span> <span class="comment"># 新生成的文件名，当然.\ex\split目录已建好</span></span><br><span class="line">        df.to_excel(path, index=<span class="literal">False</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;------------fine!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<p>运行后，结果如图：<br><img  
+<p><strong>思路：</strong></p>
+<ul>
+<li>用 match 函数找到同时满足两个条件的索引号；</li>
+<li>用 index 函数通过索引号查询。</li>
+</ul>
+<h3 id="1-index-函数"><a href="#1-index-函数" class="headerlink" title="1.index 函数"></a>1.index 函数</h3><p><strong>功能</strong>：返回表元素或数组元素的值，该元素是通过行号和列号索引选定的。<br><strong>语法</strong>：INDEX(array, row_num, [column_num])</p>
+<p>我们会用到的就是在一列里的，所以举例都是一列中的。</p>
+<p><strong>举例（上面的表格）</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INDEX(D2:D31,1) 表示D2:D31的单元格内容作为一个数组，取第1个值，即D2的值(388)</span><br><span class="line">INDEX(D2:D31,3) 表示D2:D31的单元格内容作为一个数组，取第3个值，即D4的值(329)</span><br></pre></td></tr></table></figure>
+<p>那我们只需要这个学生对应的索引行号，就可以查询到了。用match函数。</p>
+<h3 id="2-match-函数"><a href="#2-match-函数" class="headerlink" title="2.match 函数"></a>2.match 函数</h3><p><strong>功能</strong>：在指定范围单元格中搜索特定的项，然后返回该项在此区域中的相对位置。<br><strong>语法</strong>：MATCH(lookup_value, lookup_array, [match_type])</p>
+<p><strong>举例（上面的表格）</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH(F2,$B$2:$B$31,0) 表示在B2:B31中，查询F2(201)的位置，结果是：11(第1个201)</span><br><span class="line">MATCH(G2,$C$2:$C$31,0) 表示在C2:C31中，查询G2(荀彧)的位置，结果是：1(第1个荀彧)</span><br><span class="line">MATCH(F2&amp;G2,$B$2:$B$31&amp;$C$2:$C$31,0) 同时满足F2(201)和G2(荀彧)，结果是：15</span><br></pre></td></tr></table></figure>
+<h3 id="3-公式组合"><a href="#3-公式组合" class="headerlink" title="3.公式组合"></a>3.公式组合</h3><p>同时满足班级：F2(201)和姓名：G2(荀彧)的条件，查询其总分的公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;INDEX($D$2:$D$31,MATCH(F2&amp;G2,$B$2:$B$31&amp;$C$2:$C$31,0))</span><br></pre></td></tr></table></figure>
+<p>返回的结果就是255。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Python_split_excel_2.png"
+                     data-src="/img/Excel_more_condition_query_2.png"
                       style="zoom: 75%;"
                 ></p>
-<p>当然，如果是部门类别，也是一样的。<br>如果没有一个类别字段的，也是可以按序号拆分的 ，比如500条一拆。</p>
+<p>如果3个条件的话，match函数查询索引号的时候，继续加一个条件就行。</p>
+<p>PS.注意，我这里标题没算进去，所以起始行号都是第2行，即用match函数查询、index函数查询的时候起始行号要保持一致。要么都算标题行，要么都不算。因为match函数返回的是第几个。</p>
 
         </div>
 
@@ -269,11 +284,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Python拆分Excel表</li>
+        <li>本文标题：Excel中多条件查询</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-07-01 17:04:08</li>
+        <li>创建时间：2022-07-01 21:30:39</li>
         <li>
-            本文链接：http://hduzn.cn/2022/07/01/Python拆分Excel表/
+            本文链接：http://hduzn.cn/2022/07/01/Excel中多条件查询/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -288,7 +303,11 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Python/">#Python</a>&nbsp;
+                        <a href="/tags/Excel/">#Excel</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Office/">#Office</a>&nbsp;
                     </li>
                 
             </ul>
@@ -297,29 +316,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/07/01/Excel%E4%B8%AD%E5%A4%9A%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Excel中多条件查询</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/07/01/office%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%EF%BC%8C%E6%89%BE%E4%B8%8D%E5%88%B0VCRUNTIME140-1-dll/"
+                           href="/2022/07/01/Python%E6%8B%86%E5%88%86Excel%E8%A1%A8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">office无法打开，找不到VCRUNTIME140_1.dll</span>
+                                <span class="post-nav-title-item">Python拆分Excel表</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -530,7 +534,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pandas%E5%BA%93"><span class="nav-text">安装pandas库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%86%E5%88%86Excel%E8%A1%A8%E4%B8%BE%E4%BE%8B"><span class="nav-text">拆分Excel表举例</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-index-%E5%87%BD%E6%95%B0"><span class="nav-text">1.index 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-match-%E5%87%BD%E6%95%B0"><span class="nav-text">2.match 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%85%AC%E5%BC%8F%E7%BB%84%E5%90%88"><span class="nav-text">3.公式组合</span></a></li></ol>
     </div>
 </div>
         </aside>
