@@ -15,6 +15,34 @@
 ]]></content>
   </entry>
   <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CentOS安装git</title>
     <url>/2022/06/14/CentOS%E5%AE%89%E8%A3%85git/</url>
     <content><![CDATA[<p>我有一台腾讯云的CentOS 7.6，不行，安装依赖库的时候直接对应的腾讯云的mirrors都空了，没有。</p>
@@ -51,25 +79,90 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
+    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
+    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
+<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
 <a id="more"></a>
 
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
+<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
+<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
+<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
+<p><strong>Flask项目结构（样例）</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
+<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong>requirements.txt 举例</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
+<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
+<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
+<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
+<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-t 设置镜像名字和版本号</p>
+</blockquote>
+<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
+<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
+<blockquote>
+<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
+</blockquote>
+<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
+<p>COPY指令复制，源文件的各种元数据都会保留。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
+<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
+<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
+<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
+<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
+<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
+<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
+<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
+<p>1).格式</p>
+<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
+<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
+<p>2).举例</p>
+<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
+<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
+<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
+<p>3).容器中应用在前台执行（重点）</p>
+<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
+<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
+<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
+<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
+<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
+<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
+<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
+<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
+<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
+<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
+<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
+<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
+<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
+<p>比如举个简单的例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
+<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
+<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
+<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
+<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
+<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
+<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
+<p>举个例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
+<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
+<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
+<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
+<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -162,99 +255,6 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-f,--file FILE指定使用的Compose模板文件，默认为docker-compose.yml，可以多次指定。</span><br><span class="line">-p,--project-name NAME指定项目名称，默认将使用所在目录名称作为项目名。</span><br><span class="line">--verbose 输出更多调试信息。</span><br><span class="line">-v,--version 打印版本并退出。</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.部署一个Compose应用</span></span><br><span class="line">docker-compose up</span><br><span class="line"><span class="comment"># 默认情况下该命令会读取名为 docker-compose.yml，也可以使用-f指定其他文件名。</span></span><br><span class="line"><span class="comment"># 通常情况下，会使用-d参数令应用在后台启动。</span></span><br><span class="line">docker-compose up -d</span><br><span class="line">docker-compose up -d -f docker-compose-v3.yml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.列出Compose应用中的各个容器</span></span><br><span class="line">docker-compose ps</span><br><span class="line">docker ps -a <span class="comment"># 显示包括停止的容器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.停止Compose应用相关的所有容器，但不会删除它们</span></span><br><span class="line">docker-compose stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.重启已停止的Compose应用</span></span><br><span class="line">docker-compose restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.停止并删除运行中的Compose应用，会删除容器和网络，但是不会删除卷和镜像。</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure>
 <p>官方文档：<a class="link"   href="https://docs.docker.com/compose/reference/up/" >https://docs.docker.com/compose/reference/up/<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
-    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
-    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
-<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
-<a id="more"></a>
-
-<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
-<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
-<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
-<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
-<p><strong>Flask项目结构（样例）</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
-<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
-<p><strong>requirements.txt 举例</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
-<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
-<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
-<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
-<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-t 设置镜像名字和版本号</p>
-</blockquote>
-<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
-<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
-<blockquote>
-<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
-</blockquote>
-<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
-<p>COPY指令复制，源文件的各种元数据都会保留。</p>
-<p>例子：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
-<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
-<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
-<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
-<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
-<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
-<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
-<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
-<p>1).格式</p>
-<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
-<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
-<p>2).举例</p>
-<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
-<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
-<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
-<p>3).容器中应用在前台执行（重点）</p>
-<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
-<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
-<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
-<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
-<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
-<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
-<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
-<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
-<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
-<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
-<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
-<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
-<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
-<p>比如举个简单的例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
-<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
-<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
-<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
-<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
-<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
-<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
-<p>举个例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
-<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
-<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
-<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
-<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -492,8 +492,8 @@
         <category>Docker</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Docker</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -612,8 +612,8 @@
         <category>Docker</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Docker</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -755,8 +755,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Docker</tag>
+        <tag>Linux</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
       </tags>
@@ -849,6 +849,53 @@
                      
                 ></p>
 <p>最后，把不需要的辅助列都删除即可。</p>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
 <p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
 ]]></content>
       <categories>
@@ -960,50 +1007,60 @@
       </tags>
   </entry>
   <entry>
-    <title>Excel中提取身份证的出生日期和性别</title>
-    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
-    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
-<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
-<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
 <a id="more"></a>
 
-<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
-<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_1.png"
+                     data-src="/img/Github_Pages_domain_name_1.png"
                      
-                ></p>
-<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                >
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_2.png"
+                     data-src="/img/Github_Pages_domain_name_2.png"
                      
-                ></p>
-<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                >
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_3.png"
+                     data-src="/img/Github_Pages_domain_name_3.png"
+                     
+                >
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_4.png"
                      
                 ></p>
-<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
-<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
-<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
-<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
-<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
-<p>所以把取出的身份证第17位除2取余数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
-<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
-<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
-<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_5.png"
+                     
+                ></p>
+<p>这样就可以了。</p>
 ]]></content>
       <categories>
-        <category>Office</category>
+        <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1063,66 +1120,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>Markdown</tag>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_1.png"
-                     
-                >
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_3.png"
-                     
-                >
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_4.png"
-                     
-                ></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_5.png"
-                     
-                ></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -1399,7 +1399,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1420,15 +1420,15 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;" >&#103;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#x2e;&#x63;&#111;&#109;" >&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1544,25 +1544,20 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 自定义页面 跳过渲染</title>
-    <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
-    <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
-<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
-<p><strong>Hexo跳过渲染 方法：</strong></p>
-<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
 <a id="more"></a>
 
-<p><strong>举例</strong></p>
-<p>1.根目录下的a.html文件跳过渲染 配置：</p>
-<p>把a.html文件放在Hexo/source 目录下。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
-<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
-<p>2.source/test 文件夹内所有文件跳过渲染：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
-<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
-<p>4.跳过多个：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -1641,20 +1636,25 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+    <title>Hexo 自定义页面 跳过渲染</title>
+    <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
+    <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
+<p>所以，当我有个自定义的页面（比如a.html要放在根目录下），想跳过渲染，就需要设置下。</p>
+<p><strong>Hexo跳过渲染 方法：</strong></p>
+<p><strong>修改Hexo目录的配置文件（<code>_config.yml</code>）</strong><br>搜索找到 <code>skip_render</code>这一项进行配置即可。</p>
 <a id="more"></a>
 
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
+<p><strong>举例</strong></p>
+<p>1.根目录下的a.html文件跳过渲染 配置：</p>
+<p>把a.html文件放在Hexo/source 目录下。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br></pre></td></tr></table></figure>
+<p>再通过<code>hexo generate</code>命令后，在public目录下就有a.html文件了，而且没有渲染，没改变文件内容。</p>
+<p>2.source/test 文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>
+<p>3.source/test 文件夹内所有文件以及子文件夹内所有文件跳过渲染：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
+<p>4.跳过多个：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -1805,6 +1805,60 @@
       </tags>
   </entry>
   <entry>
+    <title>Navicat连接MySQL数据库不成功 解决方法</title>
+    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
+    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
+<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
+<a id="more"></a>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_1.png"
+                     
+                >
+
+<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>输入密码：123MYSQL456</p>
+<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Navicat_connect_mysql_2.png"
+                     
+                >
+
+<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
+<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
+<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<blockquote>
+<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
+</blockquote>
+<p>然后再查询user表，结果就如上所示。</p>
+<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
+<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+<p>再用Navicat连接MySQL服务器，提示成功！</p>
+<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<p>执行下面的语句，使上面的改动生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Navicat</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 定时执行 python脚本</title>
     <url>/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<p>Linux系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
@@ -1918,60 +1972,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Navicat连接MySQL数据库不成功 解决方法</title>
-    <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
-    <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
-<p>1130 - Host ‘*<strong><strong>**</strong></strong>‘ is not allowed to connect to this MySQL server</p>
-<a id="more"></a>
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_1.png"
-                     
-                >
-
-<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><h2 id="1、远程联接到MySQL服务器"><a href="#1、远程联接到MySQL服务器" class="headerlink" title="1、远程联接到MySQL服务器"></a>1、远程联接到MySQL服务器</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<h3 id="2-进入MySQL"><a href="#2-进入MySQL" class="headerlink" title="2).进入MySQL"></a>2).进入MySQL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>输入密码：123MYSQL456</p>
-<h2 id="2、查询允许连接的主机及用户信息"><a href="#2、查询允许连接的主机及用户信息" class="headerlink" title="2、查询允许连接的主机及用户信息"></a>2、查询允许连接的主机及用户信息</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;select Host, User, Password from mysql.user;</span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Navicat_connect_mysql_2.png"
-                     
-                >
-
-<p>从结果中可以看到，MySql只允许使用root用户从localhost，127.0.0.1和::1主机上进行连接，也就是只能从本机连接。</p>
-<p>注：%处原来是 <strong>::1</strong> ，是Ipv6地址127.0.0.1的缩写，也就是本机。</p>
-<h2 id="3、解决方法"><a href="#3、解决方法" class="headerlink" title="3、解决方法"></a>3、解决方法</h2><h3 id="1-使用SQL语句将-1改为-："><a href="#1-使用SQL语句将-1改为-：" class="headerlink" title="1).使用SQL语句将 ::1改为%："></a>1).使用SQL语句将 ::1改为%：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update mysql.user set &#96;Host&#96; &#x3D; &#39;%&#39; where &#96;Host&#96; &#x3D; &#39;::1&#39; and User &#x3D; &#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<blockquote>
-<p>[SQL]<br>update mysql.user set <code>Host</code> = ‘%’ where <code>Host</code> = ‘::1’ and User = ‘root’;<br>受影响的行: 1<br>时间: 0.000ms</p>
-</blockquote>
-<p>然后再查询user表，结果就如上所示。</p>
-<p>可以看到，已经将::1改为了%，**%表示匹配所有host的主机的，开放此权限，会增加MySql的风险，请根据实际情况而定！**</p>
-<h3 id="2-执行下面的SQL，使上面的改动生效，否则仍然连接不上"><a href="#2-执行下面的SQL，使上面的改动生效，否则仍然连接不上" class="headerlink" title="2).执行下面的SQL，使上面的改动生效，否则仍然连接不上"></a>2).执行下面的SQL，使上面的改动生效，否则仍然连接不上</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
-<p>再用Navicat连接MySQL服务器，提示成功！</p>
-<h2 id="4、补充"><a href="#4、补充" class="headerlink" title="4、补充"></a>4、补充</h2><p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器，并使用123456作为密码，可以执行下面的SQL语句：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
-<p>如果你想允许用户root从ip为192.168.0.8的主机连接到MySql服务器的testdb数据库，并使用123456作为密码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON testdb.* TO &#39;root&#39;@&#39;192.168.0.8&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
-<p>执行下面的语句，使上面的改动生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>Navicat</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python Failed to write executable - trying to use .deleteme logic 解决方法</title>
     <url>/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/</url>
     <content><![CDATA[<p>Python安装包的时候报错（下载完了，进入Installing的时候）：</p>
@@ -2046,6 +2046,28 @@
       </categories>
       <tags>
         <tag>Selenium</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
+    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
+<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
+<p>但其实我并不想管这个Alert。</p>
+<p><strong>解决方法</strong>：</p>
+<p>就直接把异常捕获一下，pass就行了。</p>
+<a id="more"></a>
+
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -2143,57 +2165,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python Selenium报UnexpectedAlertPresentException 解决方法</title>
-    <url>/2022/06/04/Python-Selenium%E6%8A%A5UnexpectedAlertPresentException-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>用Selenium的时候，有时候进入页面后，会收到一个Exception：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">selenium.common.exceptions.UnexpectedAlertPresentException: Alert Text *******</span><br></pre></td></tr></table></figure>
-<p>这是有个Alert text的内容提醒，然后程序就报Exception，就停了。</p>
-<p>但其实我并不想管这个Alert。</p>
-<p><strong>解决方法</strong>：</p>
-<p>就直接把异常捕获一下，pass就行了。</p>
-<a id="more"></a>
-
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_elements_by_id(<span class="string">&#x27;test_id&#x27;</span>).click()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Alert&#x27;</span> <span class="keyword">in</span> <span class="built_in">str</span>(e):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>就判断异常内容里有 Alert 这个词的，直接就pass过去了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python openpyxl.load_workbook excel file error 解决方法</title>
-    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
-    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
-<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
-<a id="more"></a>
-
-<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
-<p>这个错误主要是由于下面这行代码引起的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
-<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
-<p><strong>安全的打开Excel</strong>：</p>
-<ul>
-<li>如果已经存在原文件，就直接load；</li>
-<li>如果不存在，就新建workbook。</li>
-</ul>
-<p><strong>安全的保存Excel</strong>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
-<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python selenium 切换到新的窗口方法</title>
     <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
@@ -2225,6 +2196,35 @@
       </categories>
       <tags>
         <tag>Selenium</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python openpyxl.load_workbook excel file error 解决方法</title>
+    <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
+    <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
+<p>windows10 的环境有这个问题，在 linux(ubuntu) 上运行同样的代码并没有这个问题。</p>
+<a id="more"></a>
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 54, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    main()</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\open_funds_details.py&quot;</span>, line 49, <span class="keyword">in</span> main</span><br><span class="line">    one_open_fund.insert_one_fund_into_excel(ex_details_file, data_list, position_sheet, info_sheet)</span><br><span class="line">  File <span class="string">&quot;g:\SynologyDrive\Python\code2\funds\one_open_fund.py&quot;</span>, line 203, <span class="keyword">in</span> insert_one_fund_into_excel</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 315, <span class="keyword">in</span> load_workbook</span><br><span class="line">    reader = ExcelReader(filename, read_only, keep_vba,</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 124, <span class="keyword">in</span> __init__</span><br><span class="line">    self.archive = _validate_archive(fn)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\site-packages\openpyxl\reader\excel.py&quot;</span>, line 96, <span class="keyword">in</span> _validate_archive</span><br><span class="line">    archive = ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1257, <span class="keyword">in</span> __init__</span><br><span class="line">    self._RealGetContents()</span><br><span class="line">  File <span class="string">&quot;C:\Python39\lib\zipfile.py&quot;</span>, line 1324, <span class="keyword">in</span> _RealGetContents</span><br><span class="line">    raise BadZipFile(<span class="string">&quot;File is not a zip file&quot;</span>)</span><br><span class="line">zipfile.BadZipFile: File is not a zip file</span><br></pre></td></tr></table></figure>
+<p>这个错误主要是由于下面这行代码引起的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book = openpyxl.load_workbook(ex_file)</span><br></pre></td></tr></table></figure>
+<p>网上查了下，打开excel 文件时，改用安全的打开方式就行了。<br>用安全的打开、关闭方法就不会有这些小问题了。</p>
+<p><strong>安全的打开Excel</strong>：</p>
+<ul>
+<li>如果已经存在原文件，就直接load；</li>
+<li>如果不存在，就新建workbook。</li>
+</ul>
+<p><strong>安全的保存Excel</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">book.save(ex_file) <span class="comment"># 写入内容，保存文件 save</span></span><br><span class="line">book.close()  <span class="comment"># 不需要写入内容，打开过文件要 close</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
+<p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -2322,43 +2322,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
-    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
-    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
-<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
-<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
-<a id="more"></a>
-
-<p>这里涉及到一个 dpi 分辨率 的概念。</p>
-<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
-<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_1.png"
-                     
-                ></p>
-<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
-<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
-<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_2.png"
-                     
-                ></p>
-<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
-<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
-<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量修改图片尺寸</title>
     <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
     <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
@@ -2387,6 +2350,72 @@
 <p><strong>完整代码实现</strong>如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
 <p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量图片合成pdf文件</title>
+    <url>/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
+<p>Python处理的方法的好处是：效率更快，然后同样的图片内容，合成pdf文件不到20M，而用Photoshop处理出来都50M+。</p>
+<a id="more"></a>
+
+<h2 id="一、批量图片设置成一样的大小尺寸和dpi"><a href="#一、批量图片设置成一样的大小尺寸和dpi" class="headerlink" title="一、批量图片设置成一样的大小尺寸和dpi"></a>一、批量图片设置成一样的大小尺寸和dpi</h2><p><strong>如果对图片没有统一大小要求的，可以跳过这一步。</strong></p>
+<p>如果需要图片统一处理的，可以修改尺寸大小这些，这个用PIL库就行。</p>
+<p>安装库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>怎么批量修改的，有文章写了具体介绍：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> ，这里就不详细说了。</p>
+<p>最后反正整好一个处理好图片的文件夹。</p>
+<h2 id="二、把批量图片合成-pdf"><a href="#二、把批量图片合成-pdf" class="headerlink" title="二、把批量图片合成 pdf"></a>二、把批量图片合成 pdf</h2><p>为了pdf文件中图片能按照想要的顺序排序，图片名称直接用：01.jpg,，02.jpg，类似这样的就行。</p>
+<p>需要用到img2pdf 的库。</p>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install img2pdf</span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   href="https://pypi.org/project/img2pdf" >https://pypi.org/project/img2pdf<i class="fas fa-external-link-alt"></i></a><br>看一下示例就会用了，有多种情况适用</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
+<p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
+    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
+    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
+<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
+<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
+<a id="more"></a>
+
+<p>这里涉及到一个 dpi 分辨率 的概念。</p>
+<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
+<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_1.png"
+                     
+                ></p>
+<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
+<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
+<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_2.png"
+                     
+                ></p>
+<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
+<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
+<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2426,27 +2455,27 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量图片合成pdf文件</title>
-    <url>/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
-<p>Python处理的方法的好处是：效率更快，然后同样的图片内容，合成pdf文件不到20M，而用Photoshop处理出来都50M+。</p>
+    <title>Python 正则表达式</title>
+    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p>正则表达式是什么？</p>
+<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
+<p>比如：</p>
+<ul>
+<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
+<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
+<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
+</ul>
 <a id="more"></a>
 
-<h2 id="一、批量图片设置成一样的大小尺寸和dpi"><a href="#一、批量图片设置成一样的大小尺寸和dpi" class="headerlink" title="一、批量图片设置成一样的大小尺寸和dpi"></a>一、批量图片设置成一样的大小尺寸和dpi</h2><p><strong>如果对图片没有统一大小要求的，可以跳过这一步。</strong></p>
-<p>如果需要图片统一处理的，可以修改尺寸大小这些，这个用PIL库就行。</p>
-<p>安装库：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>怎么批量修改的，有文章写了具体介绍：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> ，这里就不详细说了。</p>
-<p>最后反正整好一个处理好图片的文件夹。</p>
-<h2 id="二、把批量图片合成-pdf"><a href="#二、把批量图片合成-pdf" class="headerlink" title="二、把批量图片合成 pdf"></a>二、把批量图片合成 pdf</h2><p>为了pdf文件中图片能按照想要的顺序排序，图片名称直接用：01.jpg,，02.jpg，类似这样的就行。</p>
-<p>需要用到img2pdf 的库。</p>
-<p>安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install img2pdf</span><br></pre></td></tr></table></figure>
-<p>官方文档：<a class="link"   href="https://pypi.org/project/img2pdf" >https://pypi.org/project/img2pdf<i class="fas fa-external-link-alt"></i></a><br>看一下示例就会用了，有多种情况适用</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
-<p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
-]]></content>
+<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
+<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
+<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -2532,35 +2561,6 @@
       <tags>
         <tag>Python</tag>
         <tag>SQLite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 正则表达式</title>
-    <url>/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-    <content><![CDATA[<p>正则表达式是什么？</p>
-<p>正则表达式(regular expression) 描述了一种字符串匹配的模式（pattern），可以用来检查一个串是否含有某种子串、将匹配的子串替换或者从某个串中取出符合某个条件的子串等。</p>
-<p>比如：</p>
-<ul>
-<li><code>col+r</code>：可以匹配 color、colour、colouur 等，+ 号代表前面的字符至少出现一次1次或多次；</li>
-<li><code>col*r</code>：可以匹配 colr、color、colour 等，<code>*</code> 号代表前面的字符可以0次或多次；</li>
-<li><code>col?r</code>： 可以匹配 colr 或者 color，? 问号代表前面的字符可以出现0次或1次。</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="基础1"><a href="#基础1" class="headerlink" title="基础1"></a>基础1</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">\n 匹配换行符</span><br><span class="line">\t 匹配制表符</span><br><span class="line">\w 匹配字母、数字、下划线</span><br><span class="line">\W 匹配除字母、数字、下划线（与\w相反）</span><br><span class="line">\d 匹配十进制数字，等价于[0-9]</span><br><span class="line">\D 匹配除十进制数字（与\D相反）</span><br><span class="line">\b 匹配空字符串，仅用于单词的首尾。</span><br><span class="line">\B 匹配空字符串，但不能用于单词的首尾。</span><br><span class="line">\s 匹配空白字符</span><br><span class="line">\S 匹配除空白字符（与\s相反）</span><br><span class="line">[aeiou] 原子表，匹配aeiou中的任意一个</span><br><span class="line">[^ab89x] 原子表，匹配除ab89x以外的任意一个字符</span><br><span class="line">[a-z0-9] 使用减号指定字符区间。这里表示一个字符，必须是小写字母或数字</span><br><span class="line">[^A-Za-z] 第一个字符是^，表示反向逻辑。这里匹配除了大小写字符之外的其他任意字符</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例1"><a href="#正则实例1" class="headerlink" title="正则实例1"></a>正则实例1</h3><h2 id="基础2"><a href="#基础2" class="headerlink" title="基础2"></a>基础2</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">^ 匹配字符串的开头</span><br><span class="line">$ 匹配字符串的结尾</span><br><span class="line">. 匹配任一字符（一个通配符）</span><br><span class="line">? 表示前接字符出现0次或1次</span><br><span class="line">* 表示前接字符出现0次或多次</span><br><span class="line">+ 表示前接字符出现1次或多次</span><br><span class="line">&#123;n&#125; 表示前接字符恰好出现n次</span><br><span class="line">&#123;n,&#125; 表示前接字符至少出现n次</span><br><span class="line">&#123;n,m&#125; 表示前接字符至少出现n次，至多m次</span><br><span class="line">| 表示选择符或</span><br><span class="line">( ) 添加括号，括号内容会丧失匹配功能，但在findall()中可以用于抽取特定部分的字符串，而不是整个字符串。</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例2"><a href="#正则实例2" class="headerlink" title="正则实例2"></a>正则实例2</h3><h2 id="基础3：贪婪模式与非贪婪模式"><a href="#基础3：贪婪模式与非贪婪模式" class="headerlink" title="基础3：贪婪模式与非贪婪模式"></a>基础3：贪婪模式与非贪婪模式</h2><blockquote>
-<p>贪婪模式：尽可能多的进行匹配（默认是贪婪模式）<br>非贪婪模式：尽可能少的匹配，精准匹配</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*? 以非贪婪模式，表示前接字符出现0次或多次</span><br><span class="line">+? 以非贪婪模式，表示前接字符的1次或多次</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例3"><a href="#正则实例3" class="headerlink" title="正则实例3"></a>正则实例3</h3><h2 id="基础4：模式修正符"><a href="#基础4：模式修正符" class="headerlink" title="基础4：模式修正符"></a>基础4：模式修正符</h2><p>模式修正符：在不改变正则表达式的情况下通过模式修正符使匹配结果发生更改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.s 让 . 也可以匹配多行</span><br><span class="line">re.l 让匹配时忽略大小写</span><br></pre></td></tr></table></figure>
-<h3 id="正则实例4"><a href="#正则实例4" class="headerlink" title="正则实例4"></a>正则实例4</h3>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2652,21 +2652,21 @@
 
 <h2 id="安装pandas库"><a href="#安装pandas库" class="headerlink" title="安装pandas库"></a>安装pandas库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装pandas库：</span></span><br><span class="line">pip install pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当然，操作excel的库也要安装一下，一般操作.xlsx格式的，安装openpyxl：</span></span><br><span class="line">pip install openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果，最后保存文件是.xls格式的，需要安装xlwt：</span></span><br><span class="line">pip install xlwt</span><br></pre></td></tr></table></figure>
 <p>最后保存成<code>.xls</code>格式的时候，会有提示这个旧东西会被淘汰，不用管，等以后不能用了再说。<br>毕竟还是有些破系统的导入，只支持xls格式的。</p>
-<h2 id="拆分Excel表举例"><a href="#拆分Excel表举例" class="headerlink" title="拆分Excel表举例"></a>拆分Excel表举例</h2><p>比如：有个表格如下图所示，想按【年级】字段，分表，每个年级一个表。<br><img  
+<h2 id="拆分Excel表举例"><a href="#拆分Excel表举例" class="headerlink" title="拆分Excel表举例"></a>拆分Excel表举例</h2><p>比如：有个表格如下图所示，想按【年级】字段，拆分表，每个年级一个表。<br><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/img/Python_split_excel_1.png"
                       style="zoom: 75%;"
                 ></p>
-<p>当然，如果是部门这些也都可以。如果没有一个类别字段的，也是可以按序号拆分的 ，比如500条一拆。</p>
 <p>完整代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\split_名单.xlsx&#x27;</span></span><br><span class="line">    data = pd.read_excel(ex_file)</span><br><span class="line">    <span class="comment"># rows = data.shape[0] # 获取行数，不算标题行。shape[1]获取列数</span></span><br><span class="line">    <span class="comment"># print(rows)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 假设年级一共有n个，就rang(n)</span></span><br><span class="line">    <span class="comment"># range(3) 取值 [0,1,2]</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        grade = i + <span class="number">1</span></span><br><span class="line">        df = data.loc[data[<span class="string">&#x27;年级&#x27;</span>] == grade]</span><br><span class="line">        path = <span class="string">r&#x27;.\ex\split&#x27;</span> + <span class="string">&#x27;\\&#x27;</span> + <span class="built_in">str</span>(grade) + <span class="string">&#x27;.xlsx&#x27;</span> <span class="comment"># 新生成的文件名，当然.\ex\split目录已存在</span></span><br><span class="line">        df.to_excel(path, index=<span class="literal">False</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;------------fine!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\split_名单.xlsx&#x27;</span></span><br><span class="line">    data = pd.read_excel(ex_file)</span><br><span class="line">    <span class="comment"># rows = data.shape[0] # 获取行数，不算标题行。shape[1]获取列数</span></span><br><span class="line">    <span class="comment"># print(rows)</span></span><br><span class="line"></span><br><span class="line">    type_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>] <span class="comment"># 年级列的所有值</span></span><br><span class="line">    <span class="keyword">for</span> grade <span class="keyword">in</span> type_list:</span><br><span class="line">        df = data.loc[data[<span class="string">&#x27;年级&#x27;</span>] == grade]</span><br><span class="line">        path = <span class="string">r&#x27;.\ex\split&#x27;</span> + <span class="string">&#x27;\\&#x27;</span> + <span class="built_in">str</span>(grade) + <span class="string">&#x27;.xlsx&#x27;</span> <span class="comment"># 新生成的文件名，当然.\ex\split目录已建好</span></span><br><span class="line">        df.to_excel(path, index=<span class="literal">False</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;------------fine!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
 <p>运行后，结果如图：<br><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/img/Python_split_excel_2.png"
                       style="zoom: 75%;"
                 ></p>
+<p>当然，如果是部门类别，也是一样的。<br>如果没有一个类别字段的，也是可以按序号拆分的 ，比如500条一拆。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2964,6 +2964,41 @@
       </tags>
   </entry>
   <entry>
+    <title>Typora+PicGo无法显示Github图床图片问题</title>
+    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
+<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+<a id="more"></a>
+
+<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
+<p>如下图：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Typora_PicGo_Github_pic_1.png"
+                     
+                >
+
+<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
+<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
+<p>hosts文件在Windows系统中的路径：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
+<p>添加以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启下 Typora，果然可以了！</p>
+<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>Typora</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Termius破解方法（Windows版）</title>
     <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
     <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
@@ -3028,89 +3063,26 @@
       </tags>
   </entry>
   <entry>
-    <title>Typora+PicGo无法显示Github图床图片问题</title>
-    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
-<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
 <a id="more"></a>
 
-<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
-<p>如下图：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Typora_PicGo_Github_pic_1.png"
-                     
-                >
-
-<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
-<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
-<p>hosts文件在Windows系统中的路径：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
-<p>添加以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启下 Typora，果然可以了！</p>
-<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
-        <tag>Typora</tag>
-        <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 升级OpenSSL教程</title>
-    <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
-<p><strong>OpenSSL 拒绝服务漏洞(CVE-2020-1971)</strong><br>披露时间 2020-12-09 00:00:00CVE编号 CVE-2020-1971</p>
-<a id="more"></a>
-<blockquote>
-<p>漏洞描述：<br>2020年12月08日，OpenSSL官方发布安全公告，披露CVE-2020-1971 OpenSSL GENERAL_NAME_cmp 拒绝服务漏洞。当两个GENERAL_NAME都包含同一个EDIPARTYNAME时，由于GENERAL_NAME_cmp函数未能正确处理，从而导致空指针引用，并可能导致拒绝服务。<br>漏洞类型：系统组件漏洞<br>威胁等级：中危</p>
-</blockquote>
-<p>修复方案：将 OpenSSL 升级至最新版本。</p>
-<p>升级方法可以参考如下：<a class="link"   href="https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7" >https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7<i class="fas fa-external-link-alt"></i></a></p>
-<p>温馨提示：升级OpenSSL前务必先做好快照备份，以免操作失误导致系统崩溃。<br>漏洞详细说明 <a class="link"   href="https://s.tencent.com/research/bsafe/1193.html" >https://s.tencent.com/research/bsafe/1193.html<i class="fas fa-external-link-alt"></i></a><br>检测到服务器存在漏洞风险，<strong>建议立即对相关主机进行快照备份</strong>，避免遭受损失。</p>
-<p>以上内容是腾讯云后台提示的。</p>
-<hr>
-<h2 id="【修复过程】"><a href="#【修复过程】" class="headerlink" title="【修复过程】"></a>【修复过程】</h2><p>没有快照，先创建快照。</p>
-<h3 id="1-下载最新-OpenSSL"><a href="#1-下载最新-OpenSSL" class="headerlink" title="1.下载最新 OpenSSL"></a>1.下载最新 OpenSSL</h3><p>比如我这现在最新的是：openssl-1.1.1i</p>
-<p>官网：<a class="link"   href="https://www.openssl.org/source/openssl-1.1.1i.tar.gz" >https://www.openssl.org/source/openssl-1.1.1i.tar.gz<i class="fas fa-external-link-alt"></i></a></p>
-<p>官网访问的速度再慢了，在国内还是用腾讯的镜像好了。</p>
-<p>腾讯镜像：<a class="link"   href="https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz" >https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz<i class="fas fa-external-link-alt"></i></a></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="2-解压-openssl-1-1-1i"><a href="#2-解压-openssl-1-1-1i" class="headerlink" title="2.解压 openssl-1.1.1i"></a>2.解压 openssl-1.1.1i</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xzvf openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-<blockquote>
-<p>xzvf 释义<br>x 解压<br>z gzip压缩格式<br>v 显示详细信息<br>f file</p>
-</blockquote>
-<p>解压后得到 openssl-1.1.1i 文件夹。</p>
-<h3 id="3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹"><a href="#3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹" class="headerlink" title="3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹"></a>3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> openssl-1.1.1i</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="4-安装-OpenSSL"><a href="#4-安装-OpenSSL" class="headerlink" title="4.安装 OpenSSL"></a>4.安装 OpenSSL</h3><p><strong>1).配置</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./config</span><br></pre></td></tr></table></figure>
-<p>运行成功后有提示：OpenSSL has been successfully configured</p>
-<p><strong>2).make</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make（如果失败，就运行 sudo apt install make gcc 命令先）</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-<h3 id="5-使用新版-OpenSSL"><a href="#5-使用新版-OpenSSL" class="headerlink" title="5.使用新版 OpenSSL"></a>5.使用新版 OpenSSL</h3><p><strong>1).找到新旧版本 openssl</strong></p>
-<p>通过 <code>find / -name &quot;openssl&quot; -print</code> 命令可以查到，</p>
-<p>新版openssl 默认在：/usr/local/bin/openssl<br>老版本的openssl 在 /usr/bin/openssl</p>
-<p><strong>2).备份老版本openssl</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /usr/bin/openssl ~/tmp</span><br></pre></td></tr></table></figure>
-<p>也可以在sudo make install之前就把老版本的先备份移走。</p>
-<p><strong>3).给新版本的openssl创建软件链接</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/openssl /usr/bin/openssl</span><br></pre></td></tr></table></figure>
-<h3 id="6-更新配置"><a href="#6-更新配置" class="headerlink" title="6.更新配置"></a>6.更新配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update symlinks and rebuild the library cache</span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
-<h3 id="7-检查OpenSSL-版本"><a href="#7-检查OpenSSL-版本" class="headerlink" title="7.检查OpenSSL 版本"></a>7.检查OpenSSL 版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
-<p>我这的运行结果是：<br>OpenSSL 1.1.1i  8 Dec 2020</p>
-]]></content>
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux</category>
       </categories>
@@ -3189,26 +3161,54 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+    <title>Ubuntu 升级OpenSSL教程</title>
+    <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
+<p><strong>OpenSSL 拒绝服务漏洞(CVE-2020-1971)</strong><br>披露时间 2020-12-09 00:00:00CVE编号 CVE-2020-1971</p>
 <a id="more"></a>
+<blockquote>
+<p>漏洞描述：<br>2020年12月08日，OpenSSL官方发布安全公告，披露CVE-2020-1971 OpenSSL GENERAL_NAME_cmp 拒绝服务漏洞。当两个GENERAL_NAME都包含同一个EDIPARTYNAME时，由于GENERAL_NAME_cmp函数未能正确处理，从而导致空指针引用，并可能导致拒绝服务。<br>漏洞类型：系统组件漏洞<br>威胁等级：中危</p>
+</blockquote>
+<p>修复方案：将 OpenSSL 升级至最新版本。</p>
+<p>升级方法可以参考如下：<a class="link"   href="https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7" >https://cloud.tencent.com/developer/article/1759794?from=information.detail.linux%20openssl%E5%8D%87%E7%BA%A7<i class="fas fa-external-link-alt"></i></a></p>
+<p>温馨提示：升级OpenSSL前务必先做好快照备份，以免操作失误导致系统崩溃。<br>漏洞详细说明 <a class="link"   href="https://s.tencent.com/research/bsafe/1193.html" >https://s.tencent.com/research/bsafe/1193.html<i class="fas fa-external-link-alt"></i></a><br>检测到服务器存在漏洞风险，<strong>建议立即对相关主机进行快照备份</strong>，避免遭受损失。</p>
+<p>以上内容是腾讯云后台提示的。</p>
+<hr>
+<h2 id="【修复过程】"><a href="#【修复过程】" class="headerlink" title="【修复过程】"></a>【修复过程】</h2><p>没有快照，先创建快照。</p>
+<h3 id="1-下载最新-OpenSSL"><a href="#1-下载最新-OpenSSL" class="headerlink" title="1.下载最新 OpenSSL"></a>1.下载最新 OpenSSL</h3><p>比如我这现在最新的是：openssl-1.1.1i</p>
+<p>官网：<a class="link"   href="https://www.openssl.org/source/openssl-1.1.1i.tar.gz" >https://www.openssl.org/source/openssl-1.1.1i.tar.gz<i class="fas fa-external-link-alt"></i></a></p>
+<p>官网访问的速度再慢了，在国内还是用腾讯的镜像好了。</p>
+<p>腾讯镜像：<a class="link"   href="https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz" >https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget https://mirrors.cloud.tencent.com/openssl/source/openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
 
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+
+<h3 id="2-解压-openssl-1-1-1i"><a href="#2-解压-openssl-1-1-1i" class="headerlink" title="2.解压 openssl-1.1.1i"></a>2.解压 openssl-1.1.1i</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xzvf openssl-1.1.1i.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>xzvf 释义<br>x 解压<br>z gzip压缩格式<br>v 显示详细信息<br>f file</p>
+</blockquote>
+<p>解压后得到 openssl-1.1.1i 文件夹。</p>
+<h3 id="3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹"><a href="#3-进入-OpenSSL-解压后的-openssl-1-1-1i-文件夹" class="headerlink" title="3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹"></a>3.进入 OpenSSL 解压后的 openssl-1.1.1i 文件夹</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> openssl-1.1.1i</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-安装-OpenSSL"><a href="#4-安装-OpenSSL" class="headerlink" title="4.安装 OpenSSL"></a>4.安装 OpenSSL</h3><p><strong>1).配置</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./config</span><br></pre></td></tr></table></figure>
+<p>运行成功后有提示：OpenSSL has been successfully configured</p>
+<p><strong>2).make</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make（如果失败，就运行 sudo apt install make gcc 命令先）</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<h3 id="5-使用新版-OpenSSL"><a href="#5-使用新版-OpenSSL" class="headerlink" title="5.使用新版 OpenSSL"></a>5.使用新版 OpenSSL</h3><p><strong>1).找到新旧版本 openssl</strong></p>
+<p>通过 <code>find / -name &quot;openssl&quot; -print</code> 命令可以查到，</p>
+<p>新版openssl 默认在：/usr/local/bin/openssl<br>老版本的openssl 在 /usr/bin/openssl</p>
+<p><strong>2).备份老版本openssl</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /usr/bin/openssl ~/tmp</span><br></pre></td></tr></table></figure>
+<p>也可以在sudo make install之前就把老版本的先备份移走。</p>
+<p><strong>3).给新版本的openssl创建软件链接</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/openssl /usr/bin/openssl</span><br></pre></td></tr></table></figure>
+<h3 id="6-更新配置"><a href="#6-更新配置" class="headerlink" title="6.更新配置"></a>6.更新配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update symlinks and rebuild the library cache</span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
+<h3 id="7-检查OpenSSL-版本"><a href="#7-检查OpenSSL-版本" class="headerlink" title="7.检查OpenSSL 版本"></a>7.检查OpenSSL 版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<p>我这的运行结果是：<br>OpenSSL 1.1.1i  8 Dec 2020</p>
+]]></content>
       <categories>
         <category>Linux</category>
       </categories>
@@ -3326,6 +3326,34 @@
       </tags>
   </entry>
   <entry>
+    <title>VSCode 远程连接服务器 Could not establish connection</title>
+    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
+    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
+<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
+<a id="more"></a>
+
+<p>假设我的服务器ip地址是：106.101.101.101</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+<p>配置文件没问题。</p>
+<p><strong>解决方法：</strong></p>
+<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
+<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
+<p>再重新连接，就可以了。</p>
+]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+      <tags>
+        <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>VSCode 无法加载文件\Scripts\Activate.ps1，因为在此系统上禁止运行脚本</title>
     <url>/2022/06/26/VSCode%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E6%96%87%E4%BB%B6-Scripts-Activate-ps1%EF%BC%8C%E5%9B%A0%E4%B8%BA%E5%9C%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<p>我在Python的Flask项目里使用了env虚拟环境，然后，把env环境的目录和代码都同步到了另一台电脑上（Windows11/Windows10）。</p>
@@ -3345,6 +3373,29 @@
       <tags>
         <tag>Python</tag>
         <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
+    <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
+<p>正常情况下，iphone手机连接电脑后，都能看到个Apple iphone的盘符。可以像U盘一样进行操作。<br>可以直接复制手机里的文件，也可以剪切出来。</p>
+<p>于是，我正在清理手机相册，清着清着，突然跳出了错误提示，再然后这个Apple的盘符就不出现了，可以充电，打开itunes也能正常连接。</p>
+<a id="more"></a>
+
+<p><strong>解决方法</strong>：</p>
+<p>去【服务】里面，把【Apple Mobile Device Service】这项服务停止一下，重新启动一下。然后手机重新连上电脑就有盘符了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/iphone_connect_pc_not_see_drive.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>iphone</category>
+      </categories>
+      <tags>
+        <tag>iphone</tag>
       </tags>
   </entry>
   <entry>
@@ -3385,57 +3436,6 @@
 <li>3、按住shift键，并用鼠标点击“恢复”按钮，弹出选择固件的窗口后松开Shift键，选择官方固件。</li>
 </ul>
 <p>PS.重刷系统前把iTunes更新到最新，先下载需要刷的系统，这样比较方便。</p>
-]]></content>
-      <categories>
-        <category>iphone</category>
-      </categories>
-      <tags>
-        <tag>iphone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VSCode 远程连接服务器 Could not establish connection</title>
-    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
-    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
-<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
-<a id="more"></a>
-
-<p>假设我的服务器ip地址是：106.101.101.101</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
-<p>配置文件没问题。</p>
-<p><strong>解决方法：</strong></p>
-<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
-<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
-<p>再重新连接，就可以了。</p>
-]]></content>
-      <categories>
-        <category>VSCode</category>
-      </categories>
-      <tags>
-        <tag>VSCode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iphone连接电脑后不显示Apple iphone盘符 解决方法</title>
-    <url>/2022/06/04/iphone%E8%BF%9E%E6%8E%A5%E7%94%B5%E8%84%91%E5%90%8E%E4%B8%8D%E6%98%BE%E7%A4%BAApple%E7%9B%98%E7%AC%A6/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：<br>iphone 连接上电脑后能充电，但是不显示那个Apple iphone的盘符。</p>
-<p>正常情况下，iphone手机连接电脑后，都能看到个Apple iphone的盘符。可以像U盘一样进行操作。<br>可以直接复制手机里的文件，也可以剪切出来。</p>
-<p>于是，我正在清理手机相册，清着清着，突然跳出了错误提示，再然后这个Apple的盘符就不出现了，可以充电，打开itunes也能正常连接。</p>
-<a id="more"></a>
-
-<p><strong>解决方法</strong>：</p>
-<p>去【服务】里面，把【Apple Mobile Device Service】这项服务停止一下，重新启动一下。然后手机重新连上电脑就有盘符了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/iphone_connect_pc_not_see_drive.png"
-                     
-                ></p>
 ]]></content>
       <categories>
         <category>iphone</category>
@@ -3705,6 +3705,62 @@
       </tags>
   </entry>
   <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>office无法打开，找不到VCRUNTIME140_1.dll</title>
+    <url>/2022/07/01/office%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%EF%BC%8C%E6%89%BE%E4%B8%8D%E5%88%B0VCRUNTIME140-1-dll/</url>
+    <content><![CDATA[<p><strong>问题描述：</strong><br>Office2016，运行Word/Excel/PPT的时候，都提示“<strong>找不到VCRUNTIME140_1.dll</strong>”。</p>
+<p>然后，把office卸载了，重新安装了，还是不行；运行程序，修复了下，也还是不行。</p>
+<a id="more"></a>
+
+<p>Microsoft Visual C++ 201X Redistributable 也是正常安装着的。</p>
+<p><strong>解决方法：</strong></p>
+<p>查看 <code>C:\Windows\System32</code>目录下， vcruntime140_1.dll 文件是否存在。</p>
+<p>（果然没有，只有 vcruntime140.dll 这个。）</p>
+<p>去C盘直接搜索 vcruntime140_1.dll 这个文件，只要能搜索到，直接复制到<code>C:\Windows\System32</code> 目录下，再打开office的软件就可以用了。</p>
+<p>如果C盘也搜索不到，就到别的电脑上或者网上下载一个复制到<code>C:\Windows\System32</code> 目录下就行。</p>
+<p>官方回答：<a class="link"   href="https://answers.microsoft.com/zh-hans/msoffice/forum/all/office%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8/50770488-bd09-4451-a04b-8f33f345d454" >office无法正常打开，也无法从程序与功能修复<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>xshell等终端登录Ubuntu &#39;ls&#39;命令目录没有颜色</title>
     <url>/2022/06/19/xshell%E7%AD%89%E7%BB%88%E7%AB%AF%E7%99%BB%E5%BD%95Ubuntu-ls-%E5%91%BD%E4%BB%A4%E7%9B%AE%E5%BD%95%E6%B2%A1%E6%9C%89%E9%A2%9C%E8%89%B2/</url>
     <content><![CDATA[<p>用Xshell、putty、Termius这些终端登录Ubuntu时，用<code>ls</code>命令查看，目录、链接都没有别的颜色，都跟文件一样，是一个颜色。</p>
@@ -3743,62 +3799,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>office无法打开，找不到VCRUNTIME140_1.dll</title>
-    <url>/2022/07/01/office%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%EF%BC%8C%E6%89%BE%E4%B8%8D%E5%88%B0VCRUNTIME140-1-dll/</url>
-    <content><![CDATA[<p><strong>问题描述：</strong><br>Office2016，运行Word/Excel/PPT的时候，都提示“<strong>找不到VCRUNTIME140_1.dll</strong>”。</p>
-<p>然后，把office卸载了，重新安装了，还是不行；运行程序，修复了下，也还是不行。</p>
-<a id="more"></a>
-
-<p>Microsoft Visual C++ 201X Redistributable 也是正常安装着的。</p>
-<p><strong>解决方法：</strong></p>
-<p>查看 <code>C:\Windows\System32</code>目录下， vcruntime140_1.dll 文件是否存在。</p>
-<p>（果然没有，只有 vcruntime140.dll 这个。）</p>
-<p>去C盘直接搜索 vcruntime140_1.dll 这个文件，只要能搜索到，直接复制到<code>C:\Windows\System32</code> 目录下，再打开office的软件就可以用了。</p>
-<p>如果C盘也搜索不到，就到别的电脑上或者网上下载一个复制到<code>C:\Windows\System32</code> 目录下就行。</p>
-<p>官方回答：<a class="link"   href="https://answers.microsoft.com/zh-hans/msoffice/forum/all/office%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8/50770488-bd09-4451-a04b-8f33f345d454" >office无法正常打开，也无法从程序与功能修复<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Office</category>
-      </categories>
-      <tags>
-        <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -4038,7 +4038,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;" >&#x67;&#x69;&#x74;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -4105,8 +4105,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>PicGo</tag>
       </tags>
   </entry>
