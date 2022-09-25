@@ -9,7 +9,7 @@
     
     <title>
         
-            关于 |
+            Excel中随机抽取中奖者 |
         
         烟雨平生
     </title>
@@ -101,7 +101,7 @@
                         </li>
                     
                         <li class="menu-item">
-                            <a class="active"
+                            <a class=""
                                href="/about"
                             >
                                 关于
@@ -155,7 +155,7 @@
                 </li>
             
                 <li class="drawer-menu-item flex-center">
-                    <a class="active"
+                    <a class=""
                        href="/about">关于</a>
                 </li>
             
@@ -175,26 +175,175 @@
 
                 
                     <div class="fade-in-down-animation">
-    <div class="page-template-container">
-        
-        
-        <div class="page-template-content markdown-body">
-            
-                <h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><p>毕业于杭州电子科技大学计算机科学与技术专业。</p>
-<p>曾学过C/C++，曾从事Java开发（此皆是过往）。现从事计算机相关教育行业。</p>
-<p>感兴趣的事：</p>
-<ul>
-<li>看看书（历史、金融、经济、法律，各种闲书、杂书等）；</li>
-<li>写写代码（只会写Python了，边学边给自己写写工具用）；</li>
-<li>研究研究，折腾折腾。</li>
-</ul>
-<p><strong>联系方式：</strong></p>
-<p>Email：<a class="link"   href="mailto:&#x68;&#100;&#117;&#x7a;&#110;&#64;&#x76;&#105;&#112;&#46;&#113;&#113;&#x2e;&#99;&#111;&#x6d;" >&#x68;&#100;&#117;&#x7a;&#110;&#64;&#x76;&#105;&#112;&#46;&#113;&#113;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a></p>
+    <div class="article-content-container">
 
-            
+        <div class="article-title">
+            <span class="title-hover-animation">Excel中随机抽取中奖者</span>
         </div>
-        <div class="page-template-comments">
-            
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-09-25 11:43:05</span>
+        <span class="mobile">2022-09-25 11:43</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Office/">Office</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Excel/">Excel</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Office/">Office</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>应用场景：比如随机抽个奖啊，随机抽个人回答问题啊，随机抽个人演讲啊，随机抽人排值班啊……</p>
+<p>如下图所示，要在这一列姓名中<strong>随机</strong>抽出一个人来。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_rand_name_1.png"
+                      style="zoom: 75%;"
+                ></p>
+<p><strong>思路：</strong></p>
+<ul>
+<li>1.在一列中写上姓名，用COUNTA函数统计有内容的总人数</li>
+<li>2.用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号</li>
+<li>3.用INDEX函数返回序号对应的人的姓名</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="1-用COUNTA函数统计总人数"><a href="#1-用COUNTA函数统计总人数" class="headerlink" title="1.用COUNTA函数统计总人数"></a>1.用COUNTA函数统计总人数</h3><p><strong>COUNTA函数</strong>：计算范围中不为空的单元格的个数。<br><strong>语法</strong>：COUNTA(value1, [value2], …)</p>
+<ul>
+<li>value1：必需。 表示要计数的值的第一个参数。</li>
+<li>value2,…：可选。表示要计数的值的其他参数，最多可包含 255 个参数。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">计算单元格A2到A6中的非白单元格的数量：</span><br><span class="line">&#x3D;COUNTA(A2:A6)</span><br><span class="line"></span><br><span class="line">计算单元格A列中的非白单元格的数量：</span><br><span class="line">&#x3D;COUNTA(A:A)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号"><a href="#2-用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号" class="headerlink" title="2.用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号"></a>2.用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号</h3><p><strong>RANDBETWEEN函数</strong>：返回位于两个指定数之间的一个随机整数。<br><strong>语法</strong>：RANDBETWEEN(bottom, top)</p>
+<ul>
+<li>bottom：必需。 RANDBETWEEN 将返回的最小整数。</li>
+<li>top：必需。 RANDBETWEEN 将返回的最大整数。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">返回1到100之间的一个随机整数：</span><br><span class="line">&#x3D;RANDBETWEEN(1,100)</span><br><span class="line"></span><br><span class="line">返回A列中从2开始到A列中的非白单元格的数量之间的一个随机整数：</span><br><span class="line">&#x3D;RANDBETWEEN(2,COUNTA(A:A))</span><br></pre></td></tr></table></figure>
+<h3 id="3-用INDEX函数返回序号（行号）对应的人的姓名"><a href="#3-用INDEX函数返回序号（行号）对应的人的姓名" class="headerlink" title="3.用INDEX函数返回序号（行号）对应的人的姓名"></a>3.用INDEX函数返回序号（行号）对应的人的姓名</h3><p>使用 INDEX 函数有两种方法，我们这里用的是数组形式：<br><strong>INDEX函数</strong>：返回表元素或数组元素的值，该元素是通过行号和列号索引选定的。<br><strong>语法</strong>：INDEX(array, row_num, [column_num])</p>
+<ul>
+<li>array：必需。 单元格区域或数组常量。（如果数组只包含一行或一列，则相对应的参数 row_num 或 column_num 为可选参数。）</li>
+<li>row_num：必需。 除非存在 column_num。 选择array中的某行，函数从该行返回数值。 如果省略 row_num，则需使用 column_num。</li>
+<li>column_num：可选。选择数组中的某列，函数从该列返回数值。 如果省略 column_num，则需使用 row_num。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">返回位于区域A2:B3中第二行和第一列交叉处的数值（即A3的数值）：</span><br><span class="line">&#x3D;INDEX(A2:B3,2,1)</span><br><span class="line"></span><br><span class="line">返回A列中第5行的值：</span><br><span class="line">&#x3D;INDEX(A:A,5)</span><br><span class="line"></span><br><span class="line">返回A列中随机一个有内容的单元格的的值：</span><br><span class="line">&#x3D;INDEX(A:A,RANDBETWEEN(2,COUNTA(A:A)))</span><br></pre></td></tr></table></figure>
+<p>最终使用的公式是：<code>=INDEX(A:A,RANDBETWEEN(2,COUNTA(A:A)))</code>，结果如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_rand_name_2.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>PS.按F9键（笔记本可能是Fn+F9），即可随机抽取一个出来；<br>按住F9键（Fn+F9），可以看到随机效果，松开时即会随机抽出一个人来。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Excel中随机抽取中奖者</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-09-25 11:43:05</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/09/25/Excel中随机抽取中奖者/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Excel/">#Excel</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Office/">#Office</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/09/21/%E7%94%A8ffmpeg%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAts%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">用ffmpeg合并多个ts视频文件</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
                 <div class="comments-container">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
@@ -271,8 +420,8 @@
     
 </div>
 
-            
-        </div>
+            </div>
+        
     </div>
 </div>
 
@@ -322,6 +471,27 @@
     </div>
 
     
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
 
     <div class="right-bottom-side-tools">
         <div class="side-tools-container">
@@ -367,6 +537,14 @@
 
     </div>
 
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%A8COUNTA%E5%87%BD%E6%95%B0%E7%BB%9F%E8%AE%A1%E6%80%BB%E4%BA%BA%E6%95%B0"><span class="nav-text">1.用COUNTA函数统计总人数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%A8RANDBETWEEN%E5%87%BD%E6%95%B0%E4%BB%8E%E6%80%BB%E4%BA%BA%E6%95%B0%E8%8C%83%E5%9B%B4%E5%86%85%E9%9A%8F%E6%9C%BA%E6%8A%BD%E5%8F%96%E4%B8%80%E4%B8%AA%E4%BA%BA%E7%9A%84%E5%BA%8F%E5%8F%B7"><span class="nav-text">2.用RANDBETWEEN函数从总人数范围内随机抽取一个人的序号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%94%A8INDEX%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%BA%8F%E5%8F%B7%EF%BC%88%E8%A1%8C%E5%8F%B7%EF%BC%89%E5%AF%B9%E5%BA%94%E7%9A%84%E4%BA%BA%E7%9A%84%E5%A7%93%E5%90%8D"><span class="nav-text">3.用INDEX函数返回序号（行号）对应的人的姓名</span></a></li></ol>
+    </div>
+</div>
+        </aside>
     
 
     <div class="image-viewer-container">
@@ -440,6 +618,14 @@
 
 
 <div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
     
 </div>
 
