@@ -9,7 +9,7 @@
     
     <title>
         
-            【行政办公系列】Python批量复制文件并重命名 |
+            Python pip源设置（使用清华源） |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">【行政办公系列】Python批量复制文件并重命名</span>
+            <span class="title-hover-animation">Python pip源设置（使用清华源）</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-05-28 12:24:57</span>
-        <span class="mobile">2022-05-28 12:24</span>
+        <span class="pc">2022-10-12 19:36:42</span>
+        <span class="mobile">2022-10-12 19:36</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -216,11 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Office/">Office</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Python/">Python</a>&nbsp;
+                        <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -243,42 +239,16 @@
         
 
         <div class="article-content markdown-body">
-            <p><strong>问题描述</strong>：</p>
-<p>比如我需要收集全部员工填写后的一份资料，要让每个人填写某个文档（模板）。现在手上有个名单列表。</p>
-<p>考虑到钉钉群里面，部分人没有电脑，只有手机的，用手机下载文件再编辑上传比如麻烦。</p>
-<p>为了方便操作，就可以建个文件夹，把模板的文档复制到文件夹中，并依次重命名为员工姓名的文件名。</p>
-<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹中自己名字的文档，直接在线编辑就行了。</p>
+            <p>直接用pip安装包的时候，用的是默认的python的官方的，是国外的，所以速度有时候挺慢的，用国内的源会方便一点，速度就正常、快多了。</p>
+<p><strong>国内常用的pip源：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">豆瓣 http:&#x2F;&#x2F;pypi.douban.com&#x2F;simple&#x2F;</span><br><span class="line">清华大学 https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple&#x2F;</span><br><span class="line">阿里云 http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;pypi&#x2F;simple&#x2F;</span><br><span class="line">中国科技大学 https:&#x2F;&#x2F;pypi.mirrors.ustc.edu.cn&#x2F;simple&#x2F;</span><br><span class="line">中国科学技术大学 http:&#x2F;&#x2F;pypi.mirrors.ustc.edu.cn&#x2F;simple&#x2F;</span><br></pre></td></tr></table></figure>
+<p>以下用清华源安装pandas包举例。</p>
 <a id="more"></a>
 
-<p>当然，上面只是举个例子，主要是方便在钉钉群中方便群员用手机操作。</p>
-<p>此文主要介绍用Python读取Excel中姓名列表，再批量复制文件并重命名的方法。</p>
-<p><strong>实现思路</strong>：</p>
-<ul>
-<li>读取Excel表中姓名列的数据</li>
-<li>创建一个目录，用来放所有的文档</li>
-<li>循环遍历姓名列表（List），依次复制文件并重命名</li>
-</ul>
-<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
-<p>比如有这样一张表：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_copyfile_rename_1.png"
-                     
-                ></p>
-<p>我们怎么把A列的数据读出来。</p>
-<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
-<h3 id="2-读取Excel一列（A列）数据"><a href="#2-读取Excel一列（A列）数据" class="headerlink" title="2.读取Excel一列（A列）数据"></a>2.读取Excel一列（A列）数据</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;A&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line">mkdir(<span class="string">&#x27;D:\107轨迹确认书&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="三、复制文件并重命名"><a href="#三、复制文件并重命名" class="headerlink" title="三、复制文件并重命名"></a>三、复制文件并重命名</h2><p>用shutil库，实现对文件的复制操作，之前一篇文章专门讲了这个库的用法举例：<a href="/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python文件操作 shutil库使用举例">Python文件操作 shutil库使用举例</a></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">temp_file = <span class="string">r&#x27;D:\a.docx&#x27;</span> <span class="comment"># 模板文件</span></span><br><span class="line">houzhui = <span class="string">&#x27;.&#x27;</span> + temp_file.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>] <span class="comment"># 模板文件后缀 .docx</span></span><br><span class="line"></span><br><span class="line">dst_path = <span class="string">r&#x27;D:\107轨迹确认书&#x27;</span> <span class="comment"># 存放新文件的目录</span></span><br><span class="line">new_file_name = <span class="string">&#x27;1荀彧&#x27;</span></span><br><span class="line">dst = dst_path + <span class="string">&#x27;\\&#x27;</span> + new_file_name + houzhui <span class="comment"># &#x27;D:\107轨迹确认书\1荀彧.docx&#x27; 这个路径是windows下写法</span></span><br><span class="line"></span><br><span class="line">shutil.copy(temp_file, dst) <span class="comment"># 复制文件并重命名</span></span><br></pre></td></tr></table></figure>
-<h2 id="四、完整代码举例"><a href="#四、完整代码举例" class="headerlink" title="四、完整代码举例"></a>四、完整代码举例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os, shutil</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\信息表.xlsx&#x27;</span></span><br><span class="line">    temp_file = <span class="string">r&#x27;C:\节假日离校返家师生员工行动轨迹确认书.doc&#x27;</span></span><br><span class="line">    houzhui = <span class="string">&#x27;.&#x27;</span> + temp_file.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">1</span>] <span class="comment"># .doc</span></span><br><span class="line">    <span class="comment"># print(houzhui)</span></span><br><span class="line"></span><br><span class="line">    dst_path = <span class="string">r&#x27;D:\107轨迹确认书&#x27;</span></span><br><span class="line">    mkdir(dst_path) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量复制文件并重命名</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        dst = dst_path + <span class="string">&#x27;\\&#x27;</span> + name + houzhui</span><br><span class="line">        shutil.copy(temp_file, dst)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;-------------fine!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
-<p>运行后结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_copyfile_rename_2.png"
-                     
-                ></p>
+<h3 id="1-临时使用清华源安装pandas包"><a href="#1-临时使用清华源安装pandas包" class="headerlink" title="1.临时使用清华源安装pandas包"></a>1.临时使用清华源安装pandas包</h3><p>使用pip命令的时候，添加<code>-i url</code>参数就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas</span><br></pre></td></tr></table></figure>
+<h3 id="2-永久设置使用清华源"><a href="#2-永久设置使用清华源" class="headerlink" title="2.永久设置使用清华源"></a>2.永久设置使用清华源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以先升级下pip版本</span></span><br><span class="line">pip install pip -U</span><br><span class="line"><span class="comment"># 使用pip命令时设置使用清华源</span></span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>
+<p>设置后再使用pip命令安装包时，就能看到下载地址是清华源了。</p>
 
         </div>
 
@@ -286,11 +256,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：【行政办公系列】Python批量复制文件并重命名</li>
+        <li>本文标题：Python pip源设置（使用清华源）</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-05-28 12:24:57</li>
+        <li>创建时间：2022-10-12 19:36:42</li>
         <li>
-            本文链接：http://hduzn.cn/2022/05/28/【行政办公系列】Python批量复制文件并重命名/
+            本文链接：http://hduzn.cn/2022/10/12/Python-pip源设置（使用清华源）/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -305,10 +275,6 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Office/">#Office</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
                         <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
@@ -321,13 +287,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/"
+                           href="/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">服务器 Docker搭建Flask应用（一）</span>
+                                <span class="post-nav-title-item">Python pandas读取Excel时空单元格读取为nan</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -337,10 +303,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/05/22/%E3%80%8A%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E4%BF%9D%E9%99%A9%E6%8C%87%E5%8D%97%E3%80%8B%E4%B9%A6%E6%91%98-%E7%AC%94%E8%AE%B0/"
+                           href="/2022/09/25/Excel%E4%B8%AD%E9%9A%8F%E6%9C%BA%E6%8A%BD%E5%8F%96%E4%B8%AD%E5%A5%96%E8%80%85/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">《你的第一本保险指南》书摘&amp;笔记</span>
+                                <span class="post-nav-title-item">Excel中随机抽取中奖者</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -551,7 +517,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%94%A8openpyxl%E5%BA%93%E8%AF%BB%E5%8F%96Excel%E8%A1%A8%E6%A0%BC"><span class="nav-text">一、用openpyxl库读取Excel表格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85openpyxl-%E5%BA%93"><span class="nav-text">1.安装openpyxl 库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AF%BB%E5%8F%96Excel%E4%B8%80%E5%88%97%EF%BC%88A%E5%88%97%EF%BC%89%E6%95%B0%E6%8D%AE"><span class="nav-text">2.读取Excel一列（A列）数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">二、创建文件夹</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%B9%B6%E9%87%8D%E5%91%BD%E5%90%8D"><span class="nav-text">三、复制文件并重命名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E4%B8%BE%E4%BE%8B"><span class="nav-text">四、完整代码举例</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90%E5%AE%89%E8%A3%85pandas%E5%8C%85"><span class="nav-text">1.临时使用清华源安装pandas包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B0%B8%E4%B9%85%E8%AE%BE%E7%BD%AE%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90"><span class="nav-text">2.永久设置使用清华源</span></a></li></ol>
     </div>
 </div>
         </aside>
