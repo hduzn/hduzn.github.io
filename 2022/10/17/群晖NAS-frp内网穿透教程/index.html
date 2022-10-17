@@ -9,7 +9,7 @@
     
     <title>
         
-            Joplin 更改默认存储路径 |
+            群晖NAS frp内网穿透教程 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Joplin 更改默认存储路径</span>
+            <span class="title-hover-animation">群晖NAS frp内网穿透教程</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-10-16 18:52:07</span>
-        <span class="mobile">2022-10-16 18:52</span>
+        <span class="pc">2022-10-17 21:40:20</span>
+        <span class="mobile">2022-10-17 21:40</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                        <a href="/categories/NAS/">NAS</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Windows/">Windows</a>&nbsp;
+                        <a href="/tags/NAS/">NAS</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,18 +239,21 @@
         
 
         <div class="article-content markdown-body">
-            <p>Joplin默认的存储路径在【工具】-&gt;【通用选项】中能看到，就是没法直接更改。<br>Windows上版本默认的路径是：<code>C:\Users\[username]\.config\joplin-desktop</code></p>
+            <p>群晖的系统管理页面，一般默认访问就是：192.168.1.122:5000 类似这样的局域网地址，端口号5000，ip是自己的路由器可以绑的一个ip地址。</p>
+<p>那要在外面访问，不在局域网内的话，就需要内网穿透。</p>
+<p>群晖本身也是自带了内网穿透的，当在【控制面板】开启QuickConnect后，这个就提供了内网穿透。设置一下QuickConnect ID后，就可以通过：<a class="link"   target="_blank" rel="noopener" href="http://quickconnect.cn/quickconnect_id" >http://QuickConnect.cn/quickconnect_id<i class="fas fa-external-link-alt"></i></a> 来访问了。（有时候连接比较慢一点，只要打开了，能登录，一般简单操作好像没啥问题的）</p>
 <a id="more"></a>
 
-<p><strong>更改Joplin存储路径方法（Windows）</strong>：</p>
-<p>在Joplin的快捷方式上右键–&gt;【属性】，在【目标】中添加<code>--profile</code>参数。<br>比如我想保存到<code>D:\Joplin-desktop</code>目录，输入以下内容后保存：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;C:\Program Files\Joplin\Joplin.exe&quot;</span> --profile <span class="string">&quot;D:\Joplin-desktop&quot;</span></span><br></pre></td></tr></table></figure>
-<p>Tips：</p>
-<ul>
-<li>1.目录路径要用双引号</li>
-<li>2.在profile前面是2个<code>-</code></li>
-</ul>
-<p>如果已经在默认路径里写了笔记，直接把默认路径中的内容全部复制到新的路径下 ，再打开Joplin，原来的笔记都还在的。</p>
+<p>如果没有别的需求，就用这个QuickConnect也是够用了，原来就用的这个。</p>
+<p>因为有了别的需求，正好也有腾讯云的服务器和域名在，也正好有需要、在服务器上安装了Frp服务器端，所以顺便给群晖也用了frp来内网穿透。因为群晖也有Docker，所以很方便的。</p>
+<p>之前笔记写了怎么用Docker搭建frp，主要用远程桌面：<a href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建frp内网穿透服务器">Docker搭建frp内网穿透服务器</a> 参考这篇文章，把群晖当成一台电脑，就一样了。</p>
+<p>要做的事，其实非常简单，<br>因为已经在服务器上安装了frp server端（推荐Docker安装，这样可以开多个）；<br>只需要在群晖上安装Docker，再下载frp client镜像，启动下容器就行了。</p>
+<p>插入图片：<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_Github_blog_1.png"
+                      style="zoom: 50%;"
+                ></p>
 
         </div>
 
@@ -258,11 +261,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Joplin 更改默认存储路径</li>
+        <li>本文标题：群晖NAS frp内网穿透教程</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-10-16 18:52:07</li>
+        <li>创建时间：2022-10-17 21:40:20</li>
         <li>
-            本文链接：http://hduzn.cn/2022/10/16/Joplin改变默认存储路径/
+            本文链接：http://hduzn.cn/2022/10/17/群晖NAS-frp内网穿透教程/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -277,7 +280,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                        <a href="/tags/NAS/">#NAS</a>&nbsp;
                     </li>
                 
             </ul>
@@ -286,29 +289,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/10/17/%E7%BE%A4%E6%99%96NAS-frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%95%99%E7%A8%8B/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">群晖NAS frp内网穿透教程</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/10/12/Python-pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E6%8A%A5%E9%94%99OSError/"
+                           href="/2022/10/16/Joplin%E6%94%B9%E5%8F%98%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E8%B7%AF%E5%BE%84/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python pip安装包时报错ERROR Could not install packages due to an OSError</span>
+                                <span class="post-nav-title-item">Joplin 更改默认存储路径</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
