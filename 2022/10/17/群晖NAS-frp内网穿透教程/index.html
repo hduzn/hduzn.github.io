@@ -248,12 +248,34 @@
 <p>因为有了别的需求，正好也有腾讯云的服务器和域名在，也正好有需要、在服务器上安装了Frp服务器端，所以顺便给群晖也用了frp来内网穿透。因为群晖也有Docker，所以很方便的。</p>
 <p>之前笔记写了怎么用Docker搭建frp，主要用远程桌面：<a href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建frp内网穿透服务器">Docker搭建frp内网穿透服务器</a> 参考这篇文章，把群晖当成一台电脑，就一样了。</p>
 <p>要做的事，其实非常简单，<br>因为已经在服务器上安装了frp server端（推荐Docker安装，这样可以开多个）；<br>只需要在群晖上安装Docker，再下载frp client镜像，启动下容器就行了。</p>
-<p>插入图片：<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_1.png"
-                      style="zoom: 50%;"
-                ></p>
+<p><strong>准备工作：</strong></p>
+<ul>
+<li>一台云服务器（Ubuntu系统，有公网ip）：主要带Docker，用来安装frp server端</li>
+<li>一台群晖NAS：安装frp client端（Docker）</li>
+</ul>
+<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>这个前面笔记写了，就不细说了。看这里：<a href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建frp内网穿透服务器">Docker搭建frp内网穿透服务器</a></p>
+<p>简单说就是启动一个frps的容器：</p>
+<ul>
+<li>1.配置一个frps.ini配置文件</li>
+<li>2.下载frps镜像</li>
+<li>3.启动容器</li>
+</ul>
+<h2 id="二、群晖NAS搭建frp-client-客户端"><a href="#二、群晖NAS搭建frp-client-客户端" class="headerlink" title="二、群晖NAS搭建frp client(客户端)"></a>二、群晖NAS搭建frp client(客户端)</h2><p>跟电脑上没啥差别。<br>步骤：</p>
+<ul>
+<li>1.安装Docker套件（官方就有）</li>
+<li>2.下载frpc镜像/映像，通过url添加：<a class="link"   target="_blank" rel="noopener" href="https://registry.hub.docker.com/r/snowdreamtech/frpc" >https://registry.hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></li>
+<li>3.镜像下载完成后，直接单击【启动】按钮，启动容器</li>
+</ul>
+<h3 id="frpc-ini配置文件"><a href="#frpc-ini配置文件" class="headerlink" title="frpc.ini配置文件"></a>frpc.ini配置文件</h3><p>启动容器前，需要做一件事，创建一个frpc.ini配置文件，跟之前的配置也一样的。这里举个例子：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="comment"># local_ip是群晖NAS局域网登录的ip，对应local_port一般是5000</span></span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">192.168</span>.<span class="number">1.122</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5000</span></span><br><span class="line"><span class="comment"># remote_port自定义，一般5位的</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18588</span></span><br></pre></td></tr></table></figure>
+<p>然后打开群晖NAS桌面上的【File Station】，在Docker目录下创建个frp目录，把frpc.ini直接拖放到frp目录里。</p>
+<p>主要说一下启动容器的设置。其实就是界面操作，对应命令一样的。</p>
+<h3 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h3><p>1.容器名称：自定义（比如frpc3，这是我开的第3个frpc）<br>2.勾选“使用高权限执行容器”<br>3.点开【高级设置】</p>
+<ul>
+<li>【存储空间】中添加文件frpc.ini，对应装载路径也是固定的一样的：/etc/frp/frpc.ini</li>
+<li>【网络】中勾选使用与Docker Host相同的网络<br>最后应用一下，等容器启动就行了。</li>
+</ul>
+<p>等容器启动后，就可以用frpc.ini配置文件中的 server_addr:remote_port 访问群晖的管理页面了。<br>即：43.142.94.65:18588</p>
 
         </div>
 
@@ -507,7 +529,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%90%AD%E5%BB%BAfrp-server-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF"><span class="nav-text">一、搭建frp server(服务器端)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BE%A4%E6%99%96NAS%E6%90%AD%E5%BB%BAfrp-client-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">二、群晖NAS搭建frp client(客户端)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#frpc-ini%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">frpc.ini配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="nav-text">启动容器</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
