@@ -439,115 +439,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker搭建frp内网穿透服务器</title>
-    <url>/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<p>frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。</p>
-<p>说直白点，我主要是想用来：</p>
-<ul>
-<li>访问内网（现在能访问，但直接访问其它的内网地址还有点问题）；</li>
-<li>安装frpc的电脑开web服务的内网没问题，可以访问；</li>
-<li>访问不了其它的内网，就先用用远程桌面连接吧。（当然，这个也有第三方的工具，但TeamView免费不好用，Todesk免费还行、就是分辨率、稳定性这些还是差一些）</li>
-</ul>
-<p>反正服务器本来就有，就顺便试一下。</p>
-<p>frp中文文档：<a class="link"   href="https://github.com/fatedier/frp/blob/dev/README_zh.md" >https://github.com/fatedier/frp/blob/dev/README_zh.md<i class="fas fa-external-link-alt"></i></a><br>完整文档：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
-<p>release版本下载：<a class="link"   href="https://github.com/fatedier/frp/releases" >https://github.com/fatedier/frp/releases<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p><strong>准备工作：</strong></p>
-<p>一共3台机子：</p>
-<ul>
-<li>Ubuntu服务器（带Docker，有公网ip）：用来安装frp server端</li>
-<li>办公室Windows10（已安装docker）：安装frp client端</li>
-<li>本机Windows10：远程连接办公室电脑</li>
-</ul>
-<p><strong>frp实现了啥：</strong></p>
-<p>比如我办公室Windows10中运行了一个web服务，局域网可以访问，通过以下地址访问：192.168.1.110:5000</p>
-<p>但外网是无法访问的。</p>
-<p>然后我的Ubuntu服务器（公网ip：43.142.94.65），分别安装了frps、frpc端。</p>
-<p>然后通过frp，外面就可以用：43.142.94.65:18188 来访问 192.168.1.110:5000 了。（这里5000端口映射到服务器的18188端口了）</p>
-<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>云服务器：带Docker的Ubuntu20.04</p>
-<h3 id="1-创建配置文件（frps-ini）"><a href="#1-创建配置文件（frps-ini）" class="headerlink" title="1.创建配置文件（frps.ini）"></a>1.创建配置文件（frps.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在用户目录(<code>/home/ubuntu</code>)下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir frp</span><br></pre></td></tr></table></figure>
-<p>可以直接在服务器(Linux)系统中用<code>vi frps.ini</code>创建配置文件、编辑、保存。</p>
-<p>也可以在本地直接创建好了，用FTP工具上传到 <code>/home/ubuntu/frp</code>目录下。</p>
-<p>frps.ini 文件内容如下：</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line"><span class="attr">bind_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 面板端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 登录面板账号设置</span></span><br><span class="line"><span class="attr">dashboard_user</span> = admin</span><br><span class="line"><span class="attr">dashboard_pwd</span> = Administrator1234</span><br><span class="line"><span class="comment"># 设置http及https协议下代理端口（非重要）</span></span><br><span class="line"><span class="attr">vhost_http_port</span> = <span class="number">7080</span></span><br><span class="line"><span class="attr">vhost_https_port</span> = <span class="number">7081</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 身份验证</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br></pre></td></tr></table></figure>
-<p>token尽量复杂一些，用Python的话，可以用secrets库生成一下随机密码。</p>
-<p>用的是腾讯云轻量服务器，所以要在【防火墙】中先把这些服务器上要用到的端口开一下，即：<br>7000、7500、7080、7081 四个端口。</p>
-<h3 id="2-创建frps容器"><a href="#2-创建frps容器" class="headerlink" title="2.创建frps容器"></a>2.创建frps容器</h3><p><strong>1).下载frp服务器镜像 snowdreamtech/frps</strong></p>
-<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frps" >https://hub.docker.com/r/snowdreamtech/frps<i class="fas fa-external-link-alt"></i></a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frps</span><br></pre></td></tr></table></figure>
-<p>碰到没有权限的时候，命令前面加上<code>sudo</code>就行。</p>
-<p><strong>2).启动容器</strong></p>
-<p>我这里配置文件在：<code>/home/ubuntu/frp/frps.ini</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v /home/ubuntu/frp/frps.ini:/etc/frp/frps.ini --name frps snowdreamtech/frps</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--network host：网络模式host</span><br><span class="line">-v &#x2F;home&#x2F;ubuntu&#x2F;frp&#x2F;frps.ini:&#x2F;etc&#x2F;frp&#x2F;frps.ini：配置文件映射</span><br><span class="line">--name frps：容器名称，可以随便取</span><br></pre></td></tr></table></figure>
-<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
-<p>创建好后，打开网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）</p>
-<p>如果出现无法访问的情况，可以在以下网站上查询一下，看服务器端口是否开放：<br><a class="link"   href="https://tool.chinaz.com/port" >https://tool.chinaz.com/port<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、搭建frp-client-客户端"><a href="#二、搭建frp-client-客户端" class="headerlink" title="二、搭建frp client(客户端)"></a>二、搭建frp client(客户端)</h2><p>办公室Windows10（已安装docker）<br>安装docker方法：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/install/windows" >https://yeasy.gitbook.io/docker_practice/install/windows<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="1-创建配置文件（frpc-ini）"><a href="#1-创建配置文件（frpc-ini）" class="headerlink" title="1.创建配置文件（frpc.ini）"></a>1.创建配置文件（frpc.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在(<code>E:\frp</code>)下.</p>
-<p>frpc.ini 文件内容如下：</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[ssh]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">2288</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ssh] 为服务名称，下方此处设置为，访问frp服务段的2288端口时，等同于通过中转服务器访问127.0.0.1的22端口。</span></span><br><span class="line"><span class="comment"># type 为连接的类型，此处为tcp</span></span><br><span class="line"><span class="comment"># local_ip 为中转客户端实际访问的IP </span></span><br><span class="line"><span class="comment"># local_port 为目标端口</span></span><br><span class="line"><span class="comment"># remote_port 为远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程桌面RDP，连接需要3389端口</span></span><br><span class="line"><span class="section">[RDP]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">3389</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18189</span></span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5002</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18289</span></span><br></pre></td></tr></table></figure>
-<p>这里可以建多个，比如我这就开了3个：ssh、RDP、web_host。</p>
-<p>最后对应的访问地址为：FRPS服务器IP地址:remote_port</p>
-<blockquote>
-<p>远程桌面连接地址：43.142.94.65:18189<br>web访问地址：43.142.94.65:18289 对应本机的 127.0.0.1:5002</p>
-</blockquote>
-<p>用的是腾讯云轻量服务器，所以要在【防火墙】中把这些服务器上要用到的端口开一下，即：<br>2288、18189、18289 三个端口。</p>
-<h3 id="2-创建frpc容器"><a href="#2-创建frpc容器" class="headerlink" title="2.创建frpc容器"></a>2.创建frpc容器</h3><p>可以在docker软件中操作，反正跟服务器端差不多的命令，我这就直接用命令了。</p>
-<p><strong>1).下载frp客户端镜像 snowdreamtech/frpc</strong></p>
-<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frpc" >https://hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></p>
-<p>打开Windows Powershell/命令提示符 用命令下载镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
-<p><strong>2).启动容器</strong></p>
-<p>我这里配置文件在：<code>E:/frp/frpc.ini</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v E:/frp/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
-<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
-<p>再刷新刚才打开的网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_1.png"
-                      style="zoom: 100%;"
-                ></p>
-<h2 id="三、远程桌面连接"><a href="#三、远程桌面连接" class="headerlink" title="三、远程桌面连接"></a>三、远程桌面连接</h2><p>当然，首先，要在办公室Windows10（已安装docker）这台机子上开启远程桌面：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_4.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>远程桌面连接地址：43.142.94.65:18189</p>
-<p>在Windows系统中打开【远程桌面连接】，输入连接地址和远程连接的计算机的用户名：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_2.png"
-                      style="zoom: 100%;"
-                ></p>
-<p>注意，Windows10在【体验】选项中，可以选择【LAN（10 Mbps或更高）】，也可以选择【自动检测连接质量】。默认是【低速宽带】，连接上之后，字体变样，感觉很丑、看起来不舒服。</p>
-<p>而Windows11的话，默认是【自动检测连接质量】，就没事问题，连接上后自动检测的效果挺好的。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_3.png"
-                      style="zoom: 100%;"
-                ></p>
-<p>就成功连接啦！<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_5.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>更多关于frp的介绍、配置文件说明，都在官方的文档中有：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
-<p>参考文章：<a class="link"   href="https://gitee.com/spoto/natserver/tree/master" >自建内网穿透服务器<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -658,6 +549,115 @@
 
 <p>进入容器：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker搭建frp内网穿透服务器</title>
+    <url>/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<p>frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。</p>
+<p>说直白点，我主要是想用来：</p>
+<ul>
+<li>访问内网（现在能访问，但直接访问其它的内网地址还有点问题）；</li>
+<li>安装frpc的电脑开web服务的内网没问题，可以访问；</li>
+<li>访问不了其它的内网，就先用用远程桌面连接吧。（当然，这个也有第三方的工具，但TeamView免费不好用，Todesk免费还行、就是分辨率、稳定性这些还是差一些）</li>
+</ul>
+<p>反正服务器本来就有，就顺便试一下。</p>
+<p>frp中文文档：<a class="link"   href="https://github.com/fatedier/frp/blob/dev/README_zh.md" >https://github.com/fatedier/frp/blob/dev/README_zh.md<i class="fas fa-external-link-alt"></i></a><br>完整文档：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>release版本下载：<a class="link"   href="https://github.com/fatedier/frp/releases" >https://github.com/fatedier/frp/releases<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p><strong>准备工作：</strong></p>
+<p>一共3台机子：</p>
+<ul>
+<li>Ubuntu服务器（带Docker，有公网ip）：用来安装frp server端</li>
+<li>办公室Windows10（已安装docker）：安装frp client端</li>
+<li>本机Windows10：远程连接办公室电脑</li>
+</ul>
+<p><strong>frp实现了啥：</strong></p>
+<p>比如我办公室Windows10中运行了一个web服务，局域网可以访问，通过以下地址访问：192.168.1.110:5000</p>
+<p>但外网是无法访问的。</p>
+<p>然后我的Ubuntu服务器（公网ip：43.142.94.65），分别安装了frps、frpc端。</p>
+<p>然后通过frp，外面就可以用：43.142.94.65:18188 来访问 192.168.1.110:5000 了。（这里5000端口映射到服务器的18188端口了）</p>
+<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>云服务器：带Docker的Ubuntu20.04</p>
+<h3 id="1-创建配置文件（frps-ini）"><a href="#1-创建配置文件（frps-ini）" class="headerlink" title="1.创建配置文件（frps.ini）"></a>1.创建配置文件（frps.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在用户目录(<code>/home/ubuntu</code>)下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir frp</span><br></pre></td></tr></table></figure>
+<p>可以直接在服务器(Linux)系统中用<code>vi frps.ini</code>创建配置文件、编辑、保存。</p>
+<p>也可以在本地直接创建好了，用FTP工具上传到 <code>/home/ubuntu/frp</code>目录下。</p>
+<p>frps.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line"><span class="attr">bind_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 面板端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 登录面板账号设置</span></span><br><span class="line"><span class="attr">dashboard_user</span> = admin</span><br><span class="line"><span class="attr">dashboard_pwd</span> = Administrator1234</span><br><span class="line"><span class="comment"># 设置http及https协议下代理端口（非重要）</span></span><br><span class="line"><span class="attr">vhost_http_port</span> = <span class="number">7080</span></span><br><span class="line"><span class="attr">vhost_https_port</span> = <span class="number">7081</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 身份验证</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br></pre></td></tr></table></figure>
+<p>token尽量复杂一些，用Python的话，可以用secrets库生成一下随机密码。</p>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中先把这些服务器上要用到的端口开一下，即：<br>7000、7500、7080、7081 四个端口。</p>
+<h3 id="2-创建frps容器"><a href="#2-创建frps容器" class="headerlink" title="2.创建frps容器"></a>2.创建frps容器</h3><p><strong>1).下载frp服务器镜像 snowdreamtech/frps</strong></p>
+<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frps" >https://hub.docker.com/r/snowdreamtech/frps<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<p>碰到没有权限的时候，命令前面加上<code>sudo</code>就行。</p>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>/home/ubuntu/frp/frps.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v /home/ubuntu/frp/frps.ini:/etc/frp/frps.ini --name frps snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--network host：网络模式host</span><br><span class="line">-v &#x2F;home&#x2F;ubuntu&#x2F;frp&#x2F;frps.ini:&#x2F;etc&#x2F;frp&#x2F;frps.ini：配置文件映射</span><br><span class="line">--name frps：容器名称，可以随便取</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>创建好后，打开网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）</p>
+<p>如果出现无法访问的情况，可以在以下网站上查询一下，看服务器端口是否开放：<br><a class="link"   href="https://tool.chinaz.com/port" >https://tool.chinaz.com/port<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、搭建frp-client-客户端"><a href="#二、搭建frp-client-客户端" class="headerlink" title="二、搭建frp client(客户端)"></a>二、搭建frp client(客户端)</h2><p>办公室Windows10（已安装docker）<br>安装docker方法：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/install/windows" >https://yeasy.gitbook.io/docker_practice/install/windows<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="1-创建配置文件（frpc-ini）"><a href="#1-创建配置文件（frpc-ini）" class="headerlink" title="1.创建配置文件（frpc.ini）"></a>1.创建配置文件（frpc.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在(<code>E:\frp</code>)下.</p>
+<p>frpc.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[ssh]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">2288</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ssh] 为服务名称，下方此处设置为，访问frp服务段的2288端口时，等同于通过中转服务器访问127.0.0.1的22端口。</span></span><br><span class="line"><span class="comment"># type 为连接的类型，此处为tcp</span></span><br><span class="line"><span class="comment"># local_ip 为中转客户端实际访问的IP </span></span><br><span class="line"><span class="comment"># local_port 为目标端口</span></span><br><span class="line"><span class="comment"># remote_port 为远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程桌面RDP，连接需要3389端口</span></span><br><span class="line"><span class="section">[RDP]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">3389</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18189</span></span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5002</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18289</span></span><br></pre></td></tr></table></figure>
+<p>这里可以建多个，比如我这就开了3个：ssh、RDP、web_host。</p>
+<p>最后对应的访问地址为：FRPS服务器IP地址:remote_port</p>
+<blockquote>
+<p>远程桌面连接地址：43.142.94.65:18189<br>web访问地址：43.142.94.65:18289 对应本机的 127.0.0.1:5002</p>
+</blockquote>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中把这些服务器上要用到的端口开一下，即：<br>2288、18189、18289 三个端口。</p>
+<h3 id="2-创建frpc容器"><a href="#2-创建frpc容器" class="headerlink" title="2.创建frpc容器"></a>2.创建frpc容器</h3><p>可以在docker软件中操作，反正跟服务器端差不多的命令，我这就直接用命令了。</p>
+<p><strong>1).下载frp客户端镜像 snowdreamtech/frpc</strong></p>
+<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frpc" >https://hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></p>
+<p>打开Windows Powershell/命令提示符 用命令下载镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>E:/frp/frpc.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v E:/frp/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>再刷新刚才打开的网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<h2 id="三、远程桌面连接"><a href="#三、远程桌面连接" class="headerlink" title="三、远程桌面连接"></a>三、远程桌面连接</h2><p>当然，首先，要在办公室Windows10（已安装docker）这台机子上开启远程桌面：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_4.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>远程桌面连接地址：43.142.94.65:18189</p>
+<p>在Windows系统中打开【远程桌面连接】，输入连接地址和远程连接的计算机的用户名：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_2.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>注意，Windows10在【体验】选项中，可以选择【LAN（10 Mbps或更高）】，也可以选择【自动检测连接质量】。默认是【低速宽带】，连接上之后，字体变样，感觉很丑、看起来不舒服。</p>
+<p>而Windows11的话，默认是【自动检测连接质量】，就没事问题，连接上后自动检测的效果挺好的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_3.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>就成功连接啦！<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_5.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>更多关于frp的介绍、配置文件说明，都在官方的文档中有：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>参考文章：<a class="link"   href="https://gitee.com/spoto/natserver/tree/master" >自建内网穿透服务器<i class="fas fa-external-link-alt"></i></a></p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -1277,35 +1277,6 @@
       </tags>
   </entry>
   <entry>
-    <title>H5视频加倍速播放方法</title>
-    <url>/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
-<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
-<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
-<a id="more"></a>
-
-<p><strong>倍速播放方法</strong>：</p>
-<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
-<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
-<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/h5_video_playbackrate.png"
-                      style="zoom: 70%;"
-                >
-
-<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo Keep主题添加归档页和标签页</title>
     <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
     <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
@@ -1336,6 +1307,35 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>H5视频加倍速播放方法</title>
+    <url>/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
+<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
+<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
+<a id="more"></a>
+
+<p><strong>倍速播放方法</strong>：</p>
+<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
+<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/h5_video_playbackrate.png"
+                      style="zoom: 70%;"
+                >
+
+<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -1449,6 +1449,136 @@
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo创建sitemap站点地图向搜索引擎提交</title>
+    <url>/2022/05/14/Hexo%E5%88%9B%E5%BB%BAsitemap%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9B%BE%E5%90%91%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%8F%90%E4%BA%A4/</url>
+    <content><![CDATA[<p>站点地图是一种xml文件，可以通过该文件列出网站上的网页，从而将网站内容的组织架构告知Google和其他搜索引擎。Sitemap 可方便管理员通知搜索引擎他们网站上有哪些可供抓取的网页。搜索引擎网页抓取工具会读取此文件，以便更加智能地抓取您的网站。</p>
+<p>向搜索引擎提交自己hexo博客的sitemap，有助于让别人更好地通过搜索引擎搜索到自己的博客。</p>
+<a id="more"></a>
+
+<h2 id="一、生成Hexo博客的sitemap文件"><a href="#一、生成Hexo博客的sitemap文件" class="headerlink" title="一、生成Hexo博客的sitemap文件"></a>一、生成Hexo博客的sitemap文件</h2><p>Hexo有提供2个插件，用来自动生成sitemap文件。用以下命令安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
+<p>安装完后，每当执行 <code>hexo generate</code>命令后，就会在Hexo下的public目录下生成两个文件。</p>
+<ul>
+<li>sitemap.xml 这个用来提交给Google、Bing等搜索引擎</li>
+<li>baidusitemap.xml 这个是百度专用的</li>
+</ul>
+<p>运行 <code>hexo deploy</code>命令后，打开访问：<code>域名/sitemap.xml</code>，<code>域名/baidusitemap.xml</code>这两个文件都能访问，就没问题了。</p>
+<p>访问结果如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_1.png"
+                     
+                ></p>
+<h2 id="二、提交站点地图-sitemap-给搜索引擎"><a href="#二、提交站点地图-sitemap-给搜索引擎" class="headerlink" title="二、提交站点地图(sitemap)给搜索引擎"></a>二、提交站点地图(sitemap)给搜索引擎</h2><h3 id="1-提交给Google"><a href="#1-提交给Google" class="headerlink" title="1.提交给Google"></a>1.提交给Google</h3><p>网址：<a class="link"   href="https://search.google.com/search-console/" >https://search.google.com/search-console/<i class="fas fa-external-link-alt"></i></a><br>当然，前提是你能访问Google，并注册了Google的账号了。</p>
+<p>1).需要有个先验证你对网站的所有权</p>
+<ul>
+<li><p>首先，按操作提示下载提供的HTML验证文件（google2342fweklrljlj235423.html类型这样的文件）；</p>
+</li>
+<li><p>然后，要把这个文件放网站首页；</p>
+<p>（就直接放<code>Hexo/source</code>目录下，按<a href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/" title="Hexo 自定义页面 跳过渲染">Hexo 自定义页面 跳过渲染</a>这篇文章的跳过渲染方法，<code>hexo g</code>后就会生成在public目录下了）</p>
+</li>
+<li><p>最后，添加站点地图</p>
+<p>有两种方式，可以自己都试下。提交完后如下图所示就行了，回头再看：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h3 id="2-提交给Bing"><a href="#2-提交给Bing" class="headerlink" title="2.提交给Bing"></a>2.提交给Bing</h3><p>如果能提交给Google的话，先提交给Google后，再提交给Bing就很简单。因为可以直接授权通过。</p>
+<p>网址：<a class="link"   href="https://www.bing.com/webmasters" >https://www.bing.com/webmasters<i class="fas fa-external-link-alt"></i></a></p>
+<p>然后我就直接添加了下【网站地图】，就用sitemap.xml文件就行，把http和https的直接添加试了下。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_3.png"
+                     
+                ></p>
+<h3 id="3-提交给百度"><a href="#3-提交给百度" class="headerlink" title="3.提交给百度"></a>3.提交给百度</h3><p>百度原来叫站长平台吧，现在好像改名叫什么资源了。<br>网址：<a class="link"   href="https://ziyuan.baidu.com/linksubmit/index" >https://ziyuan.baidu.com/linksubmit/index<i class="fas fa-external-link-alt"></i></a></p>
+<p>百度是我最搞不懂的，明明<code>域名/baidusitemap.xml</code>文件都能访问，反正提交还是失败。<br>提示“主域校验失败”。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Hexo_sitemap_4.png"
+                     
+                ></p>
+<p>难道文章里还不能出现别的站点了？？太奇怪了，什么玩意~ 遂放弃。</p>
+<p><strong>最后，顺便说一下可以怎么在搜索引擎上看结果</strong>：<br>可以过一两天，然后打开搜索引擎，直接搜索 <code>site:域名</code>或者前面再加个关键词，（比如我的搜索 <code>hexo site:hduzn.cn</code>）就可以看收录了多少了。<br>在搜索引擎中搜索时 ，加上site:域名，本来就可以搜索指定站点中的内容。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+<a id="more"></a>
+
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#46;&#99;&#x6f;&#x6d;" >&#103;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#46;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -1592,28 +1722,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Joplin 更改默认存储路径</title>
     <url>/2022/10/16/Joplin%E6%94%B9%E5%8F%98%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E8%B7%AF%E5%BE%84/</url>
     <content><![CDATA[<p>Joplin默认的存储路径在【工具】-&gt;【通用选项】中能看到，就是没法直接更改。<br>Windows上版本默认的路径是：<code>C:\Users\[username]\.config\joplin-desktop</code></p>
@@ -1634,6 +1742,28 @@
       </categories>
       <tags>
         <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -2510,6 +2640,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 备份 豆瓣 读过的书的记录</title>
     <url>/2022/05/13/Python-%E5%A4%87%E4%BB%BD-%E8%B1%86%E7%93%A3-%E8%AF%BB%E8%BF%87%E7%9A%84%E4%B9%A6%E7%9A%84%E8%AE%B0%E5%BD%95/</url>
     <content><![CDATA[<blockquote>
@@ -2603,34 +2770,34 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
+    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
+    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
+<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
+<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
 <a id="more"></a>
 
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+<p>这里涉及到一个 dpi 分辨率 的概念。</p>
+<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
+<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
+                     data-src="/img/Python_image_resize_dpi_1.png"
                      
                 ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
-</ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
+<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
+<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_2.png"
+                     
+                ></p>
+<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
+<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
+<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2691,43 +2858,6 @@
 </ul>
 <p><strong>完整代码实现</strong>如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
-    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
-    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
-<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
-<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
-<a id="more"></a>
-
-<p>这里涉及到一个 dpi 分辨率 的概念。</p>
-<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
-<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_1.png"
-                     
-                ></p>
-<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
-<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
-<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_2.png"
-                     
-                ></p>
-<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
-<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
-<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
-]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -3224,6 +3354,70 @@
       </tags>
   </entry>
   <entry>
+    <title>Termius破解方法（Windows版）</title>
+    <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
+    <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
+<p>软件有免费版和付费版，免费版就已经提供SSH功能，满足连接并操作Linux服务器的需求。</p>
+<p>免费版的缺点是不能用SFTP，也不能云同步。这不能用SFTP就挺麻烦的，现在用的都是XShell+Xftp的免费版，起码日常用用是够用的。然后收费还是订阅的制（更贵了），不是专门运维人员，自己用用，感觉太贵了。</p>
+<a id="more"></a>
+
+<p>所以，为了用用SFTP功能，看了下网上破解的方法。就试了下。</p>
+<p>提前说明一下：</p>
+<blockquote>
+<p>目前下载的最新版：7.41.3版本，里面文件的方法啥的都变了，所以不能用以下方便破解了。<br>看别人用7.26.2的版本还能找到这个js文件里破解的，于是下载了个旧版本，7.26.2之前的版本。（意思就是7.26.2之前的版本可以用此方便尝试破解，之后就不能保证了。）</p>
+</blockquote>
+<h2 id="一、工具准备"><a href="#一、工具准备" class="headerlink" title="一、工具准备"></a>一、工具准备</h2><h3 id="1-VS-Code（需安装Prettier插件）"><a href="#1-VS-Code（需安装Prettier插件）" class="headerlink" title="1.VS Code（需安装Prettier插件）"></a>1.VS Code（需安装Prettier插件）</h3><p>用来打开一个js文件，Prettier插件主要是让js文件格式化显示的，这样方便查看。</p>
+<p>我这原来就有VS Code，安装下插件就行了。<br>VS Code官方下载地址：<a class="link"   href="https://code.visualstudio.com/docs/?dv=win" >https://code.visualstudio.com/docs/?dv=win<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="2-Node-js"><a href="#2-Node-js" class="headerlink" title="2.Node.js"></a>2.Node.js</h3><p>用来安装asar，然后后面解压asar文件的。</p>
+<p>1).下载安装Node.js</p>
+<p>官网下载地址：<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ，下载对应版本安装就行。<br>（怕有问题，直接搜索安装教程照着来就行）</p>
+<p>2).安装asar</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g asar</span><br></pre></td></tr></table></figure>
+<p>Hexo博客的，原来也都有安装Node.js，所以直接安装一下asar就行了。</p>
+<h3 id="3-Termius安装包"><a href="#3-Termius安装包" class="headerlink" title="3.Termius安装包"></a>3.Termius安装包</h3><h2 id="二、破解Termius"><a href="#二、破解Termius" class="headerlink" title="二、破解Termius"></a>二、破解Termius</h2><p>看了下网上大佬的破解方法，就是：</p>
+<ul>
+<li>找到resources目录下有个app.asar的包，解压出来后修改里面有个ui-process.js文件；</li>
+<li>找到js文件里 isProUser（判断是否Pro收费用户）的地方，直接让方法返回True；</li>
+<li>最后再改一下用户名，直接定义个字符串。</li>
+</ul>
+<h3 id="1-安装Termius"><a href="#1-安装Termius" class="headerlink" title="1.安装Termius"></a>1.安装Termius</h3><p>直接【先断网】，再安装，这样也不会把老版本强制升级什么了。</p>
+<h3 id="2-解压app-asar"><a href="#2-解压app-asar" class="headerlink" title="2.解压app.asar"></a>2.解压app.asar</h3><p>在安装好的Termius快捷方式上，右键-&gt;属性，找到安装路径，然后进入resources目录。<br>一般默认路径为：<code>C:\Users\[user_name]\AppData\Local\Programs\Termius\resources</code></p>
+<p>这个目录下有一个app.asar，还有一个app-update.yml（看名字就是软件更新相关）文件先删除。</p>
+<p>在这个目录下，用命令行运行以下命令解压app.asar，得到一个app目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">asar e app.asar app</span><br></pre></td></tr></table></figure>
+<h3 id="3-VS-Code打开ui-process-js并格式化"><a href="#3-VS-Code打开ui-process-js并格式化" class="headerlink" title="3.VS Code打开ui-process.js并格式化"></a>3.VS Code打开ui-process.js并格式化</h3><p>用VS Code（需安装Prettier插件）打开 <code>resources\app\js\ui-process.js</code>文件。</p>
+<p>然后按 Ctrl+Shift+P，输入format搜索，选择 Format Document（格式化文档）。</p>
+<h3 id="4-ui-process-js中修改isProUser相关处"><a href="#4-ui-process-js中修改isProUser相关处" class="headerlink" title="4.ui-process.js中修改isProUser相关处"></a>4.ui-process.js中修改isProUser相关处</h3><p>等完成格式化后，Ctrl+F，搜索字段<code>isProUser</code>，找到类似下图所示的地方，不同版本函数会有不一样的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_1.png"
+                     
+                ></p>
+<p>然后，按Ctrl加鼠标单击，跳转至该函数处，反正把内容直接改成<code>return true;</code>，如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_2.png"
+                     
+                ></p>
+<h3 id="5-ui-process-js中修改username"><a href="#5-ui-process-js中修改username" class="headerlink" title="5.ui-process.js中修改username"></a>5.ui-process.js中修改username</h3><p>搜索字段<code>user.username</code>，把这里return后面直接写个字符串，任意值，随便的。例如：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Termius_crack_3.png"
+                     
+                ></p>
+<p>最后保存一下。</p>
+<p>再打开Termius的时候，发现SFTP功能就可以用了。</p>
+<p>PS.ui-process.js是全平台通用的，只需要修改一次。如果是mac版本，反正同一个版本号的话，直接把这个文件覆盖原安装目录下的ui-process.js文件就行。</p>
+]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>TPLink路由器无线桥接、无线中继</title>
     <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
     <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
@@ -3299,70 +3493,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Termius破解方法（Windows版）</title>
-    <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
-    <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
-<p>软件有免费版和付费版，免费版就已经提供SSH功能，满足连接并操作Linux服务器的需求。</p>
-<p>免费版的缺点是不能用SFTP，也不能云同步。这不能用SFTP就挺麻烦的，现在用的都是XShell+Xftp的免费版，起码日常用用是够用的。然后收费还是订阅的制（更贵了），不是专门运维人员，自己用用，感觉太贵了。</p>
-<a id="more"></a>
-
-<p>所以，为了用用SFTP功能，看了下网上破解的方法。就试了下。</p>
-<p>提前说明一下：</p>
-<blockquote>
-<p>目前下载的最新版：7.41.3版本，里面文件的方法啥的都变了，所以不能用以下方便破解了。<br>看别人用7.26.2的版本还能找到这个js文件里破解的，于是下载了个旧版本，7.26.2之前的版本。（意思就是7.26.2之前的版本可以用此方便尝试破解，之后就不能保证了。）</p>
-</blockquote>
-<h2 id="一、工具准备"><a href="#一、工具准备" class="headerlink" title="一、工具准备"></a>一、工具准备</h2><h3 id="1-VS-Code（需安装Prettier插件）"><a href="#1-VS-Code（需安装Prettier插件）" class="headerlink" title="1.VS Code（需安装Prettier插件）"></a>1.VS Code（需安装Prettier插件）</h3><p>用来打开一个js文件，Prettier插件主要是让js文件格式化显示的，这样方便查看。</p>
-<p>我这原来就有VS Code，安装下插件就行了。<br>VS Code官方下载地址：<a class="link"   href="https://code.visualstudio.com/docs/?dv=win" >https://code.visualstudio.com/docs/?dv=win<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="2-Node-js"><a href="#2-Node-js" class="headerlink" title="2.Node.js"></a>2.Node.js</h3><p>用来安装asar，然后后面解压asar文件的。</p>
-<p>1).下载安装Node.js</p>
-<p>官网下载地址：<a class="link"   href="https://nodejs.org/en/download/" >https://nodejs.org/en/download/<i class="fas fa-external-link-alt"></i></a> ，下载对应版本安装就行。<br>（怕有问题，直接搜索安装教程照着来就行）</p>
-<p>2).安装asar</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g asar</span><br></pre></td></tr></table></figure>
-<p>Hexo博客的，原来也都有安装Node.js，所以直接安装一下asar就行了。</p>
-<h3 id="3-Termius安装包"><a href="#3-Termius安装包" class="headerlink" title="3.Termius安装包"></a>3.Termius安装包</h3><h2 id="二、破解Termius"><a href="#二、破解Termius" class="headerlink" title="二、破解Termius"></a>二、破解Termius</h2><p>看了下网上大佬的破解方法，就是：</p>
-<ul>
-<li>找到resources目录下有个app.asar的包，解压出来后修改里面有个ui-process.js文件；</li>
-<li>找到js文件里 isProUser（判断是否Pro收费用户）的地方，直接让方法返回True；</li>
-<li>最后再改一下用户名，直接定义个字符串。</li>
-</ul>
-<h3 id="1-安装Termius"><a href="#1-安装Termius" class="headerlink" title="1.安装Termius"></a>1.安装Termius</h3><p>直接【先断网】，再安装，这样也不会把老版本强制升级什么了。</p>
-<h3 id="2-解压app-asar"><a href="#2-解压app-asar" class="headerlink" title="2.解压app.asar"></a>2.解压app.asar</h3><p>在安装好的Termius快捷方式上，右键-&gt;属性，找到安装路径，然后进入resources目录。<br>一般默认路径为：<code>C:\Users\[user_name]\AppData\Local\Programs\Termius\resources</code></p>
-<p>这个目录下有一个app.asar，还有一个app-update.yml（看名字就是软件更新相关）文件先删除。</p>
-<p>在这个目录下，用命令行运行以下命令解压app.asar，得到一个app目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">asar e app.asar app</span><br></pre></td></tr></table></figure>
-<h3 id="3-VS-Code打开ui-process-js并格式化"><a href="#3-VS-Code打开ui-process-js并格式化" class="headerlink" title="3.VS Code打开ui-process.js并格式化"></a>3.VS Code打开ui-process.js并格式化</h3><p>用VS Code（需安装Prettier插件）打开 <code>resources\app\js\ui-process.js</code>文件。</p>
-<p>然后按 Ctrl+Shift+P，输入format搜索，选择 Format Document（格式化文档）。</p>
-<h3 id="4-ui-process-js中修改isProUser相关处"><a href="#4-ui-process-js中修改isProUser相关处" class="headerlink" title="4.ui-process.js中修改isProUser相关处"></a>4.ui-process.js中修改isProUser相关处</h3><p>等完成格式化后，Ctrl+F，搜索字段<code>isProUser</code>，找到类似下图所示的地方，不同版本函数会有不一样的。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_1.png"
-                     
-                ></p>
-<p>然后，按Ctrl加鼠标单击，跳转至该函数处，反正把内容直接改成<code>return true;</code>，如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_2.png"
-                     
-                ></p>
-<h3 id="5-ui-process-js中修改username"><a href="#5-ui-process-js中修改username" class="headerlink" title="5.ui-process.js中修改username"></a>5.ui-process.js中修改username</h3><p>搜索字段<code>user.username</code>，把这里return后面直接写个字符串，任意值，随便的。例如：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Termius_crack_3.png"
-                     
-                ></p>
-<p>最后保存一下。</p>
-<p>再打开Termius的时候，发现SFTP功能就可以用了。</p>
-<p>PS.ui-process.js是全平台通用的，只需要修改一次。如果是mac版本，反正同一个版本号的话，直接把这个文件覆盖原安装目录下的ui-process.js文件就行。</p>
-]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -3470,6 +3600,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu ufw命令详解</title>
+    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
+<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
+<a id="more"></a>
+
+<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
+<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
+<p><strong>运行<code>ufw status</code>后输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
+<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
+<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
+<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
+<p>各Linux系统安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 升级OpenSSL教程</title>
     <url>/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>因为腾讯云的服务器提示了漏洞，就顺便修复了一下。</p>
@@ -3527,100 +3686,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu ufw命令详解</title>
-    <url>/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>UFW是一个简单的防火墙，全称Uncomplicated Firewall。iptables 的前端，旨在简化防火墙的配置。是 <strong>Ubuntu 系统</strong>上默认的防火墙组件。 </p>
-<p>UFW 是为轻量化配置 iptables 而开发的一款工具。 UFW 提供一个非常友好的界面用于创建基于 IPV4，IPV6 的防火墙规则。 UFW 在 Ubuntu 8.04 LTS 后的所有发行版中默认可用。</p>
-<a id="more"></a>
-
-<h2 id="一、ufw常用命令"><a href="#一、ufw常用命令" class="headerlink" title="一、ufw常用命令"></a>一、ufw常用命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.启用ufw</span></span><br><span class="line">ufw <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.禁用ufw</span></span><br><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看防火墙状态及规则列表</span></span><br><span class="line">ufw status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.重置防火墙</span></span><br><span class="line">ufw reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.拒绝其他设备连接到本机的80端口</span></span><br><span class="line">ufw deny 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.查看ufw命令帮助</span></span><br><span class="line">ufw -h</span><br></pre></td></tr></table></figure>
-<h2 id="二、添加防火墙规则命令"><a href="#二、添加防火墙规则命令" class="headerlink" title="二、添加防火墙规则命令"></a>二、添加防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ufw allow port</span><br><span class="line">ufw allow protocol</span><br><span class="line">ufw allow port/protocol</span><br></pre></td></tr></table></figure>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.开启22端口，SSH用</span></span><br><span class="line">ufw allow 22</span><br><span class="line"><span class="comment"># 2.开启http、https</span></span><br><span class="line">ufw allow http</span><br><span class="line">ufw allow https</span><br></pre></td></tr></table></figure>
-<p><strong>运行<code>ufw status</code>后输出：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">80/tcp                     ALLOW       Anywhere                  </span><br><span class="line">443/tcp                    ALLOW       Anywhere                  </span><br><span class="line">22                         ALLOW       Anywhere                  </span><br><span class="line">80/tcp (v6)                ALLOW       Anywhere (v6)             </span><br><span class="line">443/tcp (v6)               ALLOW       Anywhere (v6)             </span><br><span class="line">22 (v6)                    ALLOW       Anywhere (v6)   </span><br></pre></td></tr></table></figure>
-<h2 id="三、删除防火墙规则命令"><a href="#三、删除防火墙规则命令" class="headerlink" title="三、删除防火墙规则命令"></a>三、删除防火墙规则命令</h2><p>记得在命令前面都加上<code>sudo</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看防火墙状态及规则列表及其编号</span></span><br><span class="line">ufw status numbered</span><br><span class="line"><span class="comment"># 2.删除规则对应的编号</span></span><br><span class="line">ufw delete rule_number</span><br></pre></td></tr></table></figure>
-<h2 id="四、Linux系统安装ufw命令"><a href="#四、Linux系统安装ufw命令" class="headerlink" title="四、Linux系统安装ufw命令"></a>四、Linux系统安装ufw命令</h2><p>如果是其它的Linux系统，想用ufw命令的，安装一下就行。</p>
-<p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
-<p>各Linux系统安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo创建sitemap站点地图向搜索引擎提交</title>
-    <url>/2022/05/14/Hexo%E5%88%9B%E5%BB%BAsitemap%E7%AB%99%E7%82%B9%E5%9C%B0%E5%9B%BE%E5%90%91%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%8F%90%E4%BA%A4/</url>
-    <content><![CDATA[<p>站点地图是一种xml文件，可以通过该文件列出网站上的网页，从而将网站内容的组织架构告知Google和其他搜索引擎。Sitemap 可方便管理员通知搜索引擎他们网站上有哪些可供抓取的网页。搜索引擎网页抓取工具会读取此文件，以便更加智能地抓取您的网站。</p>
-<p>向搜索引擎提交自己hexo博客的sitemap，有助于让别人更好地通过搜索引擎搜索到自己的博客。</p>
-<a id="more"></a>
-
-<h2 id="一、生成Hexo博客的sitemap文件"><a href="#一、生成Hexo博客的sitemap文件" class="headerlink" title="一、生成Hexo博客的sitemap文件"></a>一、生成Hexo博客的sitemap文件</h2><p>Hexo有提供2个插件，用来自动生成sitemap文件。用以下命令安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
-<p>安装完后，每当执行 <code>hexo generate</code>命令后，就会在Hexo下的public目录下生成两个文件。</p>
-<ul>
-<li>sitemap.xml 这个用来提交给Google、Bing等搜索引擎</li>
-<li>baidusitemap.xml 这个是百度专用的</li>
-</ul>
-<p>运行 <code>hexo deploy</code>命令后，打开访问：<code>域名/sitemap.xml</code>，<code>域名/baidusitemap.xml</code>这两个文件都能访问，就没问题了。</p>
-<p>访问结果如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_1.png"
-                     
-                ></p>
-<h2 id="二、提交站点地图-sitemap-给搜索引擎"><a href="#二、提交站点地图-sitemap-给搜索引擎" class="headerlink" title="二、提交站点地图(sitemap)给搜索引擎"></a>二、提交站点地图(sitemap)给搜索引擎</h2><h3 id="1-提交给Google"><a href="#1-提交给Google" class="headerlink" title="1.提交给Google"></a>1.提交给Google</h3><p>网址：<a class="link"   href="https://search.google.com/search-console/" >https://search.google.com/search-console/<i class="fas fa-external-link-alt"></i></a><br>当然，前提是你能访问Google，并注册了Google的账号了。</p>
-<p>1).需要有个先验证你对网站的所有权</p>
-<ul>
-<li><p>首先，按操作提示下载提供的HTML验证文件（google2342fweklrljlj235423.html类型这样的文件）；</p>
-</li>
-<li><p>然后，要把这个文件放网站首页；</p>
-<p>（就直接放<code>Hexo/source</code>目录下，按<a href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/" title="Hexo 自定义页面 跳过渲染">Hexo 自定义页面 跳过渲染</a>这篇文章的跳过渲染方法，<code>hexo g</code>后就会生成在public目录下了）</p>
-</li>
-<li><p>最后，添加站点地图</p>
-<p>有两种方式，可以自己都试下。提交完后如下图所示就行了，回头再看：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h3 id="2-提交给Bing"><a href="#2-提交给Bing" class="headerlink" title="2.提交给Bing"></a>2.提交给Bing</h3><p>如果能提交给Google的话，先提交给Google后，再提交给Bing就很简单。因为可以直接授权通过。</p>
-<p>网址：<a class="link"   href="https://www.bing.com/webmasters" >https://www.bing.com/webmasters<i class="fas fa-external-link-alt"></i></a></p>
-<p>然后我就直接添加了下【网站地图】，就用sitemap.xml文件就行，把http和https的直接添加试了下。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_3.png"
-                     
-                ></p>
-<h3 id="3-提交给百度"><a href="#3-提交给百度" class="headerlink" title="3.提交给百度"></a>3.提交给百度</h3><p>百度原来叫站长平台吧，现在好像改名叫什么资源了。<br>网址：<a class="link"   href="https://ziyuan.baidu.com/linksubmit/index" >https://ziyuan.baidu.com/linksubmit/index<i class="fas fa-external-link-alt"></i></a></p>
-<p>百度是我最搞不懂的，明明<code>域名/baidusitemap.xml</code>文件都能访问，反正提交还是失败。<br>提示“主域校验失败”。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Hexo_sitemap_4.png"
-                     
-                ></p>
-<p>难道文章里还不能出现别的站点了？？太奇怪了，什么玩意~ 遂放弃。</p>
-<p><strong>最后，顺便说一下可以怎么在搜索引擎上看结果</strong>：<br>可以过一两天，然后打开搜索引擎，直接搜索 <code>site:域名</code>或者前面再加个关键词，（比如我的搜索 <code>hexo site:hduzn.cn</code>）就可以看收录了多少了。<br>在搜索引擎中搜索时 ，加上site:域名，本来就可以搜索指定站点中的内容。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu 命令行安装Chrome浏览器</title>
     <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
@@ -3643,6 +3708,46 @@
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
         <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu 安装Selenium自动化测试</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
+<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<a id="more"></a>
+<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
+<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
+<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
+<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
+<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
+<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
+<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
+<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
+<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Selenium</tag>
+        <tag>Python</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -3773,6 +3878,34 @@
       </tags>
   </entry>
   <entry>
+    <title>VSCode 远程连接服务器 Could not establish connection</title>
+    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
+    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
+<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
+<a id="more"></a>
+
+<p>假设我的服务器ip地址是：106.101.101.101</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+<p>配置文件没问题。</p>
+<p><strong>解决方法：</strong></p>
+<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
+<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
+<p>再重新连接，就可以了。</p>
+]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+      <tags>
+        <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>VSCode远程连接服务器 免密登录（ssh key）</title>
     <url>/2022/07/14/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
     <content><![CDATA[<p>VS Code远程连接服务器，就可以直接编辑服务器（Linux）上的文件了，进行开发等，就比较方便了。用VS Code也很简单，直接安装一个 Remote - SSH 的扩展插件就可以了。</p>
@@ -3810,34 +3943,6 @@
 <h3 id="2-在-ssh目录下创建authorized-keys文件"><a href="#2-在-ssh目录下创建authorized-keys文件" class="headerlink" title="2.在.ssh目录下创建authorized_keys文件"></a>2.在.ssh目录下创建authorized_keys文件</h3><p>为了方便，我也不创建了，直接直接把 ubuntu_rsa.pub 用ftp工具上传，然后移动到 .ssh目录后，重命名为 authorized_keys就行了。并用 chmod修改目录的权限。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv ubuntu_rsa.pub .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br><span class="line">chmod 700 ~/.ssh</span><br></pre></td></tr></table></figure>
 <p>这样就可以了。再用VS Code远程连接服务器就不用每次输入密码啦。</p>
-]]></content>
-      <categories>
-        <category>VSCode</category>
-      </categories>
-      <tags>
-        <tag>VSCode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VSCode 远程连接服务器 Could not establish connection</title>
-    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
-    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
-<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
-<a id="more"></a>
-
-<p>假设我的服务器ip地址是：106.101.101.101</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
-<p>配置文件没问题。</p>
-<p><strong>解决方法：</strong></p>
-<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
-<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
-<p>再重新连接，就可以了。</p>
 ]]></content>
       <categories>
         <category>VSCode</category>
@@ -4255,40 +4360,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -4357,6 +4428,40 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl -f <span class="string">&#x27;bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4&#x27;</span> --write-sub --sub-lang zh-CN --embed-sub -i -a list.txt</span><br></pre></td></tr></table></figure>
 <h2 id="五、报错"><a href="#五、报错" class="headerlink" title="五、报错"></a>五、报错</h2><p>如果提示 HTTP Error 403: Forbidden 错误，运行一下下面的代码：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">youtube-dl --rm-cache-dir</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Software</category>
       </categories>
@@ -4525,7 +4630,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#109;" >&#103;&#105;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -4770,71 +4875,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;" >&#103;&#x69;&#116;&#64;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;" >&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#98;&#x2e;&#x63;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>服务器 Docker搭建Flask应用（一）</title>
     <url>/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<p>用Python的Web框架——Flask写了应用，然后就可以放到服务器上。</p>
@@ -4927,43 +4967,42 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 安装Selenium自动化测试</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>Selenium自动化测试环境，主要是有浏览器和浏览器对应的WebDriver版本就可以了。</p>
-<h2 id="一、安装-Google-Chrome浏览器"><a href="#一、安装-Google-Chrome浏览器" class="headerlink" title="一、安装 Google Chrome浏览器"></a>一、安装 Google Chrome浏览器</h2><h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化界面的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+    <title>浏览器记住密码后无法查看 解决方法</title>
+    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
+    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
+<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
 <a id="more"></a>
-<p>如果你的服务器上下载不方便的，本地下载方便，那推荐直接在本地把文件下载好再上传方便。</p>
-<p>Ubuntu中使用 wget来下载 Google Chrome .deb 软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。再用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>（不同的浏览器不同的版本都是不同的）</p>
-<h3 id="1、下载-Chrome-WebDriver"><a href="#1、下载-Chrome-WebDriver" class="headerlink" title="1、下载 Chrome WebDriver"></a>1、下载 Chrome WebDriver</h3><p>我这里安装的是 Chrome 88.0.4324.146 版本对应的WebDriver。</p>
-<h4 id="方法一：在本地Windows机下载"><a href="#方法一：在本地Windows机下载" class="headerlink" title="方法一：在本地Windows机下载"></a>方法一：在本地Windows机下载</h4><p>Chrome WebDriver 官方下载地址：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a><br><a class="link"   href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
-<p>这里没有88.0.4324.146版本的，88.最新的是88.0.4324.96，就用的最新的就行。</p>
-<p>下载好后，用 xftp工具上传到 <code>python/pydriver</code> 目录中。</p>
-<h4 id="方法二：直接在Ubuntu中直接下载"><a href="#方法二：直接在Ubuntu中直接下载" class="headerlink" title="方法二：直接在Ubuntu中直接下载"></a>方法二：直接在Ubuntu中直接下载</h4><p>在上面 Chrome WebDriver 官方下载地址中查看对应版本对应文件的链接：<br><a class="link"   href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>得到 chromedriver_linux64.zip的文件链接，然后用 wget命令下载：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载之后用unzip 命令解压出来。反正看你在哪边能快速下载吧，哪边下载方便就在哪边下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip chromedriver_linux64.zip</span><br></pre></td></tr></table></figure>
-<p>下载好/解压好的 chromedriver 文件都放到  <code>python/pydriver</code> 目录中。</p>
-<h3 id="2、给chromedriver-文件添加可执行的权限"><a href="#2、给chromedriver-文件添加可执行的权限" class="headerlink" title="2、给chromedriver 文件添加可执行的权限"></a>2、给chromedriver 文件添加可执行的权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod a+x chromedriver</span><br></pre></td></tr></table></figure>
-<h2 id="三、安装-Selenium-包"><a href="#三、安装-Selenium-包" class="headerlink" title="三、安装 Selenium 包"></a>三、安装 Selenium 包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
-<h2 id="四、python代码示例"><a href="#四、python代码示例" class="headerlink" title="四、python代码示例"></a>四、python代码示例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver_path = <span class="string">r&#x27;/home/ubuntu/python/pydriver/chromedriver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># open site mode 打开浏览器模式</span></span><br><span class="line"><span class="comment"># wd = webdriver.Chrome(driver_path)</span></span><br><span class="line"><span class="comment"># not open site mode 不打开浏览器的模式</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;headless&#x27;</span>)</span><br><span class="line">wd = webdriver.Chrome(driver_path, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>) <span class="comment"># sleep</span></span><br><span class="line"></span><br><span class="line">site = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">wd.get(site)</span><br><span class="line"><span class="built_in">print</span>(wd.title)</span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>]]></content>
+
+<p>如图所示（就这个鬼样）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_1.png"
+                     
+                ></p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
+<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
+</ul>
+<p>修改type类型前是这样的：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_2.png"
+                     
+                ></p>
+<p>修改type类型后（已经能看到密码）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_3.png"
+                     
+                ></p>
+<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
+]]></content>
       <categories>
-        <category>Linux</category>
+        <category>Software</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
-        <tag>Selenium</tag>
-        <tag>Python</tag>
-        <tag>Ubuntu</tag>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -5026,45 +5065,6 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器记住密码后无法查看 解决方法</title>
-    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
-    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
-<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
-<a id="more"></a>
-
-<p>如图所示（就这个鬼样）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_1.png"
-                     
-                ></p>
-<p><strong>解决方法：</strong></p>
-<ul>
-<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
-<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
-</ul>
-<p>修改type类型前是这样的：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_2.png"
-                     
-                ></p>
-<p>修改type类型后（已经能看到密码）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_3.png"
-                     
-                ></p>
-<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
-]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
