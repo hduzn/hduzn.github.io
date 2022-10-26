@@ -439,6 +439,115 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker搭建frp内网穿透服务器</title>
+    <url>/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<p>frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。</p>
+<p>说直白点，我主要是想用来：</p>
+<ul>
+<li>访问内网（现在能访问，但直接访问其它的内网地址还有点问题）；</li>
+<li>安装frpc的电脑开web服务的内网没问题，可以访问；</li>
+<li>访问不了其它的内网，就先用用远程桌面连接吧。（当然，这个也有第三方的工具，但TeamView免费不好用，Todesk免费还行、就是分辨率、稳定性这些还是差一些）</li>
+</ul>
+<p>反正服务器本来就有，就顺便试一下。</p>
+<p>frp中文文档：<a class="link"   href="https://github.com/fatedier/frp/blob/dev/README_zh.md" >https://github.com/fatedier/frp/blob/dev/README_zh.md<i class="fas fa-external-link-alt"></i></a><br>完整文档：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>release版本下载：<a class="link"   href="https://github.com/fatedier/frp/releases" >https://github.com/fatedier/frp/releases<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p><strong>准备工作：</strong></p>
+<p>一共3台机子：</p>
+<ul>
+<li>Ubuntu服务器（带Docker，有公网ip）：用来安装frp server端</li>
+<li>办公室Windows10（已安装docker）：安装frp client端</li>
+<li>本机Windows10：远程连接办公室电脑</li>
+</ul>
+<p><strong>frp实现了啥：</strong></p>
+<p>比如我办公室Windows10中运行了一个web服务，局域网可以访问，通过以下地址访问：192.168.1.110:5000</p>
+<p>但外网是无法访问的。</p>
+<p>然后我的Ubuntu服务器（公网ip：43.142.94.65），分别安装了frps、frpc端。</p>
+<p>然后通过frp，外面就可以用：43.142.94.65:18188 来访问 192.168.1.110:5000 了。（这里5000端口映射到服务器的18188端口了）</p>
+<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>云服务器：带Docker的Ubuntu20.04</p>
+<h3 id="1-创建配置文件（frps-ini）"><a href="#1-创建配置文件（frps-ini）" class="headerlink" title="1.创建配置文件（frps.ini）"></a>1.创建配置文件（frps.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在用户目录(<code>/home/ubuntu</code>)下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir frp</span><br></pre></td></tr></table></figure>
+<p>可以直接在服务器(Linux)系统中用<code>vi frps.ini</code>创建配置文件、编辑、保存。</p>
+<p>也可以在本地直接创建好了，用FTP工具上传到 <code>/home/ubuntu/frp</code>目录下。</p>
+<p>frps.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line"><span class="attr">bind_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 面板端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 登录面板账号设置</span></span><br><span class="line"><span class="attr">dashboard_user</span> = admin</span><br><span class="line"><span class="attr">dashboard_pwd</span> = Administrator1234</span><br><span class="line"><span class="comment"># 设置http及https协议下代理端口（非重要）</span></span><br><span class="line"><span class="attr">vhost_http_port</span> = <span class="number">7080</span></span><br><span class="line"><span class="attr">vhost_https_port</span> = <span class="number">7081</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 身份验证</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br></pre></td></tr></table></figure>
+<p>token尽量复杂一些，用Python的话，可以用secrets库生成一下随机密码。</p>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中先把这些服务器上要用到的端口开一下，即：<br>7000、7500、7080、7081 四个端口。</p>
+<h3 id="2-创建frps容器"><a href="#2-创建frps容器" class="headerlink" title="2.创建frps容器"></a>2.创建frps容器</h3><p><strong>1).下载frp服务器镜像 snowdreamtech/frps</strong></p>
+<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frps" >https://hub.docker.com/r/snowdreamtech/frps<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<p>碰到没有权限的时候，命令前面加上<code>sudo</code>就行。</p>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>/home/ubuntu/frp/frps.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v /home/ubuntu/frp/frps.ini:/etc/frp/frps.ini --name frps snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--network host：网络模式host</span><br><span class="line">-v &#x2F;home&#x2F;ubuntu&#x2F;frp&#x2F;frps.ini:&#x2F;etc&#x2F;frp&#x2F;frps.ini：配置文件映射</span><br><span class="line">--name frps：容器名称，可以随便取</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>创建好后，打开网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）</p>
+<p>如果出现无法访问的情况，可以在以下网站上查询一下，看服务器端口是否开放：<br><a class="link"   href="https://tool.chinaz.com/port" >https://tool.chinaz.com/port<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、搭建frp-client-客户端"><a href="#二、搭建frp-client-客户端" class="headerlink" title="二、搭建frp client(客户端)"></a>二、搭建frp client(客户端)</h2><p>办公室Windows10（已安装docker）<br>安装docker方法：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/install/windows" >https://yeasy.gitbook.io/docker_practice/install/windows<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="1-创建配置文件（frpc-ini）"><a href="#1-创建配置文件（frpc-ini）" class="headerlink" title="1.创建配置文件（frpc.ini）"></a>1.创建配置文件（frpc.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在(<code>E:\frp</code>)下.</p>
+<p>frpc.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[ssh]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">2288</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ssh] 为服务名称，下方此处设置为，访问frp服务段的2288端口时，等同于通过中转服务器访问127.0.0.1的22端口。</span></span><br><span class="line"><span class="comment"># type 为连接的类型，此处为tcp</span></span><br><span class="line"><span class="comment"># local_ip 为中转客户端实际访问的IP </span></span><br><span class="line"><span class="comment"># local_port 为目标端口</span></span><br><span class="line"><span class="comment"># remote_port 为远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程桌面RDP，连接需要3389端口</span></span><br><span class="line"><span class="section">[RDP]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">3389</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18189</span></span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5002</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18289</span></span><br></pre></td></tr></table></figure>
+<p>这里可以建多个，比如我这就开了3个：ssh、RDP、web_host。</p>
+<p>最后对应的访问地址为：FRPS服务器IP地址:remote_port</p>
+<blockquote>
+<p>远程桌面连接地址：43.142.94.65:18189<br>web访问地址：43.142.94.65:18289 对应本机的 127.0.0.1:5002</p>
+</blockquote>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中把这些服务器上要用到的端口开一下，即：<br>2288、18189、18289 三个端口。</p>
+<h3 id="2-创建frpc容器"><a href="#2-创建frpc容器" class="headerlink" title="2.创建frpc容器"></a>2.创建frpc容器</h3><p>可以在docker软件中操作，反正跟服务器端差不多的命令，我这就直接用命令了。</p>
+<p><strong>1).下载frp客户端镜像 snowdreamtech/frpc</strong></p>
+<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frpc" >https://hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></p>
+<p>打开Windows Powershell/命令提示符 用命令下载镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>E:/frp/frpc.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v E:/frp/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>再刷新刚才打开的网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<h2 id="三、远程桌面连接"><a href="#三、远程桌面连接" class="headerlink" title="三、远程桌面连接"></a>三、远程桌面连接</h2><p>当然，首先，要在办公室Windows10（已安装docker）这台机子上开启远程桌面：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_4.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>远程桌面连接地址：43.142.94.65:18189</p>
+<p>在Windows系统中打开【远程桌面连接】，输入连接地址和远程连接的计算机的用户名：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_2.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>注意，Windows10在【体验】选项中，可以选择【LAN（10 Mbps或更高）】，也可以选择【自动检测连接质量】。默认是【低速宽带】，连接上之后，字体变样，感觉很丑、看起来不舒服。</p>
+<p>而Windows11的话，默认是【自动检测连接质量】，就没事问题，连接上后自动检测的效果挺好的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_3.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>就成功连接啦！<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_5.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>更多关于frp的介绍、配置文件说明，都在官方的文档中有：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>参考文章：<a class="link"   href="https://gitee.com/spoto/natserver/tree/master" >自建内网穿透服务器<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker 搭建开源邮件服务器 EwoMail</title>
     <url>/2022/04/05/Docker%E6%90%AD%E5%BB%BA%E5%BC%80%E6%BA%90%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%20EwoMail/</url>
     <content><![CDATA[<p>为什么要用 Docker 装 EwoMail，因为开始试过了，不行。直接装的话，需要 Centos系统，于是服务器直接选了Centos7.6系统。</p>
@@ -559,115 +668,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker搭建frp内网穿透服务器</title>
-    <url>/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<p>frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。</p>
-<p>说直白点，我主要是想用来：</p>
-<ul>
-<li>访问内网（现在能访问，但直接访问其它的内网地址还有点问题）；</li>
-<li>安装frpc的电脑开web服务的内网没问题，可以访问；</li>
-<li>访问不了其它的内网，就先用用远程桌面连接吧。（当然，这个也有第三方的工具，但TeamView免费不好用，Todesk免费还行、就是分辨率、稳定性这些还是差一些）</li>
-</ul>
-<p>反正服务器本来就有，就顺便试一下。</p>
-<p>frp中文文档：<a class="link"   href="https://github.com/fatedier/frp/blob/dev/README_zh.md" >https://github.com/fatedier/frp/blob/dev/README_zh.md<i class="fas fa-external-link-alt"></i></a><br>完整文档：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
-<p>release版本下载：<a class="link"   href="https://github.com/fatedier/frp/releases" >https://github.com/fatedier/frp/releases<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<p><strong>准备工作：</strong></p>
-<p>一共3台机子：</p>
-<ul>
-<li>Ubuntu服务器（带Docker，有公网ip）：用来安装frp server端</li>
-<li>办公室Windows10（已安装docker）：安装frp client端</li>
-<li>本机Windows10：远程连接办公室电脑</li>
-</ul>
-<p><strong>frp实现了啥：</strong></p>
-<p>比如我办公室Windows10中运行了一个web服务，局域网可以访问，通过以下地址访问：192.168.1.110:5000</p>
-<p>但外网是无法访问的。</p>
-<p>然后我的Ubuntu服务器（公网ip：43.142.94.65），分别安装了frps、frpc端。</p>
-<p>然后通过frp，外面就可以用：43.142.94.65:18188 来访问 192.168.1.110:5000 了。（这里5000端口映射到服务器的18188端口了）</p>
-<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>云服务器：带Docker的Ubuntu20.04</p>
-<h3 id="1-创建配置文件（frps-ini）"><a href="#1-创建配置文件（frps-ini）" class="headerlink" title="1.创建配置文件（frps.ini）"></a>1.创建配置文件（frps.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在用户目录(<code>/home/ubuntu</code>)下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir frp</span><br></pre></td></tr></table></figure>
-<p>可以直接在服务器(Linux)系统中用<code>vi frps.ini</code>创建配置文件、编辑、保存。</p>
-<p>也可以在本地直接创建好了，用FTP工具上传到 <code>/home/ubuntu/frp</code>目录下。</p>
-<p>frps.ini 文件内容如下：</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line"><span class="attr">bind_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 面板端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 登录面板账号设置</span></span><br><span class="line"><span class="attr">dashboard_user</span> = admin</span><br><span class="line"><span class="attr">dashboard_pwd</span> = Administrator1234</span><br><span class="line"><span class="comment"># 设置http及https协议下代理端口（非重要）</span></span><br><span class="line"><span class="attr">vhost_http_port</span> = <span class="number">7080</span></span><br><span class="line"><span class="attr">vhost_https_port</span> = <span class="number">7081</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 身份验证</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br></pre></td></tr></table></figure>
-<p>token尽量复杂一些，用Python的话，可以用secrets库生成一下随机密码。</p>
-<p>用的是腾讯云轻量服务器，所以要在【防火墙】中先把这些服务器上要用到的端口开一下，即：<br>7000、7500、7080、7081 四个端口。</p>
-<h3 id="2-创建frps容器"><a href="#2-创建frps容器" class="headerlink" title="2.创建frps容器"></a>2.创建frps容器</h3><p><strong>1).下载frp服务器镜像 snowdreamtech/frps</strong></p>
-<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frps" >https://hub.docker.com/r/snowdreamtech/frps<i class="fas fa-external-link-alt"></i></a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frps</span><br></pre></td></tr></table></figure>
-<p>碰到没有权限的时候，命令前面加上<code>sudo</code>就行。</p>
-<p><strong>2).启动容器</strong></p>
-<p>我这里配置文件在：<code>/home/ubuntu/frp/frps.ini</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v /home/ubuntu/frp/frps.ini:/etc/frp/frps.ini --name frps snowdreamtech/frps</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--network host：网络模式host</span><br><span class="line">-v &#x2F;home&#x2F;ubuntu&#x2F;frp&#x2F;frps.ini:&#x2F;etc&#x2F;frp&#x2F;frps.ini：配置文件映射</span><br><span class="line">--name frps：容器名称，可以随便取</span><br></pre></td></tr></table></figure>
-<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
-<p>创建好后，打开网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）</p>
-<p>如果出现无法访问的情况，可以在以下网站上查询一下，看服务器端口是否开放：<br><a class="link"   href="https://tool.chinaz.com/port" >https://tool.chinaz.com/port<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、搭建frp-client-客户端"><a href="#二、搭建frp-client-客户端" class="headerlink" title="二、搭建frp client(客户端)"></a>二、搭建frp client(客户端)</h2><p>办公室Windows10（已安装docker）<br>安装docker方法：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/install/windows" >https://yeasy.gitbook.io/docker_practice/install/windows<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="1-创建配置文件（frpc-ini）"><a href="#1-创建配置文件（frpc-ini）" class="headerlink" title="1.创建配置文件（frpc.ini）"></a>1.创建配置文件（frpc.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在(<code>E:\frp</code>)下.</p>
-<p>frpc.ini 文件内容如下：</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[ssh]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">2288</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ssh] 为服务名称，下方此处设置为，访问frp服务段的2288端口时，等同于通过中转服务器访问127.0.0.1的22端口。</span></span><br><span class="line"><span class="comment"># type 为连接的类型，此处为tcp</span></span><br><span class="line"><span class="comment"># local_ip 为中转客户端实际访问的IP </span></span><br><span class="line"><span class="comment"># local_port 为目标端口</span></span><br><span class="line"><span class="comment"># remote_port 为远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程桌面RDP，连接需要3389端口</span></span><br><span class="line"><span class="section">[RDP]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">3389</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18189</span></span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5002</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18289</span></span><br></pre></td></tr></table></figure>
-<p>这里可以建多个，比如我这就开了3个：ssh、RDP、web_host。</p>
-<p>最后对应的访问地址为：FRPS服务器IP地址:remote_port</p>
-<blockquote>
-<p>远程桌面连接地址：43.142.94.65:18189<br>web访问地址：43.142.94.65:18289 对应本机的 127.0.0.1:5002</p>
-</blockquote>
-<p>用的是腾讯云轻量服务器，所以要在【防火墙】中把这些服务器上要用到的端口开一下，即：<br>2288、18189、18289 三个端口。</p>
-<h3 id="2-创建frpc容器"><a href="#2-创建frpc容器" class="headerlink" title="2.创建frpc容器"></a>2.创建frpc容器</h3><p>可以在docker软件中操作，反正跟服务器端差不多的命令，我这就直接用命令了。</p>
-<p><strong>1).下载frp客户端镜像 snowdreamtech/frpc</strong></p>
-<p>docker官方镜像网址：<a class="link"   href="https://hub.docker.com/r/snowdreamtech/frpc" >https://hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></p>
-<p>打开Windows Powershell/命令提示符 用命令下载镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
-<p><strong>2).启动容器</strong></p>
-<p>我这里配置文件在：<code>E:/frp/frpc.ini</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v E:/frp/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
-<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
-<p>再刷新刚才打开的网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_1.png"
-                      style="zoom: 100%;"
-                ></p>
-<h2 id="三、远程桌面连接"><a href="#三、远程桌面连接" class="headerlink" title="三、远程桌面连接"></a>三、远程桌面连接</h2><p>当然，首先，要在办公室Windows10（已安装docker）这台机子上开启远程桌面：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_4.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>远程桌面连接地址：43.142.94.65:18189</p>
-<p>在Windows系统中打开【远程桌面连接】，输入连接地址和远程连接的计算机的用户名：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_2.png"
-                      style="zoom: 100%;"
-                ></p>
-<p>注意，Windows10在【体验】选项中，可以选择【LAN（10 Mbps或更高）】，也可以选择【自动检测连接质量】。默认是【低速宽带】，连接上之后，字体变样，感觉很丑、看起来不舒服。</p>
-<p>而Windows11的话，默认是【自动检测连接质量】，就没事问题，连接上后自动检测的效果挺好的。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_3.png"
-                      style="zoom: 100%;"
-                ></p>
-<p>就成功连接啦！<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_frp_5.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>更多关于frp的介绍、配置文件说明，都在官方的文档中有：<a class="link"   href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
-<p>参考文章：<a class="link"   href="https://gitee.com/spoto/natserver/tree/master" >自建内网穿透服务器<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker 数据卷（volumes）介绍</title>
     <url>/2022/06/19/Docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
     <content><![CDATA[<p>Docker 提供了三种不同的方式将数据从 Docker Host 挂载到 Docker 容器，并实现数据的读取和存储：volumes、bind mounts、tmpfs 。</p>
@@ -722,6 +722,44 @@
       </categories>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Edge浏览器无法同步 解决方法</title>
+    <url>/2022/06/19/Edge%E6%B5%8F%E8%A7%88%E5%99%A8%E6%97%A0%E6%B3%95%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>办公室电脑上用的Edge浏览器，然后家里电脑上打开Edge浏览器的时候，发现总是没办法自动同步收藏夹、历史记录这些。（用的是同一个微软用户的邮箱账号登录的）</p>
+<p>用别的浏览器，明显是可以都同步的。</p>
+<p>当然，在浏览器【设置】-【同步】设置中，这些同步的选项都是启用的。</p>
+<a id="more"></a>
+
+<p><strong>解决方法：</strong></p>
+<p><strong>1.在Edge浏览地址栏中输入以下地址，回车。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">edge:&#x2F;&#x2F;sync-internals&#x2F;</span><br></pre></td></tr></table></figure>
+<p>如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Edge_sync_1.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>Server URL中如果无数值，此时设备不能同步。</p>
+<p>按照网上的说法，可以修改Windows的hosts文件，添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">52.167.253.237 activity.windows.com</span><br><span class="line">52.167.253.237 edge-enterprise.activity.windows.com</span><br><span class="line">52.167.253.237 edge.activity.windows.com</span><br></pre></td></tr></table></figure>
+<p>再打开<code>edge://sync-internals/</code>，如果可看到Server URL中有数值，说明可以正常同步。</p>
+<p>但，我的问题是明明有Server URL，但是就是没同步过来。</p>
+<p><strong>2.关闭同步，重新开启同步。</strong></p>
+<p>像我这样的问题的话，可以直接在两边电脑上都先在上面的页面中关闭同步【Stop Sync（Keep Data）】，或者去【设置】-&gt;【同步】选项中关闭也是一样的。</p>
+<p>然后依次重新开启同步，重新开启同步后，默认没有选上“收藏夹”、“历史记录”这些选项的，手动选上。</p>
+<p>然后终于同步过来了。</p>
+<p>感觉Edge的同步就跟用微软的产品差不多，时不时能遇到抽风的时候。要不是我这可以远程连接，操作另一台电脑，这要是没同步过来，不都歇菜了么。</p>
+<p>目前，能正常同步了。</p>
+<p>最后，特别要注意的是，千万千万不要去点【重置同步】，这一重置，直接就把云数据清空了！</p>
+]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -810,44 +848,6 @@
         <tag>Docker</tag>
         <tag>Selenium</tag>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Edge浏览器无法同步 解决方法</title>
-    <url>/2022/06/19/Edge%E6%B5%8F%E8%A7%88%E5%99%A8%E6%97%A0%E6%B3%95%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>办公室电脑上用的Edge浏览器，然后家里电脑上打开Edge浏览器的时候，发现总是没办法自动同步收藏夹、历史记录这些。（用的是同一个微软用户的邮箱账号登录的）</p>
-<p>用别的浏览器，明显是可以都同步的。</p>
-<p>当然，在浏览器【设置】-【同步】设置中，这些同步的选项都是启用的。</p>
-<a id="more"></a>
-
-<p><strong>解决方法：</strong></p>
-<p><strong>1.在Edge浏览地址栏中输入以下地址，回车。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">edge:&#x2F;&#x2F;sync-internals&#x2F;</span><br></pre></td></tr></table></figure>
-<p>如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Edge_sync_1.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>Server URL中如果无数值，此时设备不能同步。</p>
-<p>按照网上的说法，可以修改Windows的hosts文件，添加以下内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">52.167.253.237 activity.windows.com</span><br><span class="line">52.167.253.237 edge-enterprise.activity.windows.com</span><br><span class="line">52.167.253.237 edge.activity.windows.com</span><br></pre></td></tr></table></figure>
-<p>再打开<code>edge://sync-internals/</code>，如果可看到Server URL中有数值，说明可以正常同步。</p>
-<p>但，我的问题是明明有Server URL，但是就是没同步过来。</p>
-<p><strong>2.关闭同步，重新开启同步。</strong></p>
-<p>像我这样的问题的话，可以直接在两边电脑上都先在上面的页面中关闭同步【Stop Sync（Keep Data）】，或者去【设置】-&gt;【同步】选项中关闭也是一样的。</p>
-<p>然后依次重新开启同步，重新开启同步后，默认没有选上“收藏夹”、“历史记录”这些选项的，手动选上。</p>
-<p>然后终于同步过来了。</p>
-<p>感觉Edge的同步就跟用微软的产品差不多，时不时能遇到抽风的时候。要不是我这可以远程连接，操作另一台电脑，这要是没同步过来，不都歇菜了么。</p>
-<p>目前，能正常同步了。</p>
-<p>最后，特别要注意的是，千万千万不要去点【重置同步】，这一重置，直接就把云数据清空了！</p>
-]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -1550,7 +1550,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;" >&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;" >&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1571,7 +1571,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#46;&#99;&#x6f;&#x6d;" >&#103;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#46;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#x6d;" >&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1722,6 +1722,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Joplin 更改默认存储路径</title>
     <url>/2022/10/16/Joplin%E6%94%B9%E5%8F%98%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E8%B7%AF%E5%BE%84/</url>
     <content><![CDATA[<p>Joplin默认的存储路径在【工具】-&gt;【通用选项】中能看到，就是没法直接更改。<br>Windows上版本默认的路径是：<code>C:\Users\[username]\.config\joplin-desktop</code></p>
@@ -1742,28 +1764,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1886,99 +1886,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux nohup 后台运行 命令详解</title>
-    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
-<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
-<a id="more"></a>
-
-<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
-<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
-<blockquote>
-<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
-</blockquote>
-<p><strong>例2.用Python后台运行app.py</strong></p>
-<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-<p>运行后，会显示进程的PID。</p>
-<p><strong>命令详解</strong>：</p>
-<blockquote>
-<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
-</blockquote>
-<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
-<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
-<p><strong>1.用命令查找进程的PID</strong></p>
-<p>比如上面例2运行后，我们通过以下命令查找：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
-<p>结果如图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/linux_nohup_1.png"
-                      
-                ></p>
-<p>用户名后面一项就是PID，可以看到PID=471。</p>
-<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
-<p><strong>2.结束进程</strong></p>
-<p>运行命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
-<p>比如上面的进程就是<code>kill 471</code></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux使用v2ray</title>
-    <url>/2022/06/14/Linux%E4%BD%BF%E7%94%A8v2ray/</url>
-    <content><![CDATA[<p>因为在CentOS的服务器上装东西的，用到了github，直接访问不了。本地windows系统用的v2rayN的客户端，想到v2ray在Linux上也可以用，就装上试一下。</p>
-<p>v2ray本身是不区分服务端和客户端的，只要配置好相关文件，反正都可正常使用。（就是配置文件的区别）</p>
-<a id="more"></a>
-
-<h3 id="1-下载-v2ray-linux-64-zip"><a href="#1-下载-v2ray-linux-64-zip" class="headerlink" title="1.下载 v2ray-linux-64.zip"></a>1.下载 v2ray-linux-64.zip</h3><p>v2ray的Github地址：<br><a class="link"   href="https://github.com/v2ray/v2ray-core/releases/" >https://github.com/v2ray/v2ray-core/releases/<i class="fas fa-external-link-alt"></i></a></p>
-<p>目前最新的版本是v4.31.0，下面有Download页面：<br><a class="link"   href="https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0" >https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0<i class="fas fa-external-link-alt"></i></a></p>
-<p>在页面中找到 v2ray-linux-64.zip 文件下载（我的是64位的CentOS系统）。</p>
-<p>下载后解压出来是一个 v2ray-linux-64 目录，用ftp工具上传到linux的服务器上。</p>
-<p>当然，也可以直接把解压包上传后，再用unzip命令解压。</p>
-<h3 id="2-把文件复制到对应的目录中"><a href="#2-把文件复制到对应的目录中" class="headerlink" title="2.把文件复制到对应的目录中"></a>2.把文件复制到对应的目录中</h3><p>用复制(cp命令)或移动(mv命令)都可以。这里用cp举例。</p>
-<p>首先，进入 v2ray-linux-64 目录，可以用 <code>ls -l</code>查看目录下的文件。<br>目录中的几个文件需要修改下权限，需要添加下可执行的权限。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> v2ray-linux-64</span><br><span class="line"></span><br><span class="line">chmod 755 v2ray</span><br><span class="line">chmod 755 v2ctl</span><br><span class="line">chmod 755 systemd/system/v2ray.service</span><br><span class="line">chmod 755 systemd/system/v2ray@.service</span><br></pre></td></tr></table></figure>
-<p>然后复制目录中的文件到指定位置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp v2ray /usr/<span class="built_in">local</span>/bin/</span><br><span class="line">cp v2ctl /usr/<span class="built_in">local</span>/bin/</span><br><span class="line"></span><br><span class="line">cp systemd/system/v2ray.service /etc/systemd/system/</span><br><span class="line">cp systemd/system/v2ray@.service /etc/systemd/system/</span><br><span class="line"></span><br><span class="line">mkdir /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geoip.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geosite.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line"></span><br><span class="line">mkdir /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp access.log /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp error.log /var/<span class="built_in">log</span>/v2ray/</span><br></pre></td></tr></table></figure>
-<p>两个日志文件没有的话，自己新建一个就行，要保证所有人都有读写权限。<br>反正配置文件中不用的话，其实也无所谓，就先建着扔着。</p>
-<p>还有一个config.json配置文件，等配置完了再复制。</p>
-<h3 id="3-config-json配置文件"><a href="#3-config-json配置文件" class="headerlink" title="3.config.json配置文件"></a>3.config.json配置文件</h3><p>原生的V2ray并不支持订阅，反正我本来就在windows下用的，直接在v2rayN的客户端，服务器列表中中右键-&gt;【导出所选服务器为客户端配置】，保存成config.json文件。</p>
-<p>然后把这个config.json文件也上传到 v2ray-linux-64 目录中，再来复制。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /usr/<span class="built_in">local</span>/etc/v2ray/</span><br><span class="line">cp config.json /usr/<span class="built_in">local</span>/etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
-<p>以下配置文件仅为参考（需将outbounds处settings中改成自己的）：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;log&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;access&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;error&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;loglevel&quot;</span>: <span class="string">&quot;warning&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;inbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1080</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;auth&quot;</span>: <span class="string">&quot;noauth&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1081</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;outbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;vnext&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">&quot;address&quot;</span>: <span class="string">&quot;abc.abc.net&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;port&quot;</span>: <span class="number">30000</span>,</span><br><span class="line">            <span class="attr">&quot;users&quot;</span>: [</span><br><span class="line">              &#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;effffff6-fffffb-4aaa-8888-aaaaaaaaaa&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;alterId&quot;</span>: <span class="number">1</span>,</span><br><span class="line">                <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;t@t.tt&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;security&quot;</span>: <span class="string">&quot;chacha20-poly1305&quot;</span></span><br><span class="line">              &#125;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;network&quot;</span>: <span class="string">&quot;tcp&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;mux&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;concurrency&quot;</span>: <span class="number">8</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;blackhole&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;response&quot;</span>: &#123;</span><br><span class="line">          <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;http&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;routing&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;domainStrategy&quot;</span>: <span class="string">&quot;AsIs&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;domainMatcher&quot;</span>: <span class="string">&quot;linear&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;rules&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;inboundTag&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;api&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;api&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:google&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;domain:example-example.com&quot;</span>,</span><br><span class="line">          <span class="string">&quot;domain:example-example2.com&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:category-ads-all&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我这里就没把log文件配置写进去，需要的话再写上：</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&quot;log&quot;: &#123;</span><br><span class="line">    &quot;access&quot;: &quot;/var/log/v2ray/access.log&quot;,</span><br><span class="line">    &quot;error&quot;: &quot;/var/log/v2ray/error.log&quot;,</span><br><span class="line">    &quot;loglevel&quot;: &quot;warning&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>记得这两个文件看一下，要有读写权限。</p>
-<h3 id="4-启动v2ray"><a href="#4-启动v2ray" class="headerlink" title="4.启动v2ray"></a>4.启动v2ray</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动V2ray</span></span><br><span class="line">sudo systemctl start v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查V2ray状态</span></span><br><span class="line">sudo systemctl status v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置V2ray开机自启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> v2ray</span><br></pre></td></tr></table></figure>
-<p>V2ray状态：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Linux_v2ray_1.png"
-                      style="zoom: 100%;"
-                ></p>
-<h3 id="5-检验代码是否生效"><a href="#5-检验代码是否生效" class="headerlink" title="5.检验代码是否生效"></a>5.检验代码是否生效</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://127.0.0.1:1080 https://www.google.com -v</span><br></pre></td></tr></table></figure>
-<p>如果能返回google.com的源代码，即表示配置成功。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux 定时执行 python脚本</title>
     <url>/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<p>Linux系统里有个定时任务的管理器 crontab，所以只需要编辑下定时任务，再重启下定时任务就行了。</p>
@@ -2092,6 +1999,99 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux nohup 后台运行 命令详解</title>
+    <url>/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>nohup 英文全称 no hang up（不挂起），用于在系统后台不挂断地运行命令，退出终端不会影响程序的运行。</p>
+<p>nohup 命令，在默认情况下（非重定向时），会输出一个名叫 nohup.out 的文件到当前目录下，如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</p>
+<a id="more"></a>
+
+<h2 id="命令语法格式："><a href="#命令语法格式：" class="headerlink" title="命令语法格式："></a>命令语法格式：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup Command [Arg ... ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong><br>Command：要执行的命令。<br>Arg：一些参数，可以指定输出文件。<br>&amp;：让命令在后台执行，终端退出后命令仍旧执行。</p>
+<h2 id="举例后台运行"><a href="#举例后台运行" class="headerlink" title="举例后台运行"></a>举例后台运行</h2><p><strong>例1.执行root目录下的runoob.sh脚本，并重定向输入到runoob.log文件中</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p>关于 <strong>2&gt;&amp;1</strong>解释：</p>
+<blockquote>
+<p>将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<br>0 – stdin (standard input，标准输入)<br>1 – stdout (standard output，标准输出)<br>2 – stderr (standard error，标准错误输出)</p>
+</blockquote>
+<p><strong>例2.用Python后台运行app.py</strong></p>
+<p>用这种方法，就可以把Python Flask的应用在服务器的后台运行了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nohup python -u app.py &gt; /dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<p>运行后，会显示进程的PID。</p>
+<p><strong>命令详解</strong>：</p>
+<blockquote>
+<p>1.最后一个“&amp;”：表示后台运行程序<br>2.“nohup” ：表示程序不被挂起<br>3.“python”：即python.exe，执行python代码<br>4.“-u”：表示不启用缓存，实时输出打印信息到日志文件（如果不加-u，则会导致日志文件不会实时刷新代码中的print函数的信息）<br>5.“app.py”：表示python的源代码文件<br>6.“&gt;”：表示将打印信息重定向到日志文件<br>7.“/dev/null”：我这里就不要日志文件了<br>8.“2&gt;&amp;1”：表示将标准错误输出转变化标准输出，可以将错误信息也输出到日志文件中（0-&gt; stdin, 1-&gt;stdout, 2-&gt;stderr）</p>
+</blockquote>
+<h2 id="结束后台运行进程"><a href="#结束后台运行进程" class="headerlink" title="结束后台运行进程"></a>结束后台运行进程</h2><p>进程在后台运行，想要关闭就要查看进程的PID。</p>
+<p>运行<code>nohup</code>命令后也会得到进程的PID。<br>也可以通过搜索查找这个命令的PID。</p>
+<p><strong>1.用命令查找进程的PID</strong></p>
+<p>比如上面例2运行后，我们通过以下命令查找：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span></span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/linux_nohup_1.png"
+                      
+                ></p>
+<p>用户名后面一项就是PID，可以看到PID=471。</p>
+<p>还可以用 <code>top -p 471</code>命令确认下471进程是不是这个app.py的进程（可以看到COMMAND是python）。</p>
+<p><strong>2.结束进程</strong></p>
+<p>运行命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> [PID]</span><br></pre></td></tr></table></figure>
+<p>比如上面的进程就是<code>kill 471</code></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux使用v2ray</title>
+    <url>/2022/06/14/Linux%E4%BD%BF%E7%94%A8v2ray/</url>
+    <content><![CDATA[<p>因为在CentOS的服务器上装东西的，用到了github，直接访问不了。本地windows系统用的v2rayN的客户端，想到v2ray在Linux上也可以用，就装上试一下。</p>
+<p>v2ray本身是不区分服务端和客户端的，只要配置好相关文件，反正都可正常使用。（就是配置文件的区别）</p>
+<a id="more"></a>
+
+<h3 id="1-下载-v2ray-linux-64-zip"><a href="#1-下载-v2ray-linux-64-zip" class="headerlink" title="1.下载 v2ray-linux-64.zip"></a>1.下载 v2ray-linux-64.zip</h3><p>v2ray的Github地址：<br><a class="link"   href="https://github.com/v2ray/v2ray-core/releases/" >https://github.com/v2ray/v2ray-core/releases/<i class="fas fa-external-link-alt"></i></a></p>
+<p>目前最新的版本是v4.31.0，下面有Download页面：<br><a class="link"   href="https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0" >https://github.com/v2fly/v2ray-core/releases/tag/v4.31.0<i class="fas fa-external-link-alt"></i></a></p>
+<p>在页面中找到 v2ray-linux-64.zip 文件下载（我的是64位的CentOS系统）。</p>
+<p>下载后解压出来是一个 v2ray-linux-64 目录，用ftp工具上传到linux的服务器上。</p>
+<p>当然，也可以直接把解压包上传后，再用unzip命令解压。</p>
+<h3 id="2-把文件复制到对应的目录中"><a href="#2-把文件复制到对应的目录中" class="headerlink" title="2.把文件复制到对应的目录中"></a>2.把文件复制到对应的目录中</h3><p>用复制(cp命令)或移动(mv命令)都可以。这里用cp举例。</p>
+<p>首先，进入 v2ray-linux-64 目录，可以用 <code>ls -l</code>查看目录下的文件。<br>目录中的几个文件需要修改下权限，需要添加下可执行的权限。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> v2ray-linux-64</span><br><span class="line"></span><br><span class="line">chmod 755 v2ray</span><br><span class="line">chmod 755 v2ctl</span><br><span class="line">chmod 755 systemd/system/v2ray.service</span><br><span class="line">chmod 755 systemd/system/v2ray@.service</span><br></pre></td></tr></table></figure>
+<p>然后复制目录中的文件到指定位置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp v2ray /usr/<span class="built_in">local</span>/bin/</span><br><span class="line">cp v2ctl /usr/<span class="built_in">local</span>/bin/</span><br><span class="line"></span><br><span class="line">cp systemd/system/v2ray.service /etc/systemd/system/</span><br><span class="line">cp systemd/system/v2ray@.service /etc/systemd/system/</span><br><span class="line"></span><br><span class="line">mkdir /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geoip.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line">cp geosite.dat /usr/<span class="built_in">local</span>/share/v2ray/</span><br><span class="line"></span><br><span class="line">mkdir /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp access.log /var/<span class="built_in">log</span>/v2ray/</span><br><span class="line">cp error.log /var/<span class="built_in">log</span>/v2ray/</span><br></pre></td></tr></table></figure>
+<p>两个日志文件没有的话，自己新建一个就行，要保证所有人都有读写权限。<br>反正配置文件中不用的话，其实也无所谓，就先建着扔着。</p>
+<p>还有一个config.json配置文件，等配置完了再复制。</p>
+<h3 id="3-config-json配置文件"><a href="#3-config-json配置文件" class="headerlink" title="3.config.json配置文件"></a>3.config.json配置文件</h3><p>原生的V2ray并不支持订阅，反正我本来就在windows下用的，直接在v2rayN的客户端，服务器列表中中右键-&gt;【导出所选服务器为客户端配置】，保存成config.json文件。</p>
+<p>然后把这个config.json文件也上传到 v2ray-linux-64 目录中，再来复制。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /usr/<span class="built_in">local</span>/etc/v2ray/</span><br><span class="line">cp config.json /usr/<span class="built_in">local</span>/etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
+<p>以下配置文件仅为参考（需将outbounds处settings中改成自己的）：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;log&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;access&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;error&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;loglevel&quot;</span>: <span class="string">&quot;warning&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;inbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1080</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;socks&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;auth&quot;</span>: <span class="string">&quot;noauth&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;port&quot;</span>: <span class="number">1081</span>,</span><br><span class="line">      <span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;http&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;destOverride&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;http&quot;</span>,</span><br><span class="line">          <span class="string">&quot;tls&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;udp&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">&quot;allowTransparent&quot;</span>: <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;outbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;vnext&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">&quot;address&quot;</span>: <span class="string">&quot;abc.abc.net&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;port&quot;</span>: <span class="number">30000</span>,</span><br><span class="line">            <span class="attr">&quot;users&quot;</span>: [</span><br><span class="line">              &#123;</span><br><span class="line">                <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;effffff6-fffffb-4aaa-8888-aaaaaaaaaa&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;alterId&quot;</span>: <span class="number">1</span>,</span><br><span class="line">                <span class="attr">&quot;email&quot;</span>: <span class="string">&quot;t@t.tt&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;security&quot;</span>: <span class="string">&quot;chacha20-poly1305&quot;</span></span><br><span class="line">              &#125;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;network&quot;</span>: <span class="string">&quot;tcp&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">&quot;mux&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;concurrency&quot;</span>: <span class="number">8</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;tag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;blackhole&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;response&quot;</span>: &#123;</span><br><span class="line">          <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;http&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;routing&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;domainStrategy&quot;</span>: <span class="string">&quot;AsIs&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;domainMatcher&quot;</span>: <span class="string">&quot;linear&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;rules&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;inboundTag&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;api&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;api&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;proxy&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:google&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;direct&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;domain:example-example.com&quot;</span>,</span><br><span class="line">          <span class="string">&quot;domain:example-example2.com&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;outboundTag&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;domain&quot;</span>: [</span><br><span class="line">          <span class="string">&quot;geosite:category-ads-all&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;enabled&quot;</span>: <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我这里就没把log文件配置写进去，需要的话再写上：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&quot;log&quot;: &#123;</span><br><span class="line">    &quot;access&quot;: &quot;/var/log/v2ray/access.log&quot;,</span><br><span class="line">    &quot;error&quot;: &quot;/var/log/v2ray/error.log&quot;,</span><br><span class="line">    &quot;loglevel&quot;: &quot;warning&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>记得这两个文件看一下，要有读写权限。</p>
+<h3 id="4-启动v2ray"><a href="#4-启动v2ray" class="headerlink" title="4.启动v2ray"></a>4.启动v2ray</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动V2ray</span></span><br><span class="line">sudo systemctl start v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查V2ray状态</span></span><br><span class="line">sudo systemctl status v2ray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置V2ray开机自启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> v2ray</span><br></pre></td></tr></table></figure>
+<p>V2ray状态：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Linux_v2ray_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<h3 id="5-检验代码是否生效"><a href="#5-检验代码是否生效" class="headerlink" title="5.检验代码是否生效"></a>5.检验代码是否生效</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://127.0.0.1:1080 https://www.google.com -v</span><br></pre></td></tr></table></figure>
+<p>如果能返回google.com的源代码，即表示配置成功。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Navicat连接MySQL数据库不成功 解决方法</title>
     <url>/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/</url>
     <content><![CDATA[<p>当想用本地的 Navicat 连接 服务器上 Docker中的MySQL数据库时，出现如下问题：</p>
@@ -2143,34 +2143,6 @@
       <tags>
         <tag>MySQL</tag>
         <tag>Navicat</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python Failed to write executable - trying to use .deleteme logic 解决方法</title>
-    <url>/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/</url>
-    <content><![CDATA[<p>Python安装包的时候报错（下载完了，进入Installing的时候）：</p>
-<blockquote>
-<p>WARNING: Failed to write executable - trying to use .deleteme logic<br>ERROR: Could not install packages due to an EnvironmentError: [WinError 2] 系统找不到指定的文件。</p>
-</blockquote>
-<a id="more"></a>
-
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_Failed_to_write_executable_1.png"
-                     
-                >
-
-<p>一看就是权限的问题。</p>
-<p><strong>解决方法（3种）：</strong><br>1.就打开【Windows PowerShell】（管理员）模式，再运行就行了。</p>
-<p>2.用【命令提示符】的话，反正右键用管理员身份运行，也是一样的。</p>
-<p>3.在命令后面加上<code>--user</code>就行。<br>比如<code>pip install img2pdf</code>改成<code>pip install img2pdf --user</code>就行。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2239,6 +2211,34 @@
       <tags>
         <tag>Python</tag>
         <tag>Flask</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Failed to write executable - trying to use .deleteme logic 解决方法</title>
+    <url>/2022/06/03/Python-Failed-to-write-executable-trying-to-use-deleteme-logic/</url>
+    <content><![CDATA[<p>Python安装包的时候报错（下载完了，进入Installing的时候）：</p>
+<blockquote>
+<p>WARNING: Failed to write executable - trying to use .deleteme logic<br>ERROR: Could not install packages due to an EnvironmentError: [WinError 2] 系统找不到指定的文件。</p>
+</blockquote>
+<a id="more"></a>
+
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_Failed_to_write_executable_1.png"
+                     
+                >
+
+<p>一看就是权限的问题。</p>
+<p><strong>解决方法（3种）：</strong><br>1.就打开【Windows PowerShell】（管理员）模式，再运行就行了。</p>
+<p>2.用【命令提示符】的话，反正右键用管理员身份运行，也是一样的。</p>
+<p>3.在命令后面加上<code>--user</code>就行。<br>比如<code>pip install img2pdf</code>改成<code>pip install img2pdf --user</code>就行。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2533,6 +2533,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Python pip安装包时报错ERROR Could not install packages due to an OSError</title>
+    <url>/2022/10/12/Python-pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E6%8A%A5%E9%94%99OSError/</url>
+    <content><![CDATA[<p>Python用的是虚拟环境virtualenv，然后又是放在同步盘。这样我两台电脑都是装的同一个Python版本，就共用了同一个虚拟环境（放在了同步盘，直接同步的）。</p>
+<p>一台电脑上正常，在另一台电脑上用pip安装的时候报了以下错误：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory:</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>下面提示还有涉及到的包，用<code>pip uninstall</code>卸载了重装还是不行。</p>
+<p>然后发现在虚拟环境的<code>Lib\site-packages</code>目录下，卸载后的包还有残留的。</p>
+<p><strong>解决方法：</strong><br>可能是同一个包有多版本的目录存在，也可能没卸载干净的。</p>
+<ul>
+<li>1.先用<code>pip uninstall 包名</code>卸载</li>
+<li>2.把<code>Lib\site-packages</code>目录下卸载包后还存在的目录直接删除</li>
+<li>3.再重新用<code>pip install 包名</code>安装包</li>
+</ul>
+<p>然后就可以正常使用了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python pandas读取Excel时空单元格读取为nan</title>
     <url>/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/</url>
     <content><![CDATA[<p>当用pandas读取excel的时候，用到的是read_excel函数。</p>
@@ -2550,31 +2575,6 @@
 <p>就在使用read_excel函数时，多添加一个参数keep_default_na就行。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">df &#x3D; pd.read_excel(data_file, sheet_name, usecols&#x3D;usecols, keep_default_na&#x3D;&#39;&#39;)</span><br></pre></td></tr></table></figure>
 <p>给keep_default_na设一个当空单元格时的值就行。<br>比如我上面就设为了<code>&#39;&#39;</code>字符串，这个按自己需要，设<code>keep_default_na=False</code>都行。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python pip安装包时报错ERROR Could not install packages due to an OSError</title>
-    <url>/2022/10/12/Python-pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E6%8A%A5%E9%94%99OSError/</url>
-    <content><![CDATA[<p>Python用的是虚拟环境virtualenv，然后又是放在同步盘。这样我两台电脑都是装的同一个Python版本，就共用了同一个虚拟环境（放在了同步盘，直接同步的）。</p>
-<p>一台电脑上正常，在另一台电脑上用pip安装的时候报了以下错误：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory:</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>下面提示还有涉及到的包，用<code>pip uninstall</code>卸载了重装还是不行。</p>
-<p>然后发现在虚拟环境的<code>Lib\site-packages</code>目录下，卸载后的包还有残留的。</p>
-<p><strong>解决方法：</strong><br>可能是同一个包有多版本的目录存在，也可能没卸载干净的。</p>
-<ul>
-<li>1.先用<code>pip uninstall 包名</code>卸载</li>
-<li>2.把<code>Lib\site-packages</code>目录下卸载包后还存在的目录直接删除</li>
-<li>3.再重新用<code>pip install 包名</code>安装包</li>
-</ul>
-<p>然后就可以正常使用了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2636,43 +2636,6 @@
       </categories>
       <tags>
         <tag>Selenium</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 批量修改图片尺寸</title>
-    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
-    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
-<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
-<a id="more"></a>
-
-<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_1.png"
-                     
-                ></p>
-<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
-<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
-<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
-<p><strong>解决思路</strong>：</p>
-<ul>
-<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
-<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
-<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
-</ul>
-<p><strong>修改图片尺寸代码：</strong></p>
-<p>这个很简单，就这么三步：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
-<p><strong>完整代码实现</strong>如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
-<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -2770,6 +2733,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 批量修改图片尺寸</title>
+    <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
+    <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
+<p>由于PIL仅支持到Python 2.7，加上年久失修，于是一群志愿者在PIL的基础上创建了兼容的版本，名字叫Pillow，支持最新Python 3.x，又加入了许多新特性，因此，我们可以直接安装使用Pillow。</p>
+<a id="more"></a>
+
+<h2 id="安装Pillow库"><a href="#安装Pillow库" class="headerlink" title="安装Pillow库"></a>安装Pillow库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>官方文档上有提供Pillow支持的Python 版本。基本上Python3.7+版本对Pillow新版都是支持的。<br>（<a class="link"   href="https://pillow.readthedocs.io/en/latest/installation.html" >https://pillow.readthedocs.io/en/latest/installation.html<i class="fas fa-external-link-alt"></i></a> ）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_1.png"
+                     
+                ></p>
+<h2 id="批量修改图片尺寸"><a href="#批量修改图片尺寸" class="headerlink" title="批量修改图片尺寸"></a>批量修改图片尺寸</h2><p>在网上下载了一溜的avatar的头像图，大小都是<code>800*800</code>的，在博客中用，发现太大了，还占多的空间，想批量全部把大小修改成 <code>80*80</code>的，这样占的空间也小，反正够用。</p>
+<p>原来<code>800*800</code>大小的图片，一张就要75KB左右，改成<code>80*80</code>大小后，就只有7KB左右了。</p>
+<p>比如当前存放原图片的目录为：<code>C:\a</code></p>
+<p><strong>解决思路</strong>：</p>
+<ul>
+<li>第一步，新建一个新的目录，用来存放新的尺寸的图片；（比如直接在目录后面加个 <code>_new</code>）</li>
+<li>第二步，用glob.glob() 方法把目录下所有的图片路径获取出来，返回一个List；</li>
+<li>第三步，遍历列表，处理每一张图片尺寸，把新的图片保存到新的目录中</li>
+</ul>
+<p><strong>修改图片尺寸代码：</strong></p>
+<p>这个很简单，就这么三步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;abc.jpg&quot;</span>) <span class="comment"># 打开图片</span></span><br><span class="line">new_img = img.resize((<span class="number">80</span>, <span class="number">80</span>), Image.BILINEAR) <span class="comment"># 修改图片尺寸</span></span><br><span class="line">new_img.save(<span class="string">&quot;new_abc.jpg&quot;</span>) <span class="comment"># 保存图片</span></span><br></pre></td></tr></table></figure>
+<p><strong>完整代码实现</strong>如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改所有图片尺寸</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size</span>(<span class="params">path, width, height</span>):</span></span><br><span class="line">    out_dir = path + <span class="string">&#x27;_new&#x27;</span> <span class="comment"># 改好尺寸后的新文件夹</span></span><br><span class="line">    mkdir(out_dir)</span><br><span class="line">    </span><br><span class="line">    path_files = path + <span class="string">&#x27;\\&#x27;</span> + <span class="string">&#x27;*.*&#x27;</span> <span class="comment"># 需要修改的图片文件夹中所有图片文件</span></span><br><span class="line">    path_list = glob.glob(path_files)</span><br><span class="line">    <span class="comment"># print(path_list)</span></span><br><span class="line">    <span class="keyword">for</span> picfile <span class="keyword">in</span> path_list:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line">        <span class="comment"># img.show()</span></span><br><span class="line">        <span class="comment"># print(img.mode)</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">            <span class="comment"># print(new_img.mode)</span></span><br><span class="line">            new_img.save(os.path.join(out_dir, os.path.basename(picfile)))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量修改图片尺寸</span></span><br><span class="line">change_pic_size(path=<span class="string">r&#x27;C:\a&#x27;</span>, width=<span class="number">80</span>, height=<span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+<p>执行完代码后，就得到了一个新的图片目录（’C:\a_new’），里面都是<code>80*80</code>的图片，图片文件名都没变。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 批量修改图片尺寸为一寸/二寸照</title>
     <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
     <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
@@ -2807,35 +2807,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量图片合成pdf文件</title>
-    <url>/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
-<p>Python处理的方法的好处是：效率更快，然后同样的图片内容，合成pdf文件不到20M，而用Photoshop处理出来都50M+。</p>
-<a id="more"></a>
-
-<h2 id="一、批量图片设置成一样的大小尺寸和dpi"><a href="#一、批量图片设置成一样的大小尺寸和dpi" class="headerlink" title="一、批量图片设置成一样的大小尺寸和dpi"></a>一、批量图片设置成一样的大小尺寸和dpi</h2><p><strong>如果对图片没有统一大小要求的，可以跳过这一步。</strong></p>
-<p>如果需要图片统一处理的，可以修改尺寸大小这些，这个用PIL库就行。</p>
-<p>安装库：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
-<p>怎么批量修改的，有文章写了具体介绍：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> ，这里就不详细说了。</p>
-<p>最后反正整好一个处理好图片的文件夹。</p>
-<h2 id="二、把批量图片合成-pdf"><a href="#二、把批量图片合成-pdf" class="headerlink" title="二、把批量图片合成 pdf"></a>二、把批量图片合成 pdf</h2><p>为了pdf文件中图片能按照想要的顺序排序，图片名称直接用：01.jpg,，02.jpg，类似这样的就行。</p>
-<p>需要用到img2pdf 的库。</p>
-<p>安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install img2pdf</span><br></pre></td></tr></table></figure>
-<p>官方文档：<a class="link"   href="https://pypi.org/project/img2pdf" >https://pypi.org/project/img2pdf<i class="fas fa-external-link-alt"></i></a><br>看一下示例就会用了，有多种情况适用</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
-<p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量转换图片格式</title>
     <url>/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</url>
     <content><![CDATA[<p>跟之前一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> 一样，用的也是PIL的库。</p>
@@ -2858,6 +2829,35 @@
 </ul>
 <p><strong>完整代码实现</strong>如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量转换图片格式为pic_type格式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_image_format</span>(<span class="params">path, pic_type</span>):</span></span><br><span class="line">    outdir = path + <span class="string">&#x27;_&#x27;</span> + pic_type <span class="comment"># &#x27;C:\pictest_jpg&#x27;</span></span><br><span class="line">    mkdir(outdir)</span><br><span class="line">    file_list = os.listdir(path)</span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="keyword">with</span> Image.<span class="built_in">open</span>(path+<span class="string">&#x27;\\&#x27;</span>+file) <span class="keyword">as</span> image:</span><br><span class="line">            filename = os.path.splitext(file)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span>(image.mode != <span class="string">&#x27;RGB&#x27;</span>):</span><br><span class="line">                image = image.convert(<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line">            image.save(outdir+<span class="string">&#x27;\\&#x27;</span>+filename+<span class="string">&#x27;.&#x27;</span>+pic_type)</span><br><span class="line"></span><br><span class="line">convert_image_format(path=<span class="string">r&#x27;C:\pictest&#x27;</span>, pic_type=<span class="string">&#x27;jpg&#x27;</span>) <span class="comment"># 把图片都转成jpg格式</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量图片合成pdf文件</title>
+    <url>/2022/06/04/Python-%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%90%88%E6%88%90pdf%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>批量图片合成 pdf 文件的方法试过两种。一种是用PS软件，另一种就是用Python。</p>
+<p>Python处理的方法的好处是：效率更快，然后同样的图片内容，合成pdf文件不到20M，而用Photoshop处理出来都50M+。</p>
+<a id="more"></a>
+
+<h2 id="一、批量图片设置成一样的大小尺寸和dpi"><a href="#一、批量图片设置成一样的大小尺寸和dpi" class="headerlink" title="一、批量图片设置成一样的大小尺寸和dpi"></a>一、批量图片设置成一样的大小尺寸和dpi</h2><p><strong>如果对图片没有统一大小要求的，可以跳过这一步。</strong></p>
+<p>如果需要图片统一处理的，可以修改尺寸大小这些，这个用PIL库就行。</p>
+<p>安装库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
+<p>怎么批量修改的，有文章写了具体介绍：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a> ，这里就不详细说了。</p>
+<p>最后反正整好一个处理好图片的文件夹。</p>
+<h2 id="二、把批量图片合成-pdf"><a href="#二、把批量图片合成-pdf" class="headerlink" title="二、把批量图片合成 pdf"></a>二、把批量图片合成 pdf</h2><p>为了pdf文件中图片能按照想要的顺序排序，图片名称直接用：01.jpg,，02.jpg，类似这样的就行。</p>
+<p>需要用到img2pdf 的库。</p>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install img2pdf</span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   href="https://pypi.org/project/img2pdf" >https://pypi.org/project/img2pdf<i class="fas fa-external-link-alt"></i></a><br>看一下示例就会用了，有多种情况适用</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
+<p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
+]]></content>
       <categories>
         <category>Python</category>
       </categories>
@@ -3212,6 +3212,25 @@
       </tags>
   </entry>
   <entry>
+    <title>Python生成安全随机密码（secrets）</title>
+    <url>/2022/07/12/Python%E7%94%9F%E6%88%90%E5%AE%89%E5%85%A8%E9%9A%8F%E6%9C%BA%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<p>secrets 模块可用于生成高加密强度的随机数，适应管理密码、账户验证、安全凭据和相关机密数据管理的需要。</p>
+<p>特别地，应当优先使用 secrets 来替代 random 模块中的默认伪随机数生成器，random 被设计用于建模和仿真，而不适用于安全和加密。</p>
+<a id="more"></a>
+
+<h3 id="1-简单随机密码"><a href="#1-简单随机密码" class="headerlink" title="1.简单随机密码"></a>1.简单随机密码</h3><p>主要了解下 secrets 的几个函数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> secrets</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">easy_passwd</span>():</span></span><br><span class="line">    num = secrets.randbelow(<span class="number">10</span>) <span class="comment"># [0,n) 区间的安全随机整数</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;num:&quot;</span>, num)</span><br><span class="line"></span><br><span class="line">    s = secrets.choice([<span class="string">&quot;a&quot;</span>,<span class="string">&quot;b&quot;</span>,<span class="string">&quot;z&quot;</span>]) <span class="comment"># 在一个序列中随机挑选一个元素</span></span><br><span class="line">    <span class="built_in">print</span>(s)</span><br><span class="line"></span><br><span class="line">    b_s = secrets.token_bytes(nbytes=<span class="number">6</span>) <span class="comment"># 随机生成指定长度的一串字节串</span></span><br><span class="line">    <span class="built_in">print</span>(b_s) <span class="comment"># b&#x27;\x03\x8c\xc9\x1f\x88z&#x27;</span></span><br><span class="line"></span><br><span class="line">    hex_s = secrets.token_hex(nbytes=<span class="number">6</span>) <span class="comment"># 随机生成指定长度的一串16进制字符串</span></span><br><span class="line">    <span class="built_in">print</span>(hex_s) <span class="comment"># 739ca28ec0b4</span></span><br><span class="line"></span><br><span class="line">    urlsafe_s = secrets.token_urlsafe(<span class="number">12</span>) <span class="comment"># 随机成成指定长度的一串url安全的字符串</span></span><br><span class="line">    <span class="built_in">print</span>(urlsafe_s) <span class="comment"># 6pQFjrPf_dWwjcIK</span></span><br><span class="line">    url = <span class="string">&#x27;https://mydomain.com/reset=&#x27;</span> + urlsafe_s</span><br><span class="line"></span><br><span class="line">easy_passwd()</span><br></pre></td></tr></table></figure>
+<h3 id="2-高加密强度安全随机密码"><a href="#2-高加密强度安全随机密码" class="headerlink" title="2.高加密强度安全随机密码"></a>2.高加密强度安全随机密码</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> secrets</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">letter_digit_passwd</span>(<span class="params">length</span>):</span></span><br><span class="line">    <span class="comment"># s=&#x27;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#x27;</span></span><br><span class="line">    s = string.ascii_letters + string.digits</span><br><span class="line">    passwd = <span class="string">&#x27;&#x27;</span>.join(secrets.choice(s) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length))</span><br><span class="line">    <span class="keyword">return</span> passwd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码：至少1个小写字母，upper_num个大写字母和digit_num个数字</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">letter_digit_passwd2</span>(<span class="params">length, upper_num, digit_num</span>):</span></span><br><span class="line">    s = string.ascii_letters + string.digits</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        password = <span class="string">&#x27;&#x27;</span>.join(secrets.choice(s) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length))</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">any</span>(c.islower() <span class="keyword">for</span> c <span class="keyword">in</span> password)</span><br><span class="line">                <span class="keyword">and</span> <span class="built_in">sum</span>(c.isupper() <span class="keyword">for</span> c <span class="keyword">in</span> password) &gt;= upper_num</span><br><span class="line">                <span class="keyword">and</span> <span class="built_in">sum</span>(c.isdigit() <span class="keyword">for</span> c <span class="keyword">in</span> password) &gt;= digit_num):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码</span></span><br><span class="line"><span class="built_in">print</span>(letter_digit_passwd(<span class="number">32</span>)) <span class="comment"># Ox8zw4FgCL8rehnAIcenK4jufrT0K3Bi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码：至少1个小写字母，2个大写字母和3个数字</span></span><br><span class="line"><span class="built_in">print</span>(letter_digit_passwd2(<span class="number">16</span>, <span class="number">2</span>, <span class="number">3</span>)) <span class="comment"># mavo52y2gMcjTLNR</span></span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   href="https://roohui.com/help/tutorial/python_3_9/library/secrets.html#random-numbers" >secrets — 生成安全随机数字用于管理密码<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 生成二维码图片</title>
     <url>/2022/06/01/Python%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9B%BE%E7%89%87/</url>
     <content><![CDATA[<p>直接有第三方的库：qrcode<br>地址：<a class="link"   href="https://pypi.org/project/qrcode/" >https://pypi.org/project/qrcode/<i class="fas fa-external-link-alt"></i></a></p>
@@ -3231,25 +3250,6 @@
                      data-src="/img/Python_generate_qrcode.png"
                      
                 ></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python生成安全随机密码（secrets）</title>
-    <url>/2022/07/12/Python%E7%94%9F%E6%88%90%E5%AE%89%E5%85%A8%E9%9A%8F%E6%9C%BA%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<p>secrets 模块可用于生成高加密强度的随机数，适应管理密码、账户验证、安全凭据和相关机密数据管理的需要。</p>
-<p>特别地，应当优先使用 secrets 来替代 random 模块中的默认伪随机数生成器，random 被设计用于建模和仿真，而不适用于安全和加密。</p>
-<a id="more"></a>
-
-<h3 id="1-简单随机密码"><a href="#1-简单随机密码" class="headerlink" title="1.简单随机密码"></a>1.简单随机密码</h3><p>主要了解下 secrets 的几个函数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> secrets</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">easy_passwd</span>():</span></span><br><span class="line">    num = secrets.randbelow(<span class="number">10</span>) <span class="comment"># [0,n) 区间的安全随机整数</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;num:&quot;</span>, num)</span><br><span class="line"></span><br><span class="line">    s = secrets.choice([<span class="string">&quot;a&quot;</span>,<span class="string">&quot;b&quot;</span>,<span class="string">&quot;z&quot;</span>]) <span class="comment"># 在一个序列中随机挑选一个元素</span></span><br><span class="line">    <span class="built_in">print</span>(s)</span><br><span class="line"></span><br><span class="line">    b_s = secrets.token_bytes(nbytes=<span class="number">6</span>) <span class="comment"># 随机生成指定长度的一串字节串</span></span><br><span class="line">    <span class="built_in">print</span>(b_s) <span class="comment"># b&#x27;\x03\x8c\xc9\x1f\x88z&#x27;</span></span><br><span class="line"></span><br><span class="line">    hex_s = secrets.token_hex(nbytes=<span class="number">6</span>) <span class="comment"># 随机生成指定长度的一串16进制字符串</span></span><br><span class="line">    <span class="built_in">print</span>(hex_s) <span class="comment"># 739ca28ec0b4</span></span><br><span class="line"></span><br><span class="line">    urlsafe_s = secrets.token_urlsafe(<span class="number">12</span>) <span class="comment"># 随机成成指定长度的一串url安全的字符串</span></span><br><span class="line">    <span class="built_in">print</span>(urlsafe_s) <span class="comment"># 6pQFjrPf_dWwjcIK</span></span><br><span class="line">    url = <span class="string">&#x27;https://mydomain.com/reset=&#x27;</span> + urlsafe_s</span><br><span class="line"></span><br><span class="line">easy_passwd()</span><br></pre></td></tr></table></figure>
-<h3 id="2-高加密强度安全随机密码"><a href="#2-高加密强度安全随机密码" class="headerlink" title="2.高加密强度安全随机密码"></a>2.高加密强度安全随机密码</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> secrets</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">letter_digit_passwd</span>(<span class="params">length</span>):</span></span><br><span class="line">    <span class="comment"># s=&#x27;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#x27;</span></span><br><span class="line">    s = string.ascii_letters + string.digits</span><br><span class="line">    passwd = <span class="string">&#x27;&#x27;</span>.join(secrets.choice(s) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length))</span><br><span class="line">    <span class="keyword">return</span> passwd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码：至少1个小写字母，upper_num个大写字母和digit_num个数字</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">letter_digit_passwd2</span>(<span class="params">length, upper_num, digit_num</span>):</span></span><br><span class="line">    s = string.ascii_letters + string.digits</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        password = <span class="string">&#x27;&#x27;</span>.join(secrets.choice(s) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length))</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">any</span>(c.islower() <span class="keyword">for</span> c <span class="keyword">in</span> password)</span><br><span class="line">                <span class="keyword">and</span> <span class="built_in">sum</span>(c.isupper() <span class="keyword">for</span> c <span class="keyword">in</span> password) &gt;= upper_num</span><br><span class="line">                <span class="keyword">and</span> <span class="built_in">sum</span>(c.isdigit() <span class="keyword">for</span> c <span class="keyword">in</span> password) &gt;= digit_num):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> password</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码</span></span><br><span class="line"><span class="built_in">print</span>(letter_digit_passwd(<span class="number">32</span>)) <span class="comment"># Ox8zw4FgCL8rehnAIcenK4jufrT0K3Bi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成指定长度的字母数字密码：至少1个小写字母，2个大写字母和3个数字</span></span><br><span class="line"><span class="built_in">print</span>(letter_digit_passwd2(<span class="number">16</span>, <span class="number">2</span>, <span class="number">3</span>)) <span class="comment"># mavo52y2gMcjTLNR</span></span><br></pre></td></tr></table></figure>
-<p>官方文档：<a class="link"   href="https://roohui.com/help/tutorial/python_3_9/library/secrets.html#random-numbers" >secrets — 生成安全随机数字用于管理密码<i class="fas fa-external-link-alt"></i></a></p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -3335,6 +3335,84 @@
       </tags>
   </entry>
   <entry>
+    <title>TPLink路由器无线桥接、无线中继</title>
+    <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
+    <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
+<p>然后路由器在我房间，所以在我房间信号当然没啥问题，用了快2年了，然后爹妈反应现在在客厅有时候WiFi信号不行，压根用不了。（我自己基本上是在厨房信号的确不行，别的地方好像没啥问题）</p>
+<a id="more"></a>
+
+<p>于是，把旧的那台TPLink的路由器找出来了（原来也没坏，就是觉得不好用了吧），准备扔客厅，搭个无线桥接试一下。回头如果还是不好用，再买个新路由器做无线桥接看看。</p>
+<p>TPLink的路由器做无线桥接、设置很方便。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
+<li>1.有一台正常使用的路由器（小米AC2100），作为主路由器。</li>
+<li>2.一台副路由器（TPLink）的连接上电源。</li>
+<li>3.用手机或平板进入副路由器（TPLink）的管理页面，进行操作。</li>
+</ul>
+<h2 id="TPLink路由器无线桥接设置"><a href="#TPLink路由器无线桥接设置" class="headerlink" title="TPLink路由器无线桥接设置"></a>TPLink路由器无线桥接设置</h2><h3 id="1-设备连接副路由器（TPLink）WiFI信号"><a href="#1-设备连接副路由器（TPLink）WiFI信号" class="headerlink" title="1.设备连接副路由器（TPLink）WiFI信号"></a>1.设备连接副路由器（TPLink）WiFI信号</h3><p>副路由器（TPLink）接上电源后，用手机或平板连接副路由器（TPLink）的WiFi信号。</p>
+<p>当然，你用电脑也可以，电脑有无线的直接连无线信号，没有无线的台式就需要网线连接了。</p>
+<h3 id="2-登录TPLink路由器管理页面"><a href="#2-登录TPLink路由器管理页面" class="headerlink" title="2.登录TPLink路由器管理页面"></a>2.登录TPLink路由器管理页面</h3><p>一般是”192.168.1.1” 或 “192.168.0.1”，以前用过的路由器就直接用密码登录就行。<br>如果忘记密码了，就把路由器重置一下（恢复之后，用默认的密码登录）。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_1.png"
+                     
+                >
+
+<p>名称设置不设置也无所谓，反正设置桥接后会设置的，只要登录成功了就行。</p>
+<h3 id="3-【无线桥接】设置"><a href="#3-【无线桥接】设置" class="headerlink" title="3.【无线桥接】设置"></a>3.【无线桥接】设置</h3><p>1).打开【应用管理】-&gt;【无线桥接】，进入<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_2.png"
+                     
+                ></p>
+<p>2).选择桥接的主路由器</p>
+<p>开始设置后，会扫出附近的无线名称，我这里选择主路由器（小米AC2100），选择之后会要输入主路由器设置的无线密码。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_3.png"
+                     
+                ></p>
+<p>连接成功后，然后会从主路由器自动获取IP地址，直接下一步。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_4.png"
+                     
+                ></p>
+<p><strong>注意</strong>：把这个ip记一下，因为下次再进入副路由器（TPLink）的管理页面，就不是 192.168.0.1了，而是这个ip地址了。（我这里是 192.168.31.201）</p>
+<p>3).副路由器的无线名称设置</p>
+<p>这里会有个提示：</p>
+<blockquote>
+<p>推荐将本路由器的无线名称和密码更改为与主路由器一致，请确认以下更改：</p>
+</blockquote>
+<p>然后看到无线名称和无线密码是跟主路由器设置的一样的。</p>
+<p>个人建议还是不要一致了，因为如果一致连上这个WiFi信号的时候就不清楚是哪个了。当然，后面也可以再修改（就是麻烦一点，要确认连上的是这个路由器的WiFi信号）。</p>
+<p>建议直接无线名称后面加上<code>-2</code>就行，密码可以一致。</p>
+<p>最后完成后路由器会重启。</p>
+<p>4).查看副路由器（TPLink）DHCP服器设置</p>
+<p>因为这个无线桥接是要关闭这个DHCP服务的，否则连接了TPLink的好像不能上网。</p>
+<p>TPLink的打开DHCP设置，看到直接变成【自动】选项了，那就是关闭了。不用再手动关了。</p>
+<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><p>所以TPLink的路由器无线桥接，作一个副路由器是很方便的。</p>
+<p>差不多直接下一步下一步就行，也不用设什么ip。<br>就是无线名称设置我觉得可以改一下，简单标识一下。这样哪个信号好，可以自己选择一下。密码反正设置的一样的，输过一次后也不用输入。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_5.png"
+                     
+                >
+
+<p>PS.效果咋样还不知道，看了一下订单，发现是15年买的TPLink了。别的路由器只要有这个设置选项的，应该都很简单。</p>
+<h2 id="小米路由器无线中继设置"><a href="#小米路由器无线中继设置" class="headerlink" title="小米路由器无线中继设置"></a>小米路由器无线中继设置</h2><p>设置基本上跟TPLink没啥区别，直接先连上一台主路由器后，再把副路由器（小米路由器）插上电源，登录管理地址（小米的默认是：192.168.31.1）。</p>
+<p>进入【常用设置】-&gt;【上网设置】-&gt;【工作模式切换】，选择“无线中继工作模式”就行了。</p>
+<p>后面的设置也是一样的，是否要双频合一（2.4G和5G合一），然后也一样会分配一个ip，这个就是之后这个作中继器的副路由器的管理地址了（而不是原来的192.163.31.1了）。这个地址进主路由器管理页面里也能查看的。</p>
+]]></content>
+      <categories>
+        <category>Windows</category>
+      </categories>
+      <tags>
+        <tag>Windows</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SyntaxError EOL while scanning string literal</title>
     <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
     <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
@@ -3415,84 +3493,6 @@
       <tags>
         <tag>Windows</tag>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>TPLink路由器无线桥接、无线中继</title>
-    <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
-    <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
-<p>然后路由器在我房间，所以在我房间信号当然没啥问题，用了快2年了，然后爹妈反应现在在客厅有时候WiFi信号不行，压根用不了。（我自己基本上是在厨房信号的确不行，别的地方好像没啥问题）</p>
-<a id="more"></a>
-
-<p>于是，把旧的那台TPLink的路由器找出来了（原来也没坏，就是觉得不好用了吧），准备扔客厅，搭个无线桥接试一下。回头如果还是不好用，再买个新路由器做无线桥接看看。</p>
-<p>TPLink的路由器做无线桥接、设置很方便。</p>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
-<li>1.有一台正常使用的路由器（小米AC2100），作为主路由器。</li>
-<li>2.一台副路由器（TPLink）的连接上电源。</li>
-<li>3.用手机或平板进入副路由器（TPLink）的管理页面，进行操作。</li>
-</ul>
-<h2 id="TPLink路由器无线桥接设置"><a href="#TPLink路由器无线桥接设置" class="headerlink" title="TPLink路由器无线桥接设置"></a>TPLink路由器无线桥接设置</h2><h3 id="1-设备连接副路由器（TPLink）WiFI信号"><a href="#1-设备连接副路由器（TPLink）WiFI信号" class="headerlink" title="1.设备连接副路由器（TPLink）WiFI信号"></a>1.设备连接副路由器（TPLink）WiFI信号</h3><p>副路由器（TPLink）接上电源后，用手机或平板连接副路由器（TPLink）的WiFi信号。</p>
-<p>当然，你用电脑也可以，电脑有无线的直接连无线信号，没有无线的台式就需要网线连接了。</p>
-<h3 id="2-登录TPLink路由器管理页面"><a href="#2-登录TPLink路由器管理页面" class="headerlink" title="2.登录TPLink路由器管理页面"></a>2.登录TPLink路由器管理页面</h3><p>一般是”192.168.1.1” 或 “192.168.0.1”，以前用过的路由器就直接用密码登录就行。<br>如果忘记密码了，就把路由器重置一下（恢复之后，用默认的密码登录）。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_1.png"
-                     
-                >
-
-<p>名称设置不设置也无所谓，反正设置桥接后会设置的，只要登录成功了就行。</p>
-<h3 id="3-【无线桥接】设置"><a href="#3-【无线桥接】设置" class="headerlink" title="3.【无线桥接】设置"></a>3.【无线桥接】设置</h3><p>1).打开【应用管理】-&gt;【无线桥接】，进入<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_2.png"
-                     
-                ></p>
-<p>2).选择桥接的主路由器</p>
-<p>开始设置后，会扫出附近的无线名称，我这里选择主路由器（小米AC2100），选择之后会要输入主路由器设置的无线密码。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_3.png"
-                     
-                ></p>
-<p>连接成功后，然后会从主路由器自动获取IP地址，直接下一步。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_4.png"
-                     
-                ></p>
-<p><strong>注意</strong>：把这个ip记一下，因为下次再进入副路由器（TPLink）的管理页面，就不是 192.168.0.1了，而是这个ip地址了。（我这里是 192.168.31.201）</p>
-<p>3).副路由器的无线名称设置</p>
-<p>这里会有个提示：</p>
-<blockquote>
-<p>推荐将本路由器的无线名称和密码更改为与主路由器一致，请确认以下更改：</p>
-</blockquote>
-<p>然后看到无线名称和无线密码是跟主路由器设置的一样的。</p>
-<p>个人建议还是不要一致了，因为如果一致连上这个WiFi信号的时候就不清楚是哪个了。当然，后面也可以再修改（就是麻烦一点，要确认连上的是这个路由器的WiFi信号）。</p>
-<p>建议直接无线名称后面加上<code>-2</code>就行，密码可以一致。</p>
-<p>最后完成后路由器会重启。</p>
-<p>4).查看副路由器（TPLink）DHCP服器设置</p>
-<p>因为这个无线桥接是要关闭这个DHCP服务的，否则连接了TPLink的好像不能上网。</p>
-<p>TPLink的打开DHCP设置，看到直接变成【自动】选项了，那就是关闭了。不用再手动关了。</p>
-<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><p>所以TPLink的路由器无线桥接，作一个副路由器是很方便的。</p>
-<p>差不多直接下一步下一步就行，也不用设什么ip。<br>就是无线名称设置我觉得可以改一下，简单标识一下。这样哪个信号好，可以自己选择一下。密码反正设置的一样的，输过一次后也不用输入。</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/TPLink_wifi_bridging_5.png"
-                     
-                >
-
-<p>PS.效果咋样还不知道，看了一下订单，发现是15年买的TPLink了。别的路由器只要有这个设置选项的，应该都很简单。</p>
-<h2 id="小米路由器无线中继设置"><a href="#小米路由器无线中继设置" class="headerlink" title="小米路由器无线中继设置"></a>小米路由器无线中继设置</h2><p>设置基本上跟TPLink没啥区别，直接先连上一台主路由器后，再把副路由器（小米路由器）插上电源，登录管理地址（小米的默认是：192.168.31.1）。</p>
-<p>进入【常用设置】-&gt;【上网设置】-&gt;【工作模式切换】，选择“无线中继工作模式”就行了。</p>
-<p>后面的设置也是一样的，是否要双频合一（2.4G和5G合一），然后也一样会分配一个ip，这个就是之后这个作中继器的副路由器的管理地址了（而不是原来的192.163.31.1了）。这个地址进主路由器管理页面里也能查看的。</p>
-]]></content>
-      <categories>
-        <category>Windows</category>
-      </categories>
-      <tags>
-        <tag>Windows</tag>
       </tags>
   </entry>
   <entry>
@@ -3751,6 +3751,28 @@
       </tags>
   </entry>
   <entry>
+    <title>VSCode 无法加载文件\Scripts\Activate.ps1，因为在此系统上禁止运行脚本</title>
+    <url>/2022/06/26/VSCode%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E6%96%87%E4%BB%B6-Scripts-Activate-ps1%EF%BC%8C%E5%9B%A0%E4%B8%BA%E5%9C%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/</url>
+    <content><![CDATA[<p>我在Python的Flask项目里使用了env虚拟环境，然后，把env环境的目录和代码都同步到了另一台电脑上（Windows11/Windows10）。</p>
+<p>当我在VS Code运行的时候，就报了类似下面的错误：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&amp; : 无法加载文件 xx\Scripts\Activate.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:&#x2F;go.microsoft.com&#x2F;fwlink&#x2F;?LinkID&#x3D;135170 中的about_Execution_Policies。</span><br><span class="line">所在位置 行:1 字符: 3</span><br><span class="line">+ &amp; xx&#x2F;Scripts&#x2F;Activate.ps1</span><br><span class="line">+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br><span class="line">    + CategoryInfo          : SecurityError: (:) []，PSSecurityException</span><br><span class="line">    + FullyQualifiedErrorId : UnauthorizedAccess</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p><strong>原因：</strong></p>
+<p>看上面的提示是 中的 about_Execution_Policies 相关的。</p>
+<p>就是ExecutionPolicy设置的是Restricted（防止运行没有数字签名的脚本），需要设置成RemoteSigned模式。</p>
+<p><strong>解决方法：</strong></p>
+<p>打开Windows的Windows PowerShell（管理员模式），或者命令提示符管理员模式。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看ExecutionPolicy，返回结果：Restricted</span></span><br><span class="line">get-ExecutionPolicy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.设置ExecutionPolicy为RemoteSigned模式</span></span><br><span class="line">set-ExecutionPolicy RemoteSigned</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看ExecutionPolicy，返回结果：RemoteSigned</span></span><br><span class="line">get-ExecutionPolicy</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 查看CPU占用和使用情况</title>
     <url>/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/</url>
     <content><![CDATA[<p>使用自带的 top命令和 htop命令就可以查看，个人推荐第2种。</p>
@@ -3791,28 +3813,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VSCode 无法加载文件\Scripts\Activate.ps1，因为在此系统上禁止运行脚本</title>
-    <url>/2022/06/26/VSCode%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E6%96%87%E4%BB%B6-Scripts-Activate-ps1%EF%BC%8C%E5%9B%A0%E4%B8%BA%E5%9C%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/</url>
-    <content><![CDATA[<p>我在Python的Flask项目里使用了env虚拟环境，然后，把env环境的目录和代码都同步到了另一台电脑上（Windows11/Windows10）。</p>
-<p>当我在VS Code运行的时候，就报了类似下面的错误：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&amp; : 无法加载文件 xx\Scripts\Activate.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:&#x2F;go.microsoft.com&#x2F;fwlink&#x2F;?LinkID&#x3D;135170 中的about_Execution_Policies。</span><br><span class="line">所在位置 行:1 字符: 3</span><br><span class="line">+ &amp; xx&#x2F;Scripts&#x2F;Activate.ps1</span><br><span class="line">+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br><span class="line">    + CategoryInfo          : SecurityError: (:) []，PSSecurityException</span><br><span class="line">    + FullyQualifiedErrorId : UnauthorizedAccess</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p><strong>原因：</strong></p>
-<p>看上面的提示是 中的 about_Execution_Policies 相关的。</p>
-<p>就是ExecutionPolicy设置的是Restricted（防止运行没有数字签名的脚本），需要设置成RemoteSigned模式。</p>
-<p><strong>解决方法：</strong></p>
-<p>打开Windows的Windows PowerShell（管理员模式），或者命令提示符管理员模式。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.查看ExecutionPolicy，返回结果：Restricted</span></span><br><span class="line">get-ExecutionPolicy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.设置ExecutionPolicy为RemoteSigned模式</span></span><br><span class="line">set-ExecutionPolicy RemoteSigned</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看ExecutionPolicy，返回结果：RemoteSigned</span></span><br><span class="line">get-ExecutionPolicy</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>VSCode</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>VSCode</tag>
       </tags>
   </entry>
   <entry>
@@ -3878,34 +3878,6 @@
       </tags>
   </entry>
   <entry>
-    <title>VSCode 远程连接服务器 Could not establish connection</title>
-    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
-    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
-<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
-                      style="zoom: 75%;"
-                ></p>
-<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
-<a id="more"></a>
-
-<p>假设我的服务器ip地址是：106.101.101.101</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
-<p>配置文件没问题。</p>
-<p><strong>解决方法：</strong></p>
-<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
-<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
-<p>再重新连接，就可以了。</p>
-]]></content>
-      <categories>
-        <category>VSCode</category>
-      </categories>
-      <tags>
-        <tag>VSCode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VSCode远程连接服务器 免密登录（ssh key）</title>
     <url>/2022/07/14/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
     <content><![CDATA[<p>VS Code远程连接服务器，就可以直接编辑服务器（Linux）上的文件了，进行开发等，就比较方便了。用VS Code也很简单，直接安装一个 Remote - SSH 的扩展插件就可以了。</p>
@@ -3943,6 +3915,34 @@
 <h3 id="2-在-ssh目录下创建authorized-keys文件"><a href="#2-在-ssh目录下创建authorized-keys文件" class="headerlink" title="2.在.ssh目录下创建authorized_keys文件"></a>2.在.ssh目录下创建authorized_keys文件</h3><p>为了方便，我也不创建了，直接直接把 ubuntu_rsa.pub 用ftp工具上传，然后移动到 .ssh目录后，重命名为 authorized_keys就行了。并用 chmod修改目录的权限。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv ubuntu_rsa.pub .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br><span class="line">chmod 700 ~/.ssh</span><br></pre></td></tr></table></figure>
 <p>这样就可以了。再用VS Code远程连接服务器就不用每次输入密码啦。</p>
+]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+      <tags>
+        <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VSCode 远程连接服务器 Could not establish connection</title>
+    <url>/2022/06/26/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8Could-not-establish-connection/</url>
+    <content><![CDATA[<p>用VS Code远程连接服务器（Linux），以前是能正常连接的，然后重装了服务器系统后就连接不上了。</p>
+<p>提示“Could not establish connection to 106.101.101.101”，如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/VS_Code_could_not_establish_connection_1.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>打开“More Actions…”中的ssh的配置文件（config），相当信息如下：</p>
+<a id="more"></a>
+
+<p>假设我的服务器ip地址是：106.101.101.101</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 106.101.101.101</span><br><span class="line">  HostName 106.101.101.101</span><br><span class="line">  User ubuntu</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+<p>配置文件没问题。</p>
+<p><strong>解决方法：</strong></p>
+<p>以上ssh的配置文件（config）是在：<code>C:\Users\username\.ssh\</code> 目录下，在此目录下还有一个 known_hosts 的文件。</p>
+<p><strong>打开 known_hosts 文件，把服务器ip（106.101.101.101）相关这一行删除，保存文件。</strong></p>
+<p>再重新连接，就可以了。</p>
 ]]></content>
       <categories>
         <category>VSCode</category>
@@ -4360,6 +4360,40 @@
       </tags>
   </entry>
   <entry>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
+<a id="more"></a>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>youtube-dl 使用教程</title>
     <url>/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>youtube-dl 是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>主要下载Youtube上的视频，还有国内外其它一些视频网站的，m3u8的好像会有点问题，下载不了。</p>
@@ -4436,40 +4470,6 @@
       </tags>
   </entry>
   <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【Windows疑难杂症】打不开网页 解决方法</title>
     <url>/2022/06/03/%E3%80%90Windows%E7%96%91%E9%9A%BE%E6%9D%82%E7%97%87%E3%80%91%E6%89%93%E4%B8%8D%E5%BC%80%E7%BD%91%E9%A1%B5/</url>
     <content><![CDATA[<p>当碰到不能打开网页的时候（网络是正常的，别的设备正常上网），</p>
@@ -4497,74 +4497,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【不断更新系列】Linux命令小记</title>
-    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
-    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
-<p>这篇文章主要：</p>
-<ul>
-<li>总结一些常用的Linux命令</li>
-<li>整理博客中具体介绍Linux命令的文章</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
-<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>Ubuntu命令</th>
-<th>CentOS命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>安装软件</td>
-<td><code>apt-get install package</code></td>
-<td><code>yum install package</code></td>
-</tr>
-<tr>
-<td>删除/卸载软件</td>
-<td><code>apt-get remove package</code></td>
-<td><code>yum remove package</code></td>
-</tr>
-<tr>
-<td>升级软件包</td>
-<td><code>apt-get upgrade</code></td>
-<td><code>yum update</code></td>
-</tr>
-<tr>
-<td>软件包后缀</td>
-<td>*.deb</td>
-<td>*.rpm</td>
-</tr>
-<tr>
-<td>安装已下载的软件包</td>
-<td><code>dpkg -i package.deb</code></td>
-<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
-</tr>
-</tbody></table>
-<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
-<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
-<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
-<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
-<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
-<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
-<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
-<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
-<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
-<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -4630,7 +4562,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;" >&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;" >&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -4703,48 +4635,71 @@
       </tags>
   </entry>
   <entry>
-    <title>【行政办公系列】Python批量创建文件夹</title>
-    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：</p>
-<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
-<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
-<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
+    <title>【不断更新系列】Linux命令小记</title>
+    <url>/2022/05/02/%E3%80%90%E4%B8%8D%E6%96%AD%E6%9B%B4%E6%96%B0%E7%B3%BB%E5%88%97%E3%80%91Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</url>
+    <content><![CDATA[<p>Linux的命令，主要在服务器上用的比较多。一般用的最多的就是CentOS和Ubuntu这两系统的。</p>
+<p>这篇文章主要：</p>
+<ul>
+<li>总结一些常用的Linux命令</li>
+<li>整理博客中具体介绍Linux命令的文章</li>
+</ul>
 <a id="more"></a>
 
-<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
-<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
-<p><strong>实现思路</strong>：</p>
-<ul>
-<li>读取Excel表中姓名列的数据</li>
-<li>循环一下姓名列表（List），依次创建文件夹</li>
+<h2 id="一、常用的Linux命令"><a href="#一、常用的Linux命令" class="headerlink" title="一、常用的Linux命令"></a>一、常用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span> <span class="comment"># print work directory 显示当前目录的绝对路径</span></span><br><span class="line">whoami <span class="comment"># 显示当前用户的用户名</span></span><br><span class="line">ls <span class="comment"># list 列出当前目录的列表</span></span><br><span class="line">ls -l <span class="comment"># 列出当前目录的列表，包括文件形态、权限、拥有者、文件大小、日期等。</span></span><br><span class="line">ifconfig <span class="comment"># 显示网络情况，对应Windows下ipconfig</span></span><br><span class="line">top <span class="comment"># 显示系统中进程资源占用情况，相当于Windows下任务管理器</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~ <span class="comment"># change directory 切换目录，~ 表示当前用户的home目录</span></span><br><span class="line"><span class="built_in">which</span> python <span class="comment"># 在系统变量中，搜索命令python的路径</span></span><br><span class="line">su root <span class="comment"># su 切换用户，切换到root用户</span></span><br><span class="line">chmod 755 a.txt <span class="comment"># 修改文件权限，把a.txt权限设为755</span></span><br><span class="line">chown testuser a.txt <span class="comment"># 修改文件所有者，把a.txt所有者设为testuser用户</span></span><br><span class="line">chown -R testuser:testuser /home/abc/ <span class="comment"># 把abc目录以及其子目录下所有文件所有权限给用户testuser，群体使用者testuser</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 目录</span></span><br><span class="line">mkdir dir1 <span class="comment"># 创建目录dir1</span></span><br><span class="line">rm -rf dir1 <span class="comment"># 删除，强制删除目录dir1</span></span><br><span class="line">cp -r dir1 dir2 <span class="comment"># 复制，把dir1目录复制一个dir2目录</span></span><br><span class="line">mv dir1 dir2 <span class="comment"># 移动，把dir1目录移动到dir2目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件</span></span><br><span class="line">vi a.txt <span class="comment"># 用vi编辑器打开a.txt文件</span></span><br><span class="line">vim a.txt <span class="comment"># 用vim编辑器打开a.txt文件</span></span><br><span class="line">cat a.txt <span class="comment"># 用cat读取文件，显示内容</span></span><br><span class="line">mv a.txt b.txt <span class="comment"># 移动重命名，把a.txt文件移动到b.txt上</span></span><br><span class="line">rm a.txt <span class="comment"># 删除，删除a.txt，加-rf参数 强制删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>Ubuntu</strong>与<strong>CentOS</strong>命令有的区别</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Ubuntu命令</th>
+<th>CentOS命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装软件</td>
+<td><code>apt-get install package</code></td>
+<td><code>yum install package</code></td>
+</tr>
+<tr>
+<td>删除/卸载软件</td>
+<td><code>apt-get remove package</code></td>
+<td><code>yum remove package</code></td>
+</tr>
+<tr>
+<td>升级软件包</td>
+<td><code>apt-get upgrade</code></td>
+<td><code>yum update</code></td>
+</tr>
+<tr>
+<td>软件包后缀</td>
+<td>*.deb</td>
+<td>*.rpm</td>
+</tr>
+<tr>
+<td>安装已下载的软件包</td>
+<td><code>dpkg -i package.deb</code></td>
+<td><code>rpm -i package.rpm</code>或<code>yum install package.rpm</code></td>
+</tr>
+</tbody></table>
+<h2 id="二、其他有用的Linux命令"><a href="#二、其他有用的Linux命令" class="headerlink" title="二、其他有用的Linux命令"></a>二、其他有用的Linux命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">id <span class="comment"># 显示真实以及有效的用户和所在组的信息</span></span><br><span class="line">crontab -e <span class="comment"># 进入当前用户定时任务工作表编辑</span></span><br><span class="line"></span><br><span class="line">ps -aux | grep <span class="string">&quot;app.py&quot;</span> <span class="comment"># process status 查找列出&quot;app.py&quot;进程、带进程PID</span></span><br><span class="line"><span class="built_in">kill</span> -9 11111 <span class="comment"># 结束进程PID=11111，加-9参数 彻底杀死进程</span></span><br><span class="line">netstat -ntulp | grep 3306   <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">lsof -i 3306 <span class="comment"># 查看所有3306端口使用情况</span></span><br><span class="line">systemctl restart nginx <span class="comment"># 重启nginx服务</span></span><br><span class="line">service nginx restart <span class="comment"># 重启nginx服务</span></span><br><span class="line">whatis <span class="built_in">pwd</span> <span class="comment"># 查询命令执行什么功能，查询pwd命令的功能</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、Linux命令具体使用文章集合"><a href="#三、Linux命令具体使用文章集合" class="headerlink" title="三、Linux命令具体使用文章集合"></a>三、Linux命令具体使用文章集合</h2><ul>
+<li><a href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/" title="Ubuntu 升级OpenSSL教程">Ubuntu 升级OpenSSL教程</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/" title="Ubuntu 命令行安装Chrome浏览器">Ubuntu 命令行安装Chrome浏览器</a></li>
+<li><a href="/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Selenium%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" title="Ubuntu 安装Selenium自动化测试">Ubuntu 安装Selenium自动化测试</a></li>
+<li><a href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/" title="Ubuntu 查看CPU占用和使用情况">Ubuntu 查看CPU占用和使用情况</a></li>
+<li><a href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/" title="Linux 修改文件权限">Linux 修改文件权限</a></li>
+<li><a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a></li>
+<li><a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></li>
+<li><a href="/2022/05/02/Ubuntu-ufw%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Ubuntu ufw命令详解">Ubuntu ufw命令详解</a></li>
+<li><a href="/2022/05/02/Linux-nohup-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" title="Linux nohup 后台运行 命令详解">Linux nohup 后台运行 命令详解</a>
+</li>
 </ul>
-<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
-<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
-<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
-                     
-                ></p>
-<p>所以，我们只需要把D列的数据读出来就可以了。</p>
-<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
-<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
-<p>运行后结果如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
-                     
-                ></p>
 ]]></content>
       <categories>
-        <category>Python</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>Python</tag>
-        <tag>Office</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -4784,6 +4739,51 @@
                      lazyload
                      src="/images/loading.svg"
                      data-src="/img/OfficeSeries_Python_copyfile_rename_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【行政办公系列】Python批量创建文件夹</title>
+    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：</p>
+<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
+<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
+<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
+<a id="more"></a>
+
+<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
+<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
+<p><strong>实现思路</strong>：</p>
+<ul>
+<li>读取Excel表中姓名列的数据</li>
+<li>循环一下姓名列表（List），依次创建文件夹</li>
+</ul>
+<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
+<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
+<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
+                     
+                ></p>
+<p>所以，我们只需要把D列的数据读出来就可以了。</p>
+<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
+<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
+<p>运行后结果如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
                      
                 ></p>
 ]]></content>
@@ -4967,45 +4967,6 @@
       </tags>
   </entry>
   <entry>
-    <title>浏览器记住密码后无法查看 解决方法</title>
-    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
-    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
-<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
-<a id="more"></a>
-
-<p>如图所示（就这个鬼样）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_1.png"
-                     
-                ></p>
-<p><strong>解决方法：</strong></p>
-<ul>
-<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
-<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
-</ul>
-<p>修改type类型前是这样的：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_2.png"
-                     
-                ></p>
-<p>修改type类型后（已经能看到密码）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_3.png"
-                     
-                ></p>
-<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
-]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>本博客使用的Hexo主题为：Keep</title>
     <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
     <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
@@ -5065,6 +5026,88 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器记住密码后无法查看 解决方法</title>
+    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
+    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
+<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
+<a id="more"></a>
+
+<p>如图所示（就这个鬼样）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_1.png"
+                     
+                ></p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
+<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
+</ul>
+<p>修改type类型前是这样的：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_2.png"
+                     
+                ></p>
+<p>修改type类型后（已经能看到密码）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_3.png"
+                     
+                ></p>
+<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
+]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用ffmpeg合并多个ts视频文件</title>
+    <url>/2022/09/21/%E7%94%A8ffmpeg%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAts%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
+<p>反正FFmpeg很强大的，功能也很多。之前也写过一篇：<a href="/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/" title="用FFmpeg下载m3u8格式视频">用FFmpeg下载m3u8格式视频</a>。</p>
+<a id="more"></a>
+
+<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
+<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_1.png"
+                      style="zoom: 50%;"
+                ></p>
+<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
+<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
+<h2 id="二、合并多个ts视频文件"><a href="#二、合并多个ts视频文件" class="headerlink" title="二、合并多个ts视频文件"></a>二、合并多个ts视频文件</h2><h3 id="1-新建txt文件"><a href="#1-新建txt文件" class="headerlink" title="1.新建txt文件"></a>1.新建txt文件</h3><p>把所有的.ts文件放到一个文件夹中，比如我放到 F:\2 文件夹中。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_merge_ts_files_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>然后在文件夹中新建一个 file.txt文件（名字随意取），文件内容列出所有ts文件。如下：</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">file &#x27;F:\2\1.ts&#x27;</span><br><span class="line">file &#x27;F:\2\2.ts&#x27;</span><br><span class="line">file &#x27;F:\2\3.ts&#x27;</span><br><span class="line">file &#x27;F:\2\4.ts&#x27;</span><br><span class="line">file &#x27;F:\2\5.ts&#x27;</span><br><span class="line">file &#x27;F:\2\6.ts&#x27;</span><br><span class="line">file &#x27;F:\2\7.ts&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="2-用ffmpeg命令合并ts文件"><a href="#2-用ffmpeg命令合并ts文件" class="headerlink" title="2.用ffmpeg命令合并ts文件"></a>2.用ffmpeg命令合并ts文件</h3><p>因为ffmpeg.exe已经添加了环境变量了，所以直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
+<p>使用命名如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 用命令进入 F:\2 文件夹</span></span><br><span class="line">（如果比较旧的系统不能直接从C盘跨到F盘的，可以先运行 f: 命令进入F盘，再用<span class="built_in">cd</span>命令进入文件夹）</span><br><span class="line"><span class="built_in">cd</span> f:\2</span><br><span class="line"></span><br><span class="line"><span class="comment">#-safe 0：防止Operation not permitted</span></span><br><span class="line">ffmpeg.exe -f concat -safe 0 -i file.txt -c copy output.mp4</span><br></pre></td></tr></table></figure>
+<p>等完成后，这个目录下就有了下载好的名为 output.mp4的视频了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_merge_ts_files_2.png"
+                      style="zoom: 50%;"
+                ></p>
+<h3 id="3-用ffmpeg命令直接合并ts文件"><a href="#3-用ffmpeg命令直接合并ts文件" class="headerlink" title="3.用ffmpeg命令直接合并ts文件"></a>3.用ffmpeg命令直接合并ts文件</h3><p>如果ts文件较少，就两三个，可以用以下命令直接合并：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i <span class="string">&quot;concat:1.ts|2.ts|&quot;</span> -c copy output2.mp4</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -5146,46 +5189,38 @@
       </tags>
   </entry>
   <entry>
-    <title>用ffmpeg合并多个ts视频文件</title>
-    <url>/2022/09/21/%E7%94%A8ffmpeg%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAts%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>FFmpeg 是一个开源软件，可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
-<p>反正FFmpeg很强大的，功能也很多。之前也写过一篇：<a href="/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/" title="用FFmpeg下载m3u8格式视频">用FFmpeg下载m3u8格式视频</a>。</p>
+    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
+    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
+    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
 <a id="more"></a>
 
-<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
-<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
-<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img  
+<p>如图所示：<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/ffmpeg_download_m3u8_1.png"
-                      style="zoom: 50%;"
+                     data-src="/img/NAS_homes_setting_not_see_1.png"
+                     
                 ></p>
-<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
-<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
-<h2 id="二、合并多个ts视频文件"><a href="#二、合并多个ts视频文件" class="headerlink" title="二、合并多个ts视频文件"></a>二、合并多个ts视频文件</h2><h3 id="1-新建txt文件"><a href="#1-新建txt文件" class="headerlink" title="1.新建txt文件"></a>1.新建txt文件</h3><p>把所有的.ts文件放到一个文件夹中，比如我放到 F:\2 文件夹中。如下图所示：<br><img  
+<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
+<ul>
+<li>1.使用管理员权限登录DSM；</li>
+<li>2.打开【控制面板】；</li>
+<li>3.找到“共享文件夹”；</li>
+<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
+<li>5.切换到“高级权限”标签页；</li>
+<li>6.勾选“启用高级共享权限”后点击确定。</li>
+</ul>
+<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/ffmpeg_merge_ts_files_1.png"
-                      style="zoom: 100%;"
+                     data-src="/img/NAS_homes_setting_not_see_2.png"
+                     
                 ></p>
-<p>然后在文件夹中新建一个 file.txt文件（名字随意取），文件内容列出所有ts文件。如下：</p>
-<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">file &#x27;F:\2\1.ts&#x27;</span><br><span class="line">file &#x27;F:\2\2.ts&#x27;</span><br><span class="line">file &#x27;F:\2\3.ts&#x27;</span><br><span class="line">file &#x27;F:\2\4.ts&#x27;</span><br><span class="line">file &#x27;F:\2\5.ts&#x27;</span><br><span class="line">file &#x27;F:\2\6.ts&#x27;</span><br><span class="line">file &#x27;F:\2\7.ts&#x27;</span><br></pre></td></tr></table></figure>
-<h3 id="2-用ffmpeg命令合并ts文件"><a href="#2-用ffmpeg命令合并ts文件" class="headerlink" title="2.用ffmpeg命令合并ts文件"></a>2.用ffmpeg命令合并ts文件</h3><p>因为ffmpeg.exe已经添加了环境变量了，所以直接打开个命令提示符/Windows PowerShell，就可以用ffmpeg了。</p>
-<p>使用命名如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 用命令进入 F:\2 文件夹</span></span><br><span class="line">（如果比较旧的系统不能直接从C盘跨到F盘的，可以先运行 f: 命令进入F盘，再用<span class="built_in">cd</span>命令进入文件夹）</span><br><span class="line"><span class="built_in">cd</span> f:\2</span><br><span class="line"></span><br><span class="line"><span class="comment">#-safe 0：防止Operation not permitted</span></span><br><span class="line">ffmpeg.exe -f concat -safe 0 -i file.txt -c copy output.mp4</span><br></pre></td></tr></table></figure>
-<p>等完成后，这个目录下就有了下载好的名为 output.mp4的视频了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/ffmpeg_merge_ts_files_2.png"
-                      style="zoom: 50%;"
-                ></p>
-<h3 id="3-用ffmpeg命令直接合并ts文件"><a href="#3-用ffmpeg命令直接合并ts文件" class="headerlink" title="3.用ffmpeg命令直接合并ts文件"></a>3.用ffmpeg命令直接合并ts文件</h3><p>如果ts文件较少，就两三个，可以用以下命令直接合并：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ffmpeg -i <span class="string">&quot;concat:1.ts|2.ts|&quot;</span> -c copy output2.mp4</span><br></pre></td></tr></table></figure>]]></content>
+]]></content>
       <categories>
-        <category>Software</category>
+        <category>NAS</category>
       </categories>
       <tags>
-        <tag>Software</tag>
+        <tag>NAS</tag>
       </tags>
   </entry>
   <entry>
@@ -5228,41 +5263,6 @@
 <li>【网络】中勾选使用与Docker Host相同的网络<br>最后应用一下，等容器启动就行了。</li>
 </ul>
 <p>等容器启动后，就可以用frpc.ini配置文件中的 server_addr:remote_port 访问群晖的管理页面了。<br>即：43.142.94.65:18588</p>
-]]></content>
-      <categories>
-        <category>NAS</category>
-      </categories>
-      <tags>
-        <tag>NAS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
-    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
-    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
-<a id="more"></a>
-
-<p>如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_1.png"
-                     
-                ></p>
-<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
-<ul>
-<li>1.使用管理员权限登录DSM；</li>
-<li>2.打开【控制面板】；</li>
-<li>3.找到“共享文件夹”；</li>
-<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
-<li>5.切换到“高级权限”标签页；</li>
-<li>6.勾选“启用高级共享权限”后点击确定。</li>
-</ul>
-<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_2.png"
-                     
-                ></p>
 ]]></content>
       <categories>
         <category>NAS</category>
