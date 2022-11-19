@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CentOS安装git</title>
-    <url>/2022/06/14/CentOS%E5%AE%89%E8%A3%85git/</url>
-    <content><![CDATA[<p>我有一台腾讯云的CentOS 7.6，不行，安装依赖库的时候直接对应的腾讯云的mirrors都空了，没有。</p>
-<p>于是又试了下，另一台CentOS 8.2版本的，正常可以安装。</p>
-<a id="more"></a>
-
-<p>Git官网对于Linux系统安装Git的说明：<br><a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a></p>
-<p>别的系统都很简单，直接一条命令就行。<br>但就是这个CentOS这几个，需要自己下载源码、编译才能安装。</p>
-<p>用<code>yum install git</code>命令安装的是老版本，反正都不行的。</p>
-<h2 id="CentOS安装git方法"><a href="#CentOS安装git方法" class="headerlink" title="CentOS安装git方法"></a>CentOS安装git方法</h2><h3 id="1-官网下载源码"><a href="#1-官网下载源码" class="headerlink" title="1.官网下载源码"></a>1.官网下载源码</h3><p>上面提供的官网（<a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a> ）最后CentOS部分，提供了源码下载的链接：<br><a class="link"   href="https://mirrors.edge.kernel.org/pub/software/scm/git/" >https://mirrors.edge.kernel.org/pub/software/scm/git/<i class="fas fa-external-link-alt"></i></a></p>
-<p>然后直接找一下对应的新版本，我这里下载的新版本是：git-2.36.0.tar.gz</p>
-<p>下载好了用ftp工具上传到centos服务器上。</p>
-<h3 id="2-安装依赖库和编译工具"><a href="#2-安装依赖库和编译工具" class="headerlink" title="2.安装依赖库和编译工具"></a>2.安装依赖库和编译工具</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install curl-devel expat-devel openssl-devel zlib-devel // 实测依赖</span><br><span class="line"><span class="comment">#yum -y install curl-devel expat-devel gettext-devel openssl-devel zlib-devel // 官网完整依赖</span></span><br><span class="line"></span><br><span class="line">yum -y install gcc</span><br></pre></td></tr></table></figure>
-<p>依赖库我反正用的第1个就行了。</p>
-<h3 id="3-解压-git-2-36-0-tar-gz-并进入目录"><a href="#3-解压-git-2-36-0-tar-gz-并进入目录" class="headerlink" title="3.解压 git-2.36.0.tar.gz 并进入目录"></a>3.解压 git-2.36.0.tar.gz 并进入目录</h3><p>解压文件，运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxf git-2.36.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> git-2.36.0</span><br></pre></td></tr></table></figure>
-<h3 id="4-编译并安装"><a href="#4-编译并安装" class="headerlink" title="4.编译并安装"></a>4.编译并安装</h3><p>在git-2.36.0 目录下，运行以下命令，先编译，再安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make  //编译</span><br><span class="line">make install prefix=/usr/<span class="built_in">local</span>/git  //安装</span><br></pre></td></tr></table></figure>
-<h3 id="5-把git命令添加到环境变量"><a href="#5-把git命令添加到环境变量" class="headerlink" title="5.把git命令添加到环境变量"></a>5.把git命令添加到环境变量</h3><p>安装成功后，加入到环境变量。</p>
-<p>1).用vi或vim打开编辑/etc/profile 文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
-<p>在文件末尾添加以下内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;git&#x2F;bin</span><br></pre></td></tr></table></figure>
-<p>2).执行以下命令使配置文件生效：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-<h3 id="6-查看git版本"><a href="#6-查看git版本" class="headerlink" title="6.查看git版本"></a>6.查看git版本</h3><p>安装成功后，查看版本（我这就是2.36.0版本）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2022年，继续重新开始</title>
     <url>/2021/02/05/2021start/</url>
     <content><![CDATA[<p>用了几年云笔记后，吐槽一大堆，最后还是决定继续写回博客。云笔记记录一些别的东西，做个笔记备份挺好。</p>
@@ -76,6 +40,42 @@
       </categories>
       <tags>
         <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CentOS安装git</title>
+    <url>/2022/06/14/CentOS%E5%AE%89%E8%A3%85git/</url>
+    <content><![CDATA[<p>我有一台腾讯云的CentOS 7.6，不行，安装依赖库的时候直接对应的腾讯云的mirrors都空了，没有。</p>
+<p>于是又试了下，另一台CentOS 8.2版本的，正常可以安装。</p>
+<a id="more"></a>
+
+<p>Git官网对于Linux系统安装Git的说明：<br><a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a></p>
+<p>别的系统都很简单，直接一条命令就行。<br>但就是这个CentOS这几个，需要自己下载源码、编译才能安装。</p>
+<p>用<code>yum install git</code>命令安装的是老版本，反正都不行的。</p>
+<h2 id="CentOS安装git方法"><a href="#CentOS安装git方法" class="headerlink" title="CentOS安装git方法"></a>CentOS安装git方法</h2><h3 id="1-官网下载源码"><a href="#1-官网下载源码" class="headerlink" title="1.官网下载源码"></a>1.官网下载源码</h3><p>上面提供的官网（<a class="link"   href="https://git-scm.com/download/linux" >https://git-scm.com/download/linux<i class="fas fa-external-link-alt"></i></a> ）最后CentOS部分，提供了源码下载的链接：<br><a class="link"   href="https://mirrors.edge.kernel.org/pub/software/scm/git/" >https://mirrors.edge.kernel.org/pub/software/scm/git/<i class="fas fa-external-link-alt"></i></a></p>
+<p>然后直接找一下对应的新版本，我这里下载的新版本是：git-2.36.0.tar.gz</p>
+<p>下载好了用ftp工具上传到centos服务器上。</p>
+<h3 id="2-安装依赖库和编译工具"><a href="#2-安装依赖库和编译工具" class="headerlink" title="2.安装依赖库和编译工具"></a>2.安装依赖库和编译工具</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum -y install curl-devel expat-devel openssl-devel zlib-devel // 实测依赖</span><br><span class="line"><span class="comment">#yum -y install curl-devel expat-devel gettext-devel openssl-devel zlib-devel // 官网完整依赖</span></span><br><span class="line"></span><br><span class="line">yum -y install gcc</span><br></pre></td></tr></table></figure>
+<p>依赖库我反正用的第1个就行了。</p>
+<h3 id="3-解压-git-2-36-0-tar-gz-并进入目录"><a href="#3-解压-git-2-36-0-tar-gz-并进入目录" class="headerlink" title="3.解压 git-2.36.0.tar.gz 并进入目录"></a>3.解压 git-2.36.0.tar.gz 并进入目录</h3><p>解压文件，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxf git-2.36.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> git-2.36.0</span><br></pre></td></tr></table></figure>
+<h3 id="4-编译并安装"><a href="#4-编译并安装" class="headerlink" title="4.编译并安装"></a>4.编译并安装</h3><p>在git-2.36.0 目录下，运行以下命令，先编译，再安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make  //编译</span><br><span class="line">make install prefix=/usr/<span class="built_in">local</span>/git  //安装</span><br></pre></td></tr></table></figure>
+<h3 id="5-把git命令添加到环境变量"><a href="#5-把git命令添加到环境变量" class="headerlink" title="5.把git命令添加到环境变量"></a>5.把git命令添加到环境变量</h3><p>安装成功后，加入到环境变量。</p>
+<p>1).用vi或vim打开编辑/etc/profile 文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+<p>在文件末尾添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;git&#x2F;bin</span><br></pre></td></tr></table></figure>
+<p>2).执行以下命令使配置文件生效：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+<h3 id="6-查看git版本"><a href="#6-查看git版本" class="headerlink" title="6.查看git版本"></a>6.查看git版本</h3><p>安装成功后，查看版本（我这就是2.36.0版本）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -162,6 +162,99 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-f,--file FILE指定使用的Compose模板文件，默认为docker-compose.yml，可以多次指定。</span><br><span class="line">-p,--project-name NAME指定项目名称，默认将使用所在目录名称作为项目名。</span><br><span class="line">--verbose 输出更多调试信息。</span><br><span class="line">-v,--version 打印版本并退出。</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.部署一个Compose应用</span></span><br><span class="line">docker-compose up</span><br><span class="line"><span class="comment"># 默认情况下该命令会读取名为 docker-compose.yml，也可以使用-f指定其他文件名。</span></span><br><span class="line"><span class="comment"># 通常情况下，会使用-d参数令应用在后台启动。</span></span><br><span class="line">docker-compose up -d</span><br><span class="line">docker-compose -f docker-compose-v3.yml up -d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.列出Compose应用中的各个容器</span></span><br><span class="line">docker-compose ps</span><br><span class="line">docker ps -a <span class="comment"># 显示包括停止的容器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.停止Compose应用相关的所有容器，但不会删除它们</span></span><br><span class="line">docker-compose stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.重启已停止的Compose应用</span></span><br><span class="line">docker-compose restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.停止并删除运行中的Compose应用，会删除容器和网络，但是不会删除卷和镜像。</span></span><br><span class="line">docker-compose down</span><br></pre></td></tr></table></figure>
 <p>官方文档：<a class="link"   href="https://docs.docker.com/compose/reference/up/" >https://docs.docker.com/compose/reference/up/<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
+    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
+    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
+<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+<a id="more"></a>
+
+<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
+<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
+<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
+<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
+<p><strong>Flask项目结构（样例）</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
+<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p><strong>requirements.txt 举例</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
+<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
+<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
+<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
+<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-t 设置镜像名字和版本号</p>
+</blockquote>
+<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
+<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
+<blockquote>
+<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
+</blockquote>
+<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
+<p>COPY指令复制，源文件的各种元数据都会保留。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
+<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
+<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
+<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
+<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
+<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
+<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
+<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
+<p>1).格式</p>
+<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
+<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
+<p>2).举例</p>
+<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
+<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
+<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
+<p>3).容器中应用在前台执行（重点）</p>
+<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
+<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
+<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
+<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
+<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
+<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
+<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
+<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
+<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
+<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
+<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
+<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
+<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
+<p>比如举个简单的例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
+<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
+<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
+<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
+<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
+<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
+<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
+<p>举个例子（Dockerfile中）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
+<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
+<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
+<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
+<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -295,96 +388,56 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker Dockerfile文件详解（制作自己的镜像）</title>
-    <url>/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/</url>
-    <content><![CDATA[<p>镜像的定制，实际上就是定制每一层所添加的配置、文件。我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像。这个脚本就是 Dockerfile。</p>
-<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+    <title>Docker搭建codecombat本地服务</title>
+    <url>/2022/10/25/Docker%E6%90%AD%E5%BB%BAcodecombat%E6%9C%AC%E5%9C%B0%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_codecombat.png"
+                      style="zoom: 50%;"
+                >
+
+<p>这是个游戏编程网站，可以一边游戏一边学编程（Python），感觉挺有意思，就去官网玩了下。</p>
+<p>然后玩了4-5关后，都不能玩了，订阅需要99/月。遂作罢。</p>
+<p>偶然看到网上有教程，可以用Docker直接搭这个本地服务的，然后就试了下，还真成功了！就在Win10的电脑上直接搭建成功了！用Docker挺简单的。</p>
 <a id="more"></a>
 
-<h2 id="一、举例：创建Flask项目环境镜像"><a href="#一、举例：创建Flask项目环境镜像" class="headerlink" title="一、举例：创建Flask项目环境镜像"></a>一、举例：创建Flask项目环境镜像</h2><p>比如，我自己有个Python的项目，是个Flask项目，我想把它放到服务器上，就是个Web项目。</p>
-<p>那我们怎么在一台服务器上快速、方便的把本地的Flask开发环境部署上去呢？比如本地用的Python版本、以前Flask相关的库，以及其它用到的库。就可以用Docker制作一个自己的镜像。</p>
-<p>Flask开发环境的镜像制作好了，其实就是一个Dockerfile 文件，之后就可以随意部署到带Docker的服务器上去了。贼方便。</p>
-<p>还有，就是我想制作的是一个Flask项目的环境镜像，所以代码这些无所谓的，只要环境能制作好就行，所以在建这个镜像的时候没有复制项目文件这些，也用不着运行。<br>因为这样一个通用的Flask镜像，后续项目文件自己上传就行。</p>
-<p><strong>Flask项目结构（样例）</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flask_proj_demo</span><br><span class="line">├── app</span><br><span class="line">│   ├── templates</span><br><span class="line">│       └── index.html</span><br><span class="line">│   ├── app.py</span><br><span class="line">│   ├── Dockerfile</span><br><span class="line">│   └── requirements.txt</span><br></pre></td></tr></table></figure>
-<h3 id="1-生成-requirements-txt（本地）"><a href="#1-生成-requirements-txt（本地）" class="headerlink" title="1.生成 requirements.txt（本地）"></a>1.生成 requirements.txt（本地）</h3><p>进入flask_proj_demo项目目录的app目录下，运行如下命令，就可以生成项目环境的 requirements.txt 文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
-<p><strong>requirements.txt 举例</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">click&#x3D;&#x3D;8.0.1</span><br><span class="line">colorama&#x3D;&#x3D;0.4.4</span><br><span class="line">et-xmlfile&#x3D;&#x3D;1.1.0</span><br><span class="line">Flask&#x3D;&#x3D;2.0.1</span><br><span class="line">Flask-MySQLdb&#x3D;&#x3D;0.2.0</span><br><span class="line">Flask-SQLAlchemy&#x3D;&#x3D;2.5.1</span><br><span class="line">Flask-WTF&#x3D;&#x3D;0.15.1</span><br><span class="line">greenlet&#x3D;&#x3D;1.1.0</span><br><span class="line">itsdangerous&#x3D;&#x3D;2.0.1</span><br><span class="line">Jinja2&#x3D;&#x3D;3.0.1</span><br><span class="line">MarkupSafe&#x3D;&#x3D;2.0.1</span><br><span class="line">mysqlclient&#x3D;&#x3D;2.0.3</span><br><span class="line">numpy&#x3D;&#x3D;1.22.2</span><br><span class="line">openpyxl&#x3D;&#x3D;3.0.9</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">PyMySQL&#x3D;&#x3D;1.0.2</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.2</span><br><span class="line">pytz&#x3D;&#x3D;2021.3</span><br><span class="line">six&#x3D;&#x3D;1.16.0</span><br><span class="line">SQLAlchemy&#x3D;&#x3D;1.4.21</span><br><span class="line">Werkzeug&#x3D;&#x3D;2.0.1</span><br><span class="line">WTForms&#x3D;&#x3D;2.3.3</span><br><span class="line">xlrd&#x3D;&#x3D;2.0.1</span><br><span class="line">pandas&#x3D;&#x3D;1.4.1</span><br><span class="line">requests&#x3D;&#x3D;2.27.1</span><br><span class="line">selenium&#x3D;&#x3D;4.1.3</span><br><span class="line">urllib3&#x3D;&#x3D;1.26.9</span><br></pre></td></tr></table></figure>
-<p>可以看到除了带Flask中常用的库，也带了mysql和selenium、pandas这些，这种随你自己就行，你自己项目经常用哪些就放哪些。生成的requirements.txt文件中如果有些用不着，也可以删除的。</p>
-<h3 id="2-用Dockerfile-文件创建镜像"><a href="#2-用Dockerfile-文件创建镜像" class="headerlink" title="2.用Dockerfile 文件创建镜像"></a>2.用Dockerfile 文件创建镜像</h3><p>Dockerfile文件内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Use an official Python runtime as an image</span><br><span class="line"># FROM：依赖的基础镜像 python3.9版本</span><br><span class="line">FROM python:3.9</span><br><span class="line"></span><br><span class="line"># Sets the working directory for following COPY and CMD instructions</span><br><span class="line"># Notice we haven’t created a directory by this name - this instruction</span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;app</span><br><span class="line">WORKDIR &#x2F;app</span><br><span class="line"></span><br><span class="line"># copy code</span><br><span class="line"># COPY . &#x2F;app</span><br><span class="line"># COPY：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app</span><br><span class="line"></span><br><span class="line"># RUN python -m pip install --upgrade pip</span><br><span class="line"># RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host&#x3D;files.pythonhosted.org --no-cache-dir -r requirements.txt</span><br><span class="line"># RUN：运行命令，安装依赖 requirements.txt中的库</span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple --upgrade pip </span><br><span class="line">RUN pip3 install -i https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple -r requirements.txt </span><br><span class="line"></span><br><span class="line"># The EXPOSE instruction indicates the ports on which a container</span><br><span class="line"># EXPOSE：端口暴露 我这里app.py中run的port&#x3D;5020，所以暴露的是这个端口</span><br><span class="line">EXPOSE 5020</span><br><span class="line"></span><br><span class="line"># Run app.py when the container launches</span><br><span class="line"># COPY app.py &#x2F;app</span><br><span class="line"># CMD指令只能一个，是容器启动后执行的命令，算是程序的入口；如果需要运行其他命令可以用&amp;&amp;连接</span><br><span class="line"># CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
-<p>然后，就把这整个项目的文件上传到服务器上。我这直接用Xftp上传到了 <code>/root/flask/flask_proj_demo/app</code>目录。</p>
-<p>最后用SSH连接服务器，进入到 /root/flask/flask_proj_demo/app 目录，运行以下命令生成镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t flask_demo:v1.0 .</span><br></pre></td></tr></table></figure>
+<h2 id="一、Docker安装"><a href="#一、Docker安装" class="headerlink" title="一、Docker安装"></a>一、Docker安装</h2><p>网上教程、安装方法都有，Docker常用的一些命令看这篇：<a href="/2022/05/09/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Docker常用命令">Docker常用命令</a></p>
+<p><strong>Docker使用的一般步骤</strong>：</p>
+<ul>
+<li>拉取一个镜像（<code>docker pull</code>）</li>
+<li>创建一个容器（<code>docker run</code>）</li>
+<li>在容器中运行命令（<code>docker exec</code>）</li>
+</ul>
+<h2 id="二、创建codecombat容器"><a href="#二、创建codecombat容器" class="headerlink" title="二、创建codecombat容器"></a>二、创建codecombat容器</h2><h3 id="1-拉取codecombat镜像"><a href="#1-拉取codecombat镜像" class="headerlink" title="1.拉取codecombat镜像"></a>1.拉取codecombat镜像</h3><p>打开命令提示符或PowerShell（管理员），运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 拉取codecombat镜像</span><br><span class="line">docker pull operepo&#x2F;ope-codecombat</span><br><span class="line"></span><br><span class="line"># pull下载完后，可以查看镜像</span><br><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<p>如果下载慢，卡住了，有问题；可以重新运行命令pull一下。</p>
+<h3 id="2-下载需要的数据包"><a href="#2-下载需要的数据包" class="headerlink" title="2.下载需要的数据包"></a>2.下载需要的数据包</h3><p>没有这个数据包，会无法运行。<br>下载地址（别人分享的）：<a class="link"   href="https://www.123pan.com/s/95k9-PTpJ3" >https://www.123pan.com/s/95k9-PTpJ3<i class="fas fa-external-link-alt"></i></a></p>
+<p>codecombat目录下有个：dump.tar.gz，就下载这个。</p>
+<h3 id="3-创建mycodecombat容器"><a href="#3-创建mycodecombat容器" class="headerlink" title="3.创建mycodecombat容器"></a>3.创建mycodecombat容器</h3><p>创建访问端口为3020的容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --name mycodecombat -p 0.0.0.0:3020:3000 operepo/ope-codecombat /bin/bash</span><br></pre></td></tr></table></figure>
+<p><strong>参数解释</strong>：</p>
 <blockquote>
-<p>-t 设置镜像名字和版本号</p>
+<p>-it：这个就是启动容器都会带，不用管<br>-d：表示后台运行<br>–name mycodecombat：容器名称为mycodecombat，可以自定义<br>-p 0.0.0.0:3020:3000：表示把容器中的3000端口映射到本机的3020端口，这个3020也是自定义</p>
 </blockquote>
-<p>执行完，就可以用命令 <code>docker images</code>看到以下镜像了（当然也有python3.9的镜像）。</p>
-<h2 id="二、Dockerfile-指令详解"><a href="#二、Dockerfile-指令详解" class="headerlink" title="二、Dockerfile 指令详解"></a>二、Dockerfile 指令详解</h2><h3 id="1-常用指令"><a href="#1-常用指令" class="headerlink" title="1.常用指令"></a>1.常用指令</h3><p>常用的基本上就是上面用到的那几个指令：</p>
-<blockquote>
-<p>FROM python:3.9：依赖的基础镜像 python3.9版本<br>WORKDIR /app：设置容器启动后的默认工作运行目录 /app<br>COPY . /app：复制当前目录下文件到容器的/app目录<br>RUN：执行命令<br>EXPOSE 5020：暴露5020端口<br>CMD：CMD指令只能一个，是容器启动后执行的命令，算是程序的入口</p>
-</blockquote>
-<h3 id="1-COPY-复制文件"><a href="#1-COPY-复制文件" class="headerlink" title="1.COPY 复制文件"></a>1.COPY 复制文件</h3><p>格式：<code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code><br><code>--chown=&lt;user&gt;:&lt;group&gt;</code> 参数来改变文件的所属用户及所属组。</p>
-<p>COPY指令复制，源文件的各种元数据都会保留。</p>
-<p>例子：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">COPY . &#x2F;app：复制当前目录下文件到容器的&#x2F;app目录</span><br><span class="line">COPY requirements.txt &#x2F;app：复制文件到容器的&#x2F;app目录</span><br><span class="line">COPY --chown&#x3D;abcuser:mygroup . &#x2F;app</span><br></pre></td></tr></table></figure>
-<h3 id="2-ADD-更高级的复制文件"><a href="#2-ADD-更高级的复制文件" class="headerlink" title="2.ADD 更高级的复制文件"></a>2.ADD 更高级的复制文件</h3><p>ADD 指令和 COPY 的格式和性质基本一致。但是在 COPY 基础上增加了一些功能。</p>
-<p><strong>比如 &lt;源路径&gt; 可以是一个 URL</strong>，<br>这种情况下，Docker 引擎会试图去下载这个链接的文件放到 &lt;目标路径&gt; 去。下载后的文件权限自动设置为 600，如果这并不是想要的权限，那么还需要增加额外的一层 RUN 进行权限调整，另外，如果下载的是个压缩包，需要解压缩，也一样还需要额外的一层 RUN 指令进行解压缩。<br>所以不如直接使用 RUN 指令，然后使用 wget 或者 curl 工具下载，处理权限、解压缩、然后清理无用文件更合理。<strong>因此，这个功能其实并不实用，而且不推荐使用。</strong></p>
-<p><strong>如果 &lt;源路径&gt; 为一个 tar 压缩文件的话</strong>，<br>压缩格式为 gzip, bzip2 以及 xz 的情况下，ADD 指令将会自动解压缩这个压缩文件到 &lt;目标路径&gt; 去。</p>
-<p>不过，按在Docker官方的 Dockerfile最佳实践文档中的要求，尽可能的使用COPY，因为 COPY 的语义很明确，就是复制文件而已，而 ADD 则包含了更复杂的功能，其行为也不一定很清晰。最适合使用 ADD 的场合，就是所提及的需要自动解压缩的场合。</p>
-<p>所以除了需要自动解压的场合，一般用COPY就行。</p>
-<h3 id="3-RUN-执行命令"><a href="#3-RUN-执行命令" class="headerlink" title="3.RUN 执行命令"></a>3.RUN 执行命令</h3><p>格式有两种：<br>shell 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。<br>exec 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</p>
-<p>举例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br></pre></td></tr></table></figure>
-<h3 id="4-CMD-指令"><a href="#4-CMD-指令" class="headerlink" title="4.CMD 指令"></a>4.CMD 指令</h3><p>CMD指令只能一个，是容器启动后执行的命令，算是程序的入口。</p>
-<p>1).格式</p>
-<p>格式和 RUN 相似，也是两种格式：<br>shell 格式：<code>CMD &lt;命令&gt;</code><br>exec 格式：<code>CMD [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;...]</code></p>
-<p>参数列表格式：CMD [“参数1”, “参数2”…]。在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
-<p>2).举例</p>
-<p>ubuntu 镜像默认的 CMD 是 <code>/bin/bash</code>，如果我们直接 <code>docker run -it ubuntu</code> 的话，会直接进入 bash。<br>我们也可以在运行时指定运行别的命令，如 <code>docker run -it ubuntu cat /etc/os-release</code>。这就是用 cat /etc/os-release 命令替换了默认的 /bin/bash 命令了，输出了系统版本信息。</p>
-<p>在指令格式上，一般推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组，因此一定要使用双引号 “，而不要使用单引号。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD <span class="built_in">echo</span> <span class="variable">$HOME</span></span><br></pre></td></tr></table></figure>
-<p>在实际执行中，会将其变更为：<code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]</code></p>
-<p>3).容器中应用在前台执行（重点）</p>
-<p>Docker 不是虚拟机，容器中的应用都应该以前台执行，而不是像虚拟机、物理机里面那样，用 systemd 去启动后台服务，容器内没有后台服务的概念。</p>
-<p>如果CMD这样写：<code>CMD service nginx start</code>，就会有问题了。</p>
-<p>发现容器执行后就立即退出了。甚至在容器内去使用 systemctl 命令结果却发现根本执行不了。</p>
-<p>这就是因为没有搞明白前台、后台的概念，没有区分容器和虚拟机的差异，依旧在以传统虚拟机的角度去理解容器。</p>
-<p>对于容器而言，其启动程序就是容器应用进程，容器就是为了主进程而存在的，主进程退出，容器就失去了存在的意义，从而退出，其它辅助进程不是它需要关心的东西。</p>
-<p>而使用 <code>service nginx start</code> 命令，则是希望 upstart 来以后台守护进程形式启动 nginx 服务。而刚才说了 <code>CMD service nginx start</code> 会被理解为 <code>CMD [ &quot;sh&quot;, &quot;-c&quot;, &quot;service nginx start&quot;]</code>，因此主进程实际上是 sh。</p>
-<p>那么当 <code>service nginx start</code> 命令结束后，sh 也就结束了，sh 作为主进程退出了，自然就会令容器退出。</p>
-<p>正确的做法是直接执行 nginx 可执行文件，并且要求以前台形式运行。比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CMD [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="5-EXPOSE-暴露端口"><a href="#5-EXPOSE-暴露端口" class="headerlink" title="5.EXPOSE 暴露端口"></a>5.EXPOSE 暴露端口</h3><p>格式为：<code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
-<p>EXPOSE 指令是声明容器运行时提供服务的端口，这只是一个声明，在容器运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
-<p>在 Dockerfile 中写入这样的声明有两个好处，一个是帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射；另一个用处则是在运行时使用随机端口映射时，也就是 <code>docker run -P</code> 时，会自动随机映射 EXPOSE 的端口。</p>
-<p>要将 EXPOSE 和在运行时使用 <code>-p &lt;宿主端口&gt;:&lt;容器端口&gt;</code> 区分开来。<br><code>-p</code>，是映射宿主端口和容器端口，就是将容器的对应端口服务公开给外界访问；<br>而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
-<h3 id="6-ENV-设置环境变量"><a href="#6-ENV-设置环境变量" class="headerlink" title="6.ENV 设置环境变量"></a>6.ENV 设置环境变量</h3><p>格式有两种：<br><code>ENV &lt;key&gt; &lt;value&gt;</code><br><code>ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</code></p>
-<p>这个指令很简单，就是设置环境变量而已，无论是后面的其它指令，如 RUN，还是运行时的应用，都可以直接使用这里定义的环境变量。</p>
-<p>比如举个简单的例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ENV NODE_VERSION 7.2.0</span><br><span class="line"></span><br><span class="line">RUN curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;node-v$NODE_VERSION-linux-x64.tar.xz&quot; \</span><br><span class="line">  &amp;&amp; curl -SLO &quot;https:&#x2F;&#x2F;nodejs.org&#x2F;dist&#x2F;v$NODE_VERSION&#x2F;SHASUMS256.txt.asc&quot; \</span><br><span class="line">  &amp;&amp; gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \</span><br><span class="line">  &amp;&amp; grep &quot; node-v$NODE_VERSION-linux-x64.tar.xz\$&quot; SHASUMS256.txt | sha256sum -c - \</span><br><span class="line">  &amp;&amp; tar -xJf &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; -C &#x2F;usr&#x2F;local --strip-components&#x3D;1 \</span><br><span class="line">  &amp;&amp; rm &quot;node-v$NODE_VERSION-linux-x64.tar.xz&quot; SHASUMS256.txt.asc SHASUMS256.txt \</span><br><span class="line">  &amp;&amp; ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;local&#x2F;bin&#x2F;nodejsENV NODE_VERSION 7.2.0</span><br></pre></td></tr></table></figure>
-<p>这里先定义了环境变量 NODE_VERSION，其后的 RUN 这层里，多次使用 $NODE_VERSION 来进行操作定制。</p>
-<p>那将来升级镜像构建版本的时候，只需要更新 7.2.0 即可，Dockerfile 构建维护变得更轻松了。</p>
-<p>下列指令支持环境变量展开： ADD、COPY、ENV、EXPOSE、FROM、LABEL、USER、WORKDIR、VOLUME、STOPSIGNAL、ONBUILD、RUN。</p>
-<h3 id="7-VOLUME-定义匿名卷"><a href="#7-VOLUME-定义匿名卷" class="headerlink" title="7.VOLUME 定义匿名卷"></a>7.VOLUME 定义匿名卷</h3><p>格式为：<br><code>VOLUME &lt;路径&gt;</code><br><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]</code></p>
-<p>容器运行时应该尽量保持容器存储层不发生写操作，对于数据库类需要保存动态数据的应用，其数据库文件应该保存于卷(volume)中。</p>
-<p>为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。</p>
-<p>举个例子（Dockerfile中）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">VOLUME &#x2F;data</span><br></pre></td></tr></table></figure>
-<p>这里的 /data 目录就会在容器运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层，从而保证了容器存储层的无状态化。当然，运行容器时可以覆盖这个挂载设置。</p>
-<p>比如，运行以下命令，就使用了 mydata 这个命名卷挂载到了 /data 这个位置，替代了 Dockerfile 中定义的匿名卷的挂载配置。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -v mydata:/data xxxx</span><br></pre></td></tr></table></figure>
-<h3 id="8-其它指令"><a href="#8-其它指令" class="headerlink" title="8.其它指令"></a>8.其它指令</h3><p>还剩下一些其它的指令，这里就简单列一下了。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
-<p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
+<h2 id="三、导入dump-tar-gz数据"><a href="#三、导入dump-tar-gz数据" class="headerlink" title="三、导入dump.tar.gz数据"></a>三、导入dump.tar.gz数据</h2><h3 id="1-容器内开启数据库服务（不要关闭窗口）"><a href="#1-容器内开启数据库服务（不要关闭窗口）" class="headerlink" title="1.容器内开启数据库服务（不要关闭窗口）"></a>1.容器内开启数据库服务（不要关闭窗口）</h3><p>打开一个PowerShell，</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).容器内开启数据库服务（不要关闭窗口）</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat &amp;&amp; ./bin/coco-mongodb</span><br></pre></td></tr></table></figure>
+<h3 id="2-导入dump-tar-gz数据"><a href="#2-导入dump-tar-gz数据" class="headerlink" title="2.导入dump.tar.gz数据"></a>2.导入dump.tar.gz数据</h3><p>打开<strong>另一个</strong>PowerShell，进入放dump.tar.gz数据压缩包的目录，</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1).把数据包dump.tar.gz复制到容器内</span></span><br><span class="line">docker cp dump.tar.gz mycodecombat:/home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 2).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"><span class="comment"># 3).进入放数据的data目录</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 3).解压</span></span><br><span class="line">tar -zxvf dump.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="3-容器内开启web服务（不要关闭窗口）"><a href="#3-容器内开启web服务（不要关闭窗口）" class="headerlink" title="3.容器内开启web服务（不要关闭窗口）"></a>3.容器内开启web服务（不要关闭窗口）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/coco &amp;&amp; sh start.sh</span><br></pre></td></tr></table></figure>
+<p>两个窗口（一个数据库服务、一个web服务都不能关闭）<br>PS.报错是的话，就重启下服务</p>
+<h2 id="四、进入游戏"><a href="#四、进入游戏" class="headerlink" title="四、进入游戏"></a>四、进入游戏</h2><p>访问：<a class="link"   href="http://127.0.0.1:3020/" >http://127.0.0.1:3020<i class="fas fa-external-link-alt"></i></a> 或自己电脑的 http://[ip]:3020 都可以。</p>
+<p>直接点击<strong>开始游戏</strong> 开始。</p>
+<p>PS.如果有的开了ipv6，可能用ip和127.0.0.1都无法访问，试一下：localhost:3020<br>ping localhost 看一下，是不是[::1]，那就是ipv6。<br>解决方法，在hosts文件添加一句<code>127.0.0.1 localhost</code>就行。这样正常情况，3种都是可以访问的。</p>
+<p>参考：<a class="link"   href="https://www.bilibili.com/read/cv18786920?from=articleDetail" >docker搭建codecombat本地服务教程<i class="fas fa-external-link-alt"></i></a></p>
 ]]></content>
       <categories>
         <category>Docker</category>
       </categories>
       <tags>
         <tag>Docker</tag>
+        <tag>Windows</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -447,59 +500,6 @@
       <tags>
         <tag>Docker</tag>
         <tag>物联网</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker搭建codecombat本地服务</title>
-    <url>/2022/10/25/Docker%E6%90%AD%E5%BB%BAcodecombat%E6%9C%AC%E5%9C%B0%E6%9C%8D%E5%8A%A1/</url>
-    <content><![CDATA[<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_codecombat.png"
-                      style="zoom: 50%;"
-                >
-
-<p>这是个游戏编程网站，可以一边游戏一边学编程（Python），感觉挺有意思，就去官网玩了下。</p>
-<p>然后玩了4-5关后，都不能玩了，订阅需要99/月。遂作罢。</p>
-<p>偶然看到网上有教程，可以用Docker直接搭这个本地服务的，然后就试了下，还真成功了！就在Win10的电脑上直接搭建成功了！用Docker挺简单的。</p>
-<a id="more"></a>
-
-<h2 id="一、Docker安装"><a href="#一、Docker安装" class="headerlink" title="一、Docker安装"></a>一、Docker安装</h2><p>网上教程、安装方法都有，Docker常用的一些命令看这篇：<a href="/2022/05/09/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Docker常用命令">Docker常用命令</a></p>
-<p><strong>Docker使用的一般步骤</strong>：</p>
-<ul>
-<li>拉取一个镜像（<code>docker pull</code>）</li>
-<li>创建一个容器（<code>docker run</code>）</li>
-<li>在容器中运行命令（<code>docker exec</code>）</li>
-</ul>
-<h2 id="二、创建codecombat容器"><a href="#二、创建codecombat容器" class="headerlink" title="二、创建codecombat容器"></a>二、创建codecombat容器</h2><h3 id="1-拉取codecombat镜像"><a href="#1-拉取codecombat镜像" class="headerlink" title="1.拉取codecombat镜像"></a>1.拉取codecombat镜像</h3><p>打开命令提示符或PowerShell（管理员），运行以下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 拉取codecombat镜像</span><br><span class="line">docker pull operepo&#x2F;ope-codecombat</span><br><span class="line"></span><br><span class="line"># pull下载完后，可以查看镜像</span><br><span class="line">docker images</span><br></pre></td></tr></table></figure>
-<p>如果下载慢，卡住了，有问题；可以重新运行命令pull一下。</p>
-<h3 id="2-下载需要的数据包"><a href="#2-下载需要的数据包" class="headerlink" title="2.下载需要的数据包"></a>2.下载需要的数据包</h3><p>没有这个数据包，会无法运行。<br>下载地址（别人分享的）：<a class="link"   href="https://www.123pan.com/s/95k9-PTpJ3" >https://www.123pan.com/s/95k9-PTpJ3<i class="fas fa-external-link-alt"></i></a></p>
-<p>codecombat目录下有个：dump.tar.gz，就下载这个。</p>
-<h3 id="3-创建mycodecombat容器"><a href="#3-创建mycodecombat容器" class="headerlink" title="3.创建mycodecombat容器"></a>3.创建mycodecombat容器</h3><p>创建访问端口为3020的容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -itd --name mycodecombat -p 0.0.0.0:3020:3000 operepo/ope-codecombat /bin/bash</span><br></pre></td></tr></table></figure>
-<p><strong>参数解释</strong>：</p>
-<blockquote>
-<p>-it：这个就是启动容器都会带，不用管<br>-d：表示后台运行<br>–name mycodecombat：容器名称为mycodecombat，可以自定义<br>-p 0.0.0.0:3020:3000：表示把容器中的3000端口映射到本机的3020端口，这个3020也是自定义</p>
-</blockquote>
-<h2 id="三、导入dump-tar-gz数据"><a href="#三、导入dump-tar-gz数据" class="headerlink" title="三、导入dump.tar.gz数据"></a>三、导入dump.tar.gz数据</h2><h3 id="1-容器内开启数据库服务（不要关闭窗口）"><a href="#1-容器内开启数据库服务（不要关闭窗口）" class="headerlink" title="1.容器内开启数据库服务（不要关闭窗口）"></a>1.容器内开启数据库服务（不要关闭窗口）</h3><p>打开一个PowerShell，</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).容器内开启数据库服务（不要关闭窗口）</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat &amp;&amp; ./bin/coco-mongodb</span><br></pre></td></tr></table></figure>
-<h3 id="2-导入dump-tar-gz数据"><a href="#2-导入dump-tar-gz数据" class="headerlink" title="2.导入dump.tar.gz数据"></a>2.导入dump.tar.gz数据</h3><p>打开<strong>另一个</strong>PowerShell，进入放dump.tar.gz数据压缩包的目录，</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1).把数据包dump.tar.gz复制到容器内</span></span><br><span class="line">docker cp dump.tar.gz mycodecombat:/home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 2).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"><span class="comment"># 3).进入放数据的data目录</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 3).解压</span></span><br><span class="line">tar -zxvf dump.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="3-容器内开启web服务（不要关闭窗口）"><a href="#3-容器内开启web服务（不要关闭窗口）" class="headerlink" title="3.容器内开启web服务（不要关闭窗口）"></a>3.容器内开启web服务（不要关闭窗口）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/coco &amp;&amp; sh start.sh</span><br></pre></td></tr></table></figure>
-<p>两个窗口（一个数据库服务、一个web服务都不能关闭）<br>PS.报错是的话，就重启下服务</p>
-<h2 id="四、进入游戏"><a href="#四、进入游戏" class="headerlink" title="四、进入游戏"></a>四、进入游戏</h2><p>访问：<a class="link"   href="http://127.0.0.1:3020/" >http://127.0.0.1:3020<i class="fas fa-external-link-alt"></i></a> 或自己电脑的 http://[ip]:3020 都可以。</p>
-<p>直接点击<strong>开始游戏</strong> 开始。</p>
-<p>PS.如果有的开了ipv6，可能用ip和127.0.0.1都无法访问，试一下：localhost:3020<br>ping localhost 看一下，是不是[::1]，那就是ipv6。<br>解决方法，在hosts文件添加一句<code>127.0.0.1 localhost</code>就行。这样正常情况，3种都是可以访问的。</p>
-<p>参考：<a class="link"   href="https://www.bilibili.com/read/cv18786920?from=articleDetail" >docker搭建codecombat本地服务教程<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Windows</tag>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -607,65 +607,8 @@
         <category>Docker</category>
       </categories>
       <tags>
+        <tag>Docker</tag>
         <tag>Linux</tag>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker 数据卷（volumes）介绍</title>
-    <url>/2022/06/19/Docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
-    <content><![CDATA[<p>Docker 提供了三种不同的方式将数据从 Docker Host 挂载到 Docker 容器，并实现数据的读取和存储：volumes、bind mounts、tmpfs 。</p>
-<ul>
-<li>Volumes 存储在 Docker Host 文件系统的一个路径下，这个路径是由 Docker 来进行管理，路径默认是 /var/lib/docker/volumes/，非 Docker 的进程不能去修改这个路径下面的文件，所以说Volumes 是持久存储数据最好的一种方式。</li>
-<li>Bind mounts 可以存储在 Docker Host 文件系统的任何位置，它们甚至可能是重要的系统文件或目录，非 Docker 的进程或者 Docker 容器可能随时对其进行修改，存在潜在的安全风险。</li>
-<li>Tmpfs 只存储在 Docker Host 的系统内存中，不会写入到系统的文件系统中，不会持久存储。</li>
-</ul>
-<a id="more"></a>
-
-<p>数据卷（volumes）是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：</p>
-<ul>
-<li>数据卷 可以在容器之间共享和重用；</li>
-<li>对 数据卷 的修改会立马生效；</li>
-<li>对 数据卷 的更新，不会影响镜像；</li>
-<li>数据卷 默认会一直存在，即使容器被删除。</li>
-</ul>
-<p>注意：数据卷 的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会复制到数据卷中（仅数据卷为空时会复制）。</p>
-<h2 id="数据卷"><a href="#数据卷" class="headerlink" title="数据卷"></a>数据卷</h2><h3 id="1-创建一个数据卷"><a href="#1-创建一个数据卷" class="headerlink" title="1.创建一个数据卷"></a>1.创建一个数据卷</h3><p>创建一个数据卷：my-vol</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume create my-vol</span><br></pre></td></tr></table></figure>
-<p>查看所有的数据卷：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume ls</span><br></pre></td></tr></table></figure>
-<p>查看指定 数据卷（my-vol） 的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume inspect my-vol</span><br></pre></td></tr></table></figure>
-<h3 id="2-删除数据卷"><a href="#2-删除数据卷" class="headerlink" title="2.删除数据卷"></a>2.删除数据卷</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume rm my-vol</span><br></pre></td></tr></table></figure>
-<p>数据卷 是被设计用来持久化数据的，它的生命周期独立于容器，Docker 不会在容器被删除后自动删除 数据卷，并且也不存在垃圾回收这样的机制来处理没有任何容器引用的 数据卷。</p>
-<p>如果需要在删除容器的同时移除数据卷。可以在删除容器的时候使用 <code>docker rm -v</code> 这个命令。</p>
-<p>无主的数据卷可能会占据很多空间，要清理使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume prune</span><br></pre></td></tr></table></figure>
-<h2 id="挂载数据卷"><a href="#挂载数据卷" class="headerlink" title="挂载数据卷"></a>挂载数据卷</h2><p>启动容器的时候，可以先创建好数据卷，也可以直接设置（会创建新的数据卷）。</p>
-<p><strong>用法</strong>：</p>
-<ul>
-<li><code>-v</code>或<code>--volume</code>，<code>数据卷名称:容器中路径</code></li>
-<li><code>--mount</code>，由多个键值对组成，以逗号分隔，每个键=组由一个元组组成。<code>--mount</code>语法比<code>-v</code>或<code>--volume</code>更详细</li>
-</ul>
-<h3 id="1-docker-run使用数据卷"><a href="#1-docker-run使用数据卷" class="headerlink" title="1.docker run使用数据卷"></a>1.docker run使用数据卷</h3><p>在用 docker run 命令的时候，一般使用<code>-v</code>或 <code>--mount</code> 标记来将 数据卷 挂载到容器里。在一次 docker run 中可以挂载多个 数据卷。</p>
-<p>例如：创建一个名为 myweb 的容器，并加载一个 数据卷 到容器的 <code>/usr/share/nginx/html</code> 目录。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -P \</span><br><span class="line">    --name myweb \</span><br><span class="line">    <span class="comment"># -v my-vol:/usr/share/nginx/html \</span></span><br><span class="line">    --mount <span class="built_in">source</span>=my-vol,target=/usr/share/nginx/html \</span><br><span class="line">    nginx:alpine</span><br></pre></td></tr></table></figure>
-<p><strong>查看容器中数据卷信息：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect myweb</span><br></pre></td></tr></table></figure>
-<p>以上命令可以查看 myweb 容器的信息，数据卷 信息在 “Mounts”下面。</p>
-<h3 id="2-docker-compose使用数据卷"><a href="#2-docker-compose使用数据卷" class="headerlink" title="2.docker-compose使用数据卷"></a>2.docker-compose使用数据卷</h3><p>例如：数据卷mysql_data所挂载的是容器中的/var/lib/mysql目录。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">my_src:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:8.0</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql_data:/var/lib/mysql</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mysql_data:</span></span><br></pre></td></tr></table></figure>
-<p>数据卷相关介绍 参考文章：</p>
-<ul>
-<li><a class="link"   href="https://yeasy.gitbook.io/docker_practice/data_management/volume" >Docker从入门到实践-数据卷<i class="fas fa-external-link-alt"></i></a></li>
-<li><a class="link"   href="http://docker.baoshu.red/data_management/volume.html" >数据卷详细介绍<i class="fas fa-external-link-alt"></i></a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -784,7 +727,64 @@
         <category>Docker</category>
       </categories>
       <tags>
+        <tag>Docker</tag>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker 数据卷（volumes）介绍</title>
+    <url>/2022/06/19/Docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
+    <content><![CDATA[<p>Docker 提供了三种不同的方式将数据从 Docker Host 挂载到 Docker 容器，并实现数据的读取和存储：volumes、bind mounts、tmpfs 。</p>
+<ul>
+<li>Volumes 存储在 Docker Host 文件系统的一个路径下，这个路径是由 Docker 来进行管理，路径默认是 /var/lib/docker/volumes/，非 Docker 的进程不能去修改这个路径下面的文件，所以说Volumes 是持久存储数据最好的一种方式。</li>
+<li>Bind mounts 可以存储在 Docker Host 文件系统的任何位置，它们甚至可能是重要的系统文件或目录，非 Docker 的进程或者 Docker 容器可能随时对其进行修改，存在潜在的安全风险。</li>
+<li>Tmpfs 只存储在 Docker Host 的系统内存中，不会写入到系统的文件系统中，不会持久存储。</li>
+</ul>
+<a id="more"></a>
+
+<p>数据卷（volumes）是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：</p>
+<ul>
+<li>数据卷 可以在容器之间共享和重用；</li>
+<li>对 数据卷 的修改会立马生效；</li>
+<li>对 数据卷 的更新，不会影响镜像；</li>
+<li>数据卷 默认会一直存在，即使容器被删除。</li>
+</ul>
+<p>注意：数据卷 的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会复制到数据卷中（仅数据卷为空时会复制）。</p>
+<h2 id="数据卷"><a href="#数据卷" class="headerlink" title="数据卷"></a>数据卷</h2><h3 id="1-创建一个数据卷"><a href="#1-创建一个数据卷" class="headerlink" title="1.创建一个数据卷"></a>1.创建一个数据卷</h3><p>创建一个数据卷：my-vol</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume create my-vol</span><br></pre></td></tr></table></figure>
+<p>查看所有的数据卷：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume ls</span><br></pre></td></tr></table></figure>
+<p>查看指定 数据卷（my-vol） 的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume inspect my-vol</span><br></pre></td></tr></table></figure>
+<h3 id="2-删除数据卷"><a href="#2-删除数据卷" class="headerlink" title="2.删除数据卷"></a>2.删除数据卷</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume rm my-vol</span><br></pre></td></tr></table></figure>
+<p>数据卷 是被设计用来持久化数据的，它的生命周期独立于容器，Docker 不会在容器被删除后自动删除 数据卷，并且也不存在垃圾回收这样的机制来处理没有任何容器引用的 数据卷。</p>
+<p>如果需要在删除容器的同时移除数据卷。可以在删除容器的时候使用 <code>docker rm -v</code> 这个命令。</p>
+<p>无主的数据卷可能会占据很多空间，要清理使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker volume prune</span><br></pre></td></tr></table></figure>
+<h2 id="挂载数据卷"><a href="#挂载数据卷" class="headerlink" title="挂载数据卷"></a>挂载数据卷</h2><p>启动容器的时候，可以先创建好数据卷，也可以直接设置（会创建新的数据卷）。</p>
+<p><strong>用法</strong>：</p>
+<ul>
+<li><code>-v</code>或<code>--volume</code>，<code>数据卷名称:容器中路径</code></li>
+<li><code>--mount</code>，由多个键值对组成，以逗号分隔，每个键=组由一个元组组成。<code>--mount</code>语法比<code>-v</code>或<code>--volume</code>更详细</li>
+</ul>
+<h3 id="1-docker-run使用数据卷"><a href="#1-docker-run使用数据卷" class="headerlink" title="1.docker run使用数据卷"></a>1.docker run使用数据卷</h3><p>在用 docker run 命令的时候，一般使用<code>-v</code>或 <code>--mount</code> 标记来将 数据卷 挂载到容器里。在一次 docker run 中可以挂载多个 数据卷。</p>
+<p>例如：创建一个名为 myweb 的容器，并加载一个 数据卷 到容器的 <code>/usr/share/nginx/html</code> 目录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d -P \</span><br><span class="line">    --name myweb \</span><br><span class="line">    <span class="comment"># -v my-vol:/usr/share/nginx/html \</span></span><br><span class="line">    --mount <span class="built_in">source</span>=my-vol,target=/usr/share/nginx/html \</span><br><span class="line">    nginx:alpine</span><br></pre></td></tr></table></figure>
+<p><strong>查看容器中数据卷信息：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect myweb</span><br></pre></td></tr></table></figure>
+<p>以上命令可以查看 myweb 容器的信息，数据卷 信息在 “Mounts”下面。</p>
+<h3 id="2-docker-compose使用数据卷"><a href="#2-docker-compose使用数据卷" class="headerlink" title="2.docker-compose使用数据卷"></a>2.docker-compose使用数据卷</h3><p>例如：数据卷mysql_data所挂载的是容器中的/var/lib/mysql目录。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">my_src:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:8.0</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql_data:/var/lib/mysql</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mysql_data:</span></span><br></pre></td></tr></table></figure>
+<p>数据卷相关介绍 参考文章：</p>
+<ul>
+<li><a class="link"   href="https://yeasy.gitbook.io/docker_practice/data_management/volume" >Docker从入门到实践-数据卷<i class="fas fa-external-link-alt"></i></a></li>
+<li><a class="link"   href="http://docker.baoshu.red/data_management/volume.html" >数据卷详细介绍<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
         <tag>Docker</tag>
       </tags>
   </entry>
@@ -870,8 +870,8 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Docker</tag>
+        <tag>Linux</tag>
         <tag>Python</tag>
         <tag>Selenium</tag>
       </tags>
@@ -1021,6 +1021,53 @@
       </tags>
   </entry>
   <entry>
+    <title>Excel中提取身份证的出生日期和性别</title>
+    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
+    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
+<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
+<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
+<a id="more"></a>
+
+<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
+<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_1.png"
+                     
+                ></p>
+<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_2.png"
+                     
+                ></p>
+<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Excel_id_card_3.png"
+                     
+                ></p>
+<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
+<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
+<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
+<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
+<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
+<p>所以把取出的身份证第17位除2取余数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
+<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
+<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
+<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
+]]></content>
+      <categories>
+        <category>Office</category>
+      </categories>
+      <tags>
+        <tag>Excel</tag>
+        <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Excel中随机抽取中奖者</title>
     <url>/2022/09/25/Excel%E4%B8%AD%E9%9A%8F%E6%9C%BA%E6%8A%BD%E5%8F%96%E4%B8%AD%E5%A5%96%E8%80%85/</url>
     <content><![CDATA[<p>应用场景：比如随机抽个奖啊，随机抽个人回答问题啊，随机抽个人演讲啊，随机抽人排值班啊……</p>
@@ -1072,110 +1119,6 @@
       <tags>
         <tag>Excel</tag>
         <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Excel中提取身份证的出生日期和性别</title>
-    <url>/2022/06/03/Excel%E4%B8%AD%E6%8F%90%E5%8F%96%E8%BA%AB%E4%BB%BD%E8%AF%81%E7%9A%84%E5%87%BA%E7%94%9F%E6%97%A5%E6%9C%9F%E5%92%8C%E6%80%A7%E5%88%AB/</url>
-    <content><![CDATA[<p>18位的身份证号中，前6位是地址码，第7位开始的8位是出生年月日，第17位（倒数第2位）是性别（偶数是女性，奇数是男性）。</p>
-<p>Excel截取字符串很简单，用一个MID函数就能取出来了。</p>
-<p>只是对应出生日期（日期格式）、和性别要做个判断。</p>
-<a id="more"></a>
-
-<h2 id="求出生日期"><a href="#求出生日期" class="headerlink" title="求出生日期"></a>求出生日期</h2><h3 id="1-公式求出出生日期（身份证号在A2单元格）："><a href="#1-公式求出出生日期（身份证号在A2单元格）：" class="headerlink" title="1.公式求出出生日期（身份证号在A2单元格）："></a>1.公式求出出生日期（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,7,8)</span><br></pre></td></tr></table></figure>
-<p>用公式获取到出生日期后，再复制值出来是文本格式，直接设置单元格格式会日期格式是没用的。如下图：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_1.png"
-                     
-                ></p>
-<h3 id="2-文本转换成日期格式"><a href="#2-文本转换成日期格式" class="headerlink" title="2.文本转换成日期格式"></a>2.文本转换成日期格式</h3><p>就需要用【数据】-&gt;【分列】，把数据格式选成【日期】，最后记得选一下整个目标区域就行了。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_2.png"
-                     
-                ></p>
-<p>完成后，如下图，已经是日期格式了，想改成啥日期格式都行。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Excel_id_card_3.png"
-                     
-                ></p>
-<p>在Excel中，当遇到日期是文本（字符串）的时候，如果想改成自己想要的日期格式，都是可以借助这个数据中的【分列】功能的。</p>
-<h2 id="求性别"><a href="#求性别" class="headerlink" title="求性别"></a>求性别</h2><p>最终公式为：<code>=IF(MOD(MID(A2,17,1),2)=0,&quot;女&quot;,&quot;男&quot;)</code></p>
-<p>身份证第17位如果是偶数，表示女性；是奇数，则表示男性。</p>
-<h3 id="1-MID函数取身份证第17位（身份证号在A2单元格）："><a href="#1-MID函数取身份证第17位（身份证号在A2单元格）：" class="headerlink" title="1.MID函数取身份证第17位（身份证号在A2单元格）："></a>1.MID函数取身份证第17位（身份证号在A2单元格）：</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MID(A2,17,1)</span><br></pre></td></tr></table></figure>
-<h3 id="2-用MOD函数取余数"><a href="#2-用MOD函数取余数" class="headerlink" title="2.用MOD函数取余数"></a>2.用MOD函数取余数</h3><p>MOD(5,2) 表示5除2取余数，结果为1。</p>
-<p>所以把取出的身份证第17位除2取余数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;MOD(MID(A2,17,1),2)</span><br></pre></td></tr></table></figure>
-<h3 id="3-用IF函数判断是否为偶数"><a href="#3-用IF函数判断是否为偶数" class="headerlink" title="3.用IF函数判断是否为偶数"></a>3.用IF函数判断是否为偶数</h3><p>如果除2的余数为0，是女性；否则，是男性。<br>IF(1=0,”女”,”男”) 表示如果1=0，则结果是女，否则是男。</p>
-<p>所以把MOD函数取的余数进行判断，是否等于0。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;IF(MOD(MID(A2,17,1),2)&#x3D;0,&quot;女&quot;,&quot;男&quot;)</span><br></pre></td></tr></table></figure>
-<p>PS.Excel中常用函数应用介绍：<a href="#">Post not found: 【不断更新系列】Excel常用函数</a></p>
-]]></content>
-      <categories>
-        <category>Office</category>
-      </categories>
-      <tags>
-        <tag>Excel</tag>
-        <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_1.png"
-                     
-                >
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_3.png"
-                     
-                >
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_4.png"
-                     
-                ></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_5.png"
-                     
-                ></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -1279,6 +1222,63 @@
       </tags>
   </entry>
   <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_1.png"
+                     
+                >
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_3.png"
+                     
+                >
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_4.png"
+                     
+                ></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_5.png"
+                     
+                ></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -1341,6 +1341,68 @@
       </tags>
   </entry>
   <entry>
+    <title>H5视频加倍速播放方法</title>
+    <url>/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
+<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
+<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
+<a id="more"></a>
+
+<p><strong>倍速播放方法</strong>：</p>
+<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
+<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/h5_video_playbackrate.png"
+                      style="zoom: 70%;"
+                >
+
+<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo Keep主题添加归档页和标签页</title>
+    <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
+    <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>Keep主题默认导航菜单上没有【归档】和【标签】菜单。所以需要自己开启。</p>
+<a id="more"></a>
+
+<h3 id="1-修改主题配置文件（-config-yml）"><a href="#1-修改主题配置文件（-config-yml）" class="headerlink" title="1.修改主题配置文件（_config.yml）"></a>1.修改主题配置文件（<code>_config.yml</code>）</h3><p>主题的配置文件（<code>_config.yml</code>）中导航菜单中归档页（Categories）和标签页（Tags）默认是注释了的。</p>
+<p>所以，只要去掉注释，就可以启用了。如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">Home:</span> <span class="string">/</span></span><br><span class="line">  <span class="attr">Archives:</span> <span class="string">/archives</span></span><br><span class="line">  <span class="attr">Categories:</span> <span class="string">/categories</span></span><br><span class="line">  <span class="attr">Tags:</span> <span class="string">/tags</span></span><br><span class="line">  <span class="comment"># Links: /links</span></span><br><span class="line">  <span class="comment"># About: /about</span></span><br><span class="line">  <span class="comment"># Changelog: /changelog</span></span><br><span class="line">  <span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
+<p>去掉注释后，首页导航菜单中有了【归档】和【标签】菜单，但打开并没有内容。</p>
+<h3 id="2-添加【归档】和【标签】对应的页面文件"><a href="#2-添加【归档】和【标签】对应的页面文件" class="headerlink" title="2.添加【归档】和【标签】对应的页面文件"></a>2.添加【归档】和【标签】对应的页面文件</h3><p>直接用 hexo命令新建页面。<br>在Hexo目录下，打开【Git Bash】，依次执行以下两条语句：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;categories&quot;</span></span><br><span class="line">hexo new <span class="string">&quot;tags&quot;</span></span><br></pre></td></tr></table></figure>
+<p>执行完两条命令后，会有Hexo的source目录下新建出 <code>categories\index.md</code> 文件和<code>tages\index.md</code> 文件。</p>
+<p>当然新建完后，发现首页导航菜单中【归档】和【标签】菜单打开也有了内容。</p>
+<p>但是，有一个问题，就是当你继续更新博客文章后，这两个菜单中的内容并不会更新。所以还需要修改这两个文件的内容。</p>
+<h3 id="3-修改index-md文件中的内容。"><a href="#3-修改index-md文件中的内容。" class="headerlink" title="3.修改index.md文件中的内容。"></a>3.修改index.md文件中的内容。</h3><p>1).修改 <code>source\categories\index.md</code> 文件</p>
+<p>在Front-matter部分增加后面2行内容，修改为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
+<p>2).修改 <code>source\tags\index.md</code> 文件</p>
+<p>在Front-matter部分增加后面2行内容，修改为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
+<p>主要是增加type参数，comments设为false表示该页面不允许评论。</p>
+<p>至此，再更新博客文章后，【归档】和【标签】菜单中也会跟着更新了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo SSH密钥配置</title>
     <url>/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>配置SSH密钥，可以让本地Git项目与远程的服务器建立联系，让我们在本地写了代码之后直接通过Git操作就可以实现本地代码库与服务器上的代码库同步。</p>
@@ -1397,68 +1459,6 @@
       <tags>
         <tag>Hexo</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo Keep主题添加归档页和标签页</title>
-    <url>/2022/05/03/Hexo-Keep%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E5%BD%92%E6%A1%A3%E9%A1%B5%E5%92%8C%E6%A0%87%E7%AD%BE%E9%A1%B5/</url>
-    <content><![CDATA[<p>Keep主题官方文档：<a class="link"   href="https://keep-docs.xpoet.cn/" >https://keep-docs.xpoet.cn/<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题配置指南：<a class="link"   href="https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html" >https://keep-docs.xpoet.cn/usage-tutorial/configuration-guide.html<i class="fas fa-external-link-alt"></i></a></p>
-<p>Keep主题默认导航菜单上没有【归档】和【标签】菜单。所以需要自己开启。</p>
-<a id="more"></a>
-
-<h3 id="1-修改主题配置文件（-config-yml）"><a href="#1-修改主题配置文件（-config-yml）" class="headerlink" title="1.修改主题配置文件（_config.yml）"></a>1.修改主题配置文件（<code>_config.yml</code>）</h3><p>主题的配置文件（<code>_config.yml</code>）中导航菜单中归档页（Categories）和标签页（Tags）默认是注释了的。</p>
-<p>所以，只要去掉注释，就可以启用了。如下所示：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">Home:</span> <span class="string">/</span></span><br><span class="line">  <span class="attr">Archives:</span> <span class="string">/archives</span></span><br><span class="line">  <span class="attr">Categories:</span> <span class="string">/categories</span></span><br><span class="line">  <span class="attr">Tags:</span> <span class="string">/tags</span></span><br><span class="line">  <span class="comment"># Links: /links</span></span><br><span class="line">  <span class="comment"># About: /about</span></span><br><span class="line">  <span class="comment"># Changelog: /changelog</span></span><br><span class="line">  <span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
-<p>去掉注释后，首页导航菜单中有了【归档】和【标签】菜单，但打开并没有内容。</p>
-<h3 id="2-添加【归档】和【标签】对应的页面文件"><a href="#2-添加【归档】和【标签】对应的页面文件" class="headerlink" title="2.添加【归档】和【标签】对应的页面文件"></a>2.添加【归档】和【标签】对应的页面文件</h3><p>直接用 hexo命令新建页面。<br>在Hexo目录下，打开【Git Bash】，依次执行以下两条语句：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;categories&quot;</span></span><br><span class="line">hexo new <span class="string">&quot;tags&quot;</span></span><br></pre></td></tr></table></figure>
-<p>执行完两条命令后，会有Hexo的source目录下新建出 <code>categories\index.md</code> 文件和<code>tages\index.md</code> 文件。</p>
-<p>当然新建完后，发现首页导航菜单中【归档】和【标签】菜单打开也有了内容。</p>
-<p>但是，有一个问题，就是当你继续更新博客文章后，这两个菜单中的内容并不会更新。所以还需要修改这两个文件的内容。</p>
-<h3 id="3-修改index-md文件中的内容。"><a href="#3-修改index-md文件中的内容。" class="headerlink" title="3.修改index.md文件中的内容。"></a>3.修改index.md文件中的内容。</h3><p>1).修改 <code>source\categories\index.md</code> 文件</p>
-<p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: categories</span><br><span class="line">date: 2022-04-30 21:55:36</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
-<p>2).修改 <code>source\tags\index.md</code> 文件</p>
-<p>在Front-matter部分增加后面2行内容，修改为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: tags</span><br><span class="line">date: 2022-04-30 21:54:07</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">comment: false</span><br></pre></td></tr></table></figure>
-<p>主要是增加type参数，comments设为false表示该页面不允许评论。</p>
-<p>至此，再更新博客文章后，【归档】和【标签】菜单中也会跟着更新了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>H5视频加倍速播放方法</title>
-    <url>/2022/06/04/H5%E8%A7%86%E9%A2%91%E5%8A%A0%E5%80%8D%E9%80%9F%E6%92%AD%E6%94%BE%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>网上的视频，现在一般也提供倍速播放的功能，一般最多到2.0x。如果想要更快一点，或者没提供倍速播放的，可以试试这个方法，只要是H5视频基本上就行。</p>
-<p>对于H5视频来说，其实就是在网页源代码中能找到有个<code>&lt;video&gt;</code>标签的，一般就是了。</p>
-<p>想要按自己设定的倍速观看，其实也很简单，直接运行一条 js语句就行了。</p>
-<a id="more"></a>
-
-<p><strong>倍速播放方法</strong>：</p>
-<p>1.在浏览器中按F12，打开 开发者工具，查看video标签在【Elements】（元素）里是否存在。确认是否H5视频。</p>
-<p>2.在【Console】（控制台）里，输入以下js语句后，回车 执行。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">&#x27;video&#x27;</span>).playbackRate=<span class="number">5</span></span><br></pre></td></tr></table></figure>
-<p>playbackRate后面的值5表示：5倍速。(PS.最高好像是16） </p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/h5_video_playbackrate.png"
-                      style="zoom: 70%;"
-                >
-
-<p>话说，有时候querySelector里未必是’video’，那是因为网页源码中的<code>&lt;video&gt;</code>标签被改名了。不是直接用的这个。（发现小破站就改过名字，然后又改回去了）</p>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -1614,7 +1614,7 @@
 <li>选择【SSH and GPG keys】；</li>
 <li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
 </ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#99;&#x6f;&#x6d;" >&#x67;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;" >&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
 <p>本机~/.ssh 目录有2个文件需要改动。</p>
 <ul>
 <li>known_hosts 文件</li>
@@ -1635,7 +1635,7 @@
 <h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
 <p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;" >&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p><a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;" >&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
 <p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
 ]]></content>
       <categories>
@@ -1643,6 +1643,37 @@
       </categories>
       <tags>
         <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo图片插入方式（兼容Typora）</title>
+    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
+    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
+<a id="more"></a>
+
+<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
+<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
+<p>Hexo的source目录结构为：</p>
+<blockquote>
+<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
+</blockquote>
+<p>目录名字看你自己喜欢，也可以用images.</p>
+<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
+<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
+<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
+<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
+<p>例如，此篇文章的头部即为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
+<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
+<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
+<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
         <tag>Hexo</tag>
       </tags>
   </entry>
@@ -1728,37 +1759,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo图片插入方式（兼容Typora）</title>
-    <url>/2022/04/30/Hexo%E5%9B%BE%E7%89%87%E6%8F%92%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%88%E5%85%BC%E5%AE%B9Typora%EF%BC%89/</url>
-    <content><![CDATA[<p>原来用的是 Github Pages + Hexo的博客，所以直接用 Github的图床就很方便。终于受不了Github的访问速度了，自己访问影响不大 ，主要是别人访问的时候，就算正常能看文章，图片也会动不动就加载失败，头疼~ 于是，还是把Hexo博客搬到了自己的云服务器上。（反正本来就有云服务器在用）</p>
-<a id="more"></a>
-
-<p>当把Hexo博客搬到云服务器上后，就要把文章中的图片也上传一下了。如果还是用图床，不管阿里云还是腾讯云上都有对应的对象存储器可以用，就是要收费。所以索性还是直接把文章中的图片上传到云服务器上好了。</p>
-<p>在 Hexo文章中插入图片时，通常使用网站的相对路径。</p>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><h3 id="1-新建-img-目录"><a href="#1-新建-img-目录" class="headerlink" title="1.新建 img 目录"></a>1.新建 img 目录</h3><p>在Hexo的 source 目录下新建 img 目录，用来存放文章的所有图片。<br>（Hexo的所有文章都在 source目录下的 _posts 目录中）</p>
-<p>Hexo的source目录结构为：</p>
-<blockquote>
-<p>source<br>   |– _posts<br>   |– about<br>   |– categories<br>   |– img<br>   |– tags</p>
-</blockquote>
-<p>目录名字看你自己喜欢，也可以用images.</p>
-<p><strong>注意</strong>：如果你用的主题目录下的source目录下也有images目录，那你可以跟我一样，避免重名，用 img 这样的名字。因为deploy后你会发现，这俩会在同一个目录下。</p>
-<p>网上还有其它安装插件的方法，是每篇文章生成一个目录来放图片，个人不喜欢这种，图片也没多少，还是喜欢直接都放在一个目录比较方便。</p>
-<h3 id="2-在Typora中设置图片根目录"><a href="#2-在Typora中设置图片根目录" class="headerlink" title="2.在Typora中设置图片根目录"></a>2.在Typora中设置图片根目录</h3><p>在Typora中，【格式】菜单-&gt;【图像】-&gt;【设置图片根目录】，选择刚建好的 Hexo目录下的 source/img 的目录。</p>
-<p>选择好后，在.md的文件头部会自动生成 <code>typora-root-url: ..</code>。<br>所以在有图片的文章中，只需要在头部加上这一项就行。在文章中就可以插入图片了。</p>
-<p>例如，此篇文章的头部即为：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">title: Hexo图片插入方式（兼容Typora）</span><br><span class="line">date: 2022-04-30 21:30</span><br><span class="line">typora-root-url: ..</span><br><span class="line">tags: [Hexo]</span><br><span class="line">categories: </span><br><span class="line"><span class="bullet">-</span> Hexo</span><br><span class="line">toc: true</span><br></pre></td></tr></table></figure>
-<p><code>typora-root-url: ..</code> 中的 <code>..</code>表示上一层父目录。<br>因为文章的.md文件在： <code>source/_posts/</code>中，所以 <code>..</code>即表示图片根目录为source目录。</p>
-<h3 id="3-文章中插入图片的代码"><a href="#3-文章中插入图片的代码" class="headerlink" title="3.文章中插入图片的代码"></a>3.文章中插入图片的代码</h3><p>比如我在此篇文章要插入一张图片，图片为： <code>/source/img/test.jpg</code></p>
-<p>那在此篇文章中只需要写上以下代码，就能在 Typora看到图片，也能在 hexo deploy后上传到服务器上。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/img/test.jpg&quot;</span>/&gt;</span></span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo 自定义页面 跳过渲染</title>
     <url>/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/</url>
     <content><![CDATA[<p>Hexo博客中所有的文章都是经过渲染的静态网页。</p>
@@ -1778,6 +1778,28 @@
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/**&quot;</span></span><br></pre></td></tr></table></figure>
 <p>4.跳过多个：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;a.html&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;test/*&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo链接站内文章方法</title>
+    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
+<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
+<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
+<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
+<a id="more"></a>
+
+<p><strong>方法二</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
+<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
+<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
+]]></content>
       <categories>
         <category>Hexo</category>
       </categories>
@@ -1806,28 +1828,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo链接站内文章方法</title>
-    <url>/2022/05/01/Hexo%E9%93%BE%E6%8E%A5%E7%AB%99%E5%86%85%E6%96%87%E7%AB%A0%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在写文章、写博客的时候，有时候文章中会需要链接到其它的文章。怎么写？</p>
-<p><strong>方法一</strong>：当然可以直接写链接地址，跟所有网址一样。<br>这样就需要链接的这篇文章先deploy出来，再复制文章的网址过来用。</p>
-<p>这个方法还有一个问题，当我博客换了域名，那就完了 ，所有的地址还需要手动再替换一遍。</p>
-<p>这里介绍第二个方法，采用 Hexo 的一种写法。</p>
-<a id="more"></a>
-
-<p><strong>方法二</strong>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 &#123;% post_link &#39;需要链接的文章名&#39; %&#125;</span><br></pre></td></tr></table></figure>
-<p>举个例子，比如这篇文章中，我想链接到站内另一篇文章：“本博客使用的Hexo主题为Keep”这篇文章，怎么做。</p>
-<p>这篇文章对应的md文件为：<code>本博客使用的Hexo主题为Keep.md</code></p>
-<p>那在需要引用的地方就写上：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -2568,32 +2568,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python pandas读取Excel时空单元格读取为nan</title>
-    <url>/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/</url>
-    <content><![CDATA[<p>当用pandas读取excel的时候，用到的是read_excel函数。</p>
-<p>比如以下代码，read_excel函数中（除了第1个参数，后面是可选的）：</p>
-<ul>
-<li>第1个参数是excel文件</li>
-<li>第2个参数是sheet名字</li>
-<li>第3个参数为指定的列名<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">usecols = [<span class="string">&#x27;序号&#x27;</span>,<span class="string">&#x27;姓名&#x27;</span>,<span class="string">&#x27;座位号&#x27;</span>]</span><br><span class="line">df = pd.read_excel(excel_file, sheet_name, usecols=usecols)</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-</li>
-</ul>
-<p>读取内容后，发现如果单元格是空的话，读取到的字符串就会变成nan。</p>
-<p><strong>解决方法：</strong></p>
-<p>就在使用read_excel函数时，多添加一个参数keep_default_na就行。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">df &#x3D; pd.read_excel(data_file, sheet_name, usecols&#x3D;usecols, keep_default_na&#x3D;&#39;&#39;)</span><br></pre></td></tr></table></figure>
-<p>给keep_default_na设一个当空单元格时的值就行。<br>比如我上面就设为了<code>&#39;&#39;</code>字符串，这个按自己需要，设<code>keep_default_na=False</code>都行。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python openpyxl.load_workbook excel file error 解决方法</title>
     <url>/2021/02/17/Python-openpyxl.load_workbook-excel-file-error/</url>
     <content><![CDATA[<p>这个错误是在我频繁load excel文件，写入内容的时候出现的，循环要写入上千页的内容，每页写一次，然后写了上百次之后，就每写入几次就报这个错了。</p>
@@ -2614,6 +2588,32 @@
 <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把原来那一句代码改成以下代码：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="keyword">if</span> os.path.exists(ex_file):</span><br><span class="line">    book = openpyxl.load_workbook(ex_file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    book = openpyxl.Workbook()</span><br></pre></td></tr></table></figure>
 <p>注：我这里的ex_file 是绝对路径，比如：<code>G:\Drive\funds\test1.xlsx</code></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python pandas读取Excel时空单元格读取为nan</title>
+    <url>/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/</url>
+    <content><![CDATA[<p>当用pandas读取excel的时候，用到的是read_excel函数。</p>
+<p>比如以下代码，read_excel函数中（除了第1个参数，后面是可选的）：</p>
+<ul>
+<li>第1个参数是excel文件</li>
+<li>第2个参数是sheet名字</li>
+<li>第3个参数为指定的列名<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">usecols = [<span class="string">&#x27;序号&#x27;</span>,<span class="string">&#x27;姓名&#x27;</span>,<span class="string">&#x27;座位号&#x27;</span>]</span><br><span class="line">df = pd.read_excel(excel_file, sheet_name, usecols=usecols)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+</li>
+</ul>
+<p>读取内容后，发现如果单元格是空的话，读取到的字符串就会变成nan。</p>
+<p><strong>解决方法：</strong></p>
+<p>就在使用read_excel函数时，多添加一个参数keep_default_na就行。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">df &#x3D; pd.read_excel(data_file, sheet_name, usecols&#x3D;usecols, keep_default_na&#x3D;&#39;&#39;)</span><br></pre></td></tr></table></figure>
+<p>给keep_default_na设一个当空单元格时的值就行。<br>比如我上面就设为了<code>&#39;&#39;</code>字符串，这个按自己需要，设<code>keep_default_na=False</code>都行。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -2797,43 +2797,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
-    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
-    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
-<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
-<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
-<a id="more"></a>
-
-<p>这里涉及到一个 dpi 分辨率 的概念。</p>
-<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
-<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_1.png"
-                     
-                ></p>
-<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
-<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
-<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_image_resize_dpi_2.png"
-                     
-                ></p>
-<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
-<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
-<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 批量修改图片尺寸</title>
     <url>/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/</url>
     <content><![CDATA[<p>PIL(Python Imaging Library)是Python的第三方图像处理库，但由于其强大的功能，事实上已经被认为是图像处理标准库了。PIL功能非常强大，而且API却非常简单易用。</p>
@@ -2891,6 +2854,43 @@
 <p>代码如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> img2pdf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_to_pdf</span>(<span class="params">picdir, pdf_filename</span>):</span></span><br><span class="line">    new_path = picdir + <span class="string">r&#x27;\*.*&#x27;</span></span><br><span class="line">    <span class="comment"># print(new_path) # C:\Users\zzz\Desktop\222\*.*</span></span><br><span class="line">    new_path_list = glob.glob(new_path)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(pdf_filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(img2pdf.convert(new_path_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把目录中所有图片合成pdf</span></span><br><span class="line">pic_to_pdf(picdir=<span class="string">r&#x27;C:\Users\zzz\Desktop\222&#x27;</span>, pdf_filename=<span class="string">&#x27;test222.pdf&#x27;</span>) <span class="comment"># 生成pdf文件 test222.pdf</span></span><br></pre></td></tr></table></figure>
 <p>如果有多个文件夹，需要生成多个pdf的话，就再写个 for循环，循环一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 批量修改图片尺寸为一寸/二寸照</title>
+    <url>/2022/05/30/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8%E4%B8%BA%E4%B8%80%E5%AF%B8-%E4%BA%8C%E5%AF%B8%E7%85%A7/</url>
+    <content><![CDATA[<p>关于批量修改图片尺寸，之前已经写了一篇文章：<a href="/2022/05/10/Python-%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8/" title="Python 批量修改图片尺寸">Python 批量修改图片尺寸</a>。是通过修改分辨率去修改的。</p>
+<p>那怎么修改图片尺寸为一寸照、二寸照呢？不能直接照搬网上搜索出来的结果。<br>比如网上说一寸照大小是 <code>2.5cm*3.5cm</code> 或者 <code>295像素*413像素</code>；<br>二寸照是<code>3.5cm*5.3cm</code>或者<code>413像素*626像素</code>。</p>
+<p>你如果直接把像素大小按上面的改可能就会有问题。按上面的分辨率修改出来的尺寸打开一看不对。</p>
+<a id="more"></a>
+
+<p>这里涉及到一个 dpi 分辨率 的概念。</p>
+<h2 id="dpi的概念"><a href="#dpi的概念" class="headerlink" title="dpi的概念"></a>dpi的概念</h2><p>dots per inch，每英寸点数。</p>
+<p>含义搞不那么清楚也没关系，看一张图就了解了。（在Photoshop里看的）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_1.png"
+                     
+                ></p>
+<p>看上面的图片，当图像的大小是：<code>2.5cm*3.5cm</code>时，分辨率（dpi）不同，宽度高度的像素就不同。</p>
+<p>网上经常一搜就能看到的一寸二寸照片的宽高度像素比其实是分辨率（dpi=300）的时候。</p>
+<p>二寸照dpi=96的时候，像素大概是：<code>133像素*200像素</code><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_image_resize_dpi_2.png"
+                     
+                ></p>
+<h2 id="单张图片修改尺寸和dpi"><a href="#单张图片修改尺寸和dpi" class="headerlink" title="单张图片修改尺寸和dpi"></a>单张图片修改尺寸和dpi</h2><p>那我们用Python修改图片尺寸，用PIL库的Image对象的resize修改后，其实就保存的时候设一下dpi就行了。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单张图片修改尺寸和dpi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_pic_size_dpi</span>(<span class="params">picfile, outdir, width, height, dpi_float</span>):</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(picfile)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_img = img.resize((width, height), Image.BILINEAR)</span><br><span class="line">        new_img.save(os.path.join(outdir, os.path.basename(picfile)), dpi=(dpi_float,dpi_float))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line">change_pic_size_dpi(picfile, outdir, <span class="number">96</span>, <span class="number">132</span>, dpi_float=<span class="number">96.0</span>)</span><br></pre></td></tr></table></figure>
+<p>其实就第7行，Image.save的时候，添加dpi的参数设置就行了。<br>注意对应的dpi的宽高度的像素值不同，不能直接照搬网上的。</p>
+<p>完整的批量修改的代码看上一篇文章的就行，反正就改了这一句，添加一个 dpi的参数就行，注意dpi用浮点数，带个小数点。代码这里就不贴了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -3075,30 +3075,21 @@
       </tags>
   </entry>
   <entry>
-    <title>Python使用MQTT举例</title>
-    <url>/2022/11/13/Python%E4%BD%BF%E7%94%A8MQTT%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>关于MQTT的简介和服务器的搭建，之前已经写了笔记了：<a href="/2022/11/12/Docker%E6%90%AD%E5%BB%BAMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建MQTT服务器">Docker搭建MQTT服务器</a></p>
-<p>用来学习、研究，自己不搭MQTT服务器也行，EMQX有提供免费的在线 MQTT 服务器（还提供证书的下载）：<br>官网：<a class="link"   href="https://www.emqx.com/zh/mqtt/public-mqtt5-broker" >https://www.emqx.com/zh/mqtt/public-mqtt5-broker<i class="fas fa-external-link-alt"></i></a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MQTT 服务器信息</span><br><span class="line">Broker: broker-cn.emqx.io</span><br><span class="line">TCP 端口: 1883</span><br><span class="line">WebSocket 端口: 8083</span><br><span class="line">SSL&#x2F;TLS 端口: 8883</span><br><span class="line">WebSocket Secure 端口: 8084</span><br></pre></td></tr></table></figure>
+    <title>Python使用ddddocr报错ImportError</title>
+    <url>/2022/11/11/Python%E4%BD%BF%E7%94%A8ddddocr%E6%8A%A5%E9%94%99ImportError/</url>
+    <content><![CDATA[<p>安装好ddddocr后，使用的时候一直报错：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">    from .onnxruntime_pybind11_state import *  <span class="comment"># noqa</span></span><br><span class="line">ImportError: DLL load failed: 找不到指定的模块。</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<p>Python使用MQTT的例子，主要就写2个python文件，一个用来publish（发布消息），一个用来subcribe（订阅消息），看看是不是都能接收到消息。（消息订阅后都能接收到，就可以存入自己建的本地数据库啦）</p>
-<h2 id="一、安装paho-mqtt库"><a href="#一、安装paho-mqtt库" class="headerlink" title="一、安装paho-mqtt库"></a>一、安装paho-mqtt库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install paho-mqtt</span><br></pre></td></tr></table></figure>
-<p>安装了这个库就可以处理MQTT了，官方文档上也例子：<a class="link"   href="https://pypi.org/project/paho-mqtt/#" >https://pypi.org/project/paho-mqtt/#<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、publish发布消息（mqtt-publish-py）"><a href="#二、publish发布消息（mqtt-publish-py）" class="headerlink" title="二、publish发布消息（mqtt_publish.py）"></a>二、publish发布消息（mqtt_publish.py）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt_client</span><br><span class="line"><span class="keyword">import</span> time, json, random</span><br><span class="line"></span><br><span class="line"><span class="comment"># MQTT连接</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect_mqtt</span>():</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span></span><br><span class="line">        <span class="keyword">if</span> rc == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Connected to MQTT Broker!&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Failed to connect, return code %d\n&quot;</span>, rc)</span><br><span class="line">    <span class="comment"># Set Connecting Client ID</span></span><br><span class="line">    client = mqtt_client.Client(client_id)</span><br><span class="line">    client.on_connect = on_connect</span><br><span class="line">    client.connect(broker, port)</span><br><span class="line">    <span class="keyword">return</span> client</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发布消息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">publish</span>(<span class="params">client, topic, msg</span>):</span></span><br><span class="line">    <span class="comment"># msg = f&quot;messages: &#123;msg_count&#125;&quot;</span></span><br><span class="line">    result = client.publish(topic, msg)</span><br><span class="line">    <span class="comment"># result: [0, 1]</span></span><br><span class="line">    status = result[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> status == <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Send `<span class="subst">&#123;msg&#125;</span>` to topic `<span class="subst">&#123;topic&#125;</span>`&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Failed to send message to topic <span class="subst">&#123;topic&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_publish</span>():</span></span><br><span class="line">    client = connect_mqtt()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    client.loop_start()</span><br><span class="line">    <span class="comment"># 发布消息</span></span><br><span class="line">    <span class="comment"># stus = &#123;&quot;Tempeature&quot;:30.1,&quot;Humidity&quot;:40.2,&quot;Hours&quot;:12, &quot;Minutes&quot;:15&#125;</span></span><br><span class="line">    <span class="comment"># res2 = json.dumps(stus)  # 先把字典转成json</span></span><br><span class="line">    <span class="comment"># client.publish(&#x27;python/mqtt&#x27;, payload=res2, qos=0)</span></span><br><span class="line">    <span class="comment"># client.publish(&#x27;emqtt&#x27;, payload=&#x27;Hello World&#x27;, qos=0)</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">        <span class="comment"># 循环发布消息</span></span><br><span class="line">        publish(client, <span class="string">&quot;mqtt/guangdu&quot;</span>, i)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立连接</span></span><br><span class="line"><span class="comment"># MQTT Broker连接参数</span></span><br><span class="line">broker = <span class="string">&#x27;broker-cn.emqx.io&#x27;</span></span><br><span class="line">port = <span class="number">1883</span></span><br><span class="line">client_id = <span class="string">f&#x27;python-mqtt-<span class="subst">&#123;random.randint(<span class="number">0</span>, <span class="number">1000</span>)&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 消息发布</span></span><br><span class="line">run_publish()</span><br></pre></td></tr></table></figure>
-<h2 id="三、subcribe订阅消息（mqtt-subcribe-py）"><a href="#三、subcribe订阅消息（mqtt-subcribe-py）" class="headerlink" title="三、subcribe订阅消息（mqtt_subcribe.py）"></a>三、subcribe订阅消息（mqtt_subcribe.py）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Connected with result code: &quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理订阅到的消息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span>(<span class="params">client, userdata, msg</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(msg.topic + <span class="string">&quot; &quot;</span> + <span class="built_in">str</span>(msg.payload))</span><br><span class="line"></span><br><span class="line">client = mqtt.Client()</span><br><span class="line">client.on_connect = on_connect</span><br><span class="line">client.on_message = on_message</span><br><span class="line"></span><br><span class="line"><span class="comment"># MQTT Broker连接参数</span></span><br><span class="line">broker = <span class="string">&#x27;broker-cn.emqx.io&#x27;</span></span><br><span class="line">port = <span class="number">1883</span></span><br><span class="line">client_id = <span class="string">f&#x27;python-mqtt-<span class="subst">&#123;random.randint(<span class="number">0</span>, <span class="number">1000</span>)&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">client.connect(broker, port, <span class="number">600</span>) <span class="comment"># 600为keepalive的时间间隔</span></span><br><span class="line">client.subscribe(<span class="string">&quot;mqtt/guangdu&quot;</span>, qos=<span class="number">0</span>) <span class="comment"># subscribe 订阅</span></span><br><span class="line"></span><br><span class="line">client.loop_forever() <span class="comment"># 保持连接</span></span><br></pre></td></tr></table></figure>
-<h2 id="四、测试"><a href="#四、测试" class="headerlink" title="四、测试"></a>四、测试</h2><ul>
-<li>1.先把 mqtt_subcribe.py 运行起来（在VS Code）中</li>
-<li>2.再把 mqtt_publish.py 在命令行或Windows PowerShell中运行起来<code>python .\mqtt_publish.py</code></li>
-</ul>
-<p>就能看到效果啦。订阅消息的这边一直可以接收到发布出来的消息啦。</p>
-<p>所以，在订阅消息的 on_message方法中，可以把消息的主题（msg.topic）和消息的内容（msg.payload）直接存进数据库啦，sqlite和mysql都行。</p>
+<p>网上看了下 ，以为跟onnxruntime版本什么有关系，然后看到最后是安装VC++2019解决的。</p>
+<p>下载地址：<br>32位：<a class="link"   href="https://aka.ms/vs/16/release/VC_redist.x86.exe" >Microsoft Visual C++ Redistributable 2019x86 官方下载地址<i class="fas fa-external-link-alt"></i></a></p>
+<p>64位：<a class="link"   href="https://aka.ms/vs/16/release/VC_redist.x64.exe" >Microsoft Visual C++ Redistributable 2019x64 官方下载地址<i class="fas fa-external-link-alt"></i></a></p>
+<p>下载安装后，就可以正常使用了。</p>
 ]]></content>
       <categories>
         <category>Python</category>
       </categories>
       <tags>
-        <tag>物联网</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -3147,22 +3138,31 @@
       </tags>
   </entry>
   <entry>
-    <title>Python使用ddddocr报错ImportError</title>
-    <url>/2022/11/11/Python%E4%BD%BF%E7%94%A8ddddocr%E6%8A%A5%E9%94%99ImportError/</url>
-    <content><![CDATA[<p>安装好ddddocr后，使用的时候一直报错：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">    from .onnxruntime_pybind11_state import *  <span class="comment"># noqa</span></span><br><span class="line">ImportError: DLL load failed: 找不到指定的模块。</span><br></pre></td></tr></table></figure>
+    <title>Python使用MQTT举例</title>
+    <url>/2022/11/13/Python%E4%BD%BF%E7%94%A8MQTT%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>关于MQTT的简介和服务器的搭建，之前已经写了笔记了：<a href="/2022/11/12/Docker%E6%90%AD%E5%BB%BAMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建MQTT服务器">Docker搭建MQTT服务器</a></p>
+<p>用来学习、研究，自己不搭MQTT服务器也行，EMQX有提供免费的在线 MQTT 服务器（还提供证书的下载）：<br>官网：<a class="link"   href="https://www.emqx.com/zh/mqtt/public-mqtt5-broker" >https://www.emqx.com/zh/mqtt/public-mqtt5-broker<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MQTT 服务器信息</span><br><span class="line">Broker: broker-cn.emqx.io</span><br><span class="line">TCP 端口: 1883</span><br><span class="line">WebSocket 端口: 8083</span><br><span class="line">SSL&#x2F;TLS 端口: 8883</span><br><span class="line">WebSocket Secure 端口: 8084</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<p>网上看了下 ，以为跟onnxruntime版本什么有关系，然后看到最后是安装VC++2019解决的。</p>
-<p>下载地址：<br>32位：<a class="link"   href="https://aka.ms/vs/16/release/VC_redist.x86.exe" >Microsoft Visual C++ Redistributable 2019x86 官方下载地址<i class="fas fa-external-link-alt"></i></a></p>
-<p>64位：<a class="link"   href="https://aka.ms/vs/16/release/VC_redist.x64.exe" >Microsoft Visual C++ Redistributable 2019x64 官方下载地址<i class="fas fa-external-link-alt"></i></a></p>
-<p>下载安装后，就可以正常使用了。</p>
+<p>Python使用MQTT的例子，主要就写2个python文件，一个用来publish（发布消息），一个用来subcribe（订阅消息），看看是不是都能接收到消息。（消息订阅后都能接收到，就可以存入自己建的本地数据库啦）</p>
+<h2 id="一、安装paho-mqtt库"><a href="#一、安装paho-mqtt库" class="headerlink" title="一、安装paho-mqtt库"></a>一、安装paho-mqtt库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install paho-mqtt</span><br></pre></td></tr></table></figure>
+<p>安装了这个库就可以处理MQTT了，官方文档上也例子：<a class="link"   href="https://pypi.org/project/paho-mqtt/#" >https://pypi.org/project/paho-mqtt/#<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、publish发布消息（mqtt-publish-py）"><a href="#二、publish发布消息（mqtt-publish-py）" class="headerlink" title="二、publish发布消息（mqtt_publish.py）"></a>二、publish发布消息（mqtt_publish.py）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt_client</span><br><span class="line"><span class="keyword">import</span> time, json, random</span><br><span class="line"></span><br><span class="line"><span class="comment"># MQTT连接</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect_mqtt</span>():</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span></span><br><span class="line">        <span class="keyword">if</span> rc == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Connected to MQTT Broker!&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Failed to connect, return code %d\n&quot;</span>, rc)</span><br><span class="line">    <span class="comment"># Set Connecting Client ID</span></span><br><span class="line">    client = mqtt_client.Client(client_id)</span><br><span class="line">    client.on_connect = on_connect</span><br><span class="line">    client.connect(broker, port)</span><br><span class="line">    <span class="keyword">return</span> client</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发布消息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">publish</span>(<span class="params">client, topic, msg</span>):</span></span><br><span class="line">    <span class="comment"># msg = f&quot;messages: &#123;msg_count&#125;&quot;</span></span><br><span class="line">    result = client.publish(topic, msg)</span><br><span class="line">    <span class="comment"># result: [0, 1]</span></span><br><span class="line">    status = result[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> status == <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Send `<span class="subst">&#123;msg&#125;</span>` to topic `<span class="subst">&#123;topic&#125;</span>`&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Failed to send message to topic <span class="subst">&#123;topic&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_publish</span>():</span></span><br><span class="line">    client = connect_mqtt()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    client.loop_start()</span><br><span class="line">    <span class="comment"># 发布消息</span></span><br><span class="line">    <span class="comment"># stus = &#123;&quot;Tempeature&quot;:30.1,&quot;Humidity&quot;:40.2,&quot;Hours&quot;:12, &quot;Minutes&quot;:15&#125;</span></span><br><span class="line">    <span class="comment"># res2 = json.dumps(stus)  # 先把字典转成json</span></span><br><span class="line">    <span class="comment"># client.publish(&#x27;python/mqtt&#x27;, payload=res2, qos=0)</span></span><br><span class="line">    <span class="comment"># client.publish(&#x27;emqtt&#x27;, payload=&#x27;Hello World&#x27;, qos=0)</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">        <span class="comment"># 循环发布消息</span></span><br><span class="line">        publish(client, <span class="string">&quot;mqtt/guangdu&quot;</span>, i)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立连接</span></span><br><span class="line"><span class="comment"># MQTT Broker连接参数</span></span><br><span class="line">broker = <span class="string">&#x27;broker-cn.emqx.io&#x27;</span></span><br><span class="line">port = <span class="number">1883</span></span><br><span class="line">client_id = <span class="string">f&#x27;python-mqtt-<span class="subst">&#123;random.randint(<span class="number">0</span>, <span class="number">1000</span>)&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 消息发布</span></span><br><span class="line">run_publish()</span><br></pre></td></tr></table></figure>
+<h2 id="三、subcribe订阅消息（mqtt-subcribe-py）"><a href="#三、subcribe订阅消息（mqtt-subcribe-py）" class="headerlink" title="三、subcribe订阅消息（mqtt_subcribe.py）"></a>三、subcribe订阅消息（mqtt_subcribe.py）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> paho.mqtt.client <span class="keyword">as</span> mqtt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_connect</span>(<span class="params">client, userdata, flags, rc</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Connected with result code: &quot;</span> + <span class="built_in">str</span>(rc))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理订阅到的消息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span>(<span class="params">client, userdata, msg</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(msg.topic + <span class="string">&quot; &quot;</span> + <span class="built_in">str</span>(msg.payload))</span><br><span class="line"></span><br><span class="line">client = mqtt.Client()</span><br><span class="line">client.on_connect = on_connect</span><br><span class="line">client.on_message = on_message</span><br><span class="line"></span><br><span class="line"><span class="comment"># MQTT Broker连接参数</span></span><br><span class="line">broker = <span class="string">&#x27;broker-cn.emqx.io&#x27;</span></span><br><span class="line">port = <span class="number">1883</span></span><br><span class="line">client_id = <span class="string">f&#x27;python-mqtt-<span class="subst">&#123;random.randint(<span class="number">0</span>, <span class="number">1000</span>)&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line">client.connect(broker, port, <span class="number">600</span>) <span class="comment"># 600为keepalive的时间间隔</span></span><br><span class="line">client.subscribe(<span class="string">&quot;mqtt/guangdu&quot;</span>, qos=<span class="number">0</span>) <span class="comment"># subscribe 订阅</span></span><br><span class="line"></span><br><span class="line">client.loop_forever() <span class="comment"># 保持连接</span></span><br></pre></td></tr></table></figure>
+<h2 id="四、测试"><a href="#四、测试" class="headerlink" title="四、测试"></a>四、测试</h2><ul>
+<li>1.先把 mqtt_subcribe.py 运行起来（在VS Code）中</li>
+<li>2.再把 mqtt_publish.py 在命令行或Windows PowerShell中运行起来<code>python .\mqtt_publish.py</code></li>
+</ul>
+<p>就能看到效果啦。订阅消息的这边一直可以接收到发布出来的消息啦。</p>
+<p>所以，在订阅消息的 on_message方法中，可以把消息的主题（msg.topic）和消息的内容（msg.payload）直接存进数据库啦，sqlite和mysql都行。</p>
 ]]></content>
       <categories>
         <category>Python</category>
       </categories>
       <tags>
         <tag>Python</tag>
+        <tag>物联网</tag>
       </tags>
   </entry>
   <entry>
@@ -3199,6 +3199,56 @@
       <tags>
         <tag>Python</tag>
         <tag>微信小程序</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python文件操作 shutil库使用举例</title>
+    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
+<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
+<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
+<li>src是文件，dst可以是文件或目录</li>
+<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
+<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
+<li>src，dst都是文件</li>
+<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
+<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
+<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
+<li>src，dst都是目录</li>
+<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
+<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
+<li>删除path目录，path不能是文件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
+<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
+<li>把src文件或目录移动到dst目录</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3273,56 +3323,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python文件操作 shutil库使用举例</title>
-    <url>/2022/05/15/Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-shutil%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>本文用shutil库，实现对文件的操作（复制、移动）和对文件夹的操作（复制、移动、删除）的使用举例。</p>
-<p>官方文档：<a class="link"   href="https://docs.python.org/3.9/library/shutil.html" >https://docs.python.org/3.9/library/shutil.html<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="一、复制文件"><a href="#一、复制文件" class="headerlink" title="一、复制文件"></a>一、复制文件</h2><h3 id="1-copy-src-dst"><a href="#1-copy-src-dst" class="headerlink" title="1.copy(src, dst)"></a>1.copy(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到目录dst目录中（前提是存在dst目录）</li>
-<li>如果不存在dst目录，会复制内容保存成一个test文件，相当于复制文件了。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">shutil.copy(src, dst) <span class="comment"># return dst</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-copy2-src-dst"><a href="#2-copy2-src-dst" class="headerlink" title="2.copy2(src, dst)"></a>2.copy2(src, dst)</h3><ul>
-<li>src是文件，dst可以是文件或目录</li>
-<li>把src文件复制到dst目录中，并保留源文件元数据（前提是存在dst目录）</li>
-<li>这个和copy的区别就是复制出来的src文件的元数据能保留，比如src文件的修改日期这些会不变化。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\a.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test2&#x27;</span></span><br><span class="line">shutil.copy2(src, dst) <span class="comment"># return dst，如果不存在dst目录，会复制内容保存成一个test2文件</span></span><br></pre></td></tr></table></figure>
-<h3 id="3-copyfileobj-fsrc-fdst"><a href="#3-copyfileobj-fsrc-fdst" class="headerlink" title="3.copyfileobj(fsrc, fdst)"></a>3.copyfileobj(fsrc, fdst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfileobj(<span class="built_in">open</span>(src,<span class="string">&#x27;r&#x27;</span>), <span class="built_in">open</span>(dst,<span class="string">&#x27;w&#x27;</span>))</span><br></pre></td></tr></table></figure>
-<h3 id="4-copyfile-src-dst"><a href="#4-copyfile-src-dst" class="headerlink" title="4.copyfile(src, dst)"></a>4.copyfile(src, dst)</h3><ul>
-<li>src，dst都是文件</li>
-<li>把src文件内容复制到dst文件中，如果原文件存在，会覆盖原内容</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test\a.txt&#x27;</span></span><br><span class="line">shutil.copyfile(src, dst)</span><br></pre></td></tr></table></figure>
-<p><strong>所以，感觉copyfileobj、copyfile这2个方法也用不着，一般直接用copy()就可以实现。</strong></p>
-<h2 id="二、复制文件夹"><a href="#二、复制文件夹" class="headerlink" title="二、复制文件夹"></a>二、复制文件夹</h2><h3 id="5-copytree-src-dst"><a href="#5-copytree-src-dst" class="headerlink" title="5.copytree(src, dst)"></a>5.copytree(src, dst)</h3><ul>
-<li>src，dst都是目录</li>
-<li>把src文件夹复制到dst文件夹（dst文件夹不能已存在）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.copytree(src, dst)</span><br></pre></td></tr></table></figure>
-<h2 id="三、删除目录"><a href="#三、删除目录" class="headerlink" title="三、删除目录"></a>三、删除目录</h2><h3 id="6-rmtree-path"><a href="#6-rmtree-path" class="headerlink" title="6.rmtree(path)"></a>6.rmtree(path)</h3><ul>
-<li>删除path目录，path不能是文件</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">path= <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.rmtree(path)</span><br></pre></td></tr></table></figure>
-<h2 id="四、移动文件或目录"><a href="#四、移动文件或目录" class="headerlink" title="四、移动文件或目录"></a>四、移动文件或目录</h2><h3 id="7-move-src-dst"><a href="#7-move-src-dst" class="headerlink" title="7.move(src, dst)"></a>7.move(src, dst)</h3><ul>
-<li>把src文件或目录移动到dst目录</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line">src = <span class="string">r&#x27;D:\test&#x27;</span></span><br><span class="line">src2 = <span class="string">r&#x27;D:\test2\b.txt&#x27;</span></span><br><span class="line">dst = <span class="string">r&#x27;D:\test3&#x27;</span></span><br><span class="line">shutil.move(src, dst)</span><br><span class="line">shutil.move(src2, dst)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python 生成二维码图片</title>
     <url>/2022/06/01/Python%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%9B%BE%E7%89%87/</url>
     <content><![CDATA[<p>直接有第三方的库：qrcode<br>地址：<a class="link"   href="https://pypi.org/project/qrcode/" >https://pypi.org/project/qrcode/<i class="fas fa-external-link-alt"></i></a></p>
@@ -3370,6 +3370,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 识别验证码图片</title>
+    <url>/2022/11/11/Python%E8%AF%86%E5%88%AB%E9%AA%8C%E8%AF%81%E7%A0%81%E5%9B%BE%E7%89%87/</url>
+    <content><![CDATA[<p>之前对图片进行文字识别，用过百度的文字识别API，笔记：<a href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/" title="Python 对图片进行文字识别">Python 对图片进行文字识别</a></p>
+<p>但是发现，用这个来识别图片验证码，错误率就高多了。因为验证码图片有时候经常有一些处理，不是简单的没有干扰的文字。</p>
+<p>然后发现用ddddocr这个库精确多了。推荐用这个库试一下。</p>
+<a id="more"></a>
+
+<p>应该是1年前用过的了，发现这个库现在还更新了验证码点选和滑块的内容。</p>
+<p>源码：<a class="link"   href="https://github.com/sml2h3/ddddocr" >https://github.com/sml2h3/ddddocr<i class="fas fa-external-link-alt"></i></a></p>
+<p>上面都有举例，使用也很简单。</p>
+<p><strong>安装：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install ddddocr</span><br></pre></td></tr></table></figure>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> ddddocr</span><br><span class="line"></span><br><span class="line">ocr = ddddocr.DdddOcr()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\img\ocr_test.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    image = f.read()</span><br><span class="line"></span><br><span class="line">res = ocr.classification(image)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python用 Mysqldb时报错：MySQLdb._exceptions.OperationalError 解决方法</title>
     <url>/2022/06/04/Python%E7%94%A8Mysqldb%E6%97%B6%E6%8A%A5%E9%94%99OperationalError/</url>
     <content><![CDATA[<p>在Python里，用Mysqldb的时候，报错：<code>MySQLdb._exceptions.OperationalError: (2059, &lt;NULL&gt;)</code></p>
@@ -3392,28 +3414,6 @@
       <tags>
         <tag>Python</tag>
         <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 识别验证码图片</title>
-    <url>/2022/11/11/Python%E8%AF%86%E5%88%AB%E9%AA%8C%E8%AF%81%E7%A0%81%E5%9B%BE%E7%89%87/</url>
-    <content><![CDATA[<p>之前对图片进行文字识别，用过百度的文字识别API，笔记：<a href="/2021/03/13/Python%E5%AF%B9%E5%9B%BE%E7%89%87%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/" title="Python 对图片进行文字识别">Python 对图片进行文字识别</a></p>
-<p>但是发现，用这个来识别图片验证码，错误率就高多了。因为验证码图片有时候经常有一些处理，不是简单的没有干扰的文字。</p>
-<p>然后发现用ddddocr这个库精确多了。推荐用这个库试一下。</p>
-<a id="more"></a>
-
-<p>应该是1年前用过的了，发现这个库现在还更新了验证码点选和滑块的内容。</p>
-<p>源码：<a class="link"   href="https://github.com/sml2h3/ddddocr" >https://github.com/sml2h3/ddddocr<i class="fas fa-external-link-alt"></i></a></p>
-<p>上面都有举例，使用也很简单。</p>
-<p><strong>安装：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install ddddocr</span><br></pre></td></tr></table></figure>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> ddddocr</span><br><span class="line"></span><br><span class="line">ocr = ddddocr.DdddOcr()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\img\ocr_test.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    image = f.read()</span><br><span class="line"></span><br><span class="line">res = ocr.classification(image)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3565,6 +3565,41 @@
       </tags>
   </entry>
   <entry>
+    <title>Typora+PicGo无法显示Github图床图片问题</title>
+    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
+<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+<a id="more"></a>
+
+<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
+<p>如下图：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Typora_PicGo_Github_pic_1.png"
+                     
+                >
+
+<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
+<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
+<p>hosts文件在Windows系统中的路径：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
+<p>添加以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启下 Typora，果然可以了！</p>
+<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+        <tag>Typora</tag>
+        <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Termius破解方法（Windows版）</title>
     <url>/2022/06/03/Termius%E7%A0%B4%E8%A7%A3-Windows%E7%89%88/</url>
     <content><![CDATA[<p>Termius是一个挺好用的SSH客户端，有全平台版本。MacOS、Windows、Linux，还有IOS、Android。</p>
@@ -3626,41 +3661,6 @@
       <tags>
         <tag>Windows</tag>
         <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Typora+PicGo无法显示Github图床图片问题</title>
-    <url>/2022/04/09/Typora+PicGo%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BAGithub%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
-<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
-<a id="more"></a>
-
-<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
-<p>如下图：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Typora_PicGo_Github_pic_1.png"
-                     
-                >
-
-<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
-<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
-<p>hosts文件在Windows系统中的路径：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
-<p>添加以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启下 Typora，果然可以了！</p>
-<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>Hexo</tag>
-        <tag>Typora</tag>
-        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
@@ -3843,6 +3843,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu 命令行安装Chrome浏览器</title>
+    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
+<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
+<p>使用wget来下载 Google Chrome .deb 软件包：</p>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
+<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
+<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
+<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
+<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu安装Docker</title>
     <url>/2022/11/19/Ubuntu%E5%AE%89%E8%A3%85Docker/</url>
     <content><![CDATA[<p>自己装了一台Ubuntu Server，就是为了装个Docker，方便安装一些小的服务。</p>
@@ -3854,7 +3879,7 @@
 <a id="more"></a>
 
 <p>现在最新Ubuntu Server是22.04，不知道是否支持，照理应该最新的都会支持的，可能文档还没更新。不确定系统版本，用命令查看一下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsb_release -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 相关结果如下：</span></span><br><span class="line">Distributor ID:	Ubuntu</span><br><span class="line">Description:	Ubuntu 20.04.5 LTS</span><br><span class="line">Release:	20.04</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsb_release -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 相关结果如下：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Distributor ID:	Ubuntu</span><br><span class="line">Description:	Ubuntu 20.04.5 LTS</span><br><span class="line">Release:	20.04</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
 <h2 id="二、卸载旧版本Docker"><a href="#二、卸载旧版本Docker" class="headerlink" title="二、卸载旧版本Docker"></a>二、卸载旧版本Docker</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get remove docker docker-engine docker.io containerd runc</span><br></pre></td></tr></table></figure>
 <p>如果提示没有安装，没问题。</p>
 <h2 id="三、安装Docker"><a href="#三、安装Docker" class="headerlink" title="三、安装Docker"></a>三、安装Docker</h2><p><strong>安装方式：</strong></p>
@@ -3885,36 +3910,12 @@
 <h3 id="4-升级Docker引擎"><a href="#4-升级Docker引擎" class="headerlink" title="4.升级Docker引擎"></a>4.升级Docker引擎</h3><p>要升级Docker Engine，请先运行<code>sudo apt-get update</code>。</p>
 <h3 id="5-卸载Docker引擎（Uninstall-Docker-Engine）"><a href="#5-卸载Docker引擎（Uninstall-Docker-Engine）" class="headerlink" title="5.卸载Docker引擎（Uninstall Docker Engine）"></a>5.卸载Docker引擎（Uninstall Docker Engine）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1).卸载Docker Engine，CLI和Containerd和Docker Compose packages</span></span><br><span class="line">sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).主机上镜像、窗口、卷或自定义的配置文件不会自动删除。要删除所有:</span></span><br><span class="line">sudo rm -rf /var/lib/docker</span><br><span class="line">sudo rm -rf /var/lib/containerd</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Linux</category>
+        <category>Docker</category>
       </categories>
       <tags>
+        <tag>Docker</tag>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu 命令行安装Chrome浏览器</title>
-    <url>/2021/02/08/Ubuntu%E5%AE%89%E8%A3%85Chrome%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>这里在Ubuntu服务器上安装Google Chrome浏览器，主要是为了Python Selenium跑自动化测试用的，所以直接用命令行安装。</p>
-<h3 id="1-下载-Google-Chrome"><a href="#1-下载-Google-Chrome" class="headerlink" title="1.下载 Google Chrome"></a>1.下载 Google Chrome</h3><p>如果是可视化的，就用 Ctrl+Alt+T 快捷键打开终端。</p>
-<p>使用wget来下载 Google Chrome .deb 软件包：</p>
-<a id="more"></a>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>或者手动下载好放进去。<br>比如我这里下载好了用xftp工具直接上传到 <code>python/software</code> 目录中。那就需要用 cd 命令先进入到 software目录中。</p>
-<h3 id="2-安装-Google-Chrome"><a href="#2-安装-Google-Chrome" class="headerlink" title="2.安装 Google Chrome"></a>2.安装 Google Chrome</h3><p>在 Ubuntu 系统上安装软件包需要管理员权限。以 sudo 用户身份在你的系统上运行下面的命令来安装 Chrome .deb软件包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果有提示需要密码的，输入一下密码，安装将会开始。</p>
-<h3 id="3-查看-Google-Chrome版本"><a href="#3-查看-Google-Chrome版本" class="headerlink" title="3.查看 Google Chrome版本"></a>3.查看 Google Chrome版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">google-chrome --version</span><br></pre></td></tr></table></figure>
-<p>比如我这里安装完的版本是：Google Chrome 88.0.4324.146<br>此时，你已经在你的 Ubuntu 系统上安装好了 Chrome。</p>
-<p>这里需要知道 Chrome版本才好下载对应的 WebDriver，不同的版本是不同的。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-        <tag>Chrome</tag>
       </tags>
   </entry>
   <entry>
@@ -3954,36 +3955,6 @@
         <tag>Linux</tag>
         <tag>Python</tag>
         <tag>Selenium</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu安装完显示容量小于硬盘容量</title>
-    <url>/2022/11/18/Ubuntu%E5%AE%89%E8%A3%85%E5%AE%8C%E6%98%BE%E7%A4%BA%E5%AE%B9%E9%87%8F%E5%B0%8F%E4%BA%8E%E7%A1%AC%E7%9B%98%E5%AE%B9%E9%87%8F/</url>
-    <content><![CDATA[<p>Ubuntu Server 20.04安装完后（安装笔记：<a href="/2022/11/18/U%E7%9B%98%E5%AE%89%E8%A3%85Ubuntu-Server/" title="U盘安装Ubuntu Server">U盘安装Ubuntu Server</a>），发现安装的这块硬盘有256G，但明显只看到100G。因为安装的时候都直接默认了。</p>
-<p><strong>解决方法：</strong></p>
-<p><strong>1.用 <code>lvdisplay</code> 命令查看LVM逻辑卷信息</strong></p>
-<p>可以看到结果中（LV Path记一下，后面会用到）：</p>
-<blockquote>
-<p>LV Path                /dev/ubuntu-vg/ubuntu-lv<br>LV Size           100.00 GiB</p>
-</blockquote>
-<a id="more"></a>
-
-<p><strong>2.用 <code>fdisk -l</code>命令查看所有分区表</strong></p>
-<p>结果如下，可以看到硬盘实际大小是238.49G（256G硬盘）是SAMSUNG三星的。明显是大于100G的。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">Disk /dev/sdb: 238.49 GiB, 256060514304 bytes, 500118192 sectors</span><br><span class="line">Disk model: SAMSUNG MZNLN256</span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">Disklabel <span class="built_in">type</span>: gpt</span><br><span class="line">Disk identifier: 7F793134-2627-4B7F-AF49-C65449FE962C</span><br><span class="line"></span><br><span class="line">Device       Start       End   Sectors   Size Type</span><br><span class="line">/dev/sdb1     2048   2203647   2201600   1.1G EFI System</span><br><span class="line">/dev/sdb2  2203648   6397951   4194304     2G Linux filesystem</span><br><span class="line">/dev/sdb3  6397952 500115455 493717504 235.4G Linux filesystem</span><br></pre></td></tr></table></figure>
-<p><strong>3.逻辑分区扩容</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># lvextend：扩展逻辑卷物理边界</span></span><br><span class="line"><span class="comment"># 后面的逻辑分区名称用lvdisplay命令获取到的LV Path</span></span><br><span class="line">lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv</span><br><span class="line"></span><br><span class="line"><span class="comment"># resize2fs：扩展逻辑卷逻辑边界</span></span><br><span class="line">resize2fs /dev/ubuntu-vg/ubuntu-lv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看结果,显示磁盘信息</span></span><br><span class="line">df -h</span><br></pre></td></tr></table></figure>
-<p>结果如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Filesystem                         Size  Used Avail Use% Mounted on</span><br><span class="line">udev                               3.8G     0  3.8G   0% /dev</span><br><span class="line">tmpfs                              779M  1.5M  777M   1% /run</span><br><span class="line">/dev/mapper/ubuntu--vg-ubuntu--lv  232G  8.4G  213G   4% /</span><br><span class="line">tmpfs                              3.8G     0  3.8G   0% /dev/shm</span><br><span class="line">tmpfs                              5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs                              3.8G     0  3.8G   0% /sys/fs/cgroup</span><br><span class="line">/dev/sdb2                          2.0G  107M  1.7G   6% /boot</span><br><span class="line">/dev/sdb1                          1.1G  5.3M  1.1G   1% /boot/efi</span><br><span class="line">/dev/loop0                          62M   62M     0 100% /snap/core20/1611</span><br><span class="line">/dev/loop2                          47M   47M     0 100% /snap/snapd/16292</span><br><span class="line">/dev/loop1                          64M   64M     0 100% /snap/core20/1695</span><br><span class="line">/dev/loop3                          50M   50M     0 100% /snap/snapd/17576</span><br><span class="line">/dev/loop4                          68M   68M     0 100% /snap/lxd/22753</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>看到 /dev/mapper/ubuntu–vg-ubuntu–lv  232G这里已经有了。</p>
-<p>如果还要添加新硬盘的，看下一篇笔记：<a href="/2022/11/18/Ubuntu%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%A1%AC%E7%9B%98/" title="Ubuntu添加新硬盘">Ubuntu添加新硬盘</a></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
   </entry>
@@ -4031,19 +4002,49 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu安装完显示容量小于硬盘容量</title>
+    <url>/2022/11/18/Ubuntu%E5%AE%89%E8%A3%85%E5%AE%8C%E6%98%BE%E7%A4%BA%E5%AE%B9%E9%87%8F%E5%B0%8F%E4%BA%8E%E7%A1%AC%E7%9B%98%E5%AE%B9%E9%87%8F/</url>
+    <content><![CDATA[<p>Ubuntu Server 20.04安装完后（安装笔记：<a href="/2022/11/18/U%E7%9B%98%E5%AE%89%E8%A3%85Ubuntu-Server/" title="U盘安装Ubuntu Server">U盘安装Ubuntu Server</a>），发现安装的这块硬盘有256G，但明显只看到100G。因为安装的时候都直接默认了。</p>
+<p><strong>解决方法：</strong></p>
+<p><strong>1.用 <code>lvdisplay</code> 命令查看LVM逻辑卷信息</strong></p>
+<p>可以看到结果中（LV Path记一下，后面会用到）：</p>
+<blockquote>
+<p>LV Path                /dev/ubuntu-vg/ubuntu-lv<br>LV Size           100.00 GiB</p>
+</blockquote>
+<a id="more"></a>
+
+<p><strong>2.用 <code>fdisk -l</code>命令查看所有分区表</strong></p>
+<p>结果如下，可以看到硬盘实际大小是238.49G（256G硬盘）是SAMSUNG三星的。明显是大于100G的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">---------------------------------------</span><br><span class="line">...</span><br><span class="line">Disk /dev/sdb: 238.49 GiB, 256060514304 bytes, 500118192 sectors</span><br><span class="line">Disk model: SAMSUNG MZNLN256</span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">Disklabel <span class="built_in">type</span>: gpt</span><br><span class="line">Disk identifier: 7F793134-2627-4B7F-AF49-C65449FE962C</span><br><span class="line"></span><br><span class="line">Device       Start       End   Sectors   Size Type</span><br><span class="line">/dev/sdb1     2048   2203647   2201600   1.1G EFI System</span><br><span class="line">/dev/sdb2  2203648   6397951   4194304     2G Linux filesystem</span><br><span class="line">/dev/sdb3  6397952 500115455 493717504 235.4G Linux filesystem</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
+<p><strong>3.逻辑分区扩容</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># lvextend：扩展逻辑卷物理边界</span></span><br><span class="line"><span class="comment"># 后面的逻辑分区名称用lvdisplay命令获取到的LV Path</span></span><br><span class="line">lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv</span><br><span class="line"></span><br><span class="line"><span class="comment"># resize2fs：扩展逻辑卷逻辑边界</span></span><br><span class="line">resize2fs /dev/ubuntu-vg/ubuntu-lv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看结果,显示磁盘信息</span></span><br><span class="line">df -h</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Filesystem                         Size  Used Avail Use% Mounted on</span><br><span class="line">udev                               3.8G     0  3.8G   0% /dev</span><br><span class="line">tmpfs                              779M  1.5M  777M   1% /run</span><br><span class="line">/dev/mapper/ubuntu--vg-ubuntu--lv  232G  8.4G  213G   4% /</span><br><span class="line">tmpfs                              3.8G     0  3.8G   0% /dev/shm</span><br><span class="line">tmpfs                              5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs                              3.8G     0  3.8G   0% /sys/fs/cgroup</span><br><span class="line">/dev/sdb2                          2.0G  107M  1.7G   6% /boot</span><br><span class="line">/dev/sdb1                          1.1G  5.3M  1.1G   1% /boot/efi</span><br><span class="line">/dev/loop0                          62M   62M     0 100% /snap/core20/1611</span><br><span class="line">/dev/loop2                          47M   47M     0 100% /snap/snapd/16292</span><br><span class="line">/dev/loop1                          64M   64M     0 100% /snap/core20/1695</span><br><span class="line">/dev/loop3                          50M   50M     0 100% /snap/snapd/17576</span><br><span class="line">/dev/loop4                          68M   68M     0 100% /snap/lxd/22753</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>看到 /dev/mapper/ubuntu–vg-ubuntu–lv  232G这里已经有了。</p>
+<p>如果还要添加新硬盘的，看下一篇笔记：<a href="/2022/11/18/Ubuntu%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%A1%AC%E7%9B%98/" title="Ubuntu添加新硬盘">Ubuntu添加新硬盘</a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu添加新硬盘</title>
     <url>/2022/11/18/Ubuntu%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%A1%AC%E7%9B%98/</url>
     <content><![CDATA[<p>因为我这台主机本身就装了2块硬盘，一块256G的固态+1T机械硬盘。之前安装Ubuntu的时候，使用了256G的固态硬盘。</p>
 <p>原来装的是windows，2块硬盘都在用的。所以，现在需要把1T的硬盘挂载下。<br>本文中使用了root用户，没有用root用户的话，需要sudo记得加上。</p>
 <p><strong>1.查看硬盘信息</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fdisk -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新硬盘相关结果如下：</span></span><br><span class="line">...</span><br><span class="line">Disk /dev/sda: 931.53 GiB, 1000204886016 bytes, 1953525168 sectors</span><br><span class="line">Disk model: ST1000DM010-2EP1</span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 4096 bytes</span><br><span class="line">I/O size (minimum/optimal): 4096 bytes / 4096 bytes</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fdisk -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新硬盘相关结果如下：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">...</span><br><span class="line">Disk /dev/sda: 931.53 GiB, 1000204886016 bytes, 1953525168 sectors</span><br><span class="line">Disk model: ST1000DM010-2EP1</span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 4096 bytes</span><br><span class="line">I/O size (minimum/optimal): 4096 bytes / 4096 bytes</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
 <p>记住：/dev/sda</p>
 <a id="more"></a>
 
 <p><strong>2.删除分区</strong></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入使用fdisk, /dev/sda为fdisk -l查询到的新硬盘的信息</span></span><br><span class="line">fdisk /dev/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取帮助</span></span><br><span class="line">m</span><br><span class="line"><span class="comment"># 输入d后回车，删除分区；继续输入d回车，直到提示没有可删除的分区了 </span></span><br><span class="line">d</span><br><span class="line"><span class="comment"># 最后输入w命令，写入并退出</span></span><br><span class="line">w</span><br></pre></td></tr></table></figure>
 <p><strong>3.挂载目录</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 格式化成xfs文件系统，/dev/sda为fdisk -l查询到的新硬盘的信息</span></span><br><span class="line">mkfs.xfs -f /dev/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/dev/sda文件系统情况，可以看到还未挂载</span></span><br><span class="line">lsblk -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建挂载目录</span></span><br><span class="line">mkdir /mnt/sda</span><br><span class="line"><span class="comment"># 挂载目录</span></span><br><span class="line">mount /dev/sda /mnt/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看已挂载的分区和文件系统类型（Type）</span></span><br><span class="line">df -T</span><br><span class="line"><span class="comment"># 相关结果如下：</span></span><br><span class="line">Filesystem                        Type     1K-blocks    Used Available Use% Mounted on</span><br><span class="line">...</span><br><span class="line">/dev/mapper/ubuntu--vg-ubuntu--lv ext4     242397656 8736244 222701312   4% /</span><br><span class="line">/dev/sdb2                         ext4       1992552  109248   1762064   6% /boot</span><br><span class="line">...</span><br><span class="line">/dev/sda                          xfs      976285652 6839860 969445792   1% /mnt/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件系统磁盘使用情况</span></span><br><span class="line">df -h</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 格式化成xfs文件系统，/dev/sda为fdisk -l查询到的新硬盘的信息</span></span><br><span class="line">mkfs.xfs -f /dev/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看/dev/sda文件系统情况，可以看到还未挂载</span></span><br><span class="line">lsblk -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建挂载目录</span></span><br><span class="line">mkdir /mnt/sda</span><br><span class="line"><span class="comment"># 挂载目录</span></span><br><span class="line">mount /dev/sda /mnt/sda</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看已挂载的分区和文件系统类型（Type）</span></span><br><span class="line">df -T</span><br><span class="line"><span class="comment"># 相关结果如下：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Filesystem                        Type     1K-blocks    Used Available Use% Mounted on</span><br><span class="line">...</span><br><span class="line">/dev/mapper/ubuntu--vg-ubuntu--lv ext4     242397656 8736244 222701312   4% /</span><br><span class="line">/dev/sdb2                         ext4       1992552  109248   1762064   6% /boot</span><br><span class="line">...</span><br><span class="line">/dev/sda                          xfs      976285652 6839860 969445792   1% /mnt/sda</span><br><span class="line">---------------------------------------</span><br><span class="line"><span class="comment"># 查看文件系统磁盘使用情况</span></span><br><span class="line">df -h</span><br></pre></td></tr></table></figure>
 <p><strong>4.重启时自动挂载</strong></p>
 <p>配置/etc/fstab文件。用vi打开配置文件，编辑</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/fstab</span><br></pre></td></tr></table></figure>
@@ -4053,6 +4054,26 @@
         <category>Linux</category>
       </categories>
       <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu设置普通用户也能执行docker命令</title>
+    <url>/2022/11/19/Ubuntu%E8%AE%BE%E7%BD%AE%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E4%B9%9F%E8%83%BD%E6%89%A7%E8%A1%8Cdocker%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<p>在使用docker命令的时候，是需要在命令前加上<code>sudo</code>的管理员权限的，不然就会没有权限。</p>
+<p>每次要加很烦，之前是直接就切换到root用户来着 。</p>
+<p>如果不想切换到root用户，直接使用当前登录用户，可以用以下</p>
+<a id="more"></a>
+<p><strong>设置方法：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.#添加docker用户组</span></span><br><span class="line">sudo groupadd docker</span><br><span class="line"><span class="comment"># 结果如下：（正常情况下都已经有docker用户组了）</span></span><br><span class="line"><span class="comment"># roupadd: group &#x27;docker&#x27; already exists</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.将当前登陆用户加入到docker用户组中</span></span><br><span class="line">sudo gpasswd -a <span class="variable">$USER</span> docker</span><br><span class="line"><span class="comment"># 结果如下（添加成功）：</span></span><br><span class="line"><span class="comment"># Adding user hduzn to group docker</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.更新docker用户组</span></span><br><span class="line">newgrp docker</span><br></pre></td></tr></table></figure>
+<p>然后当前用户就可以直接用docker命令了。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
       </tags>
@@ -4086,7 +4107,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Your name: 自定义，随意</span><br><span class="line">Your server&#39;s name：自定义，随意。</span><br><span class="line">Pick a username: 用户名，这个登录的时候需要的。比如：ubuntuabc</span><br><span class="line">Choose a password: 密码。比如：ubuntuabc</span><br><span class="line">Confirm you password: 确定密码</span><br></pre></td></tr></table></figure>
 <p>等待安装完成后，选一下【Reboot Now】（重启），选完就拔掉U盘启动。</p>
 <h3 id="2-设置网络（静态IP）"><a href="#2-设置网络（静态IP）" class="headerlink" title="2.设置网络（静态IP）"></a>2.设置网络（静态IP）</h3><p>安装完成重启后，可以先查看发行版本信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示结果：</span></span><br><span class="line">Ubuntu 20.04.5 LTS \n \l</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示结果：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Ubuntu 20.04.5 LTS \n \l</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
 <p>插上网线后，用vi打开配置文件<code>/etc/netplan/00-installer-config.yaml</code>（不同版本可能文件名有点不一样）</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 需要root权限，可以在前面加上sudo</span></span><br><span class="line"><span class="comment"># 我就直接用命令：sudo su切换成root用户了</span></span><br><span class="line">vi /etc/netplan/00-installer-config.yaml</span><br></pre></td></tr></table></figure>
 <p>配置文件内容如下（vi命令不会的看这篇笔记：<a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a>）：</p>
@@ -4354,6 +4375,22 @@
       </categories>
       <tags>
         <tag>Office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pip升级命令</title>
+    <url>/2022/10/18/pip%E5%8D%87%E7%BA%A7%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h3 id="1-查看当前安装的pip版本"><a href="#1-查看当前安装的pip版本" class="headerlink" title="1.查看当前安装的pip版本"></a>1.查看当前安装的pip版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看到pip完整信息</span></span><br><span class="line">pip show pip</span><br><span class="line"><span class="comment"># 下面这个经常用来查版本的也可以查询到</span></span><br><span class="line">pip --version</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="2-升级pip"><a href="#2-升级pip" class="headerlink" title="2.升级pip"></a>2.升级pip</h3><p>如果用pip安装的时候会有比较慢的问题，可以先更改一下pip默认的源，看之前这篇笔记：<a href="/2022/10/12/Python-pip%E6%BA%90%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90%EF%BC%89/" title="Python pip源设置（使用清华源）">Python pip源设置（使用清华源）</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用pip命令时使用清华源</span></span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"><span class="comment"># 升级pip</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+<h3 id="3-pip卸载-amp-安装"><a href="#3-pip卸载-amp-安装" class="headerlink" title="3.pip卸载&amp;安装"></a>3.pip卸载&amp;安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pip卸载</span></span><br><span class="line">python -m pip uninstall pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip安装</span></span><br><span class="line">python -m ensurepip --default-pip</span><br><span class="line"><span class="comment"># pip安装 有setuptools的话</span></span><br><span class="line">easy_install pip</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4637,19 +4674,37 @@
       </tags>
   </entry>
   <entry>
-    <title>pip升级命令</title>
-    <url>/2022/10/18/pip%E5%8D%87%E7%BA%A7%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<h3 id="1-查看当前安装的pip版本"><a href="#1-查看当前安装的pip版本" class="headerlink" title="1.查看当前安装的pip版本"></a>1.查看当前安装的pip版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看到pip完整信息</span></span><br><span class="line">pip show pip</span><br><span class="line"><span class="comment"># 下面这个经常用来查版本的也可以查询到</span></span><br><span class="line">pip --version</span><br></pre></td></tr></table></figure>
+    <title>you-get 使用教程</title>
+    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
 <a id="more"></a>
 
-<h3 id="2-升级pip"><a href="#2-升级pip" class="headerlink" title="2.升级pip"></a>2.升级pip</h3><p>如果用pip安装的时候会有比较慢的问题，可以先更改一下pip默认的源，看之前这篇笔记：<a href="/2022/10/12/Python-pip%E6%BA%90%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90%EF%BC%89/" title="Python pip源设置（使用清华源）">Python pip源设置（使用清华源）</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用pip命令时使用清华源</span></span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"><span class="comment"># 升级pip</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<h3 id="3-pip卸载-amp-安装"><a href="#3-pip卸载-amp-安装" class="headerlink" title="3.pip卸载&amp;安装"></a>3.pip卸载&amp;安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pip卸载</span></span><br><span class="line">python -m pip uninstall pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip安装</span></span><br><span class="line">python -m ensurepip --default-pip</span><br><span class="line"><span class="comment"># pip安装 有setuptools的话</span></span><br><span class="line">easy_install pip</span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
+<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
+<li>3、安装 RTMPDump（可选）</li>
+<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
+</ul>
+<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
+<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
+<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
+<p>标有 DEFAULT的为默认画质。</p>
+<p>2、下载视频</p>
+<p>1).下载默认画质（即DEFAULT）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
+<p>2).选择画质下载（选择itag）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
+<p>3).视频中嵌入字幕</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
+<p>4)、用代理下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Python</category>
+        <category>Software</category>
       </categories>
       <tags>
-        <tag>Python</tag>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -4691,40 +4746,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>you-get 使用教程</title>
-    <url>/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<p>you-get 和 youtube-dl 差不多，都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。<br>youtube-dl 主要用来下载Youtube上的视频，别的能用you-get下载的就用you-get，因为用起来更方便、简单。</p>
-<a id="more"></a>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><ul>
-<li>1、安装 python（<a class="link"   href="https://www.python.org/" >https://www.python.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>2、安装 ffmpeg （<a class="link"   href="http://ffmpeg.org/" >http://ffmpeg.org/<i class="fas fa-external-link-alt"></i></a> ）</li>
-<li>3、安装 RTMPDump（可选）</li>
-<li>4、安装you-get （pip3 install you-get 或从 <a class="link"   href="https://github.com/soimort/you-get/releases/latest" >https://github.com/soimort/you-get/releases/latest<i class="fas fa-external-link-alt"></i></a> 下载）</li>
-</ul>
-<p>因为命令行需要用到 you-get，所以把ffmpeg、you-get 都添加到系统环境变量。</p>
-<p>you-get 项目github地址：<a class="link"   href="https://github.com/soimort/you-get" >https://github.com/soimort/you-get<i class="fas fa-external-link-alt"></i></a></p>
-<p>you-get中文说明文档：<a class="link"   href="https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E" >https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></p>
-<h2 id="二、下载视频"><a href="#二、下载视频" class="headerlink" title="二、下载视频"></a>二、下载视频</h2><p>1、查看视频所有类型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -i [url]</span><br></pre></td></tr></table></figure>
-<p>标有 DEFAULT的为默认画质。</p>
-<p>2、下载视频</p>
-<p>1).下载默认画质（即DEFAULT）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get [url]</span><br></pre></td></tr></table></figure>
-<p>2).选择画质下载（选择itag）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --itag=137 [url]</span><br></pre></td></tr></table></figure>
-<p>3).视频中嵌入字幕</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get --embed-subs [url]</span><br></pre></td></tr></table></figure>
-<p>4)、用代理下载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">you-get -x 127.0.0.1:1080 [url]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -4964,7 +4985,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#109;" >&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;" >&#x67;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -5301,45 +5322,6 @@
       </tags>
   </entry>
   <entry>
-    <title>浏览器记住密码后无法查看 解决方法</title>
-    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
-    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
-<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
-<a id="more"></a>
-
-<p>如图所示（就这个鬼样）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_1.png"
-                     
-                ></p>
-<p><strong>解决方法：</strong></p>
-<ul>
-<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
-<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
-</ul>
-<p>修改type类型前是这样的：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_2.png"
-                     
-                ></p>
-<p>修改type类型后（已经能看到密码）：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/browser_can_not_see_password_3.png"
-                     
-                ></p>
-<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
-]]></content>
-      <categories>
-        <category>Software</category>
-      </categories>
-      <tags>
-        <tag>Software</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>本博客使用的Hexo主题为：Keep</title>
     <url>/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/</url>
     <content><![CDATA[<p>—————————-更新于：2022年04月30日—————————-</p>
@@ -5399,6 +5381,45 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器记住密码后无法查看 解决方法</title>
+    <url>/2022/06/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%B0%E4%BD%8F%E5%AF%86%E7%A0%81%E5%90%8E%E6%97%A0%E6%B3%95%E6%9F%A5%E7%9C%8B/</url>
+    <content><![CDATA[<p>碰到过的就是360的浏览器（安全浏览器、极速浏览器）！简直了！</p>
+<p>记住密码后，进入设置中，能搜出来的确保存了，都只有点，压根无法查看密码。（这个太反人类了吧）别家浏览器都是打个星号(<code>*</code>)啥的，然后输一下当前电脑的密码就能查看了。</p>
+<a id="more"></a>
+
+<p>如图所示（就这个鬼样）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_1.png"
+                     
+                ></p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>1.通过浏览器的开发工具(按F12)，查看审查元素（定位到这个密码的框）；</li>
+<li>2.把原来type的类型从password改成text，回车，就能看到了。</li>
+</ul>
+<p>修改type类型前是这样的：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_2.png"
+                     
+                ></p>
+<p>修改type类型后（已经能看到密码）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/browser_can_not_see_password_3.png"
+                     
+                ></p>
+<p>PS.当然，这个方法查看已保存的密码的方法是适用于所有浏览器的。别的浏览器也可以这样看已保存的密码。</p>
+]]></content>
+      <categories>
+        <category>Software</category>
+      </categories>
+      <tags>
+        <tag>Software</tag>
       </tags>
   </entry>
   <entry>
@@ -5523,6 +5544,41 @@
       </tags>
   </entry>
   <entry>
+    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
+    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
+    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
+<a id="more"></a>
+
+<p>如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_1.png"
+                     
+                ></p>
+<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
+<ul>
+<li>1.使用管理员权限登录DSM；</li>
+<li>2.打开【控制面板】；</li>
+<li>3.找到“共享文件夹”；</li>
+<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
+<li>5.切换到“高级权限”标签页；</li>
+<li>6.勾选“启用高级共享权限”后点击确定。</li>
+</ul>
+<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/NAS_homes_setting_not_see_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>NAS</category>
+      </categories>
+      <tags>
+        <tag>NAS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>群晖NAS frp内网穿透教程</title>
     <url>/2022/10/17/%E7%BE%A4%E6%99%96NAS-frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>群晖的系统管理页面，一般默认访问就是：192.168.1.122:5000 类似这样的局域网地址，端口号5000，ip是自己的路由器可以绑的一个ip地址。</p>
@@ -5594,41 +5650,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>群晖NAS 设置不同用户之间homes目录不可见</title>
-    <url>/2022/06/04/%E7%BE%A4%E6%99%96NAS-%E8%AE%BE%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E4%B9%8B%E9%97%B4homes%E7%9B%AE%E5%BD%95%E4%B8%8D%E5%8F%AF%E8%A7%81/</url>
-    <content><![CDATA[<p>默认的情况，每个用户登录后，都能从File station中看到homes目录，homes目录里有每个用户的Drive目录。那相当于每个用户都能看到其它用户存在Drive里的文件了。（这个默认感觉不太好）</p>
-<a id="more"></a>
-
-<p>如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_1.png"
-                     
-                ></p>
-<p><strong>设置不同用户之间homes目录不可见方法：</strong></p>
-<ul>
-<li>1.使用管理员权限登录DSM；</li>
-<li>2.打开【控制面板】；</li>
-<li>3.找到“共享文件夹”；</li>
-<li>4.选中右侧“homes”，点击上方【编辑】按钮；</li>
-<li>5.切换到“高级权限”标签页；</li>
-<li>6.勾选“启用高级共享权限”后点击确定。</li>
-</ul>
-<p>再次登录用户，就会看到homes目录已经不出现在File station的列表中，仅能登录用户的home目录。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/NAS_homes_setting_not_see_2.png"
-                     
-                ></p>
-]]></content>
-      <categories>
-        <category>NAS</category>
-      </categories>
-      <tags>
-        <tag>NAS</tag>
       </tags>
   </entry>
   <entry>
