@@ -261,9 +261,9 @@
 <h3 id="（二）、外网同步配置"><a href="#（二）、外网同步配置" class="headerlink" title="（二）、外网同步配置"></a>（二）、外网同步配置</h3><p><strong>思路</strong>：<br>既然内网可以访问了，如果像我一样有公网ip的服务器的话，用frp内网穿透（内网穿透不限这个工具）下就可以啦。</p>
 <p>怎么在服务器上搭建frp服务器看这篇：<a href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建frp内网穿透服务器">Docker搭建frp内网穿透服务器</a><br>没有安装Docker看这篇：<a href="/2022/11/19/Ubuntu%E5%AE%89%E8%A3%85Docker/" title="Ubuntu安装Docker">Ubuntu安装Docker</a><br>群晖NAS使用frp看这篇：<a href="/2022/10/17/%E7%BE%A4%E6%99%96NAS-frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%95%99%E7%A8%8B/" title="群晖NAS frp内网穿透教程">群晖NAS frp内网穿透教程</a></p>
 <p>使用方法，其实跟普通的电脑也没啥区别，群晖启用下Docker，直接Docker用frp就行。</p>
-<p>比如我服务器ip：43.142.94.65<br>在 frpc.ini配置文件中，把本机（群晖）的 local_port = 5005 映射到对应的 remote_port = 18588后，WebDAV URL就变成了：http:43.142.94.65:18588/home/Drive/Joplin-note</p>
+<p>比如我服务器ip：43.142.94.65<br>在 frpc.ini配置文件中，把本机（群晖）的 local_port = 5005 映射到对应的 remote_port = 18588后，WebDAV URL就变成了：<a class="link"   target="_blank" rel="noopener" href="http://43.142.94.65:18588/home/Drive/Joplin-note" >http://43.142.94.65:18588/home/Drive/Joplin-note<i class="fas fa-external-link-alt"></i></a></p>
 <h3 id="（三）、外网HTTPS配置"><a href="#（三）、外网HTTPS配置" class="headerlink" title="（三）、外网HTTPS配置"></a>（三）、外网HTTPS配置</h3><p>因为我的服务器本来就配了域名的。所以就顺便用https了，毕竟域名比ip好记。回头服务器换了，ip还会跟着换。</p>
-<p>使用https的话，这里群晖上是需要给域名上传个证书的。</p>
+<p>使用https的话，就不能直接用ip了，因为群晖上是需要证书的 ，需要 给域名上传个证书的。</p>
 <h4 id="1-群晖NAS-启用DNSPod-DDNS"><a href="#1-群晖NAS-启用DNSPod-DDNS" class="headerlink" title="1.群晖NAS 启用DNSPod DDNS"></a>1.群晖NAS 启用DNSPod DDNS</h4><p>我的域名是在腾讯云的DNSPod上买的，直接有官网文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.dnspod.cn/dns/dnspod-synology-nas-ddns/" >群晖（Synology） NAS 启用 DNSPod DDNS<i class="fas fa-external-link-alt"></i></a></p>
 <ul>
 <li><p>1).DNSPod注册域名</p>
