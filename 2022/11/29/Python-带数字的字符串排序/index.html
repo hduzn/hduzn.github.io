@@ -9,7 +9,7 @@
     
     <title>
         
-            Linux 修改文件权限 |
+            Python 带数字的字符串排序 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Linux 修改文件权限</span>
+            <span class="title-hover-animation">Python 带数字的字符串排序</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-08 21:10:00</span>
-        <span class="mobile">2021-02-08 21:10</span>
+        <span class="pc">2022-11-29 21:11:32</span>
+        <span class="mobile">2022-11-29 21:11</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                        <a href="/categories/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                        <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,56 +239,39 @@
         
 
         <div class="article-content markdown-body">
-            <p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
+            <p>当字符串中有数字的时候，想给字符串进行排序，不管用列表的sort()方法，还是sorted()方法，都一想，得到的结果会发现都不是我们想要的。</p>
+<p>举个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">list1 = [<span class="string">&#x27;01&#x27;</span>, <span class="string">&#x27;11&#x27;</span>, <span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;21&#x27;</span>, <span class="string">&#x27;02&#x27;</span>]</span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list1.sort()</span><br><span class="line"><span class="built_in">print</span>(list1) <span class="comment"># [&#x27;01&#x27;, &#x27;02&#x27;, &#x27;10&#x27;, &#x27;11&#x27;, &#x27;21&#x27;]</span></span><br><span class="line">list2.sort()</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生10&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;]</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
+<p>当给这样的列表中的字符串直接排序的时候，看print打印出来的结果，只有纯数字的字符串列表list1是正确的，list2和list3排完后都不是我们想要的结果。</p>
+<p>比如list2的排序，排序前是：<br><code>list2 = [&#39;学生2&#39;, &#39;学生1&#39;, &#39;学生10&#39;, &#39;学生4&#39;]</code><br>排序完后是：<br><code>list2 = [&#39;学生1&#39;, &#39;学生10&#39;, &#39;学生2&#39;, &#39;学生4&#39;]</code></p>
+<p>这里就需要用到sort()方法中的key参数了。</p>
+<h3 id="List-sort-方法"><a href="#List-sort-方法" class="headerlink" title="List sort()方法"></a>List sort()方法</h3><p><strong>功能：</strong>用于对原列表进行排序，如果指定参数，则使用比较函数指定的比较函数。<br><strong>语法：</strong>list.sort(cmp=None, key=None, reverse=False)</p>
 <ul>
-<li>read</li>
-<li>write</li>
-<li>execute</li>
-<li>none</li>
+<li>cmp：可选参数, 如果指定了该参数会使用该参数的方法进行排序。</li>
+<li>key：主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。</li>
+<li>reverse：排序规则，reverse=True 降序， reverse=False 升序（默认）。</li>
 </ul>
-<p>例如：运行命令 <code>ls -l</code> 后</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
-<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
-<ul>
-<li>r 代表read，可读</li>
-<li>w 代表write，可写入</li>
-<li>x 代表execute，可执行</li>
-<li>-代表none</li>
-</ul>
-<p>这里就代表什么样的人对文件有什么样的权限。</p>
-<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
-<ul>
-<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
-<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
-<li>最后3位(r–)表示：其它人，只读</li>
-</ul>
-<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
-<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
-<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
-<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
-<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
-<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
-</ul>
-<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
-<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
-<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
-<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
-<p>Readme.txt文件的所有者就变为testuser</p>
-
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><h4 id="1-使用匿名函数"><a href="#1-使用匿名函数" class="headerlink" title="1.使用匿名函数"></a>1.使用匿名函数</h4><p>代码如下 ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=<span class="keyword">lambda</span> customeSort: (customeSort[:<span class="number">2</span>], <span class="built_in">int</span>(customeSort[<span class="number">2</span>:])))</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>使用匿名函数，customeSort指列表的数据。<br>如果不好理解，可以用下面的方法。</p>
+<h4 id="2-更清晰的写法"><a href="#2-更清晰的写法" class="headerlink" title="2.更清晰的写法"></a>2.更清晰的写法</h4><p>用这个方法，可以直接debug看一下，每一步做了什么。结果是一样的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="keyword">return</span> arr[:<span class="number">2</span>], <span class="built_in">int</span>(arr[<span class="number">2</span>:])</span><br><span class="line"></span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>这个方法还有一个好处 ，比如上面的例子中，数字的起始坐标位置都是2，如果不是确定的就写起来更复杂一点了。但写出来一个函数，就看起来清晰一点了。</p>
+<p>比如下面这个例子（明显，我是想按第一个<code>_</code>前面的数字排序一下，默认的排序出来是不对的）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="comment"># 查看第一个&#x27;_&#x27;的位置</span></span><br><span class="line">    i = arr.index(<span class="string">&#x27;_&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(arr[:i]), arr[i:]</span><br><span class="line"></span><br><span class="line">list3 = [<span class="string">&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list3.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list3)</span><br><span class="line"><span class="comment"># list3排序后结果如下：</span></span><br><span class="line"><span class="comment"># [&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;]</span></span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Linux 修改文件权限</li>
+        <li>本文标题：Python 带数字的字符串排序</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-08 21:10:00</li>
+        <li>创建时间：2022-11-29 21:11:32</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/08/Linux 修改文件权限/
+            本文链接：http://hduzn.cn/2022/11/29/Python-带数字的字符串排序/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -303,7 +286,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                        <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -312,29 +295,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux 定时执行 python脚本</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"
+                           href="/2022/11/24/Joplin%E4%BD%BF%E7%94%A8%E7%BE%A4%E6%99%96NAS%E4%BD%9C%E5%90%8C%E6%AD%A5%E5%AD%98%E5%82%A8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux vim/vi 命令简单使用</span>
+                                <span class="post-nav-title-item">Joplin使用群晖NAS作同步存储</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -545,7 +513,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E4%B8%8B%E5%AF%B9%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-text">Linux下对于文件的权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E6%96%B9%E6%B3%95"><span class="nav-text">修改文件权限方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E6%99%AE%E9%80%9A%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90-%E6%A8%A1%E5%BC%8F"><span class="nav-text">1、普通修改文件权限(模式)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E4%B8%93%E4%B8%9A%E6%96%B9%E6%B3%95"><span class="nav-text">2、专业方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E8%80%85"><span class="nav-text">3、修改文件所有者</span></a></li></ol></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#List-sort-%E6%96%B9%E6%B3%95"><span class="nav-text">List sort()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="nav-text">1.使用匿名函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%9B%B4%E6%B8%85%E6%99%B0%E7%9A%84%E5%86%99%E6%B3%95"><span class="nav-text">2.更清晰的写法</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
