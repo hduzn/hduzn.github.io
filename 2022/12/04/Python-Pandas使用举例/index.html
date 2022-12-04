@@ -9,7 +9,7 @@
     
     <title>
         
-            PowerShell 提示出于兼容性目的已禁用PSReadLine问题 |
+            Python Pandas使用举例 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">PowerShell 提示出于兼容性目的已禁用PSReadLine问题</span>
+            <span class="title-hover-animation">Python Pandas使用举例</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-12-04 20:35:25</span>
-        <span class="mobile">2022-12-04 20:35</span>
+        <span class="pc">2022-12-04 22:24:51</span>
+        <span class="mobile">2022-12-04 22:24</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                        <a href="/categories/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Windows/">Windows</a>&nbsp;
+                        <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,21 +239,22 @@
         
 
         <div class="article-content markdown-body">
-            <p>Windows10系统，发现每次PowerShell都有提示：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">尝试新的跨平台 PowerShell https://aka.ms/pscore6</span><br><span class="line"></span><br><span class="line">警告: PowerShell 检测到你可能正在使用屏幕阅读器，并且已出于兼容性目的禁用 PSReadLine。如果要重新启用它，请运行 <span class="string">&quot;Import-Module PSReadLine&quot;</span>。</span><br></pre></td></tr></table></figure>
-<p>但是，发现运行<code>Import-Module PSReadLine</code>后并没有解决。而办公室电脑的win10上很正常，并没有发现这个问题。</p>
-<p>话说，是怎么发现这个问题的呢？倒也不是用PowerShell的时候，是因为用VS Code，发现终端界面上命令都没有高亮了，而终端用的就是PowerShell，感觉就是PowerShell的问题了。</p>
+            <p>当Python要操作Excel表格时，用Pandas库就超级方便了。</p>
+<p>Pandas的主要数据结构有Series（一维数据）与DataFrame（二维数据）。<br>用来操作Excel表时，最常用的就是DataFrame了。</p>
 <a id="more"></a>
 
-<p>于是，网上查了很多方法，下载了最新版的PowerShell也没用。</p>
-<p>最终找到一个有用的。</p>
-<p><strong>解决方法：</strong></p>
-<p>1.创建一个.ps1文件（名字随便取，比如xiufu_powershell.ps1），粘贴以下代码：</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Add-Type</span> <span class="literal">-TypeDefinition</span> <span class="string">&#x27;</span></span><br><span class="line"><span class="string">using System;</span></span><br><span class="line"><span class="string">using System.ComponentModel;</span></span><br><span class="line"><span class="string">using System.Runtime.InteropServices;</span></span><br><span class="line"><span class="string">public static class ScreenReaderFixUtil</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    public static bool IsScreenReaderActive()</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">        var ptr = IntPtr.Zero;</span></span><br><span class="line"><span class="string">        try</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            ptr = Marshal.AllocHGlobal(sizeof(int));</span></span><br><span class="line"><span class="string">            int hr = Interop.SystemParametersInfo(</span></span><br><span class="line"><span class="string">                Interop.SPI_GETSCREENREADER,</span></span><br><span class="line"><span class="string">                sizeof(int),</span></span><br><span class="line"><span class="string">                ptr,</span></span><br><span class="line"><span class="string">                0);</span></span><br><span class="line"><span class="string">            if (hr == 0)</span></span><br><span class="line"><span class="string">            &#123;</span></span><br><span class="line"><span class="string">                throw new Win32Exception(Marshal.GetLastWin32Error());</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            return Marshal.ReadInt32(ptr) != 0;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">        finally</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            if (ptr != IntPtr.Zero)</span></span><br><span class="line"><span class="string">            &#123;</span></span><br><span class="line"><span class="string">                Marshal.FreeHGlobal(ptr);</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    public static void SetScreenReaderActiveStatus(bool isActive)</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">        int hr = Interop.SystemParametersInfo(</span></span><br><span class="line"><span class="string">            Interop.SPI_SETSCREENREADER,</span></span><br><span class="line"><span class="string">            isActive ? 1u : 0u,</span></span><br><span class="line"><span class="string">            IntPtr.Zero,</span></span><br><span class="line"><span class="string">            Interop.SPIF_SENDCHANGE);</span></span><br><span class="line"><span class="string">        if (hr == 0)</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            throw new Win32Exception(Marshal.GetLastWin32Error());</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    private static class Interop</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">        public const int SPIF_SENDCHANGE = 0x0002;</span></span><br><span class="line"><span class="string">        public const int SPI_GETSCREENREADER = 0x0046;</span></span><br><span class="line"><span class="string">        public const int SPI_SETSCREENREADER = 0x0047;</span></span><br><span class="line"><span class="string">        [DllImport(&quot;user32&quot;, SetLastError = true, CharSet = CharSet.Unicode)]</span></span><br><span class="line"><span class="string">        public static extern int SystemParametersInfo(</span></span><br><span class="line"><span class="string">            uint uiAction,</span></span><br><span class="line"><span class="string">            uint uiParam,</span></span><br><span class="line"><span class="string">            IntPtr pvParam,</span></span><br><span class="line"><span class="string">            uint fWinIni);</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"><span class="keyword">if</span> ([<span class="type">ScreenReaderFixUtil</span>]::IsScreenReaderActive()) &#123;</span><br><span class="line">    [<span class="type">ScreenReaderFixUtil</span>]::SetScreenReaderActiveStatus(<span class="variable">$false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.在PowerShell中运行这个文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\xiufu_powershell.ps1</span><br></pre></td></tr></table></figure>
-<p>然后重启PowerShell，就解决了。</p>
-<p>当然，VS Code的终端中高亮问题也解决了。</p>
+<h2 id="安装pandas库"><a href="#安装pandas库" class="headerlink" title="安装pandas库"></a>安装pandas库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装pandas库：</span></span><br><span class="line">pip install pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当然，操作excel的库也要安装一下，一般操作.xlsx格式的，安装openpyxl：</span></span><br><span class="line">pip install openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果，最后保存文件是.xls格式的，需要安装xlwt：</span></span><br><span class="line">pip install xlwt</span><br></pre></td></tr></table></figure>
+<p>最后保存成<code>.xls</code>格式的时候，会有如下提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">As the xlwt package is no longer maintained, the xlwt engine will be removed in a fuine will be removed in a future version of pandas.</span><br></pre></td></tr></table></figure>
+<p>这个东西在pandas中会被淘汰，不用管，等以后不能用了再说。<br>毕竟还是有些破系统的导入，只支持xls格式的。不过，自己肯定是能用xlsx就用xlsx。</p>
+<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><p>以以下表格（data.xlsx）举例：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_pandas_demo.png"
+                      style="zoom: 100%;"
+                ></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.读取整个Excel表数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_01</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.读取某张sheet中某几列的数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_02</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    usecols = [<span class="string">&#x27;主题&#x27;</span>, <span class="string">&#x27;值&#x27;</span>] <span class="comment"># usecols = [&#x27;主题&#x27;, &#x27;值&#x27;, &#x27;时间&#x27;]</span></span><br><span class="line">    sheet_name = <span class="string">&#x27;Sheet1&#x27;</span> <span class="comment"># sheet_name=0 也可</span></span><br><span class="line">    df = pd.read_excel(ex_file, sheet_name=sheet_name, usecols=usecols)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.读取Excel数据转到List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_03</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    data_list = np.array(df).tolist()</span><br><span class="line">    <span class="built_in">print</span>(data_list)</span><br><span class="line"></span><br><span class="line">ex_file = <span class="string">r&#x27;.\data.xlsx&#x27;</span></span><br><span class="line">read_ex_01(ex_file)</span><br><span class="line">read_ex_02(ex_file)</span><br><span class="line">read_ex_03(ex_file)</span><br></pre></td></tr></table></figure>
+<p>还有使用Pandas的文章：<a href="/2022/07/01/Python%E6%8B%86%E5%88%86Excel%E8%A1%A8/" title="Python拆分Excel表">Python拆分Excel表</a></p>
 
         </div>
 
@@ -261,11 +262,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：PowerShell 提示出于兼容性目的已禁用PSReadLine问题</li>
+        <li>本文标题：Python Pandas使用举例</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-12-04 20:35:25</li>
+        <li>创建时间：2022-12-04 22:24:51</li>
         <li>
-            本文链接：http://hduzn.cn/2022/12/04/PowerShell提示出于兼容性目的已禁用PSReadLine问题/
+            本文链接：http://hduzn.cn/2022/12/04/Python-Pandas使用举例/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -280,7 +281,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                        <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -289,29 +290,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/12/04/Python-Pandas%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Python Pandas使用举例</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/12/01/Python%E6%9B%BF%E6%8D%A2Word%E6%96%87%E6%A1%A3%E4%B8%AD%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6/"
+                           href="/2022/12/04/PowerShell%E6%8F%90%E7%A4%BA%E5%87%BA%E4%BA%8E%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9B%AE%E7%9A%84%E5%B7%B2%E7%A6%81%E7%94%A8PSReadLine%E9%97%AE%E9%A2%98/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python替换Word文档中指定字符</span>
+                                <span class="post-nav-title-item">PowerShell 提示出于兼容性目的已禁用PSReadLine问题</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -522,7 +508,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pandas%E5%BA%93"><span class="nav-text">安装pandas库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-text">使用举例</span></a></li></ol>
     </div>
 </div>
         </aside>
