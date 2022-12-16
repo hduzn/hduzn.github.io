@@ -9,7 +9,7 @@
     
     <title>
         
-            QingdaoU OnlineJudge 数据备份与恢复 |
+            Docker搭建QingdaoU OnlineJudge平台 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">QingdaoU OnlineJudge 数据备份与恢复</span>
+            <span class="title-hover-animation">Docker搭建QingdaoU OnlineJudge平台</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-12-16 22:36:39</span>
-        <span class="mobile">2022-12-16 22:36</span>
+        <span class="pc">2022-12-16 20:15:09</span>
+        <span class="mobile">2022-12-16 20:15</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Python/">Python</a>&nbsp;
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -243,27 +243,42 @@
         
 
         <div class="article-content markdown-body">
-            <p>平台本身提供了数据库的备份，还挺方便的。不过，发现只导入数据库的备份文件，还是有问题。就折腾了好一会。</p>
-<h2 id="Online-Judge平台数据备份与恢复"><a href="#Online-Judge平台数据备份与恢复" class="headerlink" title="Online Judge平台数据备份与恢复"></a>Online Judge平台数据备份与恢复</h2><h3 id="1-数据备份"><a href="#1-数据备份" class="headerlink" title="1.数据备份"></a>1.数据备份</h3><h4 id="1-数据库备份（postgresql）"><a href="#1-数据库备份（postgresql）" class="headerlink" title="1).数据库备份（postgresql）"></a>1).数据库备份（postgresql）</h4><p>进入OnlineJudgeDeploy/backup目录，运行以下命令就会此目录下生成一个.sql数据库备份文件。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh db_backup.sh</span><br></pre></td></tr></table></figure>
-<p>比如我得到了 db_backup_2022_12_16_13_51_41.sql 文件</p>
+            <p>Online Judge系统（简称OJ）是一个在线的判题系统。用户可以在线提交程序多种程序（如C、C++、Python）源代码，系统对源代码进行编译和执行，并通过预先设计的测试数据来检验程序源代码的正确性。</p>
+<p>以前是知道各个大学都有自己的OJ系统用来训练ACM的。</p>
+<p>青岛大学的这个开源Online Judge系统是比较新的，界面感觉也不错，还是开源的，还可以用Docker直接搭建，就很方便了。</p>
 <a id="more"></a>
 
-<h4 id="2-data目录下的public和test-case文件夹备份"><a href="#2-data目录下的public和test-case文件夹备份" class="headerlink" title="2).data目录下的public和test_case文件夹备份"></a>2).data目录下的public和test_case文件夹备份</h4><p>如果只用一个数据库文件，没有导入这两个目录，判题时会显示编译错误，点击会显示测试用例不存在。所以需要把这两个目录也从容器中复制出来。</p>
-<p>因为直接用ftp工具发现不行，test_case目录都没有读的权限。所以，就直接从容器中把这两个目录复制出来。</p>
-<p>比如我就在当前目录下新建一个temp_data目录，然后把public和test_case目录都复制到这个目录下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker cp oj-backend:/data/public ./temp_data/</span><br><span class="line">docker cp oj-backend:/data/test_case ./temp_data/</span><br></pre></td></tr></table></figure>
-<h3 id="2-数据恢复"><a href="#2-数据恢复" class="headerlink" title="2.数据恢复"></a>2.数据恢复</h3><p>必须先恢复数据库，再复制public和test_case目录。</p>
-<p>不管是本机，还是换了一台新的机子，都可以用以下方法恢复数据，因为是很彻底的删除了数据库的。</p>
-<h4 id="1-数据库导入（postgresql）"><a href="#1-数据库导入（postgresql）" class="headerlink" title="1).数据库导入（postgresql）"></a>1).数据库导入（postgresql）</h4><p>先查看docker-compse.yml配置文件中配置的数据库容器、数据库名和数据库使用用户名：</p>
+<h2 id="Online-Judge平台搭建"><a href="#Online-Judge平台搭建" class="headerlink" title="Online Judge平台搭建"></a>Online Judge平台搭建</h2><p>青岛大学的OJ项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/QingdaoU/OnlineJudge/blob/master/README-CN.md" >https://github.com/QingdaoU/OnlineJudge/blob/master/README-CN.md<i class="fas fa-external-link-alt"></i></a></p>
+<p>上面有OJ平台搭建的项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/QingdaoU/OnlineJudgeDeploy/tree/2.0" >https://github.com/QingdaoU/OnlineJudgeDeploy/tree/2.0<i class="fas fa-external-link-alt"></i></a></p>
+<p>我是在一台装了Ubuntu 20.04 LTS的机器上装的。</p>
+<h3 id="1-下载"><a href="#1-下载" class="headerlink" title="1.下载"></a>1.下载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b 2.0 https://github.com/QingdaoU/OnlineJudgeDeploy.git &amp;&amp; <span class="built_in">cd</span> OnlineJudgeDeploy</span><br></pre></td></tr></table></figure>
+<p>执行完上面的命令后，会进入OnlineJudgeDeploy目录。</p>
+<p>不能用git下载的话，直接把上面OJ平台项目的Code包一起下载下来。然后解压到OnlineJudgeDeploy目录后，再cd进入目录，一样的。</p>
+<h3 id="2-启动服务"><a href="#2-启动服务" class="headerlink" title="2.启动服务"></a>2.启动服务</h3><h4 id="1-docker-compose安装"><a href="#1-docker-compose安装" class="headerlink" title="1).docker-compose安装"></a>1).docker-compose安装</h4><p>用的是docker-compose安装一键部署。</p>
+<p>所以，需要提前安装Docker（<a href="/2022/11/19/Ubuntu%E5%AE%89%E8%A3%85Docker/" title="Ubuntu安装Docker">Ubuntu安装Docker</a>）和docker-compose。</p>
+<p>如果装了Docker，没有安装docker-compose的话，有python、pip的话就很简单了，直接用pip命令安装就行了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install docker-compose</span><br></pre></td></tr></table></figure>
+<h4 id="2-docker-compse-yml-配置文件"><a href="#2-docker-compse-yml-配置文件" class="headerlink" title="2).docker-compse.yml 配置文件"></a>2).docker-compse.yml 配置文件</h4><p>因为服务会有个地址，涉及到端口号会不会冲突。所以，可以先看下OnlineJudgeDeploy目录下的docker-compse.yml配置文件，上面项目地址中也可以查看这个文件。</p>
+<p>文件中可以看到是开了好几个服务的：</p>
 <ul>
-<li>数据库容器：oj-postgres</li>
-<li>数据库名：onlinejudge</li>
-<li>数据库使用用户名：onlinejudge</li>
+<li>oj-redis</li>
+<li>oj-postgres：数据库，可以看到设置的数据库DB名，用户USER名和密码PASSWORD</li>
+<li>judge-server：服务器</li>
+<li>oj-backend：最后看到这个是依赖以上的服务的。重点就是最下面这个端口号了：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:80:8000&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:443:1443&quot;</span></span><br></pre></td></tr></table></figure>
+前面的默认的映射到本机是80端口（HTTP）和443端口（HTTPS）。<br>这个只要不冲突，就随便你自己改了。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.拷贝数据(.sql)到数据库容器oj-postgres</span></span><br><span class="line">docker cp db_backup_xxxxxxx.sql oj-postgres:/root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.进入数据库所在容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it oj-postgres bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.删除原有数据库</span></span><br><span class="line"><span class="comment"># -U onlinejudge表示数据库user:onlinejudge</span></span><br><span class="line">dropdb -U onlinejudge onlinejudge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除的时候如果提示有其它用户在用，有2个sessions在用，无法删除，就需要先断开所有连接到这个数据库上的连接</span></span><br><span class="line"><span class="comment"># 1).登录postgresql数据库</span></span><br><span class="line">psql -U onlinejudge</span><br><span class="line"><span class="comment"># 列出数据库</span></span><br><span class="line"><span class="comment"># \l or \list</span></span><br><span class="line"><span class="comment"># 2).断开所有连接到这个数据库上的连接，成功可以看到提示2 rows</span></span><br><span class="line">SELECT pg_terminate_backend(pg_stat_activity.pid)</span><br><span class="line">FROM pg_stat_activity</span><br><span class="line">WHERE datname=<span class="string">&#x27;onlinejudge&#x27;</span> AND pid&lt;&gt;pg_backend_pid();</span><br><span class="line"><span class="comment"># 3).退出postgresql</span></span><br><span class="line">\q</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再删除原有数据库</span></span><br><span class="line">dropdb -U onlinejudge onlinejudge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.创建数据库</span></span><br><span class="line"><span class="comment"># 数据库user:onlinejudge，数据库名:onlinejudge）</span></span><br><span class="line">createdb -U onlinejudge onlinejudge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.复制数据库，执行sql语句</span></span><br><span class="line">psql -f /root/db_backup_xxxxxxx.sql -U onlinejudge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.退出容器</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-<h4 id="2-public和test-case目录导入"><a href="#2-public和test-case目录导入" class="headerlink" title="2).public和test_case目录导入"></a>2).public和test_case目录导入</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker cp ./temp_data/public/ oj-backend:/data/</span><br><span class="line">docker cp ./temp_data/test_case/ oj-backend:/data/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看结果，进入oj-backend容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it oj-backend sh</span><br><span class="line"><span class="comment"># 列出/data目录，看到这两个目录的日期跟别的不同就是有效了</span></span><br><span class="line">ls -l /data</span><br><span class="line"><span class="comment"># 退出容器</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-<p>再登录，发现所有的数据都恢复过来了。</p>
+<p>比如一般不想冲突的话，我改成如下的：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:8080:8000&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:8443:1443&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-docker-compose启动服务"><a href="#3-docker-compose启动服务" class="headerlink" title="3).docker-compose启动服务"></a>3).docker-compose启动服务</h4><p>用vi命令修改好配置文件后，用以下命令一键部署启动就行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>根据网速情况，大约2到30分钟都有可能，正常的话，感觉一般几分钟就好了。</p>
+<p>常用的docker-compose还有以下几个：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker-compose <span class="built_in">help</span> <span class="comment"># 查看帮助</span></span><br><span class="line">docker-compose up <span class="comment"># 创建并启动容器</span></span><br><span class="line">docker-compose ps <span class="comment"># 列出容器</span></span><br><span class="line">docker-compose stop <span class="comment"># 停止服务</span></span><br><span class="line">docker-compose start <span class="comment"># 启动服务</span></span><br><span class="line">docker-compose down <span class="comment"># 停止并删除资源</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-服务成功启动"><a href="#4-服务成功启动" class="headerlink" title="4).服务成功启动"></a>4).服务成功启动</h4><p>还是在OnlineJudgeDeploy目录下，用<code>docker-compose ps</code>命令查看结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@VM-8-10-ubuntu:~&#x2F;onlinejudge&#x2F;OnlineJudgeDeploy$ docker-compose ps</span><br><span class="line">    Name                  Command                  State                            Ports                      </span><br><span class="line">---------------------------------------------------------------------------------------------------------------</span><br><span class="line">judge-server   &#x2F;bin&#x2F;sh -c &#x2F;code&#x2F;entrypoint.sh   Up (healthy)   8080&#x2F;tcp                                        </span><br><span class="line">oj-backend     &#x2F;bin&#x2F;sh -c &#x2F;app&#x2F;deploy&#x2F;ent ...   Up (healthy)   0.0.0.0:8443-&gt;1443&#x2F;tcp, 0.0.0.0:8080-&gt;8000&#x2F;tcp</span><br><span class="line">oj-postgres    docker-entrypoint.sh postgres    Up             5432&#x2F;tcp                                        </span><br><span class="line">oj-redis       docker-entrypoint.sh redis ...   Up             6379&#x2F;tcp                                        </span><br><span class="line">ubuntu@VM-8-10-ubuntu:~&#x2F;onlinejudge&#x2F;OnlineJudgeDeploy$</span><br></pre></td></tr></table></figure>
+<p><code>docker ps -a</code>命令也是可以查看到这些所有容器的（judge-server、oj-backend、oj-postgres和oj-redis）</p>
+<p>前端登录地址：<a class="link"   target="_blank" rel="noopener" href="http://ip:8080/" >http://ip:8080<i class="fas fa-external-link-alt"></i></a> （8080是对应8000端口映射到本机的地址）<br>后台管理地址：<a class="link"   target="_blank" rel="noopener" href="http://ip:8080/admin" >http://ip:8080/admin<i class="fas fa-external-link-alt"></i></a><br>默认超级管理员用户名为root，密码为rootroot</p>
+<p>关于数据备份与恢复看这篇：<a href="/2022/12/16/QingdaoU-OnlineJudge%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/" title="QingdaoU OnlineJudge 数据备份与恢复">QingdaoU OnlineJudge 数据备份与恢复</a></p>
 
         </div>
 
@@ -271,11 +286,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：QingdaoU OnlineJudge 数据备份与恢复</li>
+        <li>本文标题：Docker搭建QingdaoU OnlineJudge平台</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-12-16 22:36:39</li>
+        <li>创建时间：2022-12-16 20:15:09</li>
         <li>
-            本文链接：http://hduzn.cn/2022/12/16/QingdaoU-OnlineJudge数据备份与恢复/
+            本文链接：http://hduzn.cn/2022/12/16/Docker搭建QingdaoU-OnlineJudge平台/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -306,13 +321,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/12/16/%E5%88%A0%E9%99%A4postgresql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%A5%E9%94%99database-xx-is-being-accessed-by-other-users/"
+                           href="/2022/12/16/QingdaoU-OnlineJudge%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">删除postgresql数据库报错database xx is being accessed by other users</span>
+                                <span class="post-nav-title-item">QingdaoU OnlineJudge 数据备份与恢复</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -322,10 +337,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/12/16/Docker%E6%90%AD%E5%BB%BAQingdaoU-OnlineJudge%E5%B9%B3%E5%8F%B0/"
+                           href="/2022/12/06/Python-%E6%B1%89%E5%AD%97%E8%BD%AC%E6%8B%BC%E9%9F%B3/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Docker搭建QingdaoU OnlineJudge平台</span>
+                                <span class="post-nav-title-item">Python 汉字转拼音</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -536,7 +551,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Online-Judge%E5%B9%B3%E5%8F%B0%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D"><span class="nav-text">Online Judge平台数据备份与恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD"><span class="nav-text">1.数据备份</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%87%E4%BB%BD%EF%BC%88postgresql%EF%BC%89"><span class="nav-text">1).数据库备份（postgresql）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-data%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84public%E5%92%8Ctest-case%E6%96%87%E4%BB%B6%E5%A4%B9%E5%A4%87%E4%BB%BD"><span class="nav-text">2).data目录下的public和test_case文件夹备份</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D"><span class="nav-text">2.数据恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%BC%E5%85%A5%EF%BC%88postgresql%EF%BC%89"><span class="nav-text">1).数据库导入（postgresql）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-public%E5%92%8Ctest-case%E7%9B%AE%E5%BD%95%E5%AF%BC%E5%85%A5"><span class="nav-text">2).public和test_case目录导入</span></a></li></ol></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Online-Judge%E5%B9%B3%E5%8F%B0%E6%90%AD%E5%BB%BA"><span class="nav-text">Online Judge平台搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD"><span class="nav-text">1.下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-text">2.启动服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-docker-compose%E5%AE%89%E8%A3%85"><span class="nav-text">1).docker-compose安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-docker-compse-yml-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2).docker-compse.yml 配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-docker-compose%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-text">3).docker-compose启动服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9C%8D%E5%8A%A1%E6%88%90%E5%8A%9F%E5%90%AF%E5%8A%A8"><span class="nav-text">4).服务成功启动</span></a></li></ol></li></ol></li></ol>
     </div>
 </div>
         </aside>
