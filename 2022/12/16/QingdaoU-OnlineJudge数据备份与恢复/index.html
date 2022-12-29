@@ -244,11 +244,11 @@
 
         <div class="article-content markdown-body">
             <p>平台本身提供了数据库的备份，还挺方便的。不过，发现只导入数据库的备份文件，还是有问题。就折腾了好一会。</p>
+<a id="more"></a>
+
 <h2 id="Online-Judge平台数据备份与恢复"><a href="#Online-Judge平台数据备份与恢复" class="headerlink" title="Online Judge平台数据备份与恢复"></a>Online Judge平台数据备份与恢复</h2><h3 id="1-数据备份"><a href="#1-数据备份" class="headerlink" title="1.数据备份"></a>1.数据备份</h3><h4 id="1-数据库备份（postgresql）"><a href="#1-数据库备份（postgresql）" class="headerlink" title="1).数据库备份（postgresql）"></a>1).数据库备份（postgresql）</h4><p>进入OnlineJudgeDeploy/backup目录，运行以下命令就会此目录下生成一个.sql数据库备份文件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh db_backup.sh</span><br></pre></td></tr></table></figure>
 <p>比如我得到了 db_backup_2022_12_16_13_51_41.sql 文件</p>
-<a id="more"></a>
-
 <h4 id="2-data目录下的public和test-case文件夹备份"><a href="#2-data目录下的public和test-case文件夹备份" class="headerlink" title="2).data目录下的public和test_case文件夹备份"></a>2).data目录下的public和test_case文件夹备份</h4><p>如果只用一个数据库文件，没有导入这两个目录，判题时会显示编译错误，点击会显示测试用例不存在。所以需要把这两个目录也从容器中复制出来。</p>
 <p>因为直接用ftp工具发现不行，test_case目录都没有读的权限。所以，就直接从容器中把这两个目录复制出来。</p>
 <p>比如我就在当前目录下新建一个temp_data目录，然后把public和test_case目录都复制到这个目录下：</p>

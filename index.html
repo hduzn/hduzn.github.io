@@ -226,6 +226,60 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/">
+                        Docker可视化查询工具：Lazydocker（Ubuntu安装使用）
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>Windows这些有界面的系统，装个Docker Desktop就可以对Docker进行可视化操作、管理。</p>
+<p>像Linux的服务器系统，只有命令行，没有带界面的，每次查看Docker的使用情况，基本上就先用<code>docker images</code>查看有哪些镜像，再用<code>docker ps -a</code>查看有哪些容器和容器的运行状态。</p>
+<p>看到 Lazydocker 这个开源的UI终端，支持Linux、OSX、Windows操作系统。用命令就可以运行，界面很简洁的，就日常查看下状态够用了。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Dec 29 2022 12:52:05 GMT+0800">2022-12-29</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2022/12/26/%E6%8D%A2%E7%A1%AC%E7%9B%98%E5%90%8EPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv%E8%BF%81%E7%A7%BB%E6%96%B9%E6%B3%95/">
                         换硬盘后Python虚拟环境virtualenv迁移方法
                     </a>
@@ -235,7 +289,6 @@
                     
                         <p>关于Python使用虚拟环境virtualenv的方法，可以看之前这篇笔记：<a href="/2022/09/20/VSCode%E8%BF%90%E8%A1%8CPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv/" title="VSCode运行Python虚拟环境virtualenv">VSCode运行Python虚拟环境virtualenv</a></p>
 <p>换了硬盘后，要迁移virtualenv也很方便。先把虚拟环境的整个目录（比如我是Envs）放在硬盘任意一处。</p>
-<h2 id="迁移步骤"><a href="#迁移步骤" class="headerlink" title="迁移步骤"></a>迁移步骤</h2><h3 id="1-确认virtualenv正常"><a href="#1-确认virtualenv正常" class="headerlink" title="1.确认virtualenv正常"></a>1.确认virtualenv正常</h3><p>因为我只是换了数据盘，没有动系统盘这块硬盘，所以我的Python和virtualenv都是安装好的。</p>
                     
                 </div>
 
@@ -456,8 +509,6 @@
                     
                         <p>对于运行的容器没有做目录映射的，或者有权限问题的，需要把文件从容器中复制出来。用<code>docker cp</code>命令。</p>
 <p><code>docker cp</code>命令不管容器有没有启动，拷贝命令都会生效。 如果拷贝的内容已存在，则直接覆盖。</p>
-<h3 id="从容器中复制文件到本地"><a href="#从容器中复制文件到本地" class="headerlink" title="从容器中复制文件到本地"></a>从容器中复制文件到本地</h3><p>比如在当前目录下新建了 temp_data 目录：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.把oj-backend容器中的/data目录下的public目录都复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/public ./temp_data/</span><br><span class="line"><span class="comment"># 2.把oj-backend容器中的/data目录下的test_case目录复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/test_case ./temp_data/</span><br></pre></td></tr></table></figure>
                     
                 </div>
 
@@ -564,9 +615,6 @@
                 <div class="home-article-content markdown-body">
                     
                         <p>平台本身提供了数据库的备份，还挺方便的。不过，发现只导入数据库的备份文件，还是有问题。就折腾了好一会。</p>
-<h2 id="Online-Judge平台数据备份与恢复"><a href="#Online-Judge平台数据备份与恢复" class="headerlink" title="Online Judge平台数据备份与恢复"></a>Online Judge平台数据备份与恢复</h2><h3 id="1-数据备份"><a href="#1-数据备份" class="headerlink" title="1.数据备份"></a>1.数据备份</h3><h4 id="1-数据库备份（postgresql）"><a href="#1-数据库备份（postgresql）" class="headerlink" title="1).数据库备份（postgresql）"></a>1).数据库备份（postgresql）</h4><p>进入OnlineJudgeDeploy/backup目录，运行以下命令就会此目录下生成一个.sql数据库备份文件。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh db_backup.sh</span><br></pre></td></tr></table></figure>
-<p>比如我得到了 db_backup_2022_12_16_13_51_41.sql 文件</p>
                     
                 </div>
 
@@ -684,7 +732,6 @@
                     
                         <p>一般用来批量创建账号，想把姓名批量生成姓名拼音的账号。</p>
 <p>Python很简单，用pypinyin这个库就行了。</p>
-<h2 id="安装pypinyin库"><a href="#安装pypinyin库" class="headerlink" title="安装pypinyin库"></a>安装pypinyin库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pypinyin</span><br></pre></td></tr></table></figure>
                     
                 </div>
 
@@ -720,59 +767,6 @@
     </div>
 
     <a href="/2022/12/06/Python-%E6%B1%89%E5%AD%97%E8%BD%AC%E6%8B%BC%E9%9F%B3/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/12/04/Python-Pandas%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/">
-                        Python Pandas使用举例
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        <p>当Python要操作Excel表格时，用Pandas库就超级方便了。</p>
-<p>Pandas的主要数据结构有Series（一维数据）与DataFrame（二维数据）。<br>用来操作Excel表时，最常用的就是DataFrame了。</p>
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 04 2022 22:24:51 GMT+0800">2022-12-04</span></span>
-        
-            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/categories/Python/">Python</a>&nbsp;
-                        </li>
-                    
-                    
-                </ul>
-            </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/Python/">Python</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2022/12/04/Python-Pandas%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
