@@ -9,7 +9,7 @@
     
     <title>
         
-            Typora+PicGo无法显示Github图床图片问题 |
+            Docker Desktp更改镜像、容器存储位置 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Typora+PicGo无法显示Github图床图片问题</span>
+            <span class="title-hover-animation">Docker Desktp更改镜像、容器存储位置</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-04-09 15:10:00</span>
-        <span class="mobile">2022-04-09 15:10</span>
+        <span class="pc">2023-01-09 19:05:36</span>
+        <span class="mobile">2023-01-09 19:05</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,19 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Github/">Github</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Typora/">Typora</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/PicGo/">PicGo</a>&nbsp;
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -251,27 +239,31 @@
         
 
         <div class="article-content markdown-body">
-            <p>用Hexo+Github pages搭建的博客，图床就用的Github的图床，使用方法：<a href="/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="Github 图床使用教程">Github 图床使用教程</a></p>
-<p>然后，用 Typora的时候，插入图片的链接后，没法显示图片。</p>
+            <p>Docker用的多一点，特别是装了一个几十G的Linux后 ，就好几十G空间了，太占用系统盘了。所以想换一下存储位置。</p>
+<p>Docker Desktop查看settings设置，发现无法在设置里更改，用的是WSL2。通过WSL2启动，会自动创建2个子系统，分别对应2个 vhdx 硬盘映像文件。</p>
+<p>默认安装在C盘，默认的镜像容器这些存储在：C:\Users[用户名]\AppData\Local\Docker\wsl\，分别在data和distro目录下都有个ext4.vhdx文件。（特别是data目录下文件，就巨大）</p>
+<blockquote>
+<p>WSL全称：Windows Subsystem for Linux，即「适用于 Linux 的 Windows 子系统」，可让开发人员按原样运行 GNU/Linux 环境 – 包括大多数命令行工具、实用工具和应用程序 – 且不会产生传统虚拟机（a traditional virtual machine）或双启动设置开销。</p>
+</blockquote>
 <a id="more"></a>
 
-<p>按照网上的说法，在Typora的【偏好设置】-&gt;【图像】中也设置了上传图片用的 PicGo程序。</p>
-<p>如下图：</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Typora_PicGo_Github_pic_1.png"
-                     
-                >
-
-<p>但是，在Typora中看不到图片。再查了一下，发现是 Github屏蔽掉了图片。</p>
-<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><p>修改host文件。</p>
-<p>hosts文件在Windows系统中的路径：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
-<p>添加以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GitHub Start </span></span><br><span class="line">140.82.113.3      github.com</span><br><span class="line">140.82.114.20     gist.github.com</span><br><span class="line">151.101.184.133    assets-cdn.github.com</span><br><span class="line">151.101.184.133    raw.githubusercontent.com</span><br><span class="line">151.101.184.133    gist.githubusercontent.com</span><br><span class="line">151.101.184.133    cloud.githubusercontent.com</span><br><span class="line">151.101.184.133    camo.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars0.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars0.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars1.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars2.githubusercontent.com</span><br><span class="line">199.232.28.133     avatars2.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars3.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars3.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars4.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars4.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars5.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars5.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars6.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars6.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars7.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars7.githubusercontent.com</span><br><span class="line">151.101.184.133    avatars8.githubusercontent.com</span><br><span class="line">199.232.68.133     avatars8.githubusercontent.com</span><br><span class="line"><span class="comment"># GitHub End</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启下 Typora，果然可以了！</p>
-<p>PS.如果hosts文件不可编辑的状态，右键【属性】，把“只读”的勾去掉就行。（当然需要管理员权限）</p>
+<p><strong>步骤：</strong></p>
+<p><strong>1.查看WSL2自建的2个子系统</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看WSL2自建的2个子系统</span></span><br><span class="line">wsl --list -v</span><br></pre></td></tr></table></figure>
+<p>可以看到结果有2个：docker-desktop-data和docker-desktop，同时还能看到STATE（状态）是Running或者Stopped。</p>
+<p><strong>2.关闭WSL</strong></p>
+<p>直接右键退出 Docker Desktop软件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 退出后再次运行查看STATE（状态）是否是Stopped</span></span><br><span class="line">wsl --list -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若退出后还是Running，运行以下命令关闭WSL</span></span><br><span class="line">wsl --shutdown</span><br></pre></td></tr></table></figure>
+<p><strong>3.导出镜像ext4.vhdx到压缩包</strong></p>
+<p>导出的路径需要提前创建好目录，否则可能会报错。<br>比如我这里提前建好了<code>E:\docker\wsl</code>，以及wsl下的data和distro目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把 data\ext4.vhdx 导出到压缩文件 docker-desktop-data.tar</span></span><br><span class="line">wsl --<span class="built_in">export</span> docker-desktop-data E:\docker\wsl\docker-desktop-data.tar</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把 distro\ext4.vhdx 导出到压缩文件 docker-desktop.tar</span></span><br><span class="line">wsl --<span class="built_in">export</span> docker-desktop E:\docker\wsl\docker-desktop.tar</span><br></pre></td></tr></table></figure>
+<p><strong>4.注销原来的镜像</strong></p>
+<p>依次注销，注销完成后可以看到原来C盘的2个ext4.vhdx文件都没了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsl --unregister docker-desktop-data</span><br><span class="line"></span><br><span class="line">wsl --unregister docker-desktop</span><br></pre></td></tr></table></figure>
+<p><strong>5.将导出的压缩包再导入回wsl，并设置挂载目录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wsl --import docker-desktop-data E:\docker\wsl\data  E:\docker\wsl\docker-desktop-data.tar --version 2</span><br><span class="line"></span><br><span class="line">wsl --import docker-desktop E:\docker\wsl\distro  E:\docker\wsl\docker-desktop.tar --version 2</span><br></pre></td></tr></table></figure>
+<p>依次执行完后，在目录下又可以看到ext4.vhdx文件了，再启动Docker Desktop，就正常了。</p>
+<p>压缩包docker-desktop-data.tar和docker-desktop.tar正常启动以后就不需要了，可以删除了。</p>
 
         </div>
 
@@ -279,11 +271,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Typora+PicGo无法显示Github图床图片问题</li>
+        <li>本文标题：Docker Desktp更改镜像、容器存储位置</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-04-09 15:10:00</li>
+        <li>创建时间：2023-01-09 19:05:36</li>
         <li>
-            本文链接：http://hduzn.cn/2022/04/09/Typora+PicGo无法显示Github图床图片问题/
+            本文链接：http://hduzn.cn/2023/01/09/Docker-Desktp更改镜像-容器存储位置/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -298,19 +290,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Github/">#Github</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Typora/">#Typora</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/PicGo/">#PicGo</a>&nbsp;
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
                     </li>
                 
             </ul>
@@ -319,29 +299,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">【小白教程】免费建立静态博客网站（Github+Hexo）</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/04/05/Navicat%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8D%E6%88%90%E5%8A%9F/"
+                           href="/2023/01/07/Python-md5%E5%8A%A0%E5%AF%86%EF%BC%88%E5%93%88%E5%B8%8C%E5%8A%A0%E5%AF%86%EF%BC%89/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Navicat连接MySQL数据库不成功 解决方法</span>
+                                <span class="post-nav-title-item">Python md5加密（哈希加密）</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -552,7 +517,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95%EF%BC%9A"><span class="nav-text">解决办法：</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
