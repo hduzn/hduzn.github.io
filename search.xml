@@ -51,6 +51,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker EwoMail修改MySQL密码</title>
+    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：mysql</p>
+<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
+<p>输入密码：123456</p>
+<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker-Compose详解</title>
     <url>/2022/06/19/Docker-Compose%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>Compose 项目是 Docker 官方的开源项目，实现对 Docker 容器集群的快速编排。</p>
@@ -143,34 +171,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker EwoMail修改MySQL密码</title>
-    <url>/2022/04/05/Docker%20EwoMail%E4%BF%AE%E6%94%B9MySQL%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<h2 id="1、查看容器是否启动"><a href="#1、查看容器是否启动" class="headerlink" title="1、查看容器是否启动"></a>1、查看容器是否启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
-<h2 id="2、进入容器"><a href="#2、进入容器" class="headerlink" title="2、进入容器"></a>2、进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="3、修改root账号密码"><a href="#3、修改root账号密码" class="headerlink" title="3、修改root账号密码"></a>3、修改root账号密码</h2><h3 id="1-登录mysql（root默认密码：mysql）"><a href="#1-登录mysql（root默认密码：mysql）" class="headerlink" title="1).登录mysql（root默认密码：mysql）"></a>1).登录mysql（root默认密码：mysql）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：mysql</p>
-<h3 id="2-使用mysql数据库"><a href="#2-使用mysql数据库" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置root新密码"><a href="#3-设置root新密码" class="headerlink" title="3).设置root新密码"></a>3).设置root新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;123MYSQL456&#39;) where user&#x3D;&#39;root&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="4、修改ewomail账号密码"><a href="#4、修改ewomail账号密码" class="headerlink" title="4、修改ewomail账号密码"></a>4、修改ewomail账号密码</h2><h3 id="1-登录mysql（ewomail默认密码：123456）"><a href="#1-登录mysql（ewomail默认密码：123456）" class="headerlink" title="1).登录mysql（ewomail默认密码：123456）"></a>1).登录mysql（ewomail默认密码：123456）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u ewomail -p</span><br></pre></td></tr></table></figure>
-<p>输入密码：123456</p>
-<h3 id="2-使用mysql数据库-1"><a href="#2-使用mysql数据库-1" class="headerlink" title="2).使用mysql数据库"></a>2).使用mysql数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;show databases;</span><br><span class="line">mysql&gt;use mysql;</span><br></pre></td></tr></table></figure>
-<h3 id="3-设置ewomail新密码"><a href="#3-设置ewomail新密码" class="headerlink" title="3).设置ewomail新密码"></a>3).设置ewomail新密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt;update user set password&#x3D;password(&#39;111111MYSQL&#39;) where user&#x3D;&#39;ewomail&#39;;</span><br></pre></td></tr></table></figure>
-<h2 id="5、修改MySQL配置文件my-cnf"><a href="#5、修改MySQL配置文件my-cnf" class="headerlink" title="5、修改MySQL配置文件my.cnf"></a>5、修改MySQL配置文件my.cnf</h2><h3 id="1-进入容器"><a href="#1-进入容器" class="headerlink" title="1).进入容器"></a>1).进入容器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ewomail /bin/bash</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-查找Docker内，MySQL配置文件my-cnf的位置"><a href="#2-查找Docker内，MySQL配置文件my-cnf的位置" class="headerlink" title="2).查找Docker内，MySQL配置文件my.cnf的位置"></a>2).查找Docker内，MySQL配置文件my.cnf的位置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql --<span class="built_in">help</span> | grep my.cnf</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-查看my-cnf-文件内容"><a href="#3-查看my-cnf-文件内容" class="headerlink" title="3).查看my.cnf 文件内容"></a>3).查看my.cnf 文件内容</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /ewomail/mysql/etc/my.cnf</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker Desktp更改镜像、容器存储位置</title>
     <url>/2023/01/09/Docker-Desktp%E6%9B%B4%E6%94%B9%E9%95%9C%E5%83%8F-%E5%AE%B9%E5%99%A8%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>Docker用的多一点，特别是装了一个几十G的Linux后 ，就好几十G空间了，太占用系统盘了。所以想换一下存储位置。</p>
@@ -198,6 +198,25 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wsl --import docker-desktop-data E:\docker\wsl\data  E:\docker\wsl\docker-desktop-data.tar --version 2</span><br><span class="line"></span><br><span class="line">wsl --import docker-desktop E:\docker\wsl\distro  E:\docker\wsl\docker-desktop.tar --version 2</span><br></pre></td></tr></table></figure>
 <p>依次执行完后，在目录下又可以看到ext4.vhdx文件了，再启动Docker Desktop，就正常了。</p>
 <p>压缩包docker-desktop-data.tar和docker-desktop.tar正常启动以后就不需要了，可以删除了。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker从容器中复制文件到本地</title>
+    <url>/2022/12/16/Docker%E4%BB%8E%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%B0%E6%9C%AC%E5%9C%B0/</url>
+    <content><![CDATA[<p>对于运行的容器没有做目录映射的，或者有权限问题的，需要把文件从容器中复制出来。用<code>docker cp</code>命令。</p>
+<p><code>docker cp</code>命令不管容器有没有启动，拷贝命令都会生效。 如果拷贝的内容已存在，则直接覆盖。</p>
+<a id="more"></a>
+
+<h3 id="从容器中复制文件到本地"><a href="#从容器中复制文件到本地" class="headerlink" title="从容器中复制文件到本地"></a>从容器中复制文件到本地</h3><p>比如在当前目录下新建了 temp_data 目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.把oj-backend容器中的/data目录下的public目录都复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/public ./temp_data/</span><br><span class="line"><span class="comment"># 2.把oj-backend容器中的/data目录下的test_case目录复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/test_case ./temp_data/</span><br></pre></td></tr></table></figure>
+<h3 id="把本地文件复制到容器中"><a href="#把本地文件复制到容器中" class="headerlink" title="把本地文件复制到容器中"></a>把本地文件复制到容器中</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.复制数据(db_backup_a.sql)到oj-postgres容器的/root中</span></span><br><span class="line">docker cp db_backup_a.sql oj-postgres:/root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.复制当前目录下的temp_data/public/目录到oj-backend容器的/data/目录</span></span><br><span class="line">docker cp ./temp_data/public/ oj-backend:/data/</span><br><span class="line"><span class="comment"># 3.复制当前目录下的temp_data/test_case/目录到oj-backend容器的/data/目录</span></span><br><span class="line">docker cp ./temp_data/test_case/ oj-backend:/data/</span><br></pre></td></tr></table></figure>
+<p>复制文件和目录都可以，就是容器的路径是：[容器名]:[文件/目录]</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -291,67 +310,6 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER：指定当前用户 # 格式：USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br><span class="line">ENTRYPOINT：入口点</span><br><span class="line">SHELL：指令 # 格式：SHELL [&quot;executable&quot;, &quot;parameters&quot;]</span><br><span class="line">HEALTHCHECK：健康检查 # 格式：HEALTHCHECK [选项] CMD &lt;命令&gt;</span><br><span class="line">ONBUILD：为他人作嫁衣裳 # 格式：ONBUILD &lt;其它指令&gt;</span><br><span class="line">LABEL：为镜像添加元数据</span><br><span class="line">ARG：构建参数 # 格式：ARG &lt;参数名&gt;[&#x3D;&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
 <p>需要看具体的，网上一搜都有介绍，有Docker从入门到实践的文档：<a class="link"   href="https://yeasy.gitbook.io/docker_practice/image/dockerfile" >https://yeasy.gitbook.io/docker_practice/image/dockerfile<i class="fas fa-external-link-alt"></i></a></p>
 <p>官方镜像的Dockerfile 参考典范：<a class="link"   href="https://github.com/docker-library/docs" >https://github.com/docker-library/docs<i class="fas fa-external-link-alt"></i></a><br>可以瞅瞅，参考参考。</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker可视化查询工具：Lazydocker（Ubuntu安装使用）</title>
-    <url>/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/</url>
-    <content><![CDATA[<p>Windows这些有界面的系统，装个Docker Desktop就可以对Docker进行可视化操作、管理。</p>
-<p>像Linux的服务器系统，只有命令行，没有带界面的，每次查看Docker的使用情况，基本上就先用<code>docker images</code>查看有哪些镜像，再用<code>docker ps -a</code>查看有哪些容器和容器的运行状态。</p>
-<p>看到 Lazydocker 这个开源的UI终端，支持Linux、OSX、Windows操作系统。用命令就可以运行，界面很简洁的，就日常查看下状态够用了。</p>
-<a id="more"></a>
-
-<h2 id="Lazydocker安装使用（Ubuntu）"><a href="#Lazydocker安装使用（Ubuntu）" class="headerlink" title="Lazydocker安装使用（Ubuntu）"></a>Lazydocker安装使用（Ubuntu）</h2><p>Lazydocker项目地址：<a class="link"   href="https://github.com/jesseduffield/lazydocker" >https://github.com/jesseduffield/lazydocker<i class="fas fa-external-link-alt"></i></a></p>
-<p>项目地址上安装方法也分好几种。这里介绍在Ubuntu中使用方法。</p>
-<p>系统：Ubuntu 20.04 LTS</p>
-<p><strong>1.下载Lazydocker包</strong></p>
-<p>先去releases页面，下载最新的Lazydocker包：<br><a class="link"   href="https://github.com/jesseduffield/lazydocker/releases" >https://github.com/jesseduffield/lazydocker/releases<i class="fas fa-external-link-alt"></i></a></p>
-<p>看自己哪个系统需要哪个，我这下载的是：lazydocker_0.20.0_Linux_x86_64.tar.gz</p>
-<p>用防止github的访问问题，可以像我一样下载后用ftp工具上传到Ubuntu服务器。</p>
-<p>当然，能下载的话，也可以直接用wget或者curl下载。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># curl下载保存为lazydocker_0.20.0.tar.gz，试了下 ，速度好慢</span></span><br><span class="line">curl -Lo lazydocker_0.20.0.tar.gz <span class="string">&quot;https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># wget下载</span></span><br><span class="line">wget https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz</span><br></pre></td></tr></table></figure>
-<p><strong>2.解压Lazydocker包</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xf lazydocker_0.20.0_Linux_x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想解压到某个目录，可以先创建个目录，反正最后其它的都可以删除的</span></span><br><span class="line">mkdir lazydocker-temp</span><br><span class="line">tar xf lazydocker_0.20.0_Linux_x86_64.tar.gz -C lazydocker-temp</span><br></pre></td></tr></table></figure>
-<p><strong>3.把lazydocker（可执行文件）移动到用户可执行程序目录下</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 解压出来的lazydocker可以用ls -l命令看是，是否有带x可执行权限，现在新版本应该都有的</span></span><br><span class="line">sudo mv lazydocker /usr/<span class="built_in">local</span>/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是放在lazydocker-temp目录的，用以下命令</span></span><br><span class="line">sudo mv lazydocker-temp/lazydocker /usr/<span class="built_in">local</span>/bin</span><br></pre></td></tr></table></figure>
-<p><strong>4.使用lazydocker</strong></p>
-<p>直接运行命令就行了。这就跟在windows系统里放了一个.exe的小程序一样。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lazydocker</span><br></pre></td></tr></table></figure>
-<p>如下图所示：能看到所有的容器、镜像、还有数据卷Volumes。按q键退出。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Docker_lazydocker.png"
-                      style="zoom: 50%;"
-                ></p>
-<p>如果觉得<code>lazydocker</code>这个命令太长了，项目文档上也说了可以取一个命令别名，方便使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;alias lzd=&#x27;lazydocker&#x27;&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>然后，就可以直接用<code>lzd</code>命令代替<code>lazydocker</code>命令了。</p>
-<p>PS.解压出来还有一个LICENSE和README.md文件都可以删除，如果是解压到lazydocker-temp目录的话，整个目录都可以删除。压缩包不想留着也可以删除。</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker从容器中复制文件到本地</title>
-    <url>/2022/12/16/Docker%E4%BB%8E%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%B0%E6%9C%AC%E5%9C%B0/</url>
-    <content><![CDATA[<p>对于运行的容器没有做目录映射的，或者有权限问题的，需要把文件从容器中复制出来。用<code>docker cp</code>命令。</p>
-<p><code>docker cp</code>命令不管容器有没有启动，拷贝命令都会生效。 如果拷贝的内容已存在，则直接覆盖。</p>
-<a id="more"></a>
-
-<h3 id="从容器中复制文件到本地"><a href="#从容器中复制文件到本地" class="headerlink" title="从容器中复制文件到本地"></a>从容器中复制文件到本地</h3><p>比如在当前目录下新建了 temp_data 目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.把oj-backend容器中的/data目录下的public目录都复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/public ./temp_data/</span><br><span class="line"><span class="comment"># 2.把oj-backend容器中的/data目录下的test_case目录复制到本地temp_data目录下</span></span><br><span class="line">docker cp oj-backend:/data/test_case ./temp_data/</span><br></pre></td></tr></table></figure>
-<h3 id="把本地文件复制到容器中"><a href="#把本地文件复制到容器中" class="headerlink" title="把本地文件复制到容器中"></a>把本地文件复制到容器中</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.复制数据(db_backup_a.sql)到oj-postgres容器的/root中</span></span><br><span class="line">docker cp db_backup_a.sql oj-postgres:/root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.复制当前目录下的temp_data/public/目录到oj-backend容器的/data/目录</span></span><br><span class="line">docker cp ./temp_data/public/ oj-backend:/data/</span><br><span class="line"><span class="comment"># 3.复制当前目录下的temp_data/test_case/目录到oj-backend容器的/data/目录</span></span><br><span class="line">docker cp ./temp_data/test_case/ oj-backend:/data/</span><br></pre></td></tr></table></figure>
-<p>复制文件和目录都可以，就是容器的路径是：[容器名]:[文件/目录]</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -485,30 +443,39 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker搭建Gitbook</title>
-    <url>/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/</url>
-    <content><![CDATA[<p>在网上看到用Gitbook写的教程/文档，感觉还挺方便看的，想用它来试一下写教程/电子书之类的。</p>
-<p>看到安装Gitbook还挺方便的，跟Hexo一样（用的就是Hexo的博客），是一个基于Node.js 的命令行工具，可使用Github/Git 和Markdown 来制作精美的电子书。</p>
-<p>于是，原来都装好了Node.js和git这些，感觉倒也方便，安装下Gitbook就行了。</p>
-<p>谁料，是我年轻了，想的太简单了。</p>
+    <title>Docker可视化查询工具：Lazydocker（Ubuntu安装使用）</title>
+    <url>/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/</url>
+    <content><![CDATA[<p>Windows这些有界面的系统，装个Docker Desktop就可以对Docker进行可视化操作、管理。</p>
+<p>像Linux的服务器系统，只有命令行，没有带界面的，每次查看Docker的使用情况，基本上就先用<code>docker images</code>查看有哪些镜像，再用<code>docker ps -a</code>查看有哪些容器和容器的运行状态。</p>
+<p>看到 Lazydocker 这个开源的UI终端，支持Linux、OSX、Windows操作系统。用命令就可以运行，界面很简洁的，就日常查看下状态够用了。</p>
 <a id="more"></a>
 
-<h2 id="Gitbook直接安装方法"><a href="#Gitbook直接安装方法" class="headerlink" title="Gitbook直接安装方法"></a>Gitbook直接安装方法</h2><p>前提是已经安装了Node.js。然后用以下命令能安装上，是很方便了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.安装 gitbook-cli</span></span><br><span class="line">npm install -g gitbook-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.版本，这里开始出问题，GitBook installing开始报错</span></span><br><span class="line"><span class="comment"># 然后修改了报错的polyfills.js文件，注释掉62~64行这3行内容，才成功安装</span></span><br><span class="line">gitbook -V</span><br><span class="line"><span class="comment"># 结果如下：</span></span><br><span class="line"><span class="comment"># CLI version: 2.3.2</span></span><br><span class="line"><span class="comment"># GitBook version: 3.2.3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建目录，初始化</span></span><br><span class="line">mkdir gitbook-test</span><br><span class="line"><span class="built_in">cd</span> gitbook-test</span><br><span class="line">gitbook init</span><br><span class="line"><span class="comment"># 结果报错：</span></span><br><span class="line"><span class="comment"># TypeError [ERR_INVALID_ARG_TYPE]: The &quot;data&quot; argument must be of type string or an instance of Buffer, ……</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看Node.js版本，v14.15.4</span></span><br><span class="line">node -v</span><br></pre></td></tr></table></figure>
-<p>好家伙，前面那个问题好不容易解决，init初始化的时候还是挂了。然后查看下Node.js的版本，反正就是版本过高的问题，要么再安装个低版本的，但环境问题真是折腾人，就放弃了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 卸载Gitbook</span></span><br><span class="line"><span class="comment"># 1.找到C:\Users\&#123;用户名&#125;\.gitbook目录，删除</span></span><br><span class="line"><span class="comment"># 2.卸载</span></span><br><span class="line">npm uninstall -g gitbook-cli</span><br><span class="line"><span class="comment"># 3.清除npm缓存</span></span><br><span class="line">npm cache clean -f</span><br></pre></td></tr></table></figure>
-<h2 id="Docker搭建Gitbook"><a href="#Docker搭建Gitbook" class="headerlink" title="Docker搭建Gitbook"></a>Docker搭建Gitbook</h2><p>不想折腾环境，就开始找Docker安装的方法。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.拉取镜像 https://hub.docker.com/r/tobegit3hub/gitbook-server</span></span><br><span class="line">docker pull tobegit3hub/gitbook-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.创建目录 python\gitbook，回头用来作映射的</span></span><br><span class="line">mkdir gitbook</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建容器</span></span><br><span class="line">docker run -idt --name gitbook -p 14000:4000 -v E:\SynologyDrive\Gitbook\python\gitbook:/gitbook tobegit3hub/gitbook-server /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it gitbook /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.进入容器后，默认是在/gitbook目录，用以下命令初始化</span></span><br><span class="line"><span class="comment"># 初始化后会在本地的gitbook映射目录下生成README.md和SUMMARY.md文件。</span></span><br><span class="line">gitbook init</span><br></pre></td></tr></table></figure>
-<p><strong>6.编辑SUMMARY.md和README.md文件</strong></p>
-<p>比如SUMMARY.md文件内容如下（README.md文件随便写点内容）：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># Summary</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">*</span> [<span class="string">Introduction</span>](<span class="link">README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">前言</span>](<span class="link">readme.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第一章</span>](<span class="link">part1/README.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第一节</span>](<span class="link">part1/1.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第二节</span>](<span class="link">part1/2.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第三节</span>](<span class="link">part1/3.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第四节</span>](<span class="link">part1/4.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第二章</span>](<span class="link">part2/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第三章</span>](<span class="link">part3/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第四章</span>](<span class="link">part4/README.md</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 7.再次执行init</span></span><br><span class="line"><span class="comment"># 会发现安照SUMMARY.md文件的内容自动生成对应的目录结构和md文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.启动服务，在线预览（会生成 _book目录，静态HTML）</span></span><br><span class="line"><span class="comment"># 然后打开 http://localhost:14000 就可以看到电子书了（我把4000端口映射到14000了）</span></span><br><span class="line">gitbook serve</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gitbook输出格式</span></span><br><span class="line"><span class="comment"># 1).输出静态HTML页面，生成 _book 目录；</span></span><br><span class="line"><span class="comment"># 也可以用参数指定目录名：gitbook build ./ --output=./_book/</span></span><br><span class="line">gitbook build</span><br><span class="line"><span class="comment"># 2).输出PDF文件</span></span><br><span class="line">gitbook pdf</span><br></pre></td></tr></table></figure>
-<p><strong>9.插入图片</strong></p>
-<p>如果需要插入图片的，建议使用相对路径，很方便。</p>
-<p>直接在 <code>python\gitbook</code> 目录下建一个imgs目录，用于存放图片。</p>
-<p>比如我在imgs目录下放了一张图片：gitbook.png<br>然后用Markdown语法使用就行：<br><code>![](\imgs\gitbook.png)</code></p>
-<p>或者：<br><code>&lt;img src=&quot;/imgs/gitbook.png&quot; style=&quot;zoom: 75%;&quot;/&gt;</code></p>
-<p>后面这种还可以按比例显示，反正写Hexo博客时，我就一直偏爱用后者。</p>
+<h2 id="Lazydocker安装使用（Ubuntu）"><a href="#Lazydocker安装使用（Ubuntu）" class="headerlink" title="Lazydocker安装使用（Ubuntu）"></a>Lazydocker安装使用（Ubuntu）</h2><p>Lazydocker项目地址：<a class="link"   href="https://github.com/jesseduffield/lazydocker" >https://github.com/jesseduffield/lazydocker<i class="fas fa-external-link-alt"></i></a></p>
+<p>项目地址上安装方法也分好几种。这里介绍在Ubuntu中使用方法。</p>
+<p>系统：Ubuntu 20.04 LTS</p>
+<p><strong>1.下载Lazydocker包</strong></p>
+<p>先去releases页面，下载最新的Lazydocker包：<br><a class="link"   href="https://github.com/jesseduffield/lazydocker/releases" >https://github.com/jesseduffield/lazydocker/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>看自己哪个系统需要哪个，我这下载的是：lazydocker_0.20.0_Linux_x86_64.tar.gz</p>
+<p>用防止github的访问问题，可以像我一样下载后用ftp工具上传到Ubuntu服务器。</p>
+<p>当然，能下载的话，也可以直接用wget或者curl下载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># curl下载保存为lazydocker_0.20.0.tar.gz，试了下 ，速度好慢</span></span><br><span class="line">curl -Lo lazydocker_0.20.0.tar.gz <span class="string">&quot;https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># wget下载</span></span><br><span class="line">wget https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+<p><strong>2.解压Lazydocker包</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xf lazydocker_0.20.0_Linux_x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果想解压到某个目录，可以先创建个目录，反正最后其它的都可以删除的</span></span><br><span class="line">mkdir lazydocker-temp</span><br><span class="line">tar xf lazydocker_0.20.0_Linux_x86_64.tar.gz -C lazydocker-temp</span><br></pre></td></tr></table></figure>
+<p><strong>3.把lazydocker（可执行文件）移动到用户可执行程序目录下</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 解压出来的lazydocker可以用ls -l命令看是，是否有带x可执行权限，现在新版本应该都有的</span></span><br><span class="line">sudo mv lazydocker /usr/<span class="built_in">local</span>/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是放在lazydocker-temp目录的，用以下命令</span></span><br><span class="line">sudo mv lazydocker-temp/lazydocker /usr/<span class="built_in">local</span>/bin</span><br></pre></td></tr></table></figure>
+<p><strong>4.使用lazydocker</strong></p>
+<p>直接运行命令就行了。这就跟在windows系统里放了一个.exe的小程序一样。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lazydocker</span><br></pre></td></tr></table></figure>
+<p>如下图所示：能看到所有的容器、镜像、还有数据卷Volumes。按q键退出。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_lazydocker.png"
+                      style="zoom: 50%;"
+                ></p>
+<p>如果觉得<code>lazydocker</code>这个命令太长了，项目文档上也说了可以取一个命令别名，方便使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;alias lzd=&#x27;lazydocker&#x27;&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>然后，就可以直接用<code>lzd</code>命令代替<code>lazydocker</code>命令了。</p>
+<p>PS.解压出来还有一个LICENSE和README.md文件都可以删除，如果是解压到lazydocker-temp目录的话，整个目录都可以删除。压缩包不想留着也可以删除。</p>
 ]]></content>
       <categories>
         <category>Docker</category>
@@ -577,6 +544,39 @@
       <tags>
         <tag>Docker</tag>
         <tag>物联网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker搭建Gitbook</title>
+    <url>/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/</url>
+    <content><![CDATA[<p>在网上看到用Gitbook写的教程/文档，感觉还挺方便看的，想用它来试一下写教程/电子书之类的。</p>
+<p>看到安装Gitbook还挺方便的，跟Hexo一样（用的就是Hexo的博客），是一个基于Node.js 的命令行工具，可使用Github/Git 和Markdown 来制作精美的电子书。</p>
+<p>于是，原来都装好了Node.js和git这些，感觉倒也方便，安装下Gitbook就行了。</p>
+<p>谁料，是我年轻了，想的太简单了。</p>
+<a id="more"></a>
+
+<h2 id="Gitbook直接安装方法"><a href="#Gitbook直接安装方法" class="headerlink" title="Gitbook直接安装方法"></a>Gitbook直接安装方法</h2><p>前提是已经安装了Node.js。然后用以下命令能安装上，是很方便了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.安装 gitbook-cli</span></span><br><span class="line">npm install -g gitbook-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.版本，这里开始出问题，GitBook installing开始报错</span></span><br><span class="line"><span class="comment"># 然后修改了报错的polyfills.js文件，注释掉62~64行这3行内容，才成功安装</span></span><br><span class="line">gitbook -V</span><br><span class="line"><span class="comment"># 结果如下：</span></span><br><span class="line"><span class="comment"># CLI version: 2.3.2</span></span><br><span class="line"><span class="comment"># GitBook version: 3.2.3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建目录，初始化</span></span><br><span class="line">mkdir gitbook-test</span><br><span class="line"><span class="built_in">cd</span> gitbook-test</span><br><span class="line">gitbook init</span><br><span class="line"><span class="comment"># 结果报错：</span></span><br><span class="line"><span class="comment"># TypeError [ERR_INVALID_ARG_TYPE]: The &quot;data&quot; argument must be of type string or an instance of Buffer, ……</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看Node.js版本，v14.15.4</span></span><br><span class="line">node -v</span><br></pre></td></tr></table></figure>
+<p>好家伙，前面那个问题好不容易解决，init初始化的时候还是挂了。然后查看下Node.js的版本，反正就是版本过高的问题，要么再安装个低版本的，但环境问题真是折腾人，就放弃了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 卸载Gitbook</span></span><br><span class="line"><span class="comment"># 1.找到C:\Users\&#123;用户名&#125;\.gitbook目录，删除</span></span><br><span class="line"><span class="comment"># 2.卸载</span></span><br><span class="line">npm uninstall -g gitbook-cli</span><br><span class="line"><span class="comment"># 3.清除npm缓存</span></span><br><span class="line">npm cache clean -f</span><br></pre></td></tr></table></figure>
+<h2 id="Docker搭建Gitbook"><a href="#Docker搭建Gitbook" class="headerlink" title="Docker搭建Gitbook"></a>Docker搭建Gitbook</h2><p>不想折腾环境，就开始找Docker安装的方法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.拉取镜像 https://hub.docker.com/r/tobegit3hub/gitbook-server</span></span><br><span class="line">docker pull tobegit3hub/gitbook-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.创建目录 python\gitbook，回头用来作映射的</span></span><br><span class="line">mkdir gitbook</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建容器</span></span><br><span class="line">docker run -idt --name gitbook -p 14000:4000 -v E:\SynologyDrive\Gitbook\python\gitbook:/gitbook tobegit3hub/gitbook-server /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it gitbook /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.进入容器后，默认是在/gitbook目录，用以下命令初始化</span></span><br><span class="line"><span class="comment"># 初始化后会在本地的gitbook映射目录下生成README.md和SUMMARY.md文件。</span></span><br><span class="line">gitbook init</span><br></pre></td></tr></table></figure>
+<p><strong>6.编辑SUMMARY.md和README.md文件</strong></p>
+<p>比如SUMMARY.md文件内容如下（README.md文件随便写点内容）：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># Summary</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">*</span> [<span class="string">简介</span>](<span class="link">README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">前言</span>](<span class="link">README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第一章</span>](<span class="link">part1/README.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第一节</span>](<span class="link">part1/1.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第二节</span>](<span class="link">part1/2.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第三节</span>](<span class="link">part1/3.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第四节</span>](<span class="link">part1/4.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第二章</span>](<span class="link">part2/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第三章</span>](<span class="link">part3/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第四章</span>](<span class="link">part4/README.md</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 7.再次执行init</span></span><br><span class="line"><span class="comment"># 会发现安照SUMMARY.md文件的内容自动生成对应的目录结构和md文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.启动服务，在线预览（会生成 _book目录，静态HTML）</span></span><br><span class="line"><span class="comment"># 然后打开 http://localhost:14000 就可以看到电子书了（我把4000端口映射到14000了）</span></span><br><span class="line">gitbook serve</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gitbook输出格式</span></span><br><span class="line"><span class="comment"># 1).输出静态HTML页面，生成 _book 目录；</span></span><br><span class="line"><span class="comment"># 也可以用参数指定目录名：gitbook build ./ --output=./_book/</span></span><br><span class="line">gitbook build</span><br><span class="line"><span class="comment"># 2).输出PDF文件</span></span><br><span class="line">gitbook pdf</span><br></pre></td></tr></table></figure>
+<p><strong>9.插入图片</strong></p>
+<p>如果需要插入图片的，建议使用相对路径，很方便。</p>
+<p>直接在 <code>python\gitbook</code> 目录下建一个imgs目录，用于存放图片。</p>
+<p>比如我在imgs目录下放了一张图片：gitbook.png<br>然后用Markdown语法使用就行：<br><code>![](\imgs\gitbook.png)</code></p>
+<p>或者：<br><code>&lt;img src=&quot;/imgs/gitbook.png&quot; style=&quot;zoom: 75%;&quot;/&gt;</code></p>
+<p>后面这种还可以按比例显示，反正写Hexo博客时，我就一直偏爱用后者。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -1413,6 +1413,63 @@
       </tags>
   </entry>
   <entry>
+    <title>Github Pages绑定个人域名</title>
+    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
+<li>打开Github上[github用户名].github.io的配置</li>
+<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
+<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_1.png"
+                     
+                >
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_2.png"
+                     
+                >
+
+</li>
+</ul>
+<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_3.png"
+                     
+                >
+
+<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
+<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
+<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_4.png"
+                     
+                ></p>
+<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Github_Pages_domain_name_5.png"
+                     
+                ></p>
+<p>这样就可以了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github 图床使用教程</title>
     <url>/2021/02/08/Github%E5%9B%BE%E5%BA%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<p>自己用的是 Github Pages + Hexo的博客，Markdown语言的静态网站，所以直接再用一个 Github的图床就比较方便。<br>前提当时是先注册一个 Github的账号。</p>
@@ -1469,66 +1526,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
+        <tag>Github</tag>
         <tag>Hexo</tag>
         <tag>Markdown</tag>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github Pages绑定个人域名</title>
-    <url>/2022/04/09/Github%20Pages%E7%BB%91%E5%AE%9A%E4%B8%AA%E4%BA%BA%E5%9F%9F%E5%90%8D/</url>
-    <content><![CDATA[<p>用Github Pages + Hexo搭建个人博客后，域名都是[github用户名].github.io，如果想换成自己的域名，比如我的github上的站点是：hduzn.github.io，要绑定的域名为：<a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a></p>
-<a id="more"></a>
-
-<h2 id="1-在Github上进行设置"><a href="#1-在Github上进行设置" class="headerlink" title="1.在Github上进行设置"></a>1.在Github上进行设置</h2><ul>
-<li>打开Github上[github用户名].github.io的配置</li>
-<li>找到<strong>【Settings】</strong>中，页面拉到最下面<strong>【Github Pages】</strong>选项，</li>
-<li>在Custom domain项中输入域名：i007it.com后，Save保存一下。<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_1.png"
-                     
-                >
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_2.png"
-                     
-                >
-
-</li>
-</ul>
-<h2 id="2-添加CNAME文件"><a href="#2-添加CNAME文件" class="headerlink" title="2.添加CNAME文件"></a>2.添加CNAME文件</h2><p>打开Hexo\source 目录，添加一个CNAME文件，用记事本打开，内容如下（只有一行域名）：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">i007it.com</span></span><br></pre></td></tr></table></figure>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_3.png"
-                     
-                >
-
-<p>PS.域名前没有加“www”，如果加了“www”，那就必须只能用 <a class="link"   href="http://www.i007it.com/" >www.i007it.com<i class="fas fa-external-link-alt"></i></a> 访问了。</p>
-<h2 id="3-修改DNS中对应的IP地址"><a href="#3-修改DNS中对应的IP地址" class="headerlink" title="3.修改DNS中对应的IP地址"></a>3.修改DNS中对应的IP地址</h2><p>在域名解析服务商中，将域名的A记录对应的ip地址设置为github.io对应的ip。</p>
-<p>1).先通过<code>ping github.io</code> 命令，得到对应的ip地址为：185.199.110.153 （不固定，需要自己ping一下）<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_4.png"
-                     
-                ></p>
-<p>2).当域名解析(DNS)服务商中的A记录对应ip地址设置为上面ping出来的ip地址。<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Github_Pages_domain_name_5.png"
-                     
-                ></p>
-<p>这样就可以了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
       </tags>
   </entry>
   <entry>
@@ -1773,71 +1773,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo博客同步部署到Github Pages</title>
-    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
-    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
-<a id="more"></a>
-
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#99;&#x6f;&#109;" >&#103;&#105;&#x74;&#64;&#103;&#x69;&#x74;&#104;&#117;&#x62;&#46;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#103;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#x6d;" >&#103;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo博客部署到云服务器（Ubuntu）上</title>
     <url>/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/</url>
     <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -1999,6 +1934,71 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo博客同步部署到Github Pages</title>
+    <url>/2022/05/12/Hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2%E5%88%B0Github-Pages/</url>
+    <content><![CDATA[<p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
+<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+<a id="more"></a>
+
+<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
+<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
+<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
+<p><strong>步骤：</strong></p>
+<ul>
+<li>进入本机SSH目录，创建一对新的SSH密钥</li>
+<li>把SSH公钥添加到Github中</li>
+<li>本机SSH配置文件（config）修改</li>
+<li>ssh测试</li>
+</ul>
+<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
+<p>完成后，会显示如下的信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>这样，新的SSH密钥就创建好了。</p>
+<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<ul>
+<li>登陆GitHub，进入Account 【Settings】；</li>
+<li>选择【SSH and GPG keys】；</li>
+<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
+</ul>
+<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;" >&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
+<p>本机~/.ssh 目录有2个文件需要改动。</p>
+<ul>
+<li>known_hosts 文件</li>
+<li>config 文件</li>
+</ul>
+<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
+<p>1).修改<strong>known_hosts 文件</strong></p>
+<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
+<p>2).修改<strong>config</strong>文件</p>
+<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
+<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
+<p>用记事本类软件打开config文件，添加下面2段配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
+<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
+<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
+<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
+<p><a class="link"   href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#x6d;" >&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#111;&#x6d;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
+<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Joplin使用群晖NAS作同步存储</title>
     <url>/2022/11/24/Joplin%E4%BD%BF%E7%94%A8%E7%BE%A4%E6%99%96NAS%E4%BD%9C%E5%90%8C%E6%AD%A5%E5%AD%98%E5%82%A8/</url>
     <content><![CDATA[<p>用了多年印象笔记后，已经逐渐放弃了，近n个月/一年来也就还偶尔用用剪藏，做个备份啥的。越来越臃肿的软件，还会卡死，可怕，频率还挺高，可能一天就一次。还有好几年的会员，但不升专业版、连代码块也用不了 ，简直了~</p>
@@ -2095,55 +2095,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 修改文件权限</title>
-    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
-    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
-<a id="more"></a>
-
-<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
-<ul>
-<li>read</li>
-<li>write</li>
-<li>execute</li>
-<li>none</li>
-</ul>
-<p>例如：运行命令 <code>ls -l</code> 后</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
-<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
-<ul>
-<li>r 代表read，可读</li>
-<li>w 代表write，可写入</li>
-<li>x 代表execute，可执行</li>
-<li>-代表none</li>
-</ul>
-<p>这里就代表什么样的人对文件有什么样的权限。</p>
-<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
-<ul>
-<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
-<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
-<li>最后3位(r–)表示：其它人，只读</li>
-</ul>
-<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
-<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
-<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
-<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
-<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
-<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
-</ul>
-<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
-<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
-<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
-<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
-<p>Readme.txt文件的所有者就变为testuser</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux vim/vi 命令简单使用</title>
     <url>/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
@@ -2205,6 +2156,55 @@
 <li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
 <li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
 </ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 修改文件权限</title>
+    <url>/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/</url>
+    <content><![CDATA[<p>用 Linux系统的时候，经常会碰到文件权限的问题，比如没执行权限，没写入权限等。</p>
+<a id="more"></a>
+
+<h2 id="Linux下对于文件的权限"><a href="#Linux下对于文件的权限" class="headerlink" title="Linux下对于文件的权限"></a>Linux下对于文件的权限</h2><p>有4种：</p>
+<ul>
+<li>read</li>
+<li>write</li>
+<li>execute</li>
+<li>none</li>
+</ul>
+<p>例如：运行命令 <code>ls -l</code> 后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-rw-r--r-- 1 z------07 member   32 Jun 26 20:35 Readme.txt</span><br><span class="line">-rw-r--r-- 1 z------07 member8 Jun 26 21:13 example.txt</span><br><span class="line">drwxr-xr-x 2 z------07 member 4096 Jun 26 20:40 linux</span><br></pre></td></tr></table></figure>
+<p>第1位：- 代表文件，d 代表目录，l 代表链接。<br>后9位中：</p>
+<ul>
+<li>r 代表read，可读</li>
+<li>w 代表write，可写入</li>
+<li>x 代表execute，可执行</li>
+<li>-代表none</li>
+</ul>
+<p>这里就代表什么样的人对文件有什么样的权限。</p>
+<p>以 -rw-r–r– 1 z——7 member   32 Jun 26 20:35 Readme.txt 为例：</p>
+<ul>
+<li>第2-4位(rw-)表示：文件所有者，能读写，不能执行</li>
+<li>之后3位(r–)表示：文件所有者同组的其它人，只读</li>
+<li>最后3位(r–)表示：其它人，只读</li>
+</ul>
+<h2 id="修改文件权限方法"><a href="#修改文件权限方法" class="headerlink" title="修改文件权限方法"></a>修改文件权限方法</h2><h4 id="1、普通修改文件权限-模式"><a href="#1、普通修改文件权限-模式" class="headerlink" title="1、普通修改文件权限(模式)"></a>1、普通修改文件权限(模式)</h4><ul>
+<li>chmod +x Readme.txt  表示给Readme.txt文件添加了可执行(x)权限</li>
+<li>chmod -x Readme.txt 给Readme.txt文件除去了可执行(x)权限</li>
+<li>chmod u+x Readme.txt 给Readme.txt文件的当前用户(user)添加了可执行(x)权限</li>
+<li>chmod g+x Readme.txt 给Readme.txt文件的当前用户同组其它人(group)添加了可执行(x)权限</li>
+<li>chmod o+x Readme.txt 给Readme.txt文件的其它用户(others)添加了可执行(x)权限</li>
+</ul>
+<h4 id="2、专业方法"><a href="#2、专业方法" class="headerlink" title="2、专业方法"></a>2、专业方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 755 Readme.txt</span><br></pre></td></tr></table></figure>
+<p>linux/unix内部用9位来代表权限<br>1表示有权限，0表示没权限</p>
+<p>例如rw-r–r–，即为110100100，三位三位读后就是644。则<br>如运行<code>chmod 644 Readme.txt</code>，将能改回原来权限状态</p>
+<h4 id="3、修改文件所有者"><a href="#3、修改文件所有者" class="headerlink" title="3、修改文件所有者"></a>3、修改文件所有者</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chown testuser Readme.txt</span><br></pre></td></tr></table></figure>
+<p>Readme.txt文件的所有者就变为testuser</p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -2528,6 +2528,69 @@
       </tags>
   </entry>
   <entry>
+    <title>Python JSON使用举例</title>
+    <url>/2022/07/12/Python-JSON%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>JSON是一种轻量级的数据交换格式。易于人类的阅读和编写，同时也易于机器解析和生成，是目前应用最广泛的数据交换格式。</p>
+<p>像一些开放API接口，很多返回数据也都有json格式。这样跨语言、跨平台使用就很方便了。</p>
+<p>比如这样的json数据（注意json中都是双引号）：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[    </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;水浒传&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;施耐庵&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2016-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233444&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;三国演义&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;罗贯中&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2017-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233555&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="JSON函数"><a href="#JSON函数" class="headerlink" title="JSON函数"></a>JSON函数</h2><p>Python里用json也很方便，主要就四个函数。</p>
+<p>最主要是前两个处理字符串的，后两个是处理文件的：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">json.dumps(obj)：将Python对象序列化成json字符串</span><br><span class="line">json.loads(s)：将已编码的json字符串反序列化为Python对象</span><br><span class="line"></span><br><span class="line">json.dump(obj,fp)：将python数据类型转换并保存到json格式的文件</span><br><span class="line">json.load(fp)：从json格式的文件中读取数据并转换为python的类型</span><br></pre></td></tr></table></figure>
+<p>使用 JSON 函数需要导入 json 库：<code>import json</code>。</p>
+<h3 id="1-json-dumps-obj-序列化成json字符串"><a href="#1-json-dumps-obj-序列化成json字符串" class="headerlink" title="1. json.dumps(obj) 序列化成json字符串"></a>1. json.dumps(obj) 序列化成json字符串</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.dumps(obj, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, encoding=<span class="string">&quot;utf-8&quot;</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>2个重要参数：</strong><br>1).ensure_ascii 参数</p>
+<p>默认的话是 <code>ensure_ascii=True</code>，这个当有中文字符的时候就会有问题，默认True表示使用ascii编码。如果想输出正常中文，就要设置成 <code>ensure_ascii=False</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">s = <span class="string">&#x27;水浒传&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s)) <span class="comment"># &quot;\u6c34\u6d52\u4f20&quot;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s, ensure_ascii=<span class="literal">False</span>)) <span class="comment"># &quot;水浒传&quot;</span></span><br></pre></td></tr></table></figure>
+<p>2).indent 参数</p>
+<p>默认是 <code>indent=None</code>，表示没有格式。indent后面的数值表示缩进的空格数。看下例子就懂了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, separators=(<span class="string">&#x27;,&#x27;</span>,<span class="string">&#x27;:&#x27;</span>)))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>)) <span class="comment"># 缩进2个</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)) <span class="comment"># 缩进4个</span></span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;水浒传&quot;: &quot;施耐庵&quot;, &quot;三国演义&quot;: &quot;罗贯中&quot;, &quot;红楼梦&quot;: &quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;&quot;水浒传&quot;:&quot;施耐庵&quot;,&quot;三国演义&quot;:&quot;罗贯中&quot;,&quot;红楼梦&quot;:&quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">  &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">  &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有两个参数：</p>
+<ul>
+<li><code>sort_keys=False</code>：默认是没排序的，可以按照key来排序；</li>
+<li><code>separators=None</code>：如果设置成<code>separators=(&#39;,&#39;,&#39;:&#39;)</code>表示元素之间用逗号隔开，key和value之间用冒号隔开（这里没有空格，需要空格就加上，默认是有的）</li>
+</ul>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="comment"># dumps 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">json_info2 = json.dumps(book_info, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book_info)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;水浒传&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;施耐庵&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2016-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233444&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;三国演义&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;罗贯中&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2017-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233555&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">&lt;class &#39;list&#39;&gt;</span><br></pre></td></tr></table></figure>
+<p>一般比较常用的应该就是python的dict字典或list列表编码成json格式字符串。</p>
+<h3 id="2-json-loads-s-反序列化成Python数据对象"><a href="#2-json-loads-s-反序列化成Python数据对象" class="headerlink" title="2. json.loads(s) 反序列化成Python数据对象"></a>2. json.loads(s) 反序列化成Python数据对象</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.loads(s[, encoding[, cls[, object_hook[, parse_float[, parse_int[, parse_constant[, object_pairs_hook[, **kw]]]]]]]])</span><br></pre></td></tr></table></figure>
+<p><strong>1个重要参数：</strong><br>strict 参数<br>默认是<code>strict=True</code>，是不能有控制字符的，如果有，会报一个错：<br><code>ValueError Invalid control character……</code></p>
+<p>官方文档中也有这个参数的说明：</p>
+<blockquote>
+<p>如果 strict 为 false （默认为 True ），那么控制字符将被允许在字符串内。在此上下文中的控制字符编码在范围 0–31 内的字符，包括 ‘\t’ (制表符）， ‘\n’ ， ‘\r’ 和 ‘\0’ </p>
+</blockquote>
+<p>所以，一般我们就直接设为<code>strict=False</code>。</p>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹 &#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;序列化为json格式字符串&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 1.json.dumps(obj) 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;反序列化为Python数据对象&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 2.json.loads(s) 方法把json格式的字符串变为 Python中的数据对象</span></span><br><span class="line">trans_info = json.loads(json_info, strict=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(trans_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(trans_info)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">----------序列化为json格式字符串----------</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹 &quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">----------反序列化为Python数据对象----------</span><br><span class="line">&#123;&#39;水浒传&#39;: &#39;施耐庵&#39;, &#39;三国演义&#39;: &#39;罗贯中&#39;, &#39;红楼梦&#39;: &#39;曹雪芹 &#39;&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-json-dump-obj-fp-保存到json格式的文件"><a href="#3-json-dump-obj-fp-保存到json格式的文件" class="headerlink" title="3. json.dump(obj,fp) 保存到json格式的文件"></a>3. json.dump(obj,fp) 保存到json格式的文件</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.dump(obj, fp, *, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>2个重要参数：</strong><br>跟<code>json.dumps(obj)</code>一样的，主要就是ensure_ascii 和 indent。</p>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;保存到json格式的文件&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 3.json.dump(obj, fp) 方法将python数据类型转换并保存到json格式的文件内</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(book_info, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="4-json-load-fp-读取json格式文件数据"><a href="#4-json-load-fp-读取json格式文件数据" class="headerlink" title="4.json.load(fp) 读取json格式文件数据"></a>4.json.load(fp) 读取json格式文件数据</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.load(fp, *, cls=<span class="literal">None</span>, object_hook=<span class="literal">None</span>, parse_float=<span class="literal">None</span>, parse_int=<span class="literal">None</span>, parse_constant=<span class="literal">None</span>, object_pairs_hook=<span class="literal">None</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;读取json文件内容&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 4.json.load(fp) 方法读取 json文件内容并转换为python的类型</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br><span class="line">f.close()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   href="https://docs.python.org/zh-cn/3.9/library/json.html" >json — JSON 编码和解码器<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python Flask笔记（一）</title>
     <url>/2022/09/20/Python-Flask%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<h2 id="一、Flask简介"><a href="#一、Flask简介" class="headerlink" title="一、Flask简介"></a>一、Flask简介</h2><p>Flask诞生于2010年，是用Python语言基于Werkzeug工具箱编写的轻量级Web开发框架。</p>
@@ -2596,102 +2659,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python JSON使用举例</title>
-    <url>/2022/07/12/Python-JSON%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>JSON是一种轻量级的数据交换格式。易于人类的阅读和编写，同时也易于机器解析和生成，是目前应用最广泛的数据交换格式。</p>
-<p>像一些开放API接口，很多返回数据也都有json格式。这样跨语言、跨平台使用就很方便了。</p>
-<p>比如这样的json数据（注意json中都是双引号）：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[    </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;水浒传&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;施耐庵&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2016-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233444&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;三国演义&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;罗贯中&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2017-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233555&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="JSON函数"><a href="#JSON函数" class="headerlink" title="JSON函数"></a>JSON函数</h2><p>Python里用json也很方便，主要就四个函数。</p>
-<p>最主要是前两个处理字符串的，后两个是处理文件的：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">json.dumps(obj)：将Python对象序列化成json字符串</span><br><span class="line">json.loads(s)：将已编码的json字符串反序列化为Python对象</span><br><span class="line"></span><br><span class="line">json.dump(obj,fp)：将python数据类型转换并保存到json格式的文件</span><br><span class="line">json.load(fp)：从json格式的文件中读取数据并转换为python的类型</span><br></pre></td></tr></table></figure>
-<p>使用 JSON 函数需要导入 json 库：<code>import json</code>。</p>
-<h3 id="1-json-dumps-obj-序列化成json字符串"><a href="#1-json-dumps-obj-序列化成json字符串" class="headerlink" title="1. json.dumps(obj) 序列化成json字符串"></a>1. json.dumps(obj) 序列化成json字符串</h3><p><strong>语法：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.dumps(obj, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, encoding=<span class="string">&quot;utf-8&quot;</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
-<p><strong>2个重要参数：</strong><br>1).ensure_ascii 参数</p>
-<p>默认的话是 <code>ensure_ascii=True</code>，这个当有中文字符的时候就会有问题，默认True表示使用ascii编码。如果想输出正常中文，就要设置成 <code>ensure_ascii=False</code>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">s = <span class="string">&#x27;水浒传&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s)) <span class="comment"># &quot;\u6c34\u6d52\u4f20&quot;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s, ensure_ascii=<span class="literal">False</span>)) <span class="comment"># &quot;水浒传&quot;</span></span><br></pre></td></tr></table></figure>
-<p>2).indent 参数</p>
-<p>默认是 <code>indent=None</code>，表示没有格式。indent后面的数值表示缩进的空格数。看下例子就懂了。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, separators=(<span class="string">&#x27;,&#x27;</span>,<span class="string">&#x27;:&#x27;</span>)))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>)) <span class="comment"># 缩进2个</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)) <span class="comment"># 缩进4个</span></span><br></pre></td></tr></table></figure>
-<p>输出结果为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;水浒传&quot;: &quot;施耐庵&quot;, &quot;三国演义&quot;: &quot;罗贯中&quot;, &quot;红楼梦&quot;: &quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;&quot;水浒传&quot;:&quot;施耐庵&quot;,&quot;三国演义&quot;:&quot;罗贯中&quot;,&quot;红楼梦&quot;:&quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">  &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">  &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>还有两个参数：</p>
-<ul>
-<li><code>sort_keys=False</code>：默认是没排序的，可以按照key来排序；</li>
-<li><code>separators=None</code>：如果设置成<code>separators=(&#39;,&#39;,&#39;:&#39;)</code>表示元素之间用逗号隔开，key和value之间用冒号隔开（这里没有空格，需要空格就加上，默认是有的）</li>
-</ul>
-<p><strong>举例：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="comment"># dumps 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">json_info2 = json.dumps(book_info, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book_info)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p>输出结果如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;水浒传&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;施耐庵&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2016-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233444&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;三国演义&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;罗贯中&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2017-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233555&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">&lt;class &#39;list&#39;&gt;</span><br></pre></td></tr></table></figure>
-<p>一般比较常用的应该就是python的dict字典或list列表编码成json格式字符串。</p>
-<h3 id="2-json-loads-s-反序列化成Python数据对象"><a href="#2-json-loads-s-反序列化成Python数据对象" class="headerlink" title="2. json.loads(s) 反序列化成Python数据对象"></a>2. json.loads(s) 反序列化成Python数据对象</h3><p><strong>语法：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.loads(s[, encoding[, cls[, object_hook[, parse_float[, parse_int[, parse_constant[, object_pairs_hook[, **kw]]]]]]]])</span><br></pre></td></tr></table></figure>
-<p><strong>1个重要参数：</strong><br>strict 参数<br>默认是<code>strict=True</code>，是不能有控制字符的，如果有，会报一个错：<br><code>ValueError Invalid control character……</code></p>
-<p>官方文档中也有这个参数的说明：</p>
-<blockquote>
-<p>如果 strict 为 false （默认为 True ），那么控制字符将被允许在字符串内。在此上下文中的控制字符编码在范围 0–31 内的字符，包括 ‘\t’ (制表符）， ‘\n’ ， ‘\r’ 和 ‘\0’ </p>
-</blockquote>
-<p>所以，一般我们就直接设为<code>strict=False</code>。</p>
-<p><strong>举例：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹 &#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;序列化为json格式字符串&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 1.json.dumps(obj) 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;反序列化为Python数据对象&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 2.json.loads(s) 方法把json格式的字符串变为 Python中的数据对象</span></span><br><span class="line">trans_info = json.loads(json_info, strict=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(trans_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(trans_info)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p>输出结果如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">----------序列化为json格式字符串----------</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹 &quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">----------反序列化为Python数据对象----------</span><br><span class="line">&#123;&#39;水浒传&#39;: &#39;施耐庵&#39;, &#39;三国演义&#39;: &#39;罗贯中&#39;, &#39;红楼梦&#39;: &#39;曹雪芹 &#39;&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-json-dump-obj-fp-保存到json格式的文件"><a href="#3-json-dump-obj-fp-保存到json格式的文件" class="headerlink" title="3. json.dump(obj,fp) 保存到json格式的文件"></a>3. json.dump(obj,fp) 保存到json格式的文件</h3><p><strong>语法：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.dump(obj, fp, *, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
-<p><strong>2个重要参数：</strong><br>跟<code>json.dumps(obj)</code>一样的，主要就是ensure_ascii 和 indent。</p>
-<p><strong>举例：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;保存到json格式的文件&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 3.json.dump(obj, fp) 方法将python数据类型转换并保存到json格式的文件内</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(book_info, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="4-json-load-fp-读取json格式文件数据"><a href="#4-json-load-fp-读取json格式文件数据" class="headerlink" title="4.json.load(fp) 读取json格式文件数据"></a>4.json.load(fp) 读取json格式文件数据</h3><p><strong>语法：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">json.load(fp, *, cls=<span class="literal">None</span>, object_hook=<span class="literal">None</span>, parse_float=<span class="literal">None</span>, parse_int=<span class="literal">None</span>, parse_constant=<span class="literal">None</span>, object_pairs_hook=<span class="literal">None</span>, **kw)</span><br></pre></td></tr></table></figure>
-<p><strong>举例：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;读取json文件内容&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 4.json.load(fp) 方法读取 json文件内容并转换为python的类型</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br><span class="line">f.close()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p>官方文档：<a class="link"   href="https://docs.python.org/zh-cn/3.9/library/json.html" >json — JSON 编码和解码器<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python Pandas使用举例</title>
-    <url>/2022/12/04/Python-Pandas%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
-    <content><![CDATA[<p>当Python要操作Excel表格时，用Pandas库就超级方便了。</p>
-<p>Pandas的主要数据结构有Series（一维数据）与DataFrame（二维数据）。<br>用来操作Excel表时，最常用的就是DataFrame了。</p>
-<a id="more"></a>
-
-<h2 id="安装pandas库"><a href="#安装pandas库" class="headerlink" title="安装pandas库"></a>安装pandas库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装pandas库：</span></span><br><span class="line">pip install pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当然，操作excel的库也要安装一下，一般操作.xlsx格式的，安装openpyxl：</span></span><br><span class="line">pip install openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果，最后保存文件是.xls格式的，需要安装xlwt：</span></span><br><span class="line">pip install xlwt</span><br></pre></td></tr></table></figure>
-<p>最后保存成<code>.xls</code>格式的时候，会有如下提示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">As the xlwt package is no longer maintained, the xlwt engine will be removed in a fuine will be removed in a future version of pandas.</span><br></pre></td></tr></table></figure>
-<p>这个东西在pandas中会被淘汰，不用管，等以后不能用了再说。<br>毕竟还是有些破系统的导入，只支持xls格式的。不过，自己肯定是能用xlsx就用xlsx。</p>
-<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><p>以以下表格（data.xlsx）举例：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/Python_pandas_demo.png"
-                      style="zoom: 100%;"
-                ></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.读取整个Excel表数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_01</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.读取某张sheet中某几列的数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_02</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    usecols = [<span class="string">&#x27;主题&#x27;</span>, <span class="string">&#x27;值&#x27;</span>] <span class="comment"># usecols = [&#x27;主题&#x27;, &#x27;值&#x27;, &#x27;时间&#x27;]</span></span><br><span class="line">    sheet_name = <span class="string">&#x27;Sheet1&#x27;</span> <span class="comment"># sheet_name=0 也可</span></span><br><span class="line">    df = pd.read_excel(ex_file, sheet_name=sheet_name, usecols=usecols)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.读取Excel数据转到List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_03</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    data_list = np.array(df).tolist()</span><br><span class="line">    <span class="built_in">print</span>(data_list)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.写入Excel</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_to_ex01</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    name_list = [<span class="string">&#x27;张三&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>,  <span class="string">&#x27;王五&#x27;</span>]</span><br><span class="line">    name_pinyin_list = [<span class="string">&#x27;zhangsan&#x27;</span>, <span class="string">&#x27;lisi&#x27;</span>, <span class="string">&#x27;wangwu&#x27;</span>]</span><br><span class="line">    data_dict = &#123;<span class="string">&#x27;姓名&#x27;</span>:name_list, <span class="string">&#x27;账号&#x27;</span>:name_pinyin_list&#125;</span><br><span class="line">    data = pd.DataFrame(data_dict)</span><br><span class="line">    data.to_excel(ex_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.追加写入Excel</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_to_ex02</span>(<span class="params">ex_file, new_col, data_list</span>):</span></span><br><span class="line">    dr = pd.read_excel(ex_file)</span><br><span class="line">    col_name = dr.columns.tolist() <span class="comment"># 所有列名</span></span><br><span class="line">    col_name.append(new_col) <span class="comment"># 将新增的列添加到最后</span></span><br><span class="line">    dr.reindex(columns=col_name) <span class="comment"># 对原行/列索引重新构建索引值</span></span><br><span class="line">    dr[new_col] = data_list</span><br><span class="line">    dr.to_excel(ex_file)</span><br><span class="line"></span><br><span class="line">ex_file = <span class="string">r&#x27;.\data.xlsx&#x27;</span></span><br><span class="line"><span class="comment"># 读取Excel</span></span><br><span class="line">read_ex_01(ex_file)</span><br><span class="line">read_ex_02(ex_file)</span><br><span class="line">read_ex_03(ex_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入Excel</span></span><br><span class="line">write_to_ex01(<span class="string">r&#x27;.\ex\data1.xlsx&#x27;</span>)</span><br><span class="line">write_to_ex02(ex_file, <span class="string">&#x27;账号&#x27;</span>, [<span class="string">&#x27;zhangsan&#x27;</span>, <span class="string">&#x27;lisi&#x27;</span>, <span class="string">&#x27;wangwu&#x27;</span>])</span><br></pre></td></tr></table></figure>
-<p>还有使用Pandas的文章：</p>
-<ul>
-<li><a href="/2022/07/01/Python%E6%8B%86%E5%88%86Excel%E8%A1%A8/" title="Python拆分Excel表">Python拆分Excel表</a></li>
-<li><a href="/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/" title="Python pandas读取Excel时空单元格读取为nan">Python pandas读取Excel时空单元格读取为nan</a></li>
-<li><a href="/2023/01/07/Python-pandas%E7%BB%9F%E8%AE%A1Excel%E8%A1%A8%E4%B8%AD%E4%BA%BA%E5%90%8D%E6%AC%A1%E6%95%B0/" title="Python pandas统计Excel表中人名次数">Python pandas统计Excel表中人名次数</a>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python Selenium使用举例</title>
     <url>/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
     <content><![CDATA[<p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
@@ -2740,6 +2707,39 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python Pandas使用举例</title>
+    <url>/2022/12/04/Python-Pandas%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/</url>
+    <content><![CDATA[<p>当Python要操作Excel表格时，用Pandas库就超级方便了。</p>
+<p>Pandas的主要数据结构有Series（一维数据）与DataFrame（二维数据）。<br>用来操作Excel表时，最常用的就是DataFrame了。</p>
+<a id="more"></a>
+
+<h2 id="安装pandas库"><a href="#安装pandas库" class="headerlink" title="安装pandas库"></a>安装pandas库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装pandas库：</span></span><br><span class="line">pip install pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当然，操作excel的库也要安装一下，一般操作.xlsx格式的，安装openpyxl：</span></span><br><span class="line">pip install openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果，最后保存文件是.xls格式的，需要安装xlwt：</span></span><br><span class="line">pip install xlwt</span><br></pre></td></tr></table></figure>
+<p>最后保存成<code>.xls</code>格式的时候，会有如下提示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">As the xlwt package is no longer maintained, the xlwt engine will be removed in a fuine will be removed in a future version of pandas.</span><br></pre></td></tr></table></figure>
+<p>这个东西在pandas中会被淘汰，不用管，等以后不能用了再说。<br>毕竟还是有些破系统的导入，只支持xls格式的。不过，自己肯定是能用xlsx就用xlsx。</p>
+<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><p>以以下表格（data.xlsx）举例：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_pandas_demo.png"
+                      style="zoom: 100%;"
+                ></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.读取整个Excel表数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_01</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.读取某张sheet中某几列的数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_02</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    usecols = [<span class="string">&#x27;主题&#x27;</span>, <span class="string">&#x27;值&#x27;</span>] <span class="comment"># usecols = [&#x27;主题&#x27;, &#x27;值&#x27;, &#x27;时间&#x27;]</span></span><br><span class="line">    sheet_name = <span class="string">&#x27;Sheet1&#x27;</span> <span class="comment"># sheet_name=0 也可</span></span><br><span class="line">    df = pd.read_excel(ex_file, sheet_name=sheet_name, usecols=usecols)</span><br><span class="line">    <span class="built_in">print</span>(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.读取Excel数据转到List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_ex_03</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    df = pd.read_excel(ex_file)</span><br><span class="line">    data_list = np.array(df).tolist()</span><br><span class="line">    <span class="built_in">print</span>(data_list)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.写入Excel</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_to_ex01</span>(<span class="params">ex_file</span>):</span></span><br><span class="line">    name_list = [<span class="string">&#x27;张三&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>,  <span class="string">&#x27;王五&#x27;</span>]</span><br><span class="line">    name_pinyin_list = [<span class="string">&#x27;zhangsan&#x27;</span>, <span class="string">&#x27;lisi&#x27;</span>, <span class="string">&#x27;wangwu&#x27;</span>]</span><br><span class="line">    data_dict = &#123;<span class="string">&#x27;姓名&#x27;</span>:name_list, <span class="string">&#x27;账号&#x27;</span>:name_pinyin_list&#125;</span><br><span class="line">    data = pd.DataFrame(data_dict)</span><br><span class="line">    data.to_excel(ex_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.追加写入Excel</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_to_ex02</span>(<span class="params">ex_file, new_col, data_list</span>):</span></span><br><span class="line">    dr = pd.read_excel(ex_file)</span><br><span class="line">    col_name = dr.columns.tolist() <span class="comment"># 所有列名</span></span><br><span class="line">    col_name.append(new_col) <span class="comment"># 将新增的列添加到最后</span></span><br><span class="line">    dr.reindex(columns=col_name) <span class="comment"># 对原行/列索引重新构建索引值</span></span><br><span class="line">    dr[new_col] = data_list</span><br><span class="line">    dr.to_excel(ex_file)</span><br><span class="line"></span><br><span class="line">ex_file = <span class="string">r&#x27;.\data.xlsx&#x27;</span></span><br><span class="line"><span class="comment"># 读取Excel</span></span><br><span class="line">read_ex_01(ex_file)</span><br><span class="line">read_ex_02(ex_file)</span><br><span class="line">read_ex_03(ex_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入Excel</span></span><br><span class="line">write_to_ex01(<span class="string">r&#x27;.\ex\data1.xlsx&#x27;</span>)</span><br><span class="line">write_to_ex02(ex_file, <span class="string">&#x27;账号&#x27;</span>, [<span class="string">&#x27;zhangsan&#x27;</span>, <span class="string">&#x27;lisi&#x27;</span>, <span class="string">&#x27;wangwu&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>还有使用Pandas的文章：</p>
+<ul>
+<li><a href="/2022/07/01/Python%E6%8B%86%E5%88%86Excel%E8%A1%A8/" title="Python拆分Excel表">Python拆分Excel表</a></li>
+<li><a href="/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/" title="Python pandas读取Excel时空单元格读取为nan">Python pandas读取Excel时空单元格读取为nan</a></li>
+<li><a href="/2023/01/07/Python-pandas%E7%BB%9F%E8%AE%A1Excel%E8%A1%A8%E4%B8%AD%E4%BA%BA%E5%90%8D%E6%AC%A1%E6%95%B0/" title="Python pandas统计Excel表中人名次数">Python pandas统计Excel表中人名次数</a>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2975,6 +2975,31 @@
       </tags>
   </entry>
   <entry>
+    <title>Python pip安装包时报错ERROR Could not install packages due to an OSError</title>
+    <url>/2022/10/12/Python-pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E6%8A%A5%E9%94%99OSError/</url>
+    <content><![CDATA[<p>Python用的是虚拟环境virtualenv，然后又是放在同步盘。这样我两台电脑都是装的同一个Python版本，就共用了同一个虚拟环境（放在了同步盘，直接同步的）。</p>
+<p>一台电脑上正常，在另一台电脑上用pip安装的时候报了以下错误：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory:</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>下面提示还有涉及到的包，用<code>pip uninstall</code>卸载了重装还是不行。</p>
+<p>然后发现在虚拟环境的<code>Lib\site-packages</code>目录下，卸载后的包还有残留的。</p>
+<p><strong>解决方法：</strong><br>可能是同一个包有多版本的目录存在，也可能没卸载干净的。</p>
+<ul>
+<li>1.先用<code>pip uninstall 包名</code>卸载</li>
+<li>2.把<code>Lib\site-packages</code>目录下卸载包后还存在的目录直接删除</li>
+<li>3.再重新用<code>pip install 包名</code>安装包</li>
+</ul>
+<p>然后就可以正常使用了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python pandas读取Excel时空单元格读取为nan</title>
     <url>/2022/10/12/Python-pandas%E8%AF%BB%E5%8F%96Excel%E6%97%B6%E7%A9%BA%E5%8D%95%E5%85%83%E6%A0%BC%E8%AF%BB%E5%8F%96%E4%B8%BAnan/</url>
     <content><![CDATA[<p>当用pandas读取excel的时候，用到的是read_excel函数。</p>
@@ -3022,31 +3047,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python pip安装包时报错ERROR Could not install packages due to an OSError</title>
-    <url>/2022/10/12/Python-pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E6%8A%A5%E9%94%99OSError/</url>
-    <content><![CDATA[<p>Python用的是虚拟环境virtualenv，然后又是放在同步盘。这样我两台电脑都是装的同一个Python版本，就共用了同一个虚拟环境（放在了同步盘，直接同步的）。</p>
-<p>一台电脑上正常，在另一台电脑上用pip安装的时候报了以下错误：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory:</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>下面提示还有涉及到的包，用<code>pip uninstall</code>卸载了重装还是不行。</p>
-<p>然后发现在虚拟环境的<code>Lib\site-packages</code>目录下，卸载后的包还有残留的。</p>
-<p><strong>解决方法：</strong><br>可能是同一个包有多版本的目录存在，也可能没卸载干净的。</p>
-<ul>
-<li>1.先用<code>pip uninstall 包名</code>卸载</li>
-<li>2.把<code>Lib\site-packages</code>目录下卸载包后还存在的目录直接删除</li>
-<li>3.再重新用<code>pip install 包名</code>安装包</li>
-</ul>
-<p>然后就可以正常使用了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python selenium 切换到新的窗口方法</title>
     <url>/2021/02/19/Python-selenium3-%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84%E7%AA%97%E5%8F%A3%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>Python 用selenium（文章代码中使用selenium3版本） 在网页上操作的时候，我们经常遇到，点击一个链接 或者 按钮，就会打开一个新窗口 。</p>
@@ -3079,6 +3079,36 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python 带数字的字符串排序</title>
+    <url>/2022/11/29/Python-%E5%B8%A6%E6%95%B0%E5%AD%97%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8E%92%E5%BA%8F/</url>
+    <content><![CDATA[<p>当字符串中有数字的时候，想给字符串进行排序，不管用列表的sort()方法，还是sorted()方法，都一想，得到的结果会发现都不是我们想要的。</p>
+<p>举个例子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list1 = [<span class="string">&#x27;01&#x27;</span>, <span class="string">&#x27;11&#x27;</span>, <span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;21&#x27;</span>, <span class="string">&#x27;02&#x27;</span>]</span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list1.sort()</span><br><span class="line"><span class="built_in">print</span>(list1) <span class="comment"># [&#x27;01&#x27;, &#x27;02&#x27;, &#x27;10&#x27;, &#x27;11&#x27;, &#x27;21&#x27;]</span></span><br><span class="line">list2.sort()</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生10&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;]</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>当给这样的列表中的字符串直接排序的时候，看print打印出来的结果，只有纯数字的字符串列表list1是正确的，list2和list3排完后都不是我们想要的结果。</p>
+<p>比如list2的排序，排序前是：<br><code>list2 = [&#39;学生2&#39;, &#39;学生1&#39;, &#39;学生10&#39;, &#39;学生4&#39;]</code><br>排序完后是：<br><code>list2 = [&#39;学生1&#39;, &#39;学生10&#39;, &#39;学生2&#39;, &#39;学生4&#39;]</code></p>
+<p>这里就需要用到sort()方法中的key参数了。</p>
+<h3 id="List-sort-方法"><a href="#List-sort-方法" class="headerlink" title="List sort()方法"></a>List sort()方法</h3><p><strong>功能：</strong>用于对原列表进行排序，如果指定参数，则使用比较函数指定的比较函数。<br><strong>语法：</strong>list.sort(cmp=None, key=None, reverse=False)</p>
+<blockquote>
+<p>cmp：可选参数, 如果指定了该参数会使用该参数的方法进行排序。<br>key：主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。<br>reverse：排序规则，reverse=True 降序， reverse=False 升序（默认）。</p>
+</blockquote>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><h4 id="1-使用匿名函数"><a href="#1-使用匿名函数" class="headerlink" title="1.使用匿名函数"></a>1.使用匿名函数</h4><p>代码如下 ：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=<span class="keyword">lambda</span> customeSort: (customeSort[:<span class="number">2</span>], <span class="built_in">int</span>(customeSort[<span class="number">2</span>:])))</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>使用匿名函数，customeSort指列表的数据。<br>如果不好理解，可以用下面的方法。</p>
+<h4 id="2-更清晰的写法"><a href="#2-更清晰的写法" class="headerlink" title="2.更清晰的写法"></a>2.更清晰的写法</h4><p>用这个方法，可以直接debug看一下，每一步做了什么。结果是一样的。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="keyword">return</span> arr[:<span class="number">2</span>], <span class="built_in">int</span>(arr[<span class="number">2</span>:])</span><br><span class="line"></span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>这个方法还有一个好处 ，比如上面的例子中，数字的起始坐标位置都是2，如果不是确定的就写起来更复杂一点了。但写出来一个函数，就看起来清晰一点了。</p>
+<p>比如下面这个例子（明显，我是想按第一个<code>_</code>前面的数字排序一下，默认的排序出来是不对的）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="comment"># 查看第一个&#x27;_&#x27;的位置</span></span><br><span class="line">    i = arr.index(<span class="string">&#x27;_&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(arr[:i]), arr[i:]</span><br><span class="line"></span><br><span class="line">list3 = [<span class="string">&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list3.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list3)</span><br><span class="line"><span class="comment"># list3排序后结果如下：</span></span><br><span class="line"><span class="comment"># [&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;]</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3172,36 +3202,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 带数字的字符串排序</title>
-    <url>/2022/11/29/Python-%E5%B8%A6%E6%95%B0%E5%AD%97%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8E%92%E5%BA%8F/</url>
-    <content><![CDATA[<p>当字符串中有数字的时候，想给字符串进行排序，不管用列表的sort()方法，还是sorted()方法，都一想，得到的结果会发现都不是我们想要的。</p>
-<p>举个例子：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list1 = [<span class="string">&#x27;01&#x27;</span>, <span class="string">&#x27;11&#x27;</span>, <span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;21&#x27;</span>, <span class="string">&#x27;02&#x27;</span>]</span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list1.sort()</span><br><span class="line"><span class="built_in">print</span>(list1) <span class="comment"># [&#x27;01&#x27;, &#x27;02&#x27;, &#x27;10&#x27;, &#x27;11&#x27;, &#x27;21&#x27;]</span></span><br><span class="line">list2.sort()</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生10&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;]</span></span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>当给这样的列表中的字符串直接排序的时候，看print打印出来的结果，只有纯数字的字符串列表list1是正确的，list2和list3排完后都不是我们想要的结果。</p>
-<p>比如list2的排序，排序前是：<br><code>list2 = [&#39;学生2&#39;, &#39;学生1&#39;, &#39;学生10&#39;, &#39;学生4&#39;]</code><br>排序完后是：<br><code>list2 = [&#39;学生1&#39;, &#39;学生10&#39;, &#39;学生2&#39;, &#39;学生4&#39;]</code></p>
-<p>这里就需要用到sort()方法中的key参数了。</p>
-<h3 id="List-sort-方法"><a href="#List-sort-方法" class="headerlink" title="List sort()方法"></a>List sort()方法</h3><p><strong>功能：</strong>用于对原列表进行排序，如果指定参数，则使用比较函数指定的比较函数。<br><strong>语法：</strong>list.sort(cmp=None, key=None, reverse=False)</p>
-<blockquote>
-<p>cmp：可选参数, 如果指定了该参数会使用该参数的方法进行排序。<br>key：主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。<br>reverse：排序规则，reverse=True 降序， reverse=False 升序（默认）。</p>
-</blockquote>
-<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><h4 id="1-使用匿名函数"><a href="#1-使用匿名函数" class="headerlink" title="1.使用匿名函数"></a>1.使用匿名函数</h4><p>代码如下 ：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=<span class="keyword">lambda</span> customeSort: (customeSort[:<span class="number">2</span>], <span class="built_in">int</span>(customeSort[<span class="number">2</span>:])))</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>使用匿名函数，customeSort指列表的数据。<br>如果不好理解，可以用下面的方法。</p>
-<h4 id="2-更清晰的写法"><a href="#2-更清晰的写法" class="headerlink" title="2.更清晰的写法"></a>2.更清晰的写法</h4><p>用这个方法，可以直接debug看一下，每一步做了什么。结果是一样的。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="keyword">return</span> arr[:<span class="number">2</span>], <span class="built_in">int</span>(arr[<span class="number">2</span>:])</span><br><span class="line"></span><br><span class="line">list2 = [<span class="string">&#x27;学生2&#x27;</span>, <span class="string">&#x27;学生1&#x27;</span>, <span class="string">&#x27;学生10&#x27;</span>, <span class="string">&#x27;学生4&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list2.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list2) <span class="comment"># [&#x27;学生1&#x27;, &#x27;学生2&#x27;, &#x27;学生4&#x27;, &#x27;学生10&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>这个方法还有一个好处 ，比如上面的例子中，数字的起始坐标位置都是2，如果不是确定的就写起来更复杂一点了。但写出来一个函数，就看起来清晰一点了。</p>
-<p>比如下面这个例子（明显，我是想按第一个<code>_</code>前面的数字排序一下，默认的排序出来是不对的）：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">customeSort</span>(<span class="params">arr</span>):</span></span><br><span class="line">    <span class="comment"># 查看第一个&#x27;_&#x27;的位置</span></span><br><span class="line">    i = arr.index(<span class="string">&#x27;_&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(arr[:i]), arr[i:]</span><br><span class="line"></span><br><span class="line">list3 = [<span class="string">&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;</span>]</span><br><span class="line"></span><br><span class="line">list3.sort(key=customeSort)</span><br><span class="line"><span class="built_in">print</span>(list3)</span><br><span class="line"><span class="comment"># list3排序后结果如下：</span></span><br><span class="line"><span class="comment"># [&#x27;00_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;03_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;010_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;,</span></span><br><span class="line"><span class="comment"># &#x27;011_gzc_1000035_0bc3riaguaaacmaebliogjqjlcwdnkfaa2sa.f304110.1&#x27;]</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3466,6 +3466,42 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 读写文本文件</title>
+    <url>/2022/06/06/Python-%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>文本文件，就是可以用记事本程序打开的纯文本内容的文件。</p>
+<p>格式可以有很多，比如.txt，.log，.json，后缀是啥也不是很重要，反正内容是纯文本就可以了。</p>
+<p>Python中文本文件的读写，用一个内置的open函数，打开文件，获得文件对象。。</p>
+<a id="more"></a>
+
+<h2 id="open函数"><a href="#open函数" class="headerlink" title="open函数"></a>open函数</h2><p>open函数参数如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">open(</span><br><span class="line">    file, </span><br><span class="line">    mode&#x3D;&#39;r&#39;, </span><br><span class="line">    buffering&#x3D;-1, </span><br><span class="line">    encoding&#x3D;None, </span><br><span class="line">    errors&#x3D;None, </span><br><span class="line">    newline&#x3D;None, </span><br><span class="line">    closefd&#x3D;True, </span><br><span class="line">    opener&#x3D;None</span><br><span class="line">    ) </span><br></pre></td></tr></table></figure>
+<p>其中常用的就这3个参数：</p>
+<ul>
+<li>file：打开文件的路径，可以是相对路径，也可以是绝对路径。</li>
+<li>mode：打开文件的模式，常用就3种，<code>&#39;r&#39;</code>表示只读，<code>&#39;w&#39;</code>表示只写，<code>&#39;a&#39;</code>表示追加；默认是’r’。</li>
+<li>encoding：字符编码。最常用的就’utf-8’，’gb2312’。</li>
+</ul>
+<h2 id="读取文本文件"><a href="#读取文本文件" class="headerlink" title="读取文本文件"></a>读取文本文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 读取文本文件内容</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># s = f.read() # 读取全部文件内容</span></span><br><span class="line">        <span class="comment"># 一行一行读取，存入List</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            data.append(line.strip(<span class="string">&#x27;\n&#x27;</span>)) <span class="comment"># 读取一行</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># f.close()</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data</span><br></pre></td></tr></table></figure>
+<p>读取文件时，最常用的还是按行、一行一行读取出来，再进行处理。</p>
+<p>这里读取一行的时候，用<code>strip(&#39;\n&#39;)</code>方法处理了下，就是去除一行结尾处的换行符。<br>最后返回一个List。</p>
+<p>这里为啥用的with as 方法打开文件，而不是直接用 <code>f = open(txt_file, &#39;r&#39;, encoding=&#39;utf-8&#39;)</code> ，好处在之前一篇文章里写了：<a href="/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/" title="Python中with - as用法">Python中with - as用法</a></p>
+<h2 id="写入文本文件"><a href="#写入文本文件" class="headerlink" title="写入文本文件"></a>写入文本文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 写入文本文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = [<span class="string">&#x27;aaaa&#x27;</span>, <span class="string">&#x27;bbbb&#x27;</span>]</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 一行一行写入</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> data:</span><br><span class="line">            f.write(line+<span class="string">&#x27;\n&#x27;</span>) <span class="comment"># 写入一行</span></span><br></pre></td></tr></table></figure>
+<p>读取文件也一样，一般我们写入一个List的数据，write的时候，后面加个<code>&#39;\n&#39;</code>，就可以换行、一行一行写入了。</p>
+<p>追加写入跟写入文件一样的，就把open函数中，参数mode的<code>&#39;w&#39;</code>改成<code>&#39;a&#39;</code>就行了。</p>
+<p><strong>关于open函数的mode参数：</strong></p>
+<ul>
+<li><code>&#39;rb&#39;</code>：表示二进制方式读</li>
+<li><code>&#39;rw&#39;</code>：表示二进制方式写</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中with - as用法</title>
     <url>/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[<p>最常见到的用到with as的地方，比如打开文件的时候：</p>
@@ -3501,42 +3537,6 @@
 <blockquote>
 <p><code>exc_type</code>：错误的类型<br><code>exc_value</code>：错误类型对应的值<br><code>exc_trace</code>：代码中错误发生的位置<br>可以在exit()方法中print打印出来。</p>
 </blockquote>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python 读写文本文件</title>
-    <url>/2022/06/06/Python-%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>文本文件，就是可以用记事本程序打开的纯文本内容的文件。</p>
-<p>格式可以有很多，比如.txt，.log，.json，后缀是啥也不是很重要，反正内容是纯文本就可以了。</p>
-<p>Python中文本文件的读写，用一个内置的open函数，打开文件，获得文件对象。。</p>
-<a id="more"></a>
-
-<h2 id="open函数"><a href="#open函数" class="headerlink" title="open函数"></a>open函数</h2><p>open函数参数如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">open(</span><br><span class="line">    file, </span><br><span class="line">    mode&#x3D;&#39;r&#39;, </span><br><span class="line">    buffering&#x3D;-1, </span><br><span class="line">    encoding&#x3D;None, </span><br><span class="line">    errors&#x3D;None, </span><br><span class="line">    newline&#x3D;None, </span><br><span class="line">    closefd&#x3D;True, </span><br><span class="line">    opener&#x3D;None</span><br><span class="line">    ) </span><br></pre></td></tr></table></figure>
-<p>其中常用的就这3个参数：</p>
-<ul>
-<li>file：打开文件的路径，可以是相对路径，也可以是绝对路径。</li>
-<li>mode：打开文件的模式，常用就3种，<code>&#39;r&#39;</code>表示只读，<code>&#39;w&#39;</code>表示只写，<code>&#39;a&#39;</code>表示追加；默认是’r’。</li>
-<li>encoding：字符编码。最常用的就’utf-8’，’gb2312’。</li>
-</ul>
-<h2 id="读取文本文件"><a href="#读取文本文件" class="headerlink" title="读取文本文件"></a>读取文本文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 读取文本文件内容</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># s = f.read() # 读取全部文件内容</span></span><br><span class="line">        <span class="comment"># 一行一行读取，存入List</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            data.append(line.strip(<span class="string">&#x27;\n&#x27;</span>)) <span class="comment"># 读取一行</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># f.close()</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data</span><br></pre></td></tr></table></figure>
-<p>读取文件时，最常用的还是按行、一行一行读取出来，再进行处理。</p>
-<p>这里读取一行的时候，用<code>strip(&#39;\n&#39;)</code>方法处理了下，就是去除一行结尾处的换行符。<br>最后返回一个List。</p>
-<p>这里为啥用的with as 方法打开文件，而不是直接用 <code>f = open(txt_file, &#39;r&#39;, encoding=&#39;utf-8&#39;)</code> ，好处在之前一篇文章里写了：<a href="/2022/05/20/Python%E4%B8%ADwith-as%E7%94%A8%E6%B3%95/" title="Python中with - as用法">Python中with - as用法</a></p>
-<h2 id="写入文本文件"><a href="#写入文本文件" class="headerlink" title="写入文本文件"></a>写入文本文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 写入文本文件</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_file</span>(<span class="params">txt_file</span>):</span></span><br><span class="line">    data = [<span class="string">&#x27;aaaa&#x27;</span>, <span class="string">&#x27;bbbb&#x27;</span>]</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(txt_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="comment"># 一行一行写入</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> data:</span><br><span class="line">            f.write(line+<span class="string">&#x27;\n&#x27;</span>) <span class="comment"># 写入一行</span></span><br></pre></td></tr></table></figure>
-<p>读取文件也一样，一般我们写入一个List的数据，write的时候，后面加个<code>&#39;\n&#39;</code>，就可以换行、一行一行写入了。</p>
-<p>追加写入跟写入文件一样的，就把open函数中，参数mode的<code>&#39;w&#39;</code>改成<code>&#39;a&#39;</code>就行了。</p>
-<p><strong>关于open函数的mode参数：</strong></p>
-<ul>
-<li><code>&#39;rb&#39;</code>：表示二进制方式读</li>
-<li><code>&#39;rw&#39;</code>：表示二进制方式写</li>
-</ul>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -3856,31 +3856,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python用 Mysqldb时报错：MySQLdb._exceptions.OperationalError 解决方法</title>
-    <url>/2022/06/04/Python%E7%94%A8Mysqldb%E6%97%B6%E6%8A%A5%E9%94%99OperationalError/</url>
-    <content><![CDATA[<p>在Python里，用Mysqldb的时候，报错：<code>MySQLdb._exceptions.OperationalError: (2059, &lt;NULL&gt;)</code></p>
-<p>网上查了下 ，说这是将数据迁移至mysql8.0时遇到的问题。</p>
-<p>因为mysql8.0密码加密的问题，mysql8.0对用户密码的加密方式为 <code>caching_sha2_password</code>，然后看了MySQL Workbench的加密方式果然都是这个。</p>
-<a id="more"></a>
-
-<p>我在Python里用的时候，可能还不支持这种新增的加密方式，所以要改一下用的root账号的加密方式。</p>
-<p><strong>解决方法</strong>：</p>
-<p>1.在mysql中执行以下命令修改加密方式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; alter user &#39;root&#39;@&#39;localhost&#39; identified with mysql_native_password by &#39;yourpassword&#39;</span><br></pre></td></tr></table></figure>
-<p>yourpassword：你自己mysql root账号的密码</p>
-<p>2.再运行以下命令让其生效：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; flush privileges</span><br></pre></td></tr></table></figure>
-<p>然后就行了。</p>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python生成安全随机密码（secrets）</title>
     <url>/2022/07/12/Python%E7%94%9F%E6%88%90%E5%AE%89%E5%85%A8%E9%9A%8F%E6%9C%BA%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<p>secrets 模块可用于生成高加密强度的随机数，适应管理密码、账户验证、安全凭据和相关机密数据管理的需要。</p>
@@ -3919,6 +3894,31 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python用 Mysqldb时报错：MySQLdb._exceptions.OperationalError 解决方法</title>
+    <url>/2022/06/04/Python%E7%94%A8Mysqldb%E6%97%B6%E6%8A%A5%E9%94%99OperationalError/</url>
+    <content><![CDATA[<p>在Python里，用Mysqldb的时候，报错：<code>MySQLdb._exceptions.OperationalError: (2059, &lt;NULL&gt;)</code></p>
+<p>网上查了下 ，说这是将数据迁移至mysql8.0时遇到的问题。</p>
+<p>因为mysql8.0密码加密的问题，mysql8.0对用户密码的加密方式为 <code>caching_sha2_password</code>，然后看了MySQL Workbench的加密方式果然都是这个。</p>
+<a id="more"></a>
+
+<p>我在Python里用的时候，可能还不支持这种新增的加密方式，所以要改一下用的root账号的加密方式。</p>
+<p><strong>解决方法</strong>：</p>
+<p>1.在mysql中执行以下命令修改加密方式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; alter user &#39;root&#39;@&#39;localhost&#39; identified with mysql_native_password by &#39;yourpassword&#39;</span><br></pre></td></tr></table></figure>
+<p>yourpassword：你自己mysql root账号的密码</p>
+<p>2.再运行以下命令让其生效：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; flush privileges</span><br></pre></td></tr></table></figure>
+<p>然后就行了。</p>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -4006,6 +4006,25 @@
       </tags>
   </entry>
   <entry>
+    <title>SyntaxError EOL while scanning string literal</title>
+    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
+    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
+<a id="more"></a>
+
+<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
+<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>TPLink路由器无线桥接、无线中继</title>
     <url>/2022/05/21/TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%81%E6%97%A0%E7%BA%BF%E4%B8%AD%E6%96%AD/</url>
     <content><![CDATA[<p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
@@ -4081,25 +4100,6 @@
       </categories>
       <tags>
         <tag>Windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SyntaxError EOL while scanning string literal</title>
-    <url>/2021/02/13/SyntaxError-EOL-while-scanning-string-literal/</url>
-    <content><![CDATA[<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>python中字符串的最后一个字符是斜杠会导致出错：<br>SyntaxError: EOL while scanning string literal</p>
-<a id="more"></a>
-
-<p>报错的提示里也有提示是src这个字符串后面有 \ 的原因。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">File <span class="string">&quot;g:\SynologyDrive\Python\code2\config.py&quot;</span>, line 13</span><br><span class="line">    src = r<span class="string">&#x27;G:\SynologyDrive\ubuntu\ETF\&#x27;</span></span><br><span class="line">                                        ^</span><br></pre></td></tr></table></figure>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>把代码改成以下就行了：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = <span class="string">&#x27;a.xlsx&#x27;</span></span><br><span class="line">src = <span class="string">r&#x27;G:\SynologyDrive\ubuntu\ETF&#x27;</span></span><br><span class="line">src_file = src + <span class="string">&#x27;\\&#x27;</span> + file</span><br><span class="line"><span class="built_in">print</span>(src_file)</span><br></pre></td></tr></table></figure>
-<p>路径与文件名中间用 \ 拼接 一下就行了。</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4195,8 +4195,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>Typora</tag>
         <tag>PicGo</tag>
       </tags>
@@ -4291,30 +4291,6 @@
 <p>用 <code>ufw --verion</code>查看ufw安装的版本号。</p>
 <p>各Linux系统安装命令如下：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">sudo yum -y install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ubuntu</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">sudo apt-get install ufw</span><br><span class="line"></span><br><span class="line"><span class="comment">#Fedora</span></span><br><span class="line">sudo dnf install ufw</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu修改主机名（hostnamectl命令）</title>
-    <url>/2022/11/19/Ubuntu%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D/</url>
-    <content><![CDATA[<p>安装Ubuntu（刚安装了Ubuntu 20.04LTS）的时候，最后面有设置登录的账号信息，包括用户名、密码，还有Your server’s name这一项，当时就随意跟用户名写成了一样的 。</p>
-<p>然后登录进去后，发现前面显示的就是：<strong>用户名@主机名</strong>，然后发现都是一样的，就感觉怪怪的，所以想改一下。</p>
-<a id="more"></a>
-
-<h3 id="1-hostnamectl命令"><a href="#1-hostnamectl命令" class="headerlink" title="1.hostnamectl命令"></a>1.hostnamectl命令</h3><p><strong>语法</strong>：hostnamectl [参数]<br><strong>常用参数</strong>：</p>
-<ul>
-<li>status：显示当前主机名设置</li>
-<li>set-hostname：设置主机名</li>
-</ul>
-<h3 id="2-修改主机名"><a href="#2-修改主机名" class="headerlink" title="2.修改主机名"></a>2.修改主机名</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前主机名设置，或者 hostnamectl status</span></span><br><span class="line">hostnamectl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改当前主机名为：abc.com</span></span><br><span class="line">hostnamectl set-hostname abc.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看修改后的结果</span></span><br><span class="line">hostnamectl status</span><br></pre></td></tr></table></figure>
-<p>修改完后，再登录后，可以看到用户名@主机名这里就顺便多了 。</p>
-<p>更多关于主机名的简介：<a class="link"   href="https://cloud.tencent.com/developer/article/1649332" >如何在 Ubuntu 20.04 上修改主机名<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
       <categories>
         <category>Linux</category>
       </categories>
@@ -4617,6 +4593,30 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu修改主机名（hostnamectl命令）</title>
+    <url>/2022/11/19/Ubuntu%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D/</url>
+    <content><![CDATA[<p>安装Ubuntu（刚安装了Ubuntu 20.04LTS）的时候，最后面有设置登录的账号信息，包括用户名、密码，还有Your server’s name这一项，当时就随意跟用户名写成了一样的 。</p>
+<p>然后登录进去后，发现前面显示的就是：<strong>用户名@主机名</strong>，然后发现都是一样的，就感觉怪怪的，所以想改一下。</p>
+<a id="more"></a>
+
+<h3 id="1-hostnamectl命令"><a href="#1-hostnamectl命令" class="headerlink" title="1.hostnamectl命令"></a>1.hostnamectl命令</h3><p><strong>语法</strong>：hostnamectl [参数]<br><strong>常用参数</strong>：</p>
+<ul>
+<li>status：显示当前主机名设置</li>
+<li>set-hostname：设置主机名</li>
+</ul>
+<h3 id="2-修改主机名"><a href="#2-修改主机名" class="headerlink" title="2.修改主机名"></a>2.修改主机名</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前主机名设置，或者 hostnamectl status</span></span><br><span class="line">hostnamectl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改当前主机名为：abc.com</span></span><br><span class="line">hostnamectl set-hostname abc.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看修改后的结果</span></span><br><span class="line">hostnamectl status</span><br></pre></td></tr></table></figure>
+<p>修改完后，再登录后，可以看到用户名@主机名这里就顺便多了 。</p>
+<p>更多关于主机名的简介：<a class="link"   href="https://cloud.tencent.com/developer/article/1649332" >如何在 Ubuntu 20.04 上修改主机名<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>U盘安装Ubuntu Server</title>
     <url>/2022/11/18/U%E7%9B%98%E5%AE%89%E8%A3%85Ubuntu-Server/</url>
     <content><![CDATA[<p>想在办公室搞一台Ubuntu Server，然后装上docker后，就可以搭一些小服务了。正好有同事换下来的电脑，配置还可以，8G内存+256G固态的，一个挺小的机箱。</p>
@@ -4689,6 +4689,52 @@
       </tags>
   </entry>
   <entry>
+    <title>VSCode远程连接服务器 免密登录（ssh key）</title>
+    <url>/2022/07/14/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
+    <content><![CDATA[<p>VS Code远程连接服务器，就可以直接编辑服务器（Linux）上的文件了，进行开发等，就比较方便了。用VS Code也很简单，直接安装一个 Remote - SSH 的扩展插件就可以了。</p>
+<p>第一次添加登录的时候用 <code>ssh username@hostip -A</code>登录，比如用户名ubuntu，服务器ip是111.222.333.444，那就是<code>ssh ubuntu@111.222.333.444</code>。</p>
+<p>然后输入密码就能登录了。</p>
+<a id="more"></a>
+
+<p>但是，每次登录都需要输入密码。我们就可以用SSH密钥。<br>之前在使用Hexo博客的时候，已经用过了：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a></p>
+<p>分两步：</p>
+<ul>
+<li>1.在本机创建SSH密钥；</li>
+<li>2.把公钥文件上传/复制到服务器上。</li>
+</ul>
+<h2 id="第一步、在本机创建一对新的SSH密钥-keys"><a href="#第一步、在本机创建一对新的SSH密钥-keys" class="headerlink" title="第一步、在本机创建一对新的SSH密钥(keys)"></a>第一步、在本机创建一对新的SSH密钥(keys)</h2><h3 id="1-查看本机是否存在SSH-keys"><a href="#1-查看本机是否存在SSH-keys" class="headerlink" title="1.查看本机是否存在SSH keys"></a>1.查看本机是否存在SSH keys</h3><p>在<code>~/.ssh</code>目录中。打开【Git Bash】，并运行：：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure>
+<p>如果本机已经存在ssh公钥和私钥，可以略过这一步，直接进入第二步操作（默认的公钥文件是id_rsa.pub）。当然，建议可以创建一对新的SSH密钥专用一些用来通用。</p>
+<h3 id="2-创建新的SSH密钥"><a href="#2-创建新的SSH密钥" class="headerlink" title="2.创建新的SSH密钥"></a>2.创建新的SSH密钥</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
+<p><strong>直接回车</strong>，会将密钥按默认文件进行存储。<br>此时提示输入特定的文件名，比如：ubuntu_rsa<br><strong>（注：建议还是输入特定的名字，不然就是默认的id_rsa文件，如果你有多个SSH需要管理的，就比较麻烦了。当然，你也可以所有的全部用一套，看自己需要吧。）</strong></p>
+<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
+<p>不想输的话，就都直接回车确认密码。(所谓的最安全的密码，就是没有密码 哈哈）。<br>相关提示如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
+<p>输入密码完成之后，屏幕会显示信息，表示完成了。</p>
+<p>然后就可以在目录：C:\Users\yourusername.ssh 中看到有ubuntu_rsa 和 ubuntu_rsa.pub 文件了。<br>如果没有自定义名字，则会在当前目录下生成 id_rsa.pub(公钥)和 id_rsa(私钥)文件。</p>
+<h3 id="3-SSH密钥配置"><a href="#3-SSH密钥配置" class="headerlink" title="3.SSH密钥配置"></a>3.SSH密钥配置</h3><p>用记事本程序打开 <code>~/.ssh</code> 目录（C:\Users\yourusername.ssh）中的config文件。<br>添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 111.222.333.444</span><br><span class="line">  HostName 111.222.333.444</span><br><span class="line">  IdentityFile ~&#x2F;.ssh&#x2F;ubuntu_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line">  User ubuntu</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Host：站点别名，方便命令行使用<br>HostName：站点名（服务器ip或域名）<br>PreferredAuthentications：优先使用公钥连接<br>IdentityFile：私钥路径</p>
+</blockquote>
+<p>以上ip地址换成你自己服务器的ip地址。</p>
+<h2 id="第二步、在服务器上添加公钥"><a href="#第二步、在服务器上添加公钥" class="headerlink" title="第二步、在服务器上添加公钥"></a>第二步、在服务器上添加公钥</h2><h3 id="1-创建-ssh-目录"><a href="#1-创建-ssh-目录" class="headerlink" title="1.创建 ~/.ssh 目录"></a>1.创建 ~/.ssh 目录</h3><p>在服务器中创建.ssh目录，把本机的 ubuntu_rsa.pub 中的文件内容全部添加到 authorized_keys 文件中。（即 <code>~/.ssh/authorized_keys</code> 文件）</p>
+<p>先查看是否已存在<code>~/.ssh</code>目录，不存在则新建.ssh目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"><span class="comment"># 查看是否存在.ssh目录</span></span><br><span class="line">ls -la</span><br><span class="line"><span class="comment"># 若不存在，则新建.ssh目录</span></span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+<h3 id="2-在-ssh目录下创建authorized-keys文件"><a href="#2-在-ssh目录下创建authorized-keys文件" class="headerlink" title="2.在.ssh目录下创建authorized_keys文件"></a>2.在.ssh目录下创建authorized_keys文件</h3><p>为了方便，我也不创建了，直接直接把 ubuntu_rsa.pub 用ftp工具上传，然后移动到 .ssh目录后，重命名为 authorized_keys就行了。并用 chmod修改目录的权限。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv ubuntu_rsa.pub .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br><span class="line">chmod 700 ~/.ssh</span><br></pre></td></tr></table></figure>
+<p>这样就可以了。再用VS Code远程连接服务器就不用每次输入密码啦。</p>
+]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+      <tags>
+        <tag>VSCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>VSCode运行Python虚拟环境virtualenv</title>
     <url>/2022/09/20/VSCode%E8%BF%90%E8%A1%8CPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv/</url>
     <content><![CDATA[<p>使用虚拟环境，可以避免包的混乱和版本的冲突，虚拟环境是Python解释器的副本，在虚拟环境中你可以安装扩展包，为每个程序单独创建的虚拟环境，可以保证程序只能访问虚拟环境中的包。而不会影响系统中安装的全局Python解释器，从而保证全局解释器的整洁。</p>
@@ -4747,52 +4793,6 @@
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>VSCode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VSCode远程连接服务器 免密登录（ssh key）</title>
-    <url>/2022/07/14/VSCode%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
-    <content><![CDATA[<p>VS Code远程连接服务器，就可以直接编辑服务器（Linux）上的文件了，进行开发等，就比较方便了。用VS Code也很简单，直接安装一个 Remote - SSH 的扩展插件就可以了。</p>
-<p>第一次添加登录的时候用 <code>ssh username@hostip -A</code>登录，比如用户名ubuntu，服务器ip是111.222.333.444，那就是<code>ssh ubuntu@111.222.333.444</code>。</p>
-<p>然后输入密码就能登录了。</p>
-<a id="more"></a>
-
-<p>但是，每次登录都需要输入密码。我们就可以用SSH密钥。<br>之前在使用Hexo博客的时候，已经用过了：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a></p>
-<p>分两步：</p>
-<ul>
-<li>1.在本机创建SSH密钥；</li>
-<li>2.把公钥文件上传/复制到服务器上。</li>
-</ul>
-<h2 id="第一步、在本机创建一对新的SSH密钥-keys"><a href="#第一步、在本机创建一对新的SSH密钥-keys" class="headerlink" title="第一步、在本机创建一对新的SSH密钥(keys)"></a>第一步、在本机创建一对新的SSH密钥(keys)</h2><h3 id="1-查看本机是否存在SSH-keys"><a href="#1-查看本机是否存在SSH-keys" class="headerlink" title="1.查看本机是否存在SSH keys"></a>1.查看本机是否存在SSH keys</h3><p>在<code>~/.ssh</code>目录中。打开【Git Bash】，并运行：：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure>
-<p>如果本机已经存在ssh公钥和私钥，可以略过这一步，直接进入第二步操作（默认的公钥文件是id_rsa.pub）。当然，建议可以创建一对新的SSH密钥专用一些用来通用。</p>
-<h3 id="2-创建新的SSH密钥"><a href="#2-创建新的SSH密钥" class="headerlink" title="2.创建新的SSH密钥"></a>2.创建新的SSH密钥</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>注意上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/c/Users/yourusername/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p><strong>直接回车</strong>，会将密钥按默认文件进行存储。<br>此时提示输入特定的文件名，比如：ubuntu_rsa<br><strong>（注：建议还是输入特定的名字，不然就是默认的id_rsa文件，如果你有多个SSH需要管理的，就比较麻烦了。当然，你也可以所有的全部用一套，看自己需要吧。）</strong></p>
-<p>接着，根据提示，你<strong>需要输入密码和确认密码</strong></p>
-<p>不想输的话，就都直接回车确认密码。(所谓的最安全的密码，就是没有密码 哈哈）。<br>相关提示如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
-<p>输入密码完成之后，屏幕会显示信息，表示完成了。</p>
-<p>然后就可以在目录：C:\Users\yourusername.ssh 中看到有ubuntu_rsa 和 ubuntu_rsa.pub 文件了。<br>如果没有自定义名字，则会在当前目录下生成 id_rsa.pub(公钥)和 id_rsa(私钥)文件。</p>
-<h3 id="3-SSH密钥配置"><a href="#3-SSH密钥配置" class="headerlink" title="3.SSH密钥配置"></a>3.SSH密钥配置</h3><p>用记事本程序打开 <code>~/.ssh</code> 目录（C:\Users\yourusername.ssh）中的config文件。<br>添加以下内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host 111.222.333.444</span><br><span class="line">  HostName 111.222.333.444</span><br><span class="line">  IdentityFile ~&#x2F;.ssh&#x2F;ubuntu_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line">  User ubuntu</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Host：站点别名，方便命令行使用<br>HostName：站点名（服务器ip或域名）<br>PreferredAuthentications：优先使用公钥连接<br>IdentityFile：私钥路径</p>
-</blockquote>
-<p>以上ip地址换成你自己服务器的ip地址。</p>
-<h2 id="第二步、在服务器上添加公钥"><a href="#第二步、在服务器上添加公钥" class="headerlink" title="第二步、在服务器上添加公钥"></a>第二步、在服务器上添加公钥</h2><h3 id="1-创建-ssh-目录"><a href="#1-创建-ssh-目录" class="headerlink" title="1.创建 ~/.ssh 目录"></a>1.创建 ~/.ssh 目录</h3><p>在服务器中创建.ssh目录，把本机的 ubuntu_rsa.pub 中的文件内容全部添加到 authorized_keys 文件中。（即 <code>~/.ssh/authorized_keys</code> 文件）</p>
-<p>先查看是否已存在<code>~/.ssh</code>目录，不存在则新建.ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"><span class="comment"># 查看是否存在.ssh目录</span></span><br><span class="line">ls -la</span><br><span class="line"><span class="comment"># 若不存在，则新建.ssh目录</span></span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
-<h3 id="2-在-ssh目录下创建authorized-keys文件"><a href="#2-在-ssh目录下创建authorized-keys文件" class="headerlink" title="2.在.ssh目录下创建authorized_keys文件"></a>2.在.ssh目录下创建authorized_keys文件</h3><p>为了方便，我也不创建了，直接直接把 ubuntu_rsa.pub 用ftp工具上传，然后移动到 .ssh目录后，重命名为 authorized_keys就行了。并用 chmod修改目录的权限。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv ubuntu_rsa.pub .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br><span class="line">chmod 700 ~/.ssh</span><br></pre></td></tr></table></figure>
-<p>这样就可以了。再用VS Code远程连接服务器就不用每次输入密码啦。</p>
-]]></content>
-      <categories>
-        <category>VSCode</category>
-      </categories>
-      <tags>
         <tag>VSCode</tag>
       </tags>
   </entry>
@@ -4894,6 +4894,22 @@
       </tags>
   </entry>
   <entry>
+    <title>pip升级命令</title>
+    <url>/2022/10/18/pip%E5%8D%87%E7%BA%A7%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h3 id="1-查看当前安装的pip版本"><a href="#1-查看当前安装的pip版本" class="headerlink" title="1.查看当前安装的pip版本"></a>1.查看当前安装的pip版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看到pip完整信息</span></span><br><span class="line">pip show pip</span><br><span class="line"><span class="comment"># 下面这个经常用来查版本的也可以查询到</span></span><br><span class="line">pip --version</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="2-升级pip"><a href="#2-升级pip" class="headerlink" title="2.升级pip"></a>2.升级pip</h3><p>如果用pip安装的时候会有比较慢的问题，可以先更改一下pip默认的源，看之前这篇笔记：<a href="/2022/10/12/Python-pip%E6%BA%90%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90%EF%BC%89/" title="Python pip源设置（使用清华源）">Python pip源设置（使用清华源）</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用pip命令时使用清华源</span></span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"><span class="comment"># 升级pip</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+<h3 id="3-pip卸载-amp-安装"><a href="#3-pip卸载-amp-安装" class="headerlink" title="3.pip卸载&amp;安装"></a>3.pip卸载&amp;安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pip卸载</span></span><br><span class="line">python -m pip uninstall pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip安装</span></span><br><span class="line">python -m ensurepip --default-pip</span><br><span class="line"><span class="comment"># pip安装 有setuptools的话</span></span><br><span class="line">easy_install pip</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>office无法打开，找不到VCRUNTIME140_1.dll</title>
     <url>/2022/07/01/office%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%EF%BC%8C%E6%89%BE%E4%B8%8D%E5%88%B0VCRUNTIME140-1-dll/</url>
     <content><![CDATA[<p><strong>问题描述：</strong><br>Office2016，运行Word/Excel/PPT的时候，都提示“<strong>找不到VCRUNTIME140_1.dll</strong>”。</p>
@@ -4913,22 +4929,6 @@
       </categories>
       <tags>
         <tag>Office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pip升级命令</title>
-    <url>/2022/10/18/pip%E5%8D%87%E7%BA%A7%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<h3 id="1-查看当前安装的pip版本"><a href="#1-查看当前安装的pip版本" class="headerlink" title="1.查看当前安装的pip版本"></a>1.查看当前安装的pip版本</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看到pip完整信息</span></span><br><span class="line">pip show pip</span><br><span class="line"><span class="comment"># 下面这个经常用来查版本的也可以查询到</span></span><br><span class="line">pip --version</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h3 id="2-升级pip"><a href="#2-升级pip" class="headerlink" title="2.升级pip"></a>2.升级pip</h3><p>如果用pip安装的时候会有比较慢的问题，可以先更改一下pip默认的源，看之前这篇笔记：<a href="/2022/10/12/Python-pip%E6%BA%90%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8%E6%B8%85%E5%8D%8E%E6%BA%90%EF%BC%89/" title="Python pip源设置（使用清华源）">Python pip源设置（使用清华源）</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用pip命令时使用清华源</span></span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"><span class="comment"># 升级pip</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<h3 id="3-pip卸载-amp-安装"><a href="#3-pip卸载-amp-安装" class="headerlink" title="3.pip卸载&amp;安装"></a>3.pip卸载&amp;安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pip卸载</span></span><br><span class="line">python -m pip uninstall pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip安装</span></span><br><span class="line">python -m ensurepip --default-pip</span><br><span class="line"><span class="comment"># pip安装 有setuptools的话</span></span><br><span class="line">easy_install pip</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -5595,7 +5595,7 @@
 
 </li>
 </ul>
-<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;" >&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
+<h4 id="第四步、测试"><a href="#第四步、测试" class="headerlink" title="第四步、测试"></a>第四步、测试</h4><p>可以输入下面的命令，看看设置是否成功，<strong><a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#109;" >&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#109;<i class="fas fa-external-link-alt"></i></a>的部分不要修改</strong>： </p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 <p>如果是下面的反馈：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">The authenticityofhost<span class="string">&#x27;github.com (207.97.227.239)&#x27;</span>can<span class="string">&#x27;t be established.  RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.  Are you sure you want to continue connecting (yes/no)? </span></span><br></pre></td></tr></table></figure>
@@ -5662,54 +5662,9 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Hexo</tag>
         <tag>Github</tag>
+        <tag>Hexo</tag>
         <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【行政办公系列】Python批量创建文件夹</title>
-    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
-    <content><![CDATA[<p><strong>问题描述</strong>：</p>
-<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
-<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
-<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
-<a id="more"></a>
-
-<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
-<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
-<p><strong>实现思路</strong>：</p>
-<ul>
-<li>读取Excel表中姓名列的数据</li>
-<li>循环一下姓名列表（List），依次创建文件夹</li>
-</ul>
-<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
-<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
-<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
-                     
-                ></p>
-<p>所以，我们只需要把D列的数据读出来就可以了。</p>
-<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
-<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
-<p>运行后结果如图所示：<br><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
-                     
-                ></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
@@ -5836,29 +5791,6 @@
       </tags>
   </entry>
   <entry>
-    <title>删除postgresql数据库报错database xx is being accessed by other users</title>
-    <url>/2022/12/16/%E5%88%A0%E9%99%A4postgresql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%A5%E9%94%99database-xx-is-being-accessed-by-other-users/</url>
-    <content><![CDATA[<p>恢复青岛大学的onlinejudge的数据库的时候，运行删除postgresql数据库命令<br><code>dropdb -U onlinejudge onlinejudge</code>时发现报错了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dropdb: database removal failed: ERROR:  database <span class="string">&quot;onlinejudge&quot;</span> is being accessed by other users</span><br><span class="line">DETAIL:  There are 2 other sessions using the database.</span><br></pre></td></tr></table></figure>
-<p>这是因为当前数据库也在被别的用户使用，这里要删除也要慎重，确保数据库是可以被删除的再继续操作。</p>
-<a id="more"></a>
-
-<p><strong>解决方法：</strong></p>
-<p>断开连接到这个数据库上的所有链接，再删除数据库。在PostgreSQL 9.2 及以上版本，执行下面的语句：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.登录postgres数据库</span></span><br><span class="line">psql -U onlinejudge</span><br><span class="line"><span class="comment"># 列出数据库</span></span><br><span class="line"><span class="comment"># \l or \list</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.断开所有连接到这个数据库上的连接，成功可以看到提示2 rows</span></span><br><span class="line">SELECT pg_terminate_backend(pg_stat_activity.pid)</span><br><span class="line">FROM pg_stat_activity</span><br><span class="line">WHERE datname=<span class="string">&#x27;onlinejudge&#x27;</span> AND pid&lt;&gt;pg_backend_pid();</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.退出postgres</span></span><br><span class="line">\q</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再删除原有数据库</span></span><br><span class="line">dropdb -U onlinejudge onlinejudge</span><br></pre></td></tr></table></figure>
-<p>断开所有连接到这个数据库上的连接的语句说明：</p>
-<blockquote>
-<p>pg_terminate_backend：用来终止与数据库的连接的进程id的函数。<br>pg_stat_activity：是一个系统表，用于存储服务进程的属性和状态。<br>pg_backend_pid()：是一个系统函数，获取附加到当前会话的服务器进程的ID。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>换硬盘后Python虚拟环境virtualenv迁移方法</title>
     <url>/2022/12/26/%E6%8D%A2%E7%A1%AC%E7%9B%98%E5%90%8EPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv%E8%BF%81%E7%A7%BB%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<p>关于Python使用虚拟环境virtualenv的方法，可以看之前这篇笔记：<a href="/2022/09/20/VSCode%E8%BF%90%E8%A1%8CPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv/" title="VSCode运行Python虚拟环境virtualenv">VSCode运行Python虚拟环境virtualenv</a></p>
@@ -5879,6 +5811,29 @@
 <h3 id="4-把原硬盘虚拟环境中对应的目录覆盖"><a href="#4-把原硬盘虚拟环境中对应的目录覆盖" class="headerlink" title="4.把原硬盘虚拟环境中对应的目录覆盖"></a>4.把原硬盘虚拟环境中对应的目录覆盖</h3><p>把原来虚拟环境中flask_py这个目录全部覆盖新创建的目录下的文件就行。</p>
 <p>如果有多个的话，可以一起创建好之后，全部一起覆盖就行了。</p>
 <p>在VS Code中使用，也只需要重新选择下运行的解释器。</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>删除postgresql数据库报错database xx is being accessed by other users</title>
+    <url>/2022/12/16/%E5%88%A0%E9%99%A4postgresql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%A5%E9%94%99database-xx-is-being-accessed-by-other-users/</url>
+    <content><![CDATA[<p>恢复青岛大学的onlinejudge的数据库的时候，运行删除postgresql数据库命令<br><code>dropdb -U onlinejudge onlinejudge</code>时发现报错了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dropdb: database removal failed: ERROR:  database <span class="string">&quot;onlinejudge&quot;</span> is being accessed by other users</span><br><span class="line">DETAIL:  There are 2 other sessions using the database.</span><br></pre></td></tr></table></figure>
+<p>这是因为当前数据库也在被别的用户使用，这里要删除也要慎重，确保数据库是可以被删除的再继续操作。</p>
+<a id="more"></a>
+
+<p><strong>解决方法：</strong></p>
+<p>断开连接到这个数据库上的所有链接，再删除数据库。在PostgreSQL 9.2 及以上版本，执行下面的语句：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1.登录postgres数据库</span></span><br><span class="line">psql -U onlinejudge</span><br><span class="line"><span class="comment"># 列出数据库</span></span><br><span class="line"><span class="comment"># \l or \list</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.断开所有连接到这个数据库上的连接，成功可以看到提示2 rows</span></span><br><span class="line">SELECT pg_terminate_backend(pg_stat_activity.pid)</span><br><span class="line">FROM pg_stat_activity</span><br><span class="line">WHERE datname=<span class="string">&#x27;onlinejudge&#x27;</span> AND pid&lt;&gt;pg_backend_pid();</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.退出postgres</span></span><br><span class="line">\q</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再删除原有数据库</span></span><br><span class="line">dropdb -U onlinejudge onlinejudge</span><br></pre></td></tr></table></figure>
+<p>断开所有连接到这个数据库上的连接的语句说明：</p>
+<blockquote>
+<p>pg_terminate_backend：用来终止与数据库的连接的进程id的函数。<br>pg_stat_activity：是一个系统表，用于存储服务进程的属性和状态。<br>pg_backend_pid()：是一个系统函数，获取附加到当前会话的服务器进程的ID。</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>Python</category>
@@ -6271,6 +6226,51 @@
       </categories>
       <tags>
         <tag>NAS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【行政办公系列】Python批量创建文件夹</title>
+    <url>/2022/05/14/%E3%80%90%E8%A1%8C%E6%94%BF%E5%8A%9E%E5%85%AC%E7%B3%BB%E5%88%97%E3%80%91Python%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/</url>
+    <content><![CDATA[<p><strong>问题描述</strong>：</p>
+<p>比如我需要收集公司全部员工的一些资料（比如健康码等公开资料），现在手上有个名单列表。</p>
+<p>如果每个人都私发给我，还得自己保存、整理（重命名等）。<br>为了方便整理，于是，我就可以建个文件夹，在里面给每个人建个单独的文件夹，当然这些文件夹都是空的。</p>
+<p>然后把整个文件夹上传到钉钉群就可以了。群成员找到文件夹里自己名字的文件夹，对应上传资料就行了。</p>
+<a id="more"></a>
+
+<p>当然，上面只是举个例子，而且是用钉钉的，为了方便上传人员直接手机操作。</p>
+<p>此文主要介绍用Python读取Excel中姓名列表，再批量创建姓名为名的文件夹的方法。</p>
+<p><strong>实现思路</strong>：</p>
+<ul>
+<li>读取Excel表中姓名列的数据</li>
+<li>循环一下姓名列表（List），依次创建文件夹</li>
+</ul>
+<h2 id="一、用openpyxl库读取Excel表格"><a href="#一、用openpyxl库读取Excel表格" class="headerlink" title="一、用openpyxl库读取Excel表格"></a>一、用openpyxl库读取Excel表格</h2><p>openpyxl 库是Python用来操作Excel表格（.xlsx）一个库。这里只简单介绍怎么读取一列数据，不作详细介绍。</p>
+<p>比如有这样一张表：A号是序号，B列是姓名。<br>然后我想要的文件夹名是序号+姓名。</p>
+<p>就可以先在C列中用公式<code>A1&amp;B1</code>把A列和B列的字符串拼起来。<br>因为Python读取Excel不确定是读取到本质的公式，还是值；所以把C列再复制一列D列出来（只复制值）。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_1.png"
+                     
+                ></p>
+<p>所以，我们只需要把D列的数据读出来就可以了。</p>
+<h3 id="1-安装openpyxl-库"><a href="#1-安装openpyxl-库" class="headerlink" title="1.安装openpyxl 库"></a>1.安装openpyxl 库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install openpyxl</span><br></pre></td></tr></table></figure>
+<h3 id="2-读取Excel一列（D列）数据"><a href="#2-读取Excel一列（D列）数据" class="headerlink" title="2.读取Excel一列（D列）数据"></a>2.读取Excel一列（D列）数据</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># name_list 即获取到的姓名列表 e.g [&#x27;1荀彧&#x27;,&#x27;2荀攸&#x27;]</span></span><br><span class="line">name_list = read_from_excel_by_col_name(<span class="string">&#x27;信息表.xlsx&#x27;</span>, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建文件夹"><a href="#二、创建文件夹" class="headerlink" title="二、创建文件夹"></a>二、创建文件夹</h2><p>这个简单，直接用Python自带的os库的makedirs()方法就行。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="三、完整代码举例"><a href="#三、完整代码举例" class="headerlink" title="三、完整代码举例"></a>三、完整代码举例</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Excel文件中读取 指定列(col_name) 的数据返回List</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_from_excel_by_col_name</span>(<span class="params">ex_file, sheet_name, col_name</span>):</span></span><br><span class="line">    <span class="keyword">if</span>(os.path.exists(ex_file)):</span><br><span class="line">        book = openpyxl.load_workbook(ex_file)</span><br><span class="line">        sheet = book[sheet_name]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    value_list = []</span><br><span class="line">    <span class="keyword">for</span> col_num <span class="keyword">in</span> sheet[col_name]:</span><br><span class="line">        value_list.append(col_num.value)</span><br><span class="line">    book.close()</span><br><span class="line">    <span class="keyword">return</span> value_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mkdir</span>(<span class="params">path</span>):</span></span><br><span class="line">    outdir = os.path.exists(path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> outdir:</span><br><span class="line">        os.makedirs(path)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    ex_file = <span class="string">r&#x27;.\ex\信息表.xlsx&#x27;</span></span><br><span class="line">    collect_path = <span class="string">r&#x27;D:\test信息收集&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取姓名列表</span></span><br><span class="line">    name_list = read_from_excel_by_col_name(ex_file, <span class="string">&#x27;Sheet1&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    <span class="comment"># print(name_list)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 批量创建文件夹</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> name_list:</span><br><span class="line">        mkdir(collect_path + <span class="string">&#x27;\\&#x27;</span> + name) <span class="comment"># 创建文件夹</span></span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line"><span class="comment"># print(os.getcwd()) # 查看当前工作目录路径</span></span><br></pre></td></tr></table></figure>
+<p>运行后结果如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/OfficeSeries_Python_create_directorys_2.png"
+                     
+                ></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Office</tag>
       </tags>
   </entry>
   <entry>
