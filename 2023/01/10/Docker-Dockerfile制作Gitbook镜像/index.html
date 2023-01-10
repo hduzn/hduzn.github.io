@@ -9,7 +9,7 @@
     
     <title>
         
-            Docker搭建Gitbook |
+            Docker Dockerfile制作Gitbook镜像 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Docker搭建Gitbook</span>
+            <span class="title-hover-animation">Docker Dockerfile制作Gitbook镜像</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2023-01-10 15:02:58</span>
-        <span class="mobile">2023-01-10 15:02</span>
+        <span class="pc">2023-01-10 19:23:12</span>
+        <span class="mobile">2023-01-10 19:23</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -239,34 +239,36 @@
         
 
         <div class="article-content markdown-body">
-            <p>在网上看到用Gitbook写的教程/文档，感觉还挺方便看的，想用它来试一下写教程/电子书之类的。</p>
-<p>看到安装Gitbook还挺方便的，跟Hexo一样（用的就是Hexo的博客），是一个基于Node.js 的命令行工具，可使用Github/Git 和Markdown 来制作精美的电子书。</p>
-<p>于是，原来都装好了Node.js和git这些，感觉倒也方便，安装下Gitbook就行了。</p>
-<p>谁料，是我年轻了，想的太简单了。</p>
+            <p>上一篇文章用Docker搭建了Gitbook的环境：<a href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/" title="Docker搭建Gitbook">Docker搭建Gitbook</a>，然后发现个小问题，问题不大，不过感觉Gitbook的版本实在太低了。</p>
+<p>毕竟是7年前的镜像了，用<code>gitbook -V</code>查看了下gitbook的版本，竟然是：0.3.4</p>
+<p>于是，决定还是自己用Dockerfile制作个Gitbook的镜像好了。</p>
+<p>自己用Dockerfile制作镜像也挺方便的，参考：<a href="/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/" title="Docker Dockerfile文件详解（制作自己的镜像）">Docker Dockerfile文件详解（制作自己的镜像）</a></p>
+<p>也就是第一次生成镜像的时候花点时间。</p>
 <a id="more"></a>
 
-<h2 id="Gitbook直接安装方法"><a href="#Gitbook直接安装方法" class="headerlink" title="Gitbook直接安装方法"></a>Gitbook直接安装方法</h2><p>前提是已经安装了Node.js。然后用以下命令能安装上，是很方便了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.安装 gitbook-cli</span></span><br><span class="line">npm install -g gitbook-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.版本，这里开始出问题，GitBook installing开始报错</span></span><br><span class="line"><span class="comment"># 然后修改了报错的polyfills.js文件，注释掉62~64行这3行内容，才成功安装</span></span><br><span class="line">gitbook -V</span><br><span class="line"><span class="comment"># 结果如下：</span></span><br><span class="line"><span class="comment"># CLI version: 2.3.2</span></span><br><span class="line"><span class="comment"># GitBook version: 3.2.3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建目录，初始化</span></span><br><span class="line">mkdir gitbook-test</span><br><span class="line"><span class="built_in">cd</span> gitbook-test</span><br><span class="line">gitbook init</span><br><span class="line"><span class="comment"># 结果报错：</span></span><br><span class="line"><span class="comment"># TypeError [ERR_INVALID_ARG_TYPE]: The &quot;data&quot; argument must be of type string or an instance of Buffer, ……</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看Node.js版本，v14.15.4</span></span><br><span class="line">node -v</span><br></pre></td></tr></table></figure>
-<p>好家伙，前面那个问题好不容易解决，init初始化的时候还是挂了。然后查看下Node.js的版本，反正就是版本过高的问题，要么再安装个低版本的，但环境问题真是折腾人，就放弃了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载Gitbook</span></span><br><span class="line"><span class="comment"># 1.找到C:\Users\&#123;用户名&#125;\.gitbook目录，删除</span></span><br><span class="line"><span class="comment"># 2.卸载</span></span><br><span class="line">npm uninstall -g gitbook-cli</span><br><span class="line"><span class="comment"># 3.清除npm缓存</span></span><br><span class="line">npm cache clean -f</span><br></pre></td></tr></table></figure>
-<h2 id="Docker搭建Gitbook"><a href="#Docker搭建Gitbook" class="headerlink" title="Docker搭建Gitbook"></a>Docker搭建Gitbook</h2><p>不想折腾环境，就开始找Docker安装的方法。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.拉取镜像 https://hub.docker.com/r/tobegit3hub/gitbook-server</span></span><br><span class="line">docker pull tobegit3hub/gitbook-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.创建目录 python\gitbook，回头用来作映射的</span></span><br><span class="line">mkdir gitbook</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.创建容器</span></span><br><span class="line">docker run -idt --name gitbook -p 14000:4000 -v E:\SynologyDrive\Gitbook\python\gitbook:/gitbook tobegit3hub/gitbook-server /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it gitbook /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.进入容器后，默认是在/gitbook目录，用以下命令初始化</span></span><br><span class="line"><span class="comment"># 初始化后会在本地的gitbook映射目录下生成README.md和SUMMARY.md文件。</span></span><br><span class="line">gitbook init</span><br></pre></td></tr></table></figure>
-<p><strong>6.编辑SUMMARY.md和README.md文件</strong></p>
-<p>比如SUMMARY.md文件内容如下（README.md文件随便写点内容）：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Summary</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">*</span> [<span class="string">简介</span>](<span class="link">README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">前言</span>](<span class="link">README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第一章</span>](<span class="link">part1/README.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第一节</span>](<span class="link">part1/1.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第二节</span>](<span class="link">part1/2.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第三节</span>](<span class="link">part1/3.md</span>)</span><br><span class="line"><span class="bullet">    *</span> [<span class="string">第四节</span>](<span class="link">part1/4.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第二章</span>](<span class="link">part2/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第三章</span>](<span class="link">part3/README.md</span>)</span><br><span class="line"><span class="bullet">*</span> [<span class="string">第四章</span>](<span class="link">part4/README.md</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 7.再次执行init</span></span><br><span class="line"><span class="comment"># 会发现安照SUMMARY.md文件的内容自动生成对应的目录结构和md文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.启动服务，在线预览（会生成 _book目录，静态HTML）</span></span><br><span class="line"><span class="comment"># 然后打开 http://localhost:14000 就可以看到电子书了（我把4000端口映射到14000了）</span></span><br><span class="line">gitbook serve</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gitbook输出格式</span></span><br><span class="line"><span class="comment"># 1).输出静态HTML页面，生成 _book 目录；</span></span><br><span class="line"><span class="comment"># 也可以用参数指定目录名：gitbook build ./ --output=./_book/</span></span><br><span class="line">gitbook build</span><br><span class="line"><span class="comment"># 2).输出PDF文件</span></span><br><span class="line">gitbook pdf</span><br></pre></td></tr></table></figure>
-<p><strong>9.插入图片</strong></p>
-<p>如果需要插入图片的，建议使用相对路径，很方便。</p>
-<p>直接在 <code>python\gitbook</code> 目录下建一个imgs目录，用于存放图片。</p>
-<p>比如我在imgs目录下放了一张图片：gitbook.png<br>然后用Markdown语法使用就行：<br><code>![](\imgs\gitbook.png)</code></p>
-<p>或者：<br><code>&lt;img src=&quot;/imgs/gitbook.png&quot; style=&quot;zoom: 75%;&quot;/&gt;</code></p>
-<p>后面这种还可以按比例显示，反正写Hexo博客时，我就一直偏爱用后者。</p>
-<p><strong>10.配置文件book.json</strong></p>
-<p>在<code>python\gitbook</code> 目录下自己建个book.json文件。</p>
-<p>内容一般就标题、作者这些，比如：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;title&quot;</span>: <span class="string">&quot;GitBook学习笔记&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;记录Gitbook的配置和一些插件的使用&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;hduzn&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;language&quot;</span>: <span class="string">&quot;zh-hans&quot;</span>,</span><br><span class="line">	<span class="attr">&quot;gitbook&quot;</span>: <span class="string">&quot;3.2.3&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;links&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;sidebar&quot;</span> : &#123;</span><br><span class="line">            <span class="attr">&quot;Home&quot;</span> : <span class="string">&quot;https://www.hduzn.cn/&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>配置文件中更多的内容，网上搜一下就有。</p>
-<p>PS.如果跟我一样，嫌弃gitbook的版本太旧了，可以考虑自己制作下Gitbook的镜像：<a href="/2023/01/10/Docker-Dockerfile%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F/" title="Docker Dockerfile制作Gitbook镜像">Docker Dockerfile制作Gitbook镜像</a></p>
+<h2 id="一、制作Gitbook镜像"><a href="#一、制作Gitbook镜像" class="headerlink" title="一、制作Gitbook镜像"></a>一、制作Gitbook镜像</h2><h3 id="1-Dockerfile文件"><a href="#1-Dockerfile文件" class="headerlink" title="1.Dockerfile文件"></a>1.Dockerfile文件</h3><p>node的版本反正用12点几的还是有问题，索性降到8，反正是没问题的。</p>
+<p>因为我只是需要环境，并不是直接就生成电子书了，所以最后的CMD的命令也不需要执行。</p>
+<p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Use an official Node.js runtime as a parent image</span><br><span class="line">FROM node:8.11.1</span><br><span class="line"></span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;gitbook</span><br><span class="line">WORKDIR &#x2F;gitbook</span><br><span class="line"></span><br><span class="line"># Set npm registry to China Taobao and install Gitbook</span><br><span class="line">RUN npm config set registry https:&#x2F;&#x2F;registry.npm.taobao.org</span><br><span class="line">RUN npm install gitbook-cli -g</span><br><span class="line">RUN gitbook -V</span><br><span class="line"></span><br><span class="line"># Make port 4000 available to the world outside this container</span><br><span class="line">EXPOSE 4000</span><br><span class="line"></span><br><span class="line"># CMD [&quot;sh&quot;, &quot;-c&quot;, &quot;gitbook install &#x2F;gitbook; gitbook serve &#x2F;gitbook&quot;]</span><br></pre></td></tr></table></figure>
+<h3 id="2-生成镜像"><a href="#2-生成镜像" class="headerlink" title="2.生成镜像"></a>2.生成镜像</h3><p>因为有本地安装过，所以知道现在的gitbook版本是：3.2.3，不确定的话，这里的版本号自己看着写吧。自己编一个差不多的也行。</p>
+<p>注意最后有个点表示当前目录，所以需要在Dockerfile文件所在的目录下运行此命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t gitbook:3.2.3 .</span><br></pre></td></tr></table></figure>
+<p>等待制作完成，估计需要几分钟。完成后用命令<code>docker images</code>就可以看到 gitbook:3.2.3 这个镜像了。</p>
+<h2 id="二、运行Gitbook容器"><a href="#二、运行Gitbook容器" class="headerlink" title="二、运行Gitbook容器"></a>二、运行Gitbook容器</h2><h3 id="1-运行Gitbook容器"><a href="#1-运行Gitbook容器" class="headerlink" title="1.运行Gitbook容器"></a>1.运行Gitbook容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -idt --name gitbook_cs -p 14001:4000 -v E:\SynologyDrive\Gitbook\cs_gitbook:/gitbook gitbook:3.2.3 /bin/bash</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–name gitbook_cs：容器名称，自己取<br>-p 14001:4000：把容器中的4000端口映射到本地14001端口，这个也随意</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it gitbook_cs /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化，会生成README.md 和SUMMARY.md文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑README.md 和SUMMARY.md文件后再次执行，生成目录、文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务，在线预览，打开 http://localhost:14001 就可以看到了</span></span><br><span class="line">gitbook serve</span><br></pre></td></tr></table></figure>
+<h3 id="2-Error：no-such-file-fontsettings-js"><a href="#2-Error：no-such-file-fontsettings-js" class="headerlink" title="2.Error：no such file fontsettings.js"></a>2.Error：no such file fontsettings.js</h3><p>执行<code>gitbook serve</code>或<code>gitbook build</code>都会报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: ENOENT: no such file or directory, <span class="built_in">stat</span> <span class="string">&#x27;***/_book/gitbook/gitbook-plugin-fontsettings/fontsettings.js&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>解决方法：</strong></p>
+<p>找到<code>/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js</code>文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> fs.copyDir(</span><br><span class="line">    assetsFolder,</span><br><span class="line">    assetOutputFolder,</span><br><span class="line">    &#123;</span><br><span class="line">        deleteFirst: <span class="literal">false</span>,</span><br><span class="line">        overwrite: <span class="literal">true</span>,</span><br><span class="line">        confirm: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>把<code>confirm: true</code>修改为<code>confirm: false</code>，注意有2处！</p>
+<p>这个文件的路径中有个gitbook的版本号，找对应的版本号。可先在容器内查看找到此文件。</p>
+<p>因为用的Docker，所以使用 Docker 容器修改方法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.把copyPluginAssets.js文件从容器中拷到当前目录下</span></span><br><span class="line">docker cp gitbook_cs:/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js ./copyPluginAssets.js</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.按上面的方法修改copyPluginAssets.js文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.再把修改后的copyPluginAssets.js文件覆盖容器内的文件</span></span><br><span class="line">docker cp copyPluginAssets.js gitbook_cs:/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js</span><br></pre></td></tr></table></figure>
+<p>再执行<code>gitbook serve</code>就没问题啦。</p>
 
         </div>
 
@@ -274,11 +276,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Docker搭建Gitbook</li>
+        <li>本文标题：Docker Dockerfile制作Gitbook镜像</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2023-01-10 15:02:58</li>
+        <li>创建时间：2023-01-10 19:23:12</li>
         <li>
-            本文链接：http://hduzn.cn/2023/01/10/Docker搭建Gitbook/
+            本文链接：http://hduzn.cn/2023/01/10/Docker-Dockerfile制作Gitbook镜像/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -302,29 +304,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2023/01/10/Docker-Dockerfile%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Docker Dockerfile制作Gitbook镜像</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2023/01/09/Docker-Desktp%E6%9B%B4%E6%94%B9%E9%95%9C%E5%83%8F-%E5%AE%B9%E5%99%A8%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE/"
+                           href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Docker Desktp更改镜像、容器存储位置</span>
+                                <span class="post-nav-title-item">Docker搭建Gitbook</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -535,7 +522,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gitbook%E7%9B%B4%E6%8E%A5%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95"><span class="nav-text">Gitbook直接安装方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker%E6%90%AD%E5%BB%BAGitbook"><span class="nav-text">Docker搭建Gitbook</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F"><span class="nav-text">一、制作Gitbook镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Dockerfile%E6%96%87%E4%BB%B6"><span class="nav-text">1.Dockerfile文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E9%95%9C%E5%83%8F"><span class="nav-text">2.生成镜像</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%BF%90%E8%A1%8CGitbook%E5%AE%B9%E5%99%A8"><span class="nav-text">二、运行Gitbook容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BF%90%E8%A1%8CGitbook%E5%AE%B9%E5%99%A8"><span class="nav-text">1.运行Gitbook容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Error%EF%BC%9Ano-such-file-fontsettings-js"><span class="nav-text">2.Error：no such file fontsettings.js</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
