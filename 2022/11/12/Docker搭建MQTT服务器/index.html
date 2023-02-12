@@ -276,7 +276,7 @@
 <p>不写版本写，就是最新版(latest)。</p>
 <h3 id="2-运行容器"><a href="#2-运行容器" class="headerlink" title="2.运行容器"></a>2.运行容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name emqx -p 18084:1883 -p 18085:8081 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>–name emqx：容器名为emqx，可自定义<br>-p 18083:18083：端口映射，web端后台管理页端口，前面一个18083是本机端口，可自定义<br>-p 18084:1883：端口映射，MQTT TCP端口，前面一个18082是自定义的本机的端口，可自定义<br>-p 8883:8883：端口映射，MQTT TCP TLS/SSL 端口，前面一个8883可自定义<br>-p 8083:8083：端口映射，HTTP and WebSocket 端口，前面一个8083可自定义<br>-p 8084:8084：端口映射，HTTPS and WSS 端口，前面一个8084可自定义</p>
+<p>–name emqx：容器名为emqx，可自定义<br>-p 18083:18083：端口映射，web端后台管理页端口，前面一个18083是本机端口，可自定义<br>-p 18084:1883：端口映射，MQTT TCP端口，前面一个18084是自定义的本机的端口，可自定义<br>-p 8883:8883：端口映射，MQTT TCP TLS/SSL 端口，前面一个8883可自定义<br>-p 8083:8083：端口映射，HTTP and WebSocket 端口，前面一个8083可自定义<br>-p 8084:8084：端口映射，HTTPS and WSS 端口，前面一个8084可自定义</p>
 </blockquote>
 <p>如果有端口被限制不能使用啥的，直接换就行。如果是在服务器上使用，记得把防火墙设置一下，给允许下使用的端口就行。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 容器运行后，查看容器</span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器，用/bin/sh</span></span><br><span class="line">docker <span class="built_in">exec</span> -it emqx /bin/sh</span><br></pre></td></tr></table></figure>
