@@ -9,7 +9,7 @@
     
     <title>
         
-            Ubuntu安装Docker |
+            Win10 Docker启动容器时，端口莫名没权限被拒绝 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Ubuntu安装Docker</span>
+            <span class="title-hover-animation">Win10 Docker启动容器时，端口莫名没权限被拒绝</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-11-19 14:28:10</span>
-        <span class="mobile">2022-11-19 14:28</span>
+        <span class="pc">2023-05-10 10:12:45</span>
+        <span class="mobile">2023-05-10 10:12</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                        <a href="/categories/Windows/">Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,15 +216,11 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/Docker/">Docker</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Ubuntu/">Ubuntu</a>&nbsp;
+                        | <a href="/tags/Windows/">Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -247,56 +243,52 @@
         
 
         <div class="article-content markdown-body">
-            <p>自己装了一台Ubuntu Server，就是为了装个Docker，方便安装一些小的服务。</p>
-<p>Ubuntu安装Docker很简单，官方直接就有文档：<br>英文文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/ubuntu/" >https://docs.docker.com/engine/install/ubuntu/<i class="fas fa-external-link-alt"></i></a><br>中文文档：<a class="link"   target="_blank" rel="noopener" href="https://dockerdocs.cn/engine/install/ubuntu/" >https://dockerdocs.cn/engine/install/ubuntu/<i class="fas fa-external-link-alt"></i></a></p>
+            <p>在Win10系统中，装了Docker desktop，启动容器的时候，突然提示”Permission denied” 了。</p>
+<p>之前还正常的，突然某次开机后，就提示映射的端口没有权限，被拒绝了。</p>
+<p>输入 <code>netstat -ano | findstr &quot;50000&quot;</code> 查看端口占用信息时，它却无任何输出。端口并没被占用使用。</p>
+<p>这是没有权限直接被拒绝了，并不是被占用了。</p>
+<p>然后网上查了下。</p>
 <a id="more"></a>
 
-<h2 id="一、操作系统要求"><a href="#一、操作系统要求" class="headerlink" title="一、操作系统要求"></a>一、操作系统要求</h2><p>要安装Docker Engine，Ubuntu64位版本支持的有：</p>
+<p>找到原因：</p>
 <blockquote>
-<p>Ubuntu Hirsute 21.04<br>Ubuntu Groovy 20.10<br>Ubuntu Focal 20.04（LTS）<br>Ubuntu Bionic 18.04（LTS）<br>Ubuntu Xenial 16.04（LTS）</p>
+<p>出现这个错误的原因是 Windows 10 的补丁 KB4074588 中存在一个已知问题：</p>
+<p>安装此更新后，应用程序可能无法保留或绑定到以前工作的端口。</p>
+<p>这些端口会被 Hyper-V 拿来保留备用，处于备用的端口无法被其他程序使用，用户登录后，系统会随机保留一些端口。使用 netsh interface ipv4 show excludedportrange protocol=tcp 可以查看被保留的端口段，每次重启都有可能是不同的端口。</p>
+<p>因此，当你的系统启用 Hyper-V 或安装 Docker（安装 Docker Desktop 会启用 Hyper-V）之后，这个问题可能就会出现。</p>
 </blockquote>
-<p>现在最新Ubuntu Server是22.04，不知道是否支持，照理应该最新的都会支持的，可能文档还没更新。不确定系统版本，用命令查看一下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">lsb_release -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 相关结果如下：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Distributor ID:	Ubuntu</span><br><span class="line">Description:	Ubuntu 20.04.5 LTS</span><br><span class="line">Release:	20.04</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
-<h2 id="二、卸载旧版本Docker"><a href="#二、卸载旧版本Docker" class="headerlink" title="二、卸载旧版本Docker"></a>二、卸载旧版本Docker</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove docker docker-engine docker.io containerd runc</span><br></pre></td></tr></table></figure>
-<p>如果提示没有安装，没问题。</p>
-<h2 id="三、安装Docker"><a href="#三、安装Docker" class="headerlink" title="三、安装Docker"></a>三、安装Docker</h2><p><strong>安装方式：</strong></p>
-<ul>
-<li>大多数用户会 设置Docker的存储库并从中进行安装，以简化安装和升级任务。这是推荐的方法。</li>
-<li>一些用户下载并手动安装DEB软件包， 并完全手动管理升级。这在诸如在无法访问互联网的空白系统上安装Docker的情况下很有用。</li>
-<li>在测试和开发环境中，一些用户选择使用自动 便利脚本来安装Docker。</li>
-</ul>
-<p>这里就用推荐的方法：使用存储库安装（Install using the repository）</p>
-<h3 id="1-设置存储库（Set-up-the-repository）"><a href="#1-设置存储库（Set-up-the-repository）" class="headerlink" title="1.设置存储库（Set up the repository）"></a>1.设置存储库（Set up the repository）</h3><p>1).更新apt软件包索引并安装软件包以允许apt通过HTTPS使用存储库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install \</span><br><span class="line">    apt-transport-https \</span><br><span class="line">    ca-certificates \</span><br><span class="line">    curl \</span><br><span class="line">    gnupg \</span><br><span class="line">    lsb-release</span><br></pre></td></tr></table></figure>
-<p>2).添加Docker的官方GPG密钥（Add Docker’s official GPG key）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/apt/keyrings</span><br><span class="line"></span><br><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg</span><br></pre></td></tr></table></figure>
-<p>3).使用以下命令来设置存储库（Use the following command to set up the repository）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> \</span><br><span class="line">  <span class="string">&quot;deb [arch=<span class="subst">$(dpkg --print-architecture)</span> signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \</span></span><br><span class="line"><span class="string">  <span class="subst">$(lsb_release -cs)</span> stable&quot;</span> | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null</span><br></pre></td></tr></table></figure>
-<h3 id="2-安装Docker引擎（Install-Docker-Engine）"><a href="#2-安装Docker引擎（Install-Docker-Engine）" class="headerlink" title="2.安装Docker引擎（Install Docker Engine）"></a>2.安装Docker引擎（Install Docker Engine）</h3><p>1).更新apt程序包索引（Update the apt package index）：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
-<p>2).安装最新版本的Docker Engine，containerd和Docker Compose（Install Docker Engine, containerd, and Docker Compose）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin</span><br></pre></td></tr></table></figure>
-<p>如果要安装指定版本的Docker Engine：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出仓库中可用的版本</span></span><br><span class="line">apt-cache madison docker-ce</span><br><span class="line"><span class="comment"># 指定版本比如：5:18.09.1~3-0~ubuntu-xenial</span></span><br><span class="line"><span class="comment"># VERSION_STRING=5:18.09.1~3-0~ubuntu-xenial</span></span><br><span class="line">sudo apt-get install docker-ce=&lt;VERSION_STRING&gt; docker-ce-cli=&lt;VERSION_STRING&gt; containerd.io</span><br></pre></td></tr></table></figure>
-<p>3).通过运行hello-world 映像来验证是否正确安装了Docker Engine（Verify that the Docker Engine installation is successful by running the hello-world image）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
-<p>最后用docker命令查看下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker version <span class="comment"># 查看docker版本</span></span><br><span class="line">docker images <span class="comment"># 列出镜像列表</span></span><br><span class="line">docker ps -a <span class="comment"># 列出所有容器（包括停止的容器）</span></span><br></pre></td></tr></table></figure>
-<p>Docker常用命令看这篇笔记：<a href="/2022/05/09/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Docker常用命令">Docker常用命令</a></p>
-<h3 id="3-启动Docker"><a href="#3-启动Docker" class="headerlink" title="3.启动Docker"></a>3.启动Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装完成后，查看Docker服务是否运行</span></span><br><span class="line">systemctl status docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动Docker服务</span></span><br><span class="line">sudo systemctl start docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># Docker服务设置开机自启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
-<h3 id="4-升级Docker引擎"><a href="#4-升级Docker引擎" class="headerlink" title="4.升级Docker引擎"></a>4.升级Docker引擎</h3><p>要升级Docker Engine，请先运行<code>sudo apt-get update</code>。</p>
-<h3 id="5-卸载Docker引擎（Uninstall-Docker-Engine）"><a href="#5-卸载Docker引擎（Uninstall-Docker-Engine）" class="headerlink" title="5.卸载Docker引擎（Uninstall Docker Engine）"></a>5.卸载Docker引擎（Uninstall Docker Engine）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1).卸载Docker Engine，CLI和Containerd和Docker Compose packages</span></span><br><span class="line">sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).主机上镜像、窗口、卷或自定义的配置文件不会自动删除。要删除所有:</span></span><br><span class="line">sudo rm -rf /var/lib/docker</span><br><span class="line">sudo rm -rf /var/lib/containerd</span><br></pre></td></tr></table></figure>
+<p><strong>1.查看被保留的端口段</strong></p>
+<p>所以，先用以下命令在Windows PowerShell查看了下被保留的端口段，范围内的端口段被保留了，就无法使用了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">netsh interface ipv4 show excludedportrange protocol=tcp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行结果如下：</span></span><br><span class="line">协议 tcp 端口排除范围</span><br><span class="line"></span><br><span class="line">开始端口    结束端口</span><br><span class="line">----------    --------</span><br><span class="line">      5357        5357</span><br><span class="line">     14353       14452</span><br><span class="line">     14453       14552</span><br><span class="line">     14553       14652</span><br><span class="line">     14653       14752</span><br><span class="line">     14759       14858</span><br><span class="line">     50000       50059     *</span><br><span class="line"></span><br><span class="line">* - 管理的端口排除。</span><br></pre></td></tr></table></figure>
+<p><strong>2.查看某个端口TCP是否可用</strong></p>
+<p>具体查看某个端口是否可用，可以用命令测试：<code>Test-NetConnection localhost -Port &lt;端口号&gt;</code></p>
+<p>当看到结果<code>TcpTestSucceeded       : False</code>，False就不能用了，如果是True就可以用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试50000端口是否可用</span></span><br><span class="line">Test-NetConnection localhost -Port 50000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行结果如下：</span></span><br><span class="line">警告: TCP connect to (::1 : 50000) failed</span><br><span class="line">警告: TCP connect to (127.0.0.1 : 50000) failed</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ComputerName           : localhost</span><br><span class="line">RemoteAddress          : ::1</span><br><span class="line">RemotePort             : 50000</span><br><span class="line">InterfaceAlias         : Loopback Pseudo-Interface 1</span><br><span class="line">SourceAddress          : ::1</span><br><span class="line">PingSucceeded          : True</span><br><span class="line">PingReplyDetails (RTT) : 0 ms</span><br><span class="line">TcpTestSucceeded       : False</span><br></pre></td></tr></table></figure>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>这个问题的解决方法有两种：</p>
+<p><strong>1.最粗暴的方法</strong></p>
+<p>直接重启电脑，因为端口会随机改变。多重启几次，总能解决的。<br>不过以后仍有可能会遇到同样的问题。</p>
+<p><strong>2.排除掉需要使用的端口</strong></p>
+<p>1).禁用 Hyper-V</p>
+<p>2).添加需要排除的端口范围</p>
+<p>如：<code>netsh int ipv4 add excludedportrange protocol=tcp startport=50051 numberofports=1</code></p>
+<p>这个命令的作用是添加一个 TCP 端口范围，其中端口从 50051 开始，共计 1 个端口。同时，这个范围中的一个端口将被排除，以确保该端口不会被其他应用程序占用。</p>
+<blockquote>
+<p>netsh：Windows 中的一个命令行工具，用于配置网络参数。<br>int ipv4：表示要配置 IPv4 网络接口。<br>add excludedportrange：添加一个被排除的端口范围。<br>protocol=tcp：指定排除的是 TCP 端口。<br>startport=50051：指定排除的端口范围的起始端口为 50051。<br>numberofports=1：指定端口范围中要排除的端口数量为 1。</p>
+</blockquote>
+<p>3).重新启用 Hyper-V</p>
+<p>PS.第2种方法也只是重启电脑前可以解决，只要重启电脑了，端口又随机了，还是会有可能再碰到这个问题。</p>
+
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Ubuntu安装Docker</li>
+        <li>本文标题：Win10 Docker启动容器时，端口莫名没权限被拒绝</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-11-19 14:28:10</li>
+        <li>创建时间：2023-05-10 10:12:45</li>
         <li>
-            本文链接：http://hduzn.cn/2022/11/19/Ubuntu安装Docker/
+            本文链接：http://hduzn.cn/2023/05/10/Win10端口莫名被拒绝问题/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -311,15 +303,11 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
                         <a href="/tags/Docker/">#Docker</a>&nbsp;
                     </li>
                 
                     <li class="tag-item">
-                        <a href="/tags/Ubuntu/">#Ubuntu</a>&nbsp;
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -328,29 +316,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/11/19/Ubuntu%E8%AE%BE%E7%BD%AE%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E4%B9%9F%E8%83%BD%E6%89%A7%E8%A1%8Cdocker%E5%91%BD%E4%BB%A4/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu设置普通用户也能执行docker命令</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/11/19/Ubuntu%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D/"
+                           href="/2023/03/29/cctv%E5%AE%98%E7%BD%91%E8%A7%86%E9%A2%91%E4%B8%8B%E8%BD%BD%E8%8A%B1%E5%B1%8F%E6%80%8E%E4%B9%88%E5%8A%9E/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu修改主机名（hostnamectl命令）</span>
+                                <span class="post-nav-title-item">cctv官网视频下载花屏怎么办</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -547,7 +520,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="nav-text">一、操作系统要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%8D%B8%E8%BD%BD%E6%97%A7%E7%89%88%E6%9C%ACDocker"><span class="nav-text">二、卸载旧版本Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85Docker"><span class="nav-text">三、安装Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AE%BE%E7%BD%AE%E5%AD%98%E5%82%A8%E5%BA%93%EF%BC%88Set-up-the-repository%EF%BC%89"><span class="nav-text">1.设置存储库（Set up the repository）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85Docker%E5%BC%95%E6%93%8E%EF%BC%88Install-Docker-Engine%EF%BC%89"><span class="nav-text">2.安装Docker引擎（Install Docker Engine）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%AF%E5%8A%A8Docker"><span class="nav-text">3.启动Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%8D%87%E7%BA%A7Docker%E5%BC%95%E6%93%8E"><span class="nav-text">4.升级Docker引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%8D%B8%E8%BD%BDDocker%E5%BC%95%E6%93%8E%EF%BC%88Uninstall-Docker-Engine%EF%BC%89"><span class="nav-text">5.卸载Docker引擎（Uninstall Docker Engine）</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a></li></ol>
     </div>
 </div>
         </aside>
