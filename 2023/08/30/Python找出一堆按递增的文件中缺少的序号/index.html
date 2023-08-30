@@ -9,7 +9,7 @@
     
     <title>
         
-            Python使用pytesseract库进行文字识别 |
+            Python找出一堆按递增的文件中缺少的序号 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Python使用pytesseract库进行文字识别</span>
+            <span class="title-hover-animation">Python找出一堆按递增的文件中缺少的序号</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2023-08-29 22:21:48</span>
-        <span class="mobile">2023-08-29 22:21</span>
+        <span class="pc">2023-08-30 22:41:34</span>
+        <span class="mobile">2023-08-30 22:41</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -219,10 +219,6 @@
                         <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
-                    <li>
-                        | <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>&nbsp;
-                    </li>
-                
             </ul>
         </span>
     
@@ -243,50 +239,28 @@
         
 
         <div class="article-content markdown-body">
-            <p>pytesseract是Python的一个OCR文本识别库。</p>
-<p>以下几点概括了它的主要信息：</p>
-<ul>
-<li>基于Tesseract OCR引擎：pytesseract是Tesseract OCR引擎的Python接口，需要先安装Tesseract。</li>
-<li>支持多种语言：通过Tesseract训练好的语言数据，pytesseract支持英文、中文等多种语言的OCR识别。</li>
-<li>主要功能：主要提供 image_to_string等方法，将图像文件识别为文本内容。</li>
-<li>准确率：基于深度学习的Tesseract 4.0+，识别准确率可以达到96%以上。</li>
-<li>使用简单：只需要几行代码就可以实现OCR识别，非常易于上手。</li>
-<li>识别流程：加载图像-&gt; 预处理(提高识别质量) -&gt; OCR识别 -&gt; 后处理文本</li>
-<li>适用场景：printed文本识别、 invoices识别、身份证/护照识别等。</li>
-<li>优势：开源、使用简单、支持多语言、支持训练自定义模型。</li>
-<li>劣势：对手写体识别效果较差，对图像质量要求较高。</li>
-<li>备选方案：EasyOCR、PaddleOCR等其他OCR库。</li>
-</ul>
-<p>Github项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/tesseract-ocr/tesseract" >https://github.com/tesseract-ocr/tesseract<i class="fas fa-external-link-alt"></i></a></p>
+            <p>原因是这样的：</p>
+<p>用手机拍了四五百张照片后，用苹果手机连接电脑，想导入到电脑里。</p>
+<p>然后发现了这个问题：连接电脑后，在电脑上看到了像U盘盘符的Apple盘符，打开后发现照片不全；如果在手机相册中打开某张没有的照片，再在电脑中打开就能看到这张照片，不知道什么bug，感觉是没加载全的。</p>
+<p>为了快速找到到底缺了哪些照片，因为图片文件名都是按序号递增的，就想用到Python直接检查一下好了。毕竟少了好几十张，手动找起来真的麻烦死了。</p>
 <a id="more"></a>
 
-<h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><p>要使用pytesseract，除了编写代码外，还需要进行以下几个步骤：</p>
-<h3 id="1-安装Tesseract-OCR引擎"><a href="#1-安装Tesseract-OCR引擎" class="headerlink" title="1. 安装Tesseract OCR引擎"></a>1. 安装Tesseract OCR引擎</h3><p>pytesseract是一个Python的OCR库，它依赖于Tesseract OCR引擎。因此，首先需要安装Tesseract OCR引擎。</p>
-<p>Github项目页上有下载地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/UB-Mannheim/tesseract/wiki" >https://github.com/UB-Mannheim/tesseract/wiki<i class="fas fa-external-link-alt"></i></a></p>
-<p>找到“Tesseract installer for Windows”项中 <mark>tesseract-ocr-w64-setup-5.3.1.20230401.exe (64 bit)</mark> 下载就行（如果32位的就打开 <a class="link"   target="_blank" rel="noopener" href="https://digi.bib.uni-mannheim.de/tesseract/" >older versions for 32 and 64 bit Windows<i class="fas fa-external-link-alt"></i></a> 的页面找对应包含w32的去下载）</p>
-<p>注意：安装的时候有个语言数据的选择可以选一下自己需要的，我这就选择了chinese相关的4个。</p>
-<p>安装完后，可以把安装目录下的 exe 文件添加到系统环境变量，默认是：<code>C:\Program Files\Tesseract-OCR\tesseract.exe</code></p>
-<p>添加了系统环境变量，就可以运行以下命令查看安装的语言有哪些（没添加的话就安装目录下运行也可以的）：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tesseract --list-langs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果如下：</span></span><br><span class="line">chi_sim <span class="comment"># 简体中文</span></span><br><span class="line">chi_sim_vert</span><br><span class="line">chi_tra</span><br><span class="line">chi_tra_vert</span><br><span class="line">eng</span><br><span class="line">osd</span><br></pre></td></tr></table></figure>
-<h3 id="2-安装pytesseract库"><a href="#2-安装pytesseract库" class="headerlink" title="2. 安装pytesseract库"></a>2. 安装pytesseract库</h3><p>在安装了Tesseract OCR引擎之后，可以使用pip命令安装pytesseract库。打开终端或命令提示符，运行以下命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pytesseract</span><br></pre></td></tr></table></figure>
-<h3 id="3-Python代码举例"><a href="#3-Python代码举例" class="headerlink" title="3.Python代码举例"></a>3.Python代码举例</h3><p>使用pytesseract库的<code>image_to_string</code>函数可以将图像转换为文本。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> pytesseract</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置Tesseract的安装路径（可选）</span></span><br><span class="line"><span class="comment"># 如果Tesseract OCR引擎没有被自动识别，可以手动设置其安装路径。</span></span><br><span class="line">pytesseract.pytesseract.tesseract_cmd = <span class="string">r&#x27;C:\Program Files\Tesseract-OCR\tesseract.exe&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line">image = cv2.imread(<span class="string">&#x27;IMG_2103.JPG&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行图像预处理,包括灰度化、降噪等</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Pytesseract识别图片</span></span><br><span class="line">text = pytesseract.image_to_string(image, lang=<span class="string">&#x27;chi_sim&#x27;</span>) </span><br><span class="line"><span class="built_in">print</span>(text)</span><br></pre></td></tr></table></figure>
-<p>以上是使用pytesseract的基本步骤。</p>
-<p>很多时候直接对原图使用 pytesseract 识别效果不佳，需要先对图像进行预处理，提高识别准确率。常见的预处理有裁切、去噪、缩放、阈值化、膨胀腐蚀等。可以使用 OpenCV 等图像处理库。</p>
-<p>比如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取图片</span></span><br><span class="line">image = cv2.imread(<span class="string">&#x27;IMG_2103.JPG&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进行图像预处理,包括灰度化、降噪等</span></span><br><span class="line">gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)</span><br><span class="line">gray = cv2.threshold(gray, <span class="number">0</span>, <span class="number">255</span>, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[<span class="number">1</span>]</span><br><span class="line">gray = cv2.medianBlur(gray, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Pytesseract识别图片</span></span><br><span class="line">text = pytesseract.image_to_string(gray, lang=<span class="string">&#x27;chi_sim&#x27;</span>) </span><br><span class="line"><span class="built_in">print</span>(text)</span><br></pre></td></tr></table></figure>
+<p><strong>功能实现：</strong> 找出 pic 目录下的图片文件缺少哪几个序号的文件名。</p>
+<p>图片是从苹果手机导出的，所以文件名中的序号都是规律的、递增的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">@File    :   test.py</span></span><br><span class="line"><span class="string">@Time    :   2023/08/30</span></span><br><span class="line"><span class="string">@Author  :   HDUZN</span></span><br><span class="line"><span class="string">@Version :   1.0</span></span><br><span class="line"><span class="string">@Contact :   hduzn@vip.qq.com</span></span><br><span class="line"><span class="string">@License :   (C)Copyright 2022-2023</span></span><br><span class="line"><span class="string">@Desc    :   把目录中所有的图片文件名由IMG_7255.JPG变成7255后写入到excel表格</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># here put the import lib</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取目录中所有的图片文件名</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_names</span>(<span class="params">directory</span>):</span></span><br><span class="line">    file_names = []</span><br><span class="line">    <span class="keyword">for</span> filename <span class="keyword">in</span> os.listdir(directory):</span><br><span class="line">        file_names.append(filename)</span><br><span class="line">    <span class="keyword">return</span> file_names</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理文件名，由 IMG_7255.JPG 变成 7255</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_file_names</span>(<span class="params">file_names</span>):</span></span><br><span class="line">    num_list = []</span><br><span class="line">    <span class="keyword">for</span> filename <span class="keyword">in</span> file_names:</span><br><span class="line">        name_without_extension = os.path.splitext(filename)[<span class="number">0</span>] <span class="comment"># 去除后缀</span></span><br><span class="line">        num = name_without_extension.split(<span class="string">&#x27;_&#x27;</span>)[<span class="number">1</span>]</span><br><span class="line">        num_list.append(<span class="built_in">int</span>(num))</span><br><span class="line">    <span class="keyword">return</span> num_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取缺少的数字</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_missing_numbers</span>(<span class="params">num_list</span>):</span></span><br><span class="line">    min_num = <span class="built_in">min</span>(num_list)</span><br><span class="line">    max_num = <span class="built_in">max</span>(num_list)</span><br><span class="line">    all_nums = <span class="built_in">set</span>(<span class="built_in">range</span>(min_num, max_num+<span class="number">1</span>))</span><br><span class="line">    missing_nums = <span class="built_in">sorted</span>(all_nums - <span class="built_in">set</span>(num_list))</span><br><span class="line">    <span class="keyword">return</span> missing_nums</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入Excel表格</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_to_excel</span>(<span class="params">num_list, missing_nums, output_file</span>):</span></span><br><span class="line">    workbook = openpyxl.Workbook()</span><br><span class="line">    sheet = workbook.active</span><br><span class="line">    <span class="keyword">for</span> i, num <span class="keyword">in</span> <span class="built_in">enumerate</span>(num_list):</span><br><span class="line">        sheet.cell(row=i+<span class="number">1</span>, column=<span class="number">1</span>, value=num)</span><br><span class="line">    <span class="keyword">for</span> i, num <span class="keyword">in</span> <span class="built_in">enumerate</span>(missing_nums):</span><br><span class="line">        sheet.cell(row=i+<span class="number">1</span>, column=<span class="number">2</span>, value=num)</span><br><span class="line">    workbook.save(output_file)</span><br><span class="line"></span><br><span class="line">directory = <span class="string">r&#x27;.\pic&#x27;</span></span><br><span class="line">output_file = <span class="string">&quot;num_list.xlsx&quot;</span></span><br><span class="line"></span><br><span class="line">file_names = get_file_names(directory) <span class="comment"># 获取目录中所有的图片文件名</span></span><br><span class="line">num_list = process_file_names(file_names) <span class="comment"># 处理文件名</span></span><br><span class="line">missing_nums = generate_missing_numbers(num_list) <span class="comment"># 获取缺少的数字</span></span><br><span class="line">write_to_excel(num_list, missing_nums, output_file) <span class="comment"># 写入Excel表格</span></span><br></pre></td></tr></table></figure>
+<p>思路有了，代码就一步一步让聊天机器人写的，看看没问题直接拿过来用就行了。</p>
+
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Python使用pytesseract库进行文字识别</li>
+        <li>本文标题：Python找出一堆按递增的文件中缺少的序号</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2023-08-29 22:21:48</li>
+        <li>创建时间：2023-08-30 22:41:34</li>
         <li>
-            本文链接：http://hduzn.cn/2023/08/29/Python使用pytesseract库进行文字识别/
+            本文链接：http://hduzn.cn/2023/08/30/Python找出一堆按递增的文件中缺少的序号/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -304,39 +278,20 @@
                         <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
-                    <li class="tag-item">
-                        <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">#人工智能</a>&nbsp;
-                    </li>
-                
             </ul>
         
 
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2023/08/30/Python%E6%89%BE%E5%87%BA%E4%B8%80%E5%A0%86%E6%8C%89%E9%80%92%E5%A2%9E%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%AD%E7%BC%BA%E5%B0%91%E7%9A%84%E5%BA%8F%E5%8F%B7/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Python找出一堆按递增的文件中缺少的序号</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2023/08/29/Python%E4%BD%BF%E7%94%A8Easyocr%E5%BA%93%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/"
+                           href="/2023/08/29/Python%E4%BD%BF%E7%94%A8pytesseract%E5%BA%93%E8%BF%9B%E8%A1%8C%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Python使用Easyocr库进行文字识别</span>
+                                <span class="post-nav-title-item">Python使用pytesseract库进行文字识别</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -533,7 +488,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="nav-text">使用步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85Tesseract-OCR%E5%BC%95%E6%93%8E"><span class="nav-text">1. 安装Tesseract OCR引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85pytesseract%E5%BA%93"><span class="nav-text">2. 安装pytesseract库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Python%E4%BB%A3%E7%A0%81%E4%B8%BE%E4%BE%8B"><span class="nav-text">3.Python代码举例</span></a></li></ol></li></ol>
+        
     </div>
 </div>
         </aside>
