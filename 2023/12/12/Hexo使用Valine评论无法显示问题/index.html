@@ -9,7 +9,7 @@
     
     <title>
         
-            Linux vim/vi 命令简单使用 |
+            Hexo使用Valine评论无法显示问题 |
         
         烟雨平生
     </title>
@@ -178,7 +178,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Linux vim/vi 命令简单使用</span>
+            <span class="title-hover-animation">Hexo使用Valine评论无法显示问题</span>
         </div>
 
         
@@ -195,8 +195,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-08 21:10:00</span>
-        <span class="mobile">2021-02-08 21:10</span>
+        <span class="pc">2023-12-12 19:14:05</span>
+        <span class="mobile">2023-12-12 19:14</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -204,7 +204,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -216,7 +216,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                        <a href="/tags/Hexo/">Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -239,65 +239,22 @@
         
 
         <div class="article-content markdown-body">
-            <p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
-<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
-<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
+            <p>用的 Keep主题，主题的配置文件中关于这个Valine 评论的配置就以下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Valine</span></span><br><span class="line"><span class="comment"># See: https://github.com/xCss/Valine</span></span><br><span class="line"><span class="attr">valine:</span></span><br><span class="line">  <span class="attr">appid:</span> <span class="string">U************************sz</span></span><br><span class="line">  <span class="attr">appkey:</span> <span class="string">y************************m7</span></span><br><span class="line">  <span class="attr">placeholder:</span> <span class="string">请在此输入您的留言</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 
-<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
+<p>然后之前也挂过，所以找了位置，在主题目录下的 <code>layout\_partial\comment</code> 目录下有文件 valine.ejs 是实现这个评论模块的。</p>
+<p>相关内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class&#x3D;&quot;valine-container&quot;&gt;</span><br><span class="line">        &lt;script &lt;%&#x3D; theme.pjax.enable &#x3D;&#x3D;&#x3D; true ? &#39;data-pjax&#39; : &#39;&#39; %&gt;</span><br><span class="line">                src&#x3D;&quot;&#x2F;&#x2F;unpkg.com&#x2F;valine@latest&#x2F;dist&#x2F;Valine.min.js&quot;&gt;&lt;&#x2F;script&gt;</span><br><span class="line">        &lt;div id&#x3D;&quot;vcomments&quot;&gt;&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+<p>主要就是 <code>src=&quot;//unpkg.com/valine@latest/dist/Valine.min.js&quot;</code>这里引用的这个文件的链接访问不了了，访问地址是：<a class="link"   target="_blank" rel="noopener" href="https://unpkg.com/valine@latest/dist/Valine.min.js" >https://unpkg.com/valine@latest/dist/Valine.min.js<i class="fas fa-external-link-alt"></i></a>，看看能不能打开。</p>
+<p>就是被墙了，所以导致评论模块显示不出来了。</p>
+<p><strong>解决方法：</strong></p>
 <ul>
-<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
-<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
+<li>1.保存一个 Valine.min.js 文件，放到主题目录下的 <code>source\js</code>目录中；</li>
+<li>2.修改 valine.ejs文件，把 <code>src=&quot;//unpkg.com/valine@latest/dist/Valine.min.js&quot;</code>这句改成以下内容，引用本地文件就行了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src&#x3D;&quot;&#x2F;js&#x2F;Valine.min.js&quot;</span><br></pre></td></tr></table></figure>
+顺手提供一个Valine.min.js 1.5.1下载地址：</li>
 </ul>
-<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
-<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
-<table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">:w</td>
-<td>保存</td>
-</tr>
-<tr>
-<td align="left">:wq</td>
-<td>保存并退出</td>
-</tr>
-<tr>
-<td align="left">:q</td>
-<td>不保存退出</td>
-</tr>
-</tbody></table>
-<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">o</td>
-<td>插入一行</td>
-</tr>
-<tr>
-<td align="left">dd</td>
-<td>删除一行</td>
-</tr>
-<tr>
-<td align="left">dw</td>
-<td>删除选中字母开始的第一个字母</td>
-</tr>
-</tbody></table>
-<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
-<ul>
-<li>1.用vim 打开文件后，是命令模式；</li>
-<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
-<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
-<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
-</ul>
+<p><a class="link"   target="_blank" rel="noopener" href="https://gitee.com/hduzn/share_files/blob/master/Valine.min.js" >https://gitee.com/hduzn/share_files/blob/master/Valine.min.js<i class="fas fa-external-link-alt"></i></a></p>
 
         </div>
 
@@ -305,11 +262,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Linux vim/vi 命令简单使用</li>
+        <li>本文标题：Hexo使用Valine评论无法显示问题</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-08 21:10:00</li>
+        <li>创建时间：2023-12-12 19:14:05</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/08/Linux vim命令简单使用/
+            本文链接：http://hduzn.cn/2023/12/12/Hexo使用Valine评论无法显示问题/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -324,7 +281,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
                     </li>
                 
             </ul>
@@ -333,29 +290,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux 定时执行 python脚本</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/"
+                           href="/2023/12/01/SQL%E8%AF%AD%E5%8F%A5%E4%BB%A5%E5%8F%8A%E5%9C%A8Python%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux 修改文件权限</span>
+                                <span class="post-nav-title-item">SQL语句以及在Python中的应用</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -552,7 +494,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8D%A2"><span class="nav-text">1.两种模式切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BF%9D%E5%AD%98%E6%96%87%E4%BB%B6"><span class="nav-text">2.保存文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%91%BD%E4%BB%A4-%E5%8A%9F%E8%83%BD"><span class="nav-text">3.命令 功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B0%8F%E7%BB%93"><span class="nav-text">4.小结</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
