@@ -217,7 +217,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Python/">Python</a>&nbsp;
+                        <a href="/categories/AI/">AI</a>&nbsp;
                     </li>
                 
             </ul>
@@ -229,7 +229,11 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Python/">Python</a>&nbsp;
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/AI/">AI</a>&nbsp;
                     </li>
                 
             </ul>
@@ -252,15 +256,35 @@
         
 
         <div class="article-content markdown-body">
-            <a id="more"></a>
+            <p>Ollama 是一个便于本地部署和运行大型语言模型（Large Language Models, LLMs）的工具。</p>
+<p>本文将介绍如何使用 Docker 安装和使用 Ollama 和 Open WebUI，并下载模型进行使用。</p>
+<p>没有Docker的话，只需要安装 Python后，用 pip 命令照样可以安装 Open Webui，再下载模型，同样也可以用。</p>
+<a id="more"></a>
 
-<p>链接站内文章：<a href="/2022/04/30/%E6%9C%AC%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8%E7%9A%84Hexo%E4%B8%BB%E9%A2%98%E4%B8%BAKeep/" title="本博客使用的Hexo主题为：Keep">本博客使用的Hexo主题为：Keep</a></p>
-<p>插入图片：<img  
+<h2 id="Ollama-Docker-安装"><a href="#Ollama-Docker-安装" class="headerlink" title="Ollama Docker 安装"></a>Ollama Docker 安装</h2><p>开源的大型语言模型平台 Ollama 提供了强大的模型管理功能，允许用户下载、上传和管理各种预训练的语言模型。用户可以根据自己的需求选择合适的模型，并进行定制化配置。</p>
+<p>Ollama项目在Github上 目前有 91.1k的星。</p>
+<p>官网：<a class="link"   target="_blank" rel="noopener" href="https://ollama.com/" >https://ollama.com/<i class="fas fa-external-link-alt"></i></a><br>模型：<a class="link"   target="_blank" rel="noopener" href="https://ollama.com/library" >https://ollama.com/library<i class="fas fa-external-link-alt"></i></a><br>Github：<a class="link"   target="_blank" rel="noopener" href="https://github.com/ollama/ollama" >https://github.com/ollama/ollama<i class="fas fa-external-link-alt"></i></a><br>Docker：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/r/ollama/ollama/tags" >https://hub.docker.com/r/ollama/ollama/tags<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.拉取 Ollama Docker 镜像</span></span><br><span class="line">docker pull ollama/ollama:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.创建容器（需要映射目录，比如我这是：D:\ollama）</span></span><br><span class="line">docker run -d -v D:\ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.下载模型 llama3.1:8b</span></span><br><span class="line">docker <span class="built_in">exec</span> -it ollama ollama run llama3.1:8b</span><br></pre></td></tr></table></figure>
+<p>完成第2步后，打开浏览器，访问 <code>http://localhost:11434</code>，可以看到 Ollama is running 在运行了。</p>
+<p>运行第3步后，等待模型下载完成，就直接可以使用该模型聊天了。（第一次没有该模型会自动下载该模型）</p>
+<p>在模型页面上可以查看自己需要下载的模型。</p>
+<h2 id="Open-WebUI-Docker-安装"><a href="#Open-WebUI-Docker-安装" class="headerlink" title="Open WebUI Docker 安装"></a>Open WebUI Docker 安装</h2><p>Open WebUI 是一种可扩展的、功能丰富且用户友好的自托管 WebUI，旨在完全离线运行。它支持各种LLM运行器，包括 Ollama 和与 OpenAI 兼容的 API。</p>
+<p>该项目在Github上 目前有 40.6k的星。</p>
+<p>Github：<a class="link"   target="_blank" rel="noopener" href="https://github.com/open-webui/open-webui" >https://github.com/open-webui/open-webui<i class="fas fa-external-link-alt"></i></a><br>文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.openwebui.com/" >https://docs.openwebui.com/<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.拉取镜像</span></span><br><span class="line">docker pull dyrnq/open-webui:main</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.创建容器（需要映射目录，比如我是：D:\open-webui,映射的端口我这是8186）</span></span><br><span class="line">docker run -d -p 8186:8080 --add-host=host.docker.internal:host-gateway -v D:\open-webui:/app/backend/data --name open-webui --restart always dyrnq/open-webui:main</span><br></pre></td></tr></table></figure>
+<p>完成第2步后，打开浏览器，访问 <code>http://localhost:8080</code>，即可开始使用 Open WebUI。用邮箱注册下就可以了。</p>
+<p>如果没有下载模型需要先下载模型，如果前面在ollama上下载过了，这里直接就选择模型就能用了。</p>
+<img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/img/Hexo_Github_blog_1.png"
+                     data-src="/img/Ollama_OpenWebui.png"
                       style="zoom: 50%;"
-                ></p>
+                >
+
+<h2 id="pip-命令安装使用-Open-Webui"><a href="#pip-命令安装使用-Open-Webui" class="headerlink" title="pip 命令安装使用 Open Webui"></a>pip 命令安装使用 Open Webui</h2><p>安装过 Python的话，没有Docker也可以用。直接用 pip 命令安装 OpenWebui后，直接在上面下载模型就行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">pip install open-webui</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动</span></span><br><span class="line">open-webui serve</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，访问 <code>http://localhost:8080</code></p>
+<p>然后是可以下载模型的。去模型页面上看 <a class="link"   target="_blank" rel="noopener" href="https://ollama.com/library" >https://ollama.com/library<i class="fas fa-external-link-alt"></i></a> 然后比如要下载 llama3.1:8b 写上就能下载了。</p>
 
         </div>
 
@@ -287,7 +311,11 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Python/">#Python</a>&nbsp;
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/AI/">#AI</a>&nbsp;
                     </li>
                 
             </ul>
@@ -500,7 +528,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ollama-Docker-%E5%AE%89%E8%A3%85"><span class="nav-text">Ollama Docker 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Open-WebUI-Docker-%E5%AE%89%E8%A3%85"><span class="nav-text">Open WebUI Docker 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pip-%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8-Open-Webui"><span class="nav-text">pip 命令安装使用 Open Webui</span></a></li></ol>
     </div>
 </div>
         </aside>
