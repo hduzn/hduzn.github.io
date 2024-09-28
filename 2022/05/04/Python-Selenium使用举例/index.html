@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python Selenium使用举例 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python Selenium使用举例</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-04 11:33:58</span>
+        <span class="mobile">2022-05-04 11:33</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Selenium是一个用于Web应用程序测试的开源工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样，实现自动化测试。说白了，就是个Web应用的自动化测试工具。</p>
+<p>Web的自动化测试，因为是模拟用户操作一样，自然而然也可以把测试过程中需要的数据、信息等保存下来。所以我也用这个来下载一些公开数据（不用担心对爬虫的限制啥的）。</p>
+<a id="more"></a>
+
+<p>Selenium with Python中文文档：<a class="link"   target="_blank" rel="noopener" href="https://selenium-python-zh.readthedocs.io/en/latest/index.html" >https://selenium-python-zh.readthedocs.io/en/latest/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="一、安装Selenium包"><a href="#一、安装Selenium包" class="headerlink" title="一、安装Selenium包"></a>一、安装Selenium包</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
+<p>如果不知道自己是否安装过，可以用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U selenium</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-U：就是 –upgrade，表示如果已安装就升级到最新版。</p>
+</blockquote>
+<h2 id="二、安装浏览器驱动"><a href="#二、安装浏览器驱动" class="headerlink" title="二、安装浏览器驱动"></a>二、安装浏览器驱动</h2><p>需要找你自己的浏览器版本对应的驱动下载。<br>（浏览器一般会自动更新，需要及时更换）</p>
+<h3 id="1-下载-WebDriver"><a href="#1-下载-WebDriver" class="headerlink" title="1.下载 WebDriver"></a>1.下载 WebDriver</h3><p>1).Chrome WebDriver下载：<br><a class="link"   target="_blank" rel="noopener" href="https://chromedriver.storage.googleapis.com/index.html" >https://chromedriver.storage.googleapis.com/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://sites.google.com/a/chromium.org/chromedriver/downloads" >https://sites.google.com/a/chromium.org/chromedriver/downloads<i class="fas fa-external-link-alt"></i></a></p>
+<p>如果用的是<mark> Chrome115</mark>以上的版本，下载地址：<br><a class="link"   target="_blank" rel="noopener" href="https://googlechromelabs.github.io/chrome-for-testing/" >https://googlechromelabs.github.io/chrome-for-testing/<i class="fas fa-external-link-alt"></i></a></p>
+<p>2).Edge WebDriver下载：<br><a class="link"   target="_blank" rel="noopener" href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" >https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/<i class="fas fa-external-link-alt"></i></a></p>
+<p>3).Firefox WebDriver下载：<br><a class="link"   target="_blank" rel="noopener" href="https://github.com/mozilla/geckodriver/releases" >https://github.com/mozilla/geckodriver/releases<i class="fas fa-external-link-alt"></i></a></p>
+<p>4).Safari WebDriver下载：<br><a class="link"   target="_blank" rel="noopener" href="https://webkit.org/blog/6900/webdriver-support-in-safari-10/" >https://webkit.org/blog/6900/webdriver-support-in-safari-10/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>Chrome WebDriver下载举例</strong></p>
+<p>第2个下载不了（需要梯子），就用1个下载地址。</p>
+<p>比如我用的Chrome版本是：101.0.4951.54<br>那就直接在页面上搜 101.0.4951，然后最后一位找个小一点最接近的，比如 101.0.4951.41 这个目录点进去。</p>
+<p>会提供 Linux、Mac、Windows系统对应的版本，比如我这是Windows系统的，就下载对应的 chromedriver_win32.zip。<br>解压后得到一个 chromedriver.exe 文件，随便找地方放一下（回头需要用到这个文件的路径）。</p>
+<p><strong>Edge WebDriver下载举例</strong></p>
+<p>比如我用的Edge版本是：101.0.1210.32 (正式版本) (64 位)<br>打开下载页后，直接看到这个版本对应有：x86、x64、Mac、Linux等系统下载。<br>x86是32位的，所以下载x64的版本。<br>把压缩包里的 msedgedriver.exe 文件解压出来就行。（回头需要用到这个文件的路径）</p>
+<h3 id="2-添加到系统环境变量"><a href="#2-添加到系统环境变量" class="headerlink" title="2.添加到系统环境变量"></a>2.添加到系统环境变量</h3><p>建个目录，把两个WebDriver文件放一起，就放在：</p>
+<ul>
+<li>G:\Python\software\webdriver\chromedriver.exe、</li>
+<li>G:\Python\software\webdriver\msedgedriver.exe</li>
+</ul>
+<p>放好之后，将这个webdriver目录添加到系统环境变量中。<br>注：现在新的selenium4好像已经不支持在参数中用这个webdriver的路径了，selenium3原来是可以用的。所以建议还是添加到环境变量。</p>
+<h2 id="三、代码示例"><a href="#三、代码示例" class="headerlink" title="三、代码示例"></a>三、代码示例</h2><p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象 webdriver.Chrome()；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>以下代码示例用的Chrome浏览器测试，webdriver文件已添加到环境变量；如果没添加的，把driver_path 变量启用一下就行。</p>
+<p>这种做搜索引擎站点做测试效果一般，建议用别的站点。反正一开始用的百度，还会有验证出来，所以用 time.sleep()等待了几秒。</p>
+<p>注意：以下代码中用的Selenium为<strong>Selenium4</strong>新版用法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions() <span class="comment"># Edge浏览器没有option参数，比较麻烦</span></span><br><span class="line">option.add_experimental_option(<span class="string">&quot;detach&quot;</span>, <span class="literal">True</span>) <span class="comment"># 不自动关闭浏览器</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 WebDriver 对象，指明使用chrome浏览器驱动</span></span><br><span class="line"><span class="comment"># 两种模式，第一种：打开浏览器模式（默认为第一种，建议测试时用第一种模式，可以看到效果）</span></span><br><span class="line"><span class="comment"># 第二种：不打开浏览器模式（给option添加以下代码就行）</span></span><br><span class="line"><span class="comment"># option.add_argument(&#x27;headless&#x27;)</span></span><br><span class="line"></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># wd.quit()</span></span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python Selenium使用举例</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-05-04 11:33:58</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/05/04/Python-Selenium使用举例/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/05/04/Python-Selenium%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Selenium查找元素方法汇总</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">用FFmpeg下载m3u8格式视频</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85Selenium%E5%8C%85"><span class="nav-text">一、安装Selenium包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85%E6%B5%8F%E8%A7%88%E5%99%A8%E9%A9%B1%E5%8A%A8"><span class="nav-text">二、安装浏览器驱动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD-WebDriver"><span class="nav-text">1.下载 WebDriver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">2.添加到系统环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-text">三、代码示例</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

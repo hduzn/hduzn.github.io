@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker版Selenium使用方法 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker版Selenium使用方法</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-29 00:19:31</span>
+        <span class="mobile">2022-05-29 00:19</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Selenium 包含 3 大组件，Selenium IDE、Selenium WebDriver、Selenium Grid。<br>Selenium IDE：负责录制、回放脚本，模拟用户对页面的真实操作。<br>Selenium WebDriver：提供 API 来操作浏览器。<br>Selenium Grid：用于分布式自动化测试，可以控制多台机器、多个浏览器并行执行测试用例。</p>
+<p>此文用的就是Docker版Selenium Grid，用的环境是：服务器CentOS8.2。</p>
+<p><strong>Selenium Grid Docker</strong><br>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md" >https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、pull需要的docker镜像"><a href="#一、pull需要的docker镜像" class="headerlink" title="一、pull需要的docker镜像"></a>一、pull需要的docker镜像</h2><p>使用到两个镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull selenium/hub</span><br><span class="line">docker pull selenium/node-chrome</span><br></pre></td></tr></table></figure>
+<p>selenium/node-chrome 是无界面的。</p>
+<p>拉取完镜像后，可以用 <code>docker images</code> 查看所有镜像。</p>
+<p>要想能看到实时运行界面，需要pull以下镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull selenium/standalone-chrome-debug</span><br></pre></td></tr></table></figure>
+<h2 id="二、创建容器"><a href="#二、创建容器" class="headerlink" title="二、创建容器"></a>二、创建容器</h2><h3 id="1-创建一个新的-Docker-网络"><a href="#1-创建一个新的-Docker-网络" class="headerlink" title="1.创建一个新的 Docker 网络"></a>1.创建一个新的 Docker 网络</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create my-grid</span><br></pre></td></tr></table></figure>
+<p>可以通过 <code>docker network ls</code>命令查看结果。</p>
+<h3 id="1-Hub节点的容器"><a href="#1-Hub节点的容器" class="headerlink" title="1.Hub节点的容器"></a>1.Hub节点的容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 4442-4444:4442-4444 --net my-grid --name selen-hub selenium/hub</span><br></pre></td></tr></table></figure>
+<h3 id="2-Node节点的容器"><a href="#2-Node节点的容器" class="headerlink" title="2.Node节点的容器"></a>2.Node节点的容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --net my-grid -e SE_EVENT_BUS_HOST=selen-hub \</span><br><span class="line">	--shm-size=<span class="string">&quot;2g&quot;</span> \</span><br><span class="line">	-e SE_EVENT_BUS_PUBLISH_PORT=4442 \</span><br><span class="line">	-e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \</span><br><span class="line">	-p 5900:5900 \</span><br><span class="line">	-p 7900:7900 \</span><br><span class="line">	-v /dev/shm:/dev/shm \</span><br><span class="line">	--name selen-node-chrome1 selenium/node-chrome</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>5900 端口是给VNC客户端用的<br>7900 端口是给noVNC用的</p>
+</blockquote>
+<p>容器可以通过 <code>docker ps -a</code>命令查看 。</p>
+<p>服务起来了，可以在浏览器中查看（我的服务器ip为：43.142.94.65）：<br><a class="link"   target="_blank" rel="noopener" href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a></p>
+<p>结果如下：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_1.png"
+                     
+                ></p>
+<p>点开版本号上面的1，可以看到有如下信息（这些信息有用的，记一下，代码里会用到这些参数）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-使用docker-compose创建"><a href="#3-使用docker-compose创建" class="headerlink" title="3. 使用docker-compose创建"></a>3. 使用docker-compose创建</h3><p>如果不想用上面这种依次创建容器的方法，就直接用docker-compose一起创建（内容对照上面的一样的）。</p>
+<p>docker-compose.yml 文件模板如下（Github上也有模板）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># To execute this docker-compose yml file use `docker-compose -f docker-compose-v3.yml up`</span></span><br><span class="line"><span class="comment"># Add the `-d` flag at the end for detached execution</span></span><br><span class="line"><span class="comment"># To stop the execution, hit Ctrl+C, and then `docker-compose -f docker-compose-v3.yml down`</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">chrome:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-chrome:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5900:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7900:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">firefox:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/node-firefox:latest</span></span><br><span class="line">    <span class="attr">shm_size:</span> <span class="string">2gb</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">selenium-hub</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_HOST=selen-hub</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_PUBLISH_PORT=4442</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SE_EVENT_BUS_SUBSCRIBE_PORT=4443</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5901:5900&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;7901:7900&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">selenium-hub:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">selenium/hub:latest</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">selen-hub</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4442:4442&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4443:4443&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;4444:4444&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">my-grid</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">my-grid:</span></span><br></pre></td></tr></table></figure>
+<p>把docker-compose.yml 文件上传到服务器，然后进入文件所在目录下，执行以下命令运行容器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-d ：后台运行</p>
+</blockquote>
+<p>如果文件名没用默认的 docker-compose.yml，就参考上面的提示，加上-f 的文件参数就行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml up -d</span><br></pre></td></tr></table></figure>
+<p>执行完后，通过<code>docker ps -a</code>查看容器列表，如图所示，添加了3个容器（容器需要加name的，自己添加一下container_name参数；还有个firefox不需要的就删除或者注释掉就行。）：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_2.png"
+                     
+                ></p>
+<p>要删除这些容器也简单，可以一键删除：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose -f docker-compose-v3.yml down</span><br></pre></td></tr></table></figure>
+<h2 id="三、使用Python调用Selenium-Grid"><a href="#三、使用Python调用Selenium-Grid" class="headerlink" title="三、使用Python调用Selenium Grid"></a>三、使用Python调用Selenium Grid</h2><p>这反正跟平常的Selenium WebDriver一样的，参考之前的文章：<a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
+<p>主要就是开头设置有些不一样。这里就需要用到 <a class="link"   target="_blank" rel="noopener" href="http://43.142.94.65:4444/" >http://43.142.94.65:4444<i class="fas fa-external-link-alt"></i></a> 运行后的这些信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;browserName&quot;:&quot;chrome&quot;,&quot;browserVersion&quot;:&quot;102.0&quot;,&quot;platformName&quot;:&quot;Linux&quot;,&quot;se:noVncPort&quot;:7900,&quot;se:vncEnabled&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<p>代码举例（test.py）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- encoding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">selenium_grid_url = <span class="string">&#x27;http://43.142.94.65:4444/wd/hub&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># selenium</span></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.set_capability(<span class="string">&quot;browserName&quot;</span>, <span class="string">&quot;chrome&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;browserVersion&quot;</span>, <span class="string">&quot;102.0&quot;</span>)</span><br><span class="line">option.set_capability(<span class="string">&quot;platformName&quot;</span>, <span class="string">&quot;Linux&quot;</span>)</span><br><span class="line">wd = webdriver.Remote(command_executor=selenium_grid_url, options=option)</span><br><span class="line"></span><br><span class="line">wd.implicitly_wait(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用WebDriver 对象的get方法 可以让浏览器打开指定网址</span></span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(wd.title) <span class="comment"># 打印网页标题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据id选择元素，返回的就是该元素对应的WebElement对象</span></span><br><span class="line"><span class="comment"># element = wd.find_element_by_id(&#x27;c&#x27;) # selenium3写法</span></span><br><span class="line">element = wd.find_element(By.ID,<span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该 WebElement对象，就可以对页面元素进行操作了</span></span><br><span class="line"><span class="comment"># 比如输入字符串到 这个 输入框里</span></span><br><span class="line"><span class="comment"># element.send_keys(&#x27;五四青年节\n&#x27;)</span></span><br><span class="line">element.send_keys(<span class="string">&#x27;五四青年节&#x27;</span>)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">element2 = wd.find_element(By.ID, <span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line">element2.click()</span><br><span class="line">time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">wd.quit()</span><br></pre></td></tr></table></figure>
+<p>用命令运行这个Python文件，<code>python test.py</code>就可以看到运行结果了。也可以用下面远程观看的方式看到运行过程。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_Selenium_3.png"
+                     
+                ></p>
+<h2 id="四、远程观看"><a href="#四、远程观看" class="headerlink" title="四、远程观看"></a>四、远程观看</h2><p>Selenium 提示VNC客户端和浏览器两种远程方法。</p>
+<h3 id="1-VNC客户端"><a href="#1-VNC客户端" class="headerlink" title="1.VNC客户端"></a>1.VNC客户端</h3><p>vnc viewer是一款优秀的远程控制工具软件。<br>官网下载地址：<a class="link"   target="_blank" rel="noopener" href="https://www.realvnc.com/en/connect/download/viewer/" >https://www.realvnc.com/en/connect/download/viewer/<i class="fas fa-external-link-alt"></i></a></p>
+<p>安装好以后 File-&gt;New connection，在弹出的界面中输入node的ip和端口号（比如我这就是43.142.94.65:5900，Name随意），保存后双击启动。<br>连接，会要求输入密码，默认密码：secret</p>
+<p>连接上后，再运行Python selenium的代码，就能看到运行过程了。（结果就像上面那张图一样）</p>
+<h3 id="2-使用浏览器（noVNC）"><a href="#2-使用浏览器（noVNC）" class="headerlink" title="2.使用浏览器（noVNC）"></a>2.使用浏览器（noVNC）</h3><p>我的服务器ip为：43.142.94.65，映射出来的端口也是7900，那打开地址就是：</p>
+<p><a class="link"   target="_blank" rel="noopener" href="http://43.142.94.65:7900/vnc.html" >http://43.142.94.65:7900/vnc.html<i class="fas fa-external-link-alt"></i></a></p>
+<p>默认密码：secret</p>
+<p>效果跟上面也是一样的。</p>
+<p>PS.注意服务器防火墙设置里这几个用到的端口开一下。（docker-compose.yml 文件里那些个端口）</p>
+<h2 id="小结的话"><a href="#小结的话" class="headerlink" title="小结的话"></a>小结的话</h2><p>有了这些可以做些什么呢？</p>
+<p>加上前面一篇文章：<a href="/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/" title="服务器 Docker搭建Flask应用（一）">服务器 Docker搭建Flask应用（一）</a>，就在服务器上用Docker创建了3个容器，分别是：</p>
+<ul>
+<li>Flask应用的容器</li>
+<li>selenium hub的容器</li>
+<li>selenium node-chrome的容器</li>
+</ul>
+<p>这样就可以在Flask应用的容器中，代码用selenium爬取数据，写一个get接口，返回json数据；或者做自动化测试。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker版Selenium使用方法</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-05-29 00:19:31</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/05/29/Docker版Selenium使用方法/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Docker Dockerfile文件详解（制作自己的镜像）</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/28/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%B8%80%EF%BC%89/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">服务器 Docker搭建Flask应用（一）</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81pull%E9%9C%80%E8%A6%81%E7%9A%84docker%E9%95%9C%E5%83%8F"><span class="nav-text">一、pull需要的docker镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8"><span class="nav-text">二、创建容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84-Docker-%E7%BD%91%E7%BB%9C"><span class="nav-text">1.创建一个新的 Docker 网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Hub%E8%8A%82%E7%82%B9%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-text">1.Hub节点的容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Node%E8%8A%82%E7%82%B9%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-text">2.Node节点的容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BD%BF%E7%94%A8docker-compose%E5%88%9B%E5%BB%BA"><span class="nav-text">3. 使用docker-compose创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BD%BF%E7%94%A8Python%E8%B0%83%E7%94%A8Selenium-Grid"><span class="nav-text">三、使用Python调用Selenium Grid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%9C%E7%A8%8B%E8%A7%82%E7%9C%8B"><span class="nav-text">四、远程观看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-VNC%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">1.VNC客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8%E6%B5%8F%E8%A7%88%E5%99%A8%EF%BC%88noVNC%EF%BC%89"><span class="nav-text">2.使用浏览器（noVNC）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%E7%9A%84%E8%AF%9D"><span class="nav-text">小结的话</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker搭建codecombat本地服务 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker搭建codecombat本地服务</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-10-25 21:06:03</span>
+        <span class="mobile">2022-10-25 21:06</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_codecombat_1.png"
+                      style="zoom: 50%;"
+                >
+
+<p>这是个游戏编程网站，可以一边游戏一边学编程（Python），感觉挺有意思，就去官网玩了下。</p>
+<p>然后玩了4-5关后，都不能玩了，订阅需要99/月。遂作罢。</p>
+<p>偶然看到网上有教程，可以用Docker直接搭这个本地服务的，然后就试了下，还真成功了！就在Win10的电脑上直接搭建成功了！用Docker挺简单的。</p>
+<a id="more"></a>
+
+<h2 id="一、Docker安装"><a href="#一、Docker安装" class="headerlink" title="一、Docker安装"></a>一、Docker安装</h2><p>网上教程、安装方法都有，Docker常用的一些命令看这篇：<a href="/2022/05/09/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Docker常用命令">Docker常用命令</a></p>
+<p><strong>Docker使用的一般步骤</strong>：</p>
+<ul>
+<li>拉取一个镜像（<code>docker pull</code>）</li>
+<li>创建一个容器（<code>docker run</code>）</li>
+<li>在容器中运行命令（<code>docker exec</code>）</li>
+</ul>
+<h2 id="二、创建codecombat容器"><a href="#二、创建codecombat容器" class="headerlink" title="二、创建codecombat容器"></a>二、创建codecombat容器</h2><h3 id="1-拉取codecombat镜像"><a href="#1-拉取codecombat镜像" class="headerlink" title="1.拉取codecombat镜像"></a>1.拉取codecombat镜像</h3><p>打开命令提示符或PowerShell（管理员），运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 拉取codecombat镜像</span><br><span class="line">docker pull operepo&#x2F;ope-codecombat</span><br><span class="line"></span><br><span class="line"># pull下载完后，可以查看镜像</span><br><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<p>如果下载慢，卡住了，有问题；可以重新运行命令pull一下。</p>
+<h3 id="2-下载需要的数据包"><a href="#2-下载需要的数据包" class="headerlink" title="2.下载需要的数据包"></a>2.下载需要的数据包</h3><p>没有这个数据包，会无法运行。<br>下载地址（别人分享的）：<br><a class="link"   target="_blank" rel="noopener" href="https://cloud.189.cn/t/IJzmuqz2u673" >https://cloud.189.cn/t/IJzmuqz2u673<i class="fas fa-external-link-alt"></i></a> (访问码:c1wi) </p>
+<p>codecombat目录下有个：dump.tar.gz，就下载这个。</p>
+<h3 id="3-创建mycodecombat容器"><a href="#3-创建mycodecombat容器" class="headerlink" title="3.创建mycodecombat容器"></a>3.创建mycodecombat容器</h3><p>创建访问端口为3020的容器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mycodecombat -p 0.0.0.0:3020:3000 operepo/ope-codecombat /bin/bash</span><br></pre></td></tr></table></figure>
+<p><strong>参数解释</strong>：</p>
+<blockquote>
+<p>-it：这个就是启动容器都会带，不用管<br>-d：表示后台运行<br>–name mycodecombat：容器名称为mycodecombat，可以自定义<br>-p 0.0.0.0:3020:3000：表示把容器中的3000端口映射到本机的3020端口，这个3020也是自定义</p>
+</blockquote>
+<h2 id="三、导入dump-tar-gz数据"><a href="#三、导入dump-tar-gz数据" class="headerlink" title="三、导入dump.tar.gz数据"></a>三、导入dump.tar.gz数据</h2><h3 id="1-容器内开启数据库服务（不要关闭窗口）"><a href="#1-容器内开启数据库服务（不要关闭窗口）" class="headerlink" title="1.容器内开启数据库服务（不要关闭窗口）"></a>1.容器内开启数据库服务（不要关闭窗口）</h3><p>打开一个PowerShell，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).容器内开启数据库服务（不要关闭窗口）</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat &amp;&amp; ./bin/coco-mongodb</span><br></pre></td></tr></table></figure>
+<h3 id="2-导入dump-tar-gz数据"><a href="#2-导入dump-tar-gz数据" class="headerlink" title="2.导入dump.tar.gz数据"></a>2.导入dump.tar.gz数据</h3><p>打开<strong>另一个</strong>PowerShell，进入放dump.tar.gz数据压缩包的目录，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1).把数据包dump.tar.gz复制到容器内</span></span><br><span class="line">docker cp dump.tar.gz mycodecombat:/home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 2).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"><span class="comment"># 3).进入放数据的data目录</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat/data/</span><br><span class="line"><span class="comment"># 3).解压</span></span><br><span class="line">tar -zxvf dump.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="3-容器内开启web服务（不要关闭窗口）"><a href="#3-容器内开启web服务（不要关闭窗口）" class="headerlink" title="3.容器内开启web服务（不要关闭窗口）"></a>3.容器内开启web服务（不要关闭窗口）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/coco &amp;&amp; sh start.sh</span><br></pre></td></tr></table></figure>
+<p>两个窗口（一个数据库服务、一个web服务都不能关闭）<br>PS.报错的话，先重启下数据库服务，再重启web服务。</p>
+<h2 id="四、进入游戏"><a href="#四、进入游戏" class="headerlink" title="四、进入游戏"></a>四、进入游戏</h2><p>访问：<a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1:3020/" >http://127.0.0.1:3020<i class="fas fa-external-link-alt"></i></a> 或自己电脑的 http://[ip]:3020 都可以。</p>
+<p>直接点击<strong>开始游戏</strong> 开始。</p>
+<p>PS.如果有的开了ipv6，可能用ip和127.0.0.1都无法访问，试一下：localhost:3020<br>ping localhost 看一下，是不是[::1]，那就是ipv6。<br>解决方法，在hosts文件添加一句<code>127.0.0.1 localhost</code>就行。这样正常情况，3种都是可以访问的。</p>
+<h2 id="五、Ubuntu20-04中用Docker搭建Codecombat"><a href="#五、Ubuntu20-04中用Docker搭建Codecombat" class="headerlink" title="五、Ubuntu20.04中用Docker搭建Codecombat"></a>五、Ubuntu20.04中用Docker搭建Codecombat</h2><p>用Docker么，跟在Windows中别的差别不大。就是在开启数据库服务和Web服务的时候，不要直接开，在后台运行就行了。</p>
+<h3 id="1-开启数据库服务"><a href="#1-开启数据库服务" class="headerlink" title="1.开启数据库服务"></a>1.开启数据库服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat &amp;&amp; ./bin/coco-mongodb</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu(用nohup后台运行，会生成一个PID进程号，用kill可结束进程就行)</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco/codecombat</span><br><span class="line">nohup ./bin/coco-mongodb &gt; mycoco-mongodb.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<h3 id="2-开启web服务"><a href="#2-开启web服务" class="headerlink" title="2.开启web服务"></a>2.开启web服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco &amp;&amp; sh start.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu，mystart.log这些是日志名，随意取</span></span><br><span class="line"><span class="built_in">cd</span> /home/coco</span><br><span class="line">nohup sh start.sh &gt; mystart.log 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+<h2 id="六、上帝模式"><a href="#六、上帝模式" class="headerlink" title="六、上帝模式"></a>六、上帝模式</h2><p>上帝模式就是游戏里所有的都解锁了，都可以玩了。不用等通关去解锁。<br>PS.里面有几关可能数据有问题，玩不了。所以开了上帝模式，其它的就不影响了。</p>
+<h3 id="1-注册独立账号"><a href="#1-注册独立账号" class="headerlink" title="1.注册独立账号"></a>1.注册独立账号</h3><p>打开 <a class="link"   target="_blank" rel="noopener" href="http://127.0.0.1:3020/" >http://127.0.0.1:3020<i class="fas fa-external-link-alt"></i></a> ，点击【注册】，要选择【独立账号】。<br>用个自己的邮箱和账号（英文就行），比如我的账号名为：abccba</p>
+<p>注意：出生日期往前面选一点，选择1990年之前，否则判定不是家长，就无法注册。</p>
+<h3 id="2-开启“管理”和“上帝模式”"><a href="#2-开启“管理”和“上帝模式”" class="headerlink" title="2.开启“管理”和“上帝模式”"></a>2.开启“管理”和“上帝模式”</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"><span class="comment"># 2).打开数据库</span></span><br><span class="line">mongo</span><br><span class="line"><span class="comment"># 3).使用cocoo数据库</span></span><br><span class="line">use coco</span><br><span class="line"><span class="comment"># 4).将abccba账号升级为“上帝模式”，这里abccba为你自己注册时候用的名字</span></span><br><span class="line">db.users.update(&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;abccba&#x27;</span>&#125;,&#123;<span class="variable">$set</span>:&#123;<span class="string">&#x27;earned.gems&#x27;</span>:9999999,permissions:[<span class="string">&quot;godmode&quot;</span>,<span class="string">&quot;admin&quot;</span>]&#125;&#125;,<span class="literal">true</span>,<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+<p>再登录这个账号，就能看到全部是解锁状态啦。爽歪歪！<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_codecombat_2.png"
+                      style="zoom: 50%;"
+                ></p>
+<p>参考：<a class="link"   target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv18786920?from=articleDetail" >docker搭建codecombat本地服务教程<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="七、修改用户密码"><a href="#七、修改用户密码" class="headerlink" title="七、修改用户密码"></a>七、修改用户密码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1).进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it mycodecombat /bin/bash</span><br><span class="line"><span class="comment"># 2).打开数据库</span></span><br><span class="line">mongo</span><br><span class="line"><span class="comment"># 3).使用cocoo数据库</span></span><br><span class="line">use coco</span><br><span class="line"><span class="comment"># 4).查看用户abccba密码</span></span><br><span class="line">db.users.find(&#123;name: <span class="string">&#x27;abccba&#x27;</span>&#125;, &#123;name: 1, passwordHash: 1&#125;)</span><br><span class="line"><span class="comment"># 5).查看用户所有信息</span></span><br><span class="line">db.users.find(&#123;name: <span class="string">&#x27;abccba&#x27;</span>&#125;)</span><br><span class="line"><span class="comment"># 6).修改用户abccba密码</span></span><br><span class="line">db.users.updateOne(&#123;name: <span class="string">&#x27;abccba&#x27;</span>&#125;, &#123;<span class="variable">$set</span>: &#123;passwordHash: <span class="string">&#x27;977aa9a1ce6a580116484f227cca6ded1d82f37987c22121748ff1625640a4623c52e0f420420d15bb89ae680e3f27cb5d7d92d1a2c738fae5d753d66c94c9e8&#x27;</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>修改密码的时候，因为是修改为 passwordHash 值，所以不知道的话可以创建个新的账号，看一下这个账号的密码，然后用这个就可以了。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker搭建codecombat本地服务</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-10-25 21:06:03</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/10/25/Docker搭建codecombat本地服务/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/11/11/Python%E4%BD%BF%E7%94%A8ddddocr%E6%8A%A5%E9%94%99ImportError/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python使用ddddocr报错ImportError</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/10/19/Python-Selenium%E6%9C%AC%E5%9C%B0debugger%E6%A8%A1%E5%BC%8F/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Selenium本地debugger模式</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Docker%E5%AE%89%E8%A3%85"><span class="nav-text">一、Docker安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BAcodecombat%E5%AE%B9%E5%99%A8"><span class="nav-text">二、创建codecombat容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%8B%89%E5%8F%96codecombat%E9%95%9C%E5%83%8F"><span class="nav-text">1.拉取codecombat镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%8B%E8%BD%BD%E9%9C%80%E8%A6%81%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-text">2.下载需要的数据包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BAmycodecombat%E5%AE%B9%E5%99%A8"><span class="nav-text">3.创建mycodecombat容器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AF%BC%E5%85%A5dump-tar-gz%E6%95%B0%E6%8D%AE"><span class="nav-text">三、导入dump.tar.gz数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%B9%E5%99%A8%E5%86%85%E5%BC%80%E5%90%AF%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%8D%E5%8A%A1%EF%BC%88%E4%B8%8D%E8%A6%81%E5%85%B3%E9%97%AD%E7%AA%97%E5%8F%A3%EF%BC%89"><span class="nav-text">1.容器内开启数据库服务（不要关闭窗口）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AF%BC%E5%85%A5dump-tar-gz%E6%95%B0%E6%8D%AE"><span class="nav-text">2.导入dump.tar.gz数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%B9%E5%99%A8%E5%86%85%E5%BC%80%E5%90%AFweb%E6%9C%8D%E5%8A%A1%EF%BC%88%E4%B8%8D%E8%A6%81%E5%85%B3%E9%97%AD%E7%AA%97%E5%8F%A3%EF%BC%89"><span class="nav-text">3.容器内开启web服务（不要关闭窗口）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%9B%E5%85%A5%E6%B8%B8%E6%88%8F"><span class="nav-text">四、进入游戏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81Ubuntu20-04%E4%B8%AD%E7%94%A8Docker%E6%90%AD%E5%BB%BACodecombat"><span class="nav-text">五、Ubuntu20.04中用Docker搭建Codecombat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BC%80%E5%90%AF%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%8D%E5%8A%A1"><span class="nav-text">1.开启数据库服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%BC%80%E5%90%AFweb%E6%9C%8D%E5%8A%A1"><span class="nav-text">2.开启web服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E4%B8%8A%E5%B8%9D%E6%A8%A1%E5%BC%8F"><span class="nav-text">六、上帝模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%B3%A8%E5%86%8C%E7%8B%AC%E7%AB%8B%E8%B4%A6%E5%8F%B7"><span class="nav-text">1.注册独立账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%BC%80%E5%90%AF%E2%80%9C%E7%AE%A1%E7%90%86%E2%80%9D%E5%92%8C%E2%80%9C%E4%B8%8A%E5%B8%9D%E6%A8%A1%E5%BC%8F%E2%80%9D"><span class="nav-text">2.开启“管理”和“上帝模式”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="nav-text">七、修改用户密码</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

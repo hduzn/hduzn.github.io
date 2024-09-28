@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            TPLink路由器无线桥接、无线中继 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">TPLink路由器无线桥接、无线中继</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-21 14:55:19</span>
+        <span class="mobile">2022-05-21 14:55</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>原来用的一台TPLink的路由器，之前换成小米AC2100了（千兆路由器），还换了网线，开了5G配置，带宽300+M。</p>
+<p>然后路由器在我房间，所以在我房间信号当然没啥问题，用了快2年了，然后爹妈反应现在在客厅有时候WiFi信号不行，压根用不了。（我自己基本上是在厨房信号的确不行，别的地方好像没啥问题）</p>
+<a id="more"></a>
+
+<p>于是，把旧的那台TPLink的路由器找出来了（原来也没坏，就是觉得不好用了吧），准备扔客厅，搭个无线桥接试一下。回头如果还是不好用，再买个新路由器做无线桥接看看。</p>
+<p>TPLink的路由器做无线桥接、设置很方便。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
+<li>1.有一台正常使用的路由器（小米AC2100），作为主路由器。</li>
+<li>2.一台副路由器（TPLink）的连接上电源。</li>
+<li>3.用手机或平板进入副路由器（TPLink）的管理页面，进行操作。</li>
+</ul>
+<h2 id="TPLink路由器无线桥接设置"><a href="#TPLink路由器无线桥接设置" class="headerlink" title="TPLink路由器无线桥接设置"></a>TPLink路由器无线桥接设置</h2><h3 id="1-设备连接副路由器（TPLink）WiFI信号"><a href="#1-设备连接副路由器（TPLink）WiFI信号" class="headerlink" title="1.设备连接副路由器（TPLink）WiFI信号"></a>1.设备连接副路由器（TPLink）WiFI信号</h3><p>副路由器（TPLink）接上电源后，用手机或平板连接副路由器（TPLink）的WiFi信号。</p>
+<p>当然，你用电脑也可以，电脑有无线的直接连无线信号，没有无线的台式就需要网线连接了。</p>
+<h3 id="2-登录TPLink路由器管理页面"><a href="#2-登录TPLink路由器管理页面" class="headerlink" title="2.登录TPLink路由器管理页面"></a>2.登录TPLink路由器管理页面</h3><p>一般是”192.168.1.1” 或 “192.168.0.1”，以前用过的路由器就直接用密码登录就行。<br>如果忘记密码了，就把路由器重置一下（恢复之后，用默认的密码登录）。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_1.png"
+                     
+                >
+
+<p>名称设置不设置也无所谓，反正设置桥接后会设置的，只要登录成功了就行。</p>
+<h3 id="3-【无线桥接】设置"><a href="#3-【无线桥接】设置" class="headerlink" title="3.【无线桥接】设置"></a>3.【无线桥接】设置</h3><p>1).打开【应用管理】-&gt;【无线桥接】，进入<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_2.png"
+                     
+                ></p>
+<p>2).选择桥接的主路由器</p>
+<p>开始设置后，会扫出附近的无线名称，我这里选择主路由器（小米AC2100），选择之后会要输入主路由器设置的无线密码。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_3.png"
+                     
+                ></p>
+<p>连接成功后，然后会从主路由器自动获取IP地址，直接下一步。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_4.png"
+                     
+                ></p>
+<p><strong>注意</strong>：把这个ip记一下，因为下次再进入副路由器（TPLink）的管理页面，就不是 192.168.0.1了，而是这个ip地址了。（我这里是 192.168.31.201）</p>
+<p>3).副路由器的无线名称设置</p>
+<p>这里会有个提示：</p>
+<blockquote>
+<p>推荐将本路由器的无线名称和密码更改为与主路由器一致，请确认以下更改：</p>
+</blockquote>
+<p>然后看到无线名称和无线密码是跟主路由器设置的一样的。</p>
+<p>个人建议还是不要一致了，因为如果一致连上这个WiFi信号的时候就不清楚是哪个了。当然，后面也可以再修改（就是麻烦一点，要确认连上的是这个路由器的WiFi信号）。</p>
+<p>建议直接无线名称后面加上<code>-2</code>就行，密码可以一致。</p>
+<p>最后完成后路由器会重启。</p>
+<p>4).查看副路由器（TPLink）DHCP服器设置</p>
+<p>因为这个无线桥接是要关闭这个DHCP服务的，否则连接了TPLink的好像不能上网。</p>
+<p>TPLink的打开DHCP设置，看到直接变成【自动】选项了，那就是关闭了。不用再手动关了。</p>
+<h3 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h3><p>所以TPLink的路由器无线桥接，作一个副路由器是很方便的。</p>
+<p>差不多直接下一步下一步就行，也不用设什么ip。<br>就是无线名称设置我觉得可以改一下，简单标识一下。这样哪个信号好，可以自己选择一下。密码反正设置的一样的，输过一次后也不用输入。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/TPLink_wifi_bridging_5.png"
+                     
+                >
+
+<p>PS.效果咋样还不知道，看了一下订单，发现是15年买的TPLink了。别的路由器只要有这个设置选项的，应该都很简单。</p>
+<h2 id="小米路由器无线中继设置"><a href="#小米路由器无线中继设置" class="headerlink" title="小米路由器无线中继设置"></a>小米路由器无线中继设置</h2><p>设置基本上跟TPLink没啥区别，直接先连上一台主路由器后，再把副路由器（小米路由器）插上电源，登录管理地址（小米的默认是：192.168.31.1）。</p>
+<p>进入【常用设置】-&gt;【上网设置】-&gt;【工作模式切换】，选择“无线中继工作模式”就行了。</p>
+<p>后面的设置也是一样的，是否要双频合一（2.4G和5G合一），然后也一样会分配一个ip，这个就是之后这个作中继器的副路由器的管理地址了（而不是原来的192.163.31.1了）。这个地址进主路由器管理页面里也能查看的。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：TPLink路由器无线桥接、无线中继</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-05-21 14:55:19</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/05/21/TPLink路由器无线桥接、无线中断/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/05/22/%E3%80%8A%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E4%BF%9D%E9%99%A9%E6%8C%87%E5%8D%97%E3%80%8B%E4%B9%A6%E6%91%98-%E7%AC%94%E8%AE%B0/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">《你的第一本保险指南》书摘&amp;笔记</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/20/Python-%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python 批量转换图片格式</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E8%AE%BE%E7%BD%AE"><span class="nav-text">TPLink路由器无线桥接设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AE%BE%E5%A4%87%E8%BF%9E%E6%8E%A5%E5%89%AF%E8%B7%AF%E7%94%B1%E5%99%A8%EF%BC%88TPLink%EF%BC%89WiFI%E4%BF%A1%E5%8F%B7"><span class="nav-text">1.设备连接副路由器（TPLink）WiFI信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%99%BB%E5%BD%95TPLink%E8%B7%AF%E7%94%B1%E5%99%A8%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2"><span class="nav-text">2.登录TPLink路由器管理页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E3%80%90%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5%E3%80%91%E8%AE%BE%E7%BD%AE"><span class="nav-text">3.【无线桥接】设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%B0%8F%E7%BB%93"><span class="nav-text">4.小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%B1%B3%E8%B7%AF%E7%94%B1%E5%99%A8%E6%97%A0%E7%BA%BF%E4%B8%AD%E7%BB%A7%E8%AE%BE%E7%BD%AE"><span class="nav-text">小米路由器无线中继设置</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

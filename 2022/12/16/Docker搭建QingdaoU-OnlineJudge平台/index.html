@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker搭建QingdaoU OnlineJudge平台 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker搭建QingdaoU OnlineJudge平台</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-12-16 20:15:09</span>
+        <span class="mobile">2022-12-16 20:15</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Online Judge系统（简称OJ）是一个在线的判题系统。用户可以在线提交程序多种程序（如C、C++、Python）源代码，系统对源代码进行编译和执行，并通过预先设计的测试数据来检验程序源代码的正确性。</p>
+<p>以前是知道各个大学都有自己的OJ系统用来训练ACM的。</p>
+<p>青岛大学的这个开源Online Judge系统是比较新的，界面感觉也不错，还是开源的，还可以用Docker直接搭建，就很方便了。</p>
+<a id="more"></a>
+
+<h2 id="Online-Judge平台搭建"><a href="#Online-Judge平台搭建" class="headerlink" title="Online Judge平台搭建"></a>Online Judge平台搭建</h2><p>青岛大学的OJ项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/QingdaoU/OnlineJudge/blob/master/README-CN.md" >https://github.com/QingdaoU/OnlineJudge/blob/master/README-CN.md<i class="fas fa-external-link-alt"></i></a></p>
+<p>上面有OJ平台搭建的项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/QingdaoU/OnlineJudgeDeploy/tree/2.0" >https://github.com/QingdaoU/OnlineJudgeDeploy/tree/2.0<i class="fas fa-external-link-alt"></i></a></p>
+<p>我是在一台装了Ubuntu 20.04 LTS的机器上装的。</p>
+<h3 id="1-下载"><a href="#1-下载" class="headerlink" title="1.下载"></a>1.下载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b 2.0 https://github.com/QingdaoU/OnlineJudgeDeploy.git &amp;&amp; <span class="built_in">cd</span> OnlineJudgeDeploy</span><br></pre></td></tr></table></figure>
+<p>执行完上面的命令后，会进入OnlineJudgeDeploy目录。</p>
+<p>不能用git下载的话，直接把上面OJ平台项目的Code包一起下载下来。然后解压到OnlineJudgeDeploy目录后，再cd进入目录，一样的。</p>
+<h3 id="2-启动服务"><a href="#2-启动服务" class="headerlink" title="2.启动服务"></a>2.启动服务</h3><h4 id="1-docker-compose安装"><a href="#1-docker-compose安装" class="headerlink" title="1).docker-compose安装"></a>1).docker-compose安装</h4><p>用的是docker-compose安装一键部署。</p>
+<p>所以，需要提前安装Docker（<a href="/2022/11/19/Ubuntu%E5%AE%89%E8%A3%85Docker/" title="Ubuntu安装Docker">Ubuntu安装Docker</a>）和docker-compose。</p>
+<p>如果装了Docker，没有安装docker-compose的话，有python、pip的话就很简单了，直接用pip命令安装就行了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install docker-compose</span><br></pre></td></tr></table></figure>
+<h4 id="2-docker-compse-yml-配置文件"><a href="#2-docker-compse-yml-配置文件" class="headerlink" title="2).docker-compse.yml 配置文件"></a>2).docker-compse.yml 配置文件</h4><p>因为服务会有个地址，涉及到端口号会不会冲突。所以，可以先看下OnlineJudgeDeploy目录下的docker-compse.yml配置文件，上面项目地址中也可以查看这个文件。</p>
+<p>文件中可以看到是开了好几个服务的：</p>
+<ul>
+<li>oj-redis</li>
+<li>oj-postgres：数据库，可以看到设置的数据库DB名，用户USER名和密码PASSWORD</li>
+<li>judge-server：服务器</li>
+<li>oj-backend：最后看到这个是依赖以上的服务的。重点就是最下面这个端口号了：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:80:8000&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:443:1443&quot;</span></span><br></pre></td></tr></table></figure>
+前面的默认的映射到本机是80端口（HTTP）和443端口（HTTPS）。<br>这个只要不冲突，就随便你自己改了。</li>
+</ul>
+<p>比如一般不想冲突的话，我改成如下的：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:8080:8000&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;0.0.0.0:8443:1443&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-docker-compose启动服务"><a href="#3-docker-compose启动服务" class="headerlink" title="3).docker-compose启动服务"></a>3).docker-compose启动服务</h4><p>用vi命令修改好配置文件后，用以下命令一键部署启动就行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>根据网速情况，大约2到30分钟都有可能，正常的话，感觉一般几分钟就好了。</p>
+<p>常用的docker-compose还有以下几个：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker-compose <span class="built_in">help</span> <span class="comment"># 查看帮助</span></span><br><span class="line">docker-compose up <span class="comment"># 创建并启动容器</span></span><br><span class="line">docker-compose ps <span class="comment"># 列出容器</span></span><br><span class="line">docker-compose stop <span class="comment"># 停止服务</span></span><br><span class="line">docker-compose start <span class="comment"># 启动服务</span></span><br><span class="line">docker-compose down <span class="comment"># 停止并删除资源</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-服务成功启动"><a href="#4-服务成功启动" class="headerlink" title="4).服务成功启动"></a>4).服务成功启动</h4><p>还是在OnlineJudgeDeploy目录下，用<code>docker-compose ps</code>命令查看结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@VM-8-10-ubuntu:~&#x2F;onlinejudge&#x2F;OnlineJudgeDeploy$ docker-compose ps</span><br><span class="line">    Name                  Command                  State                            Ports                      </span><br><span class="line">---------------------------------------------------------------------------------------------------------------</span><br><span class="line">judge-server   &#x2F;bin&#x2F;sh -c &#x2F;code&#x2F;entrypoint.sh   Up (healthy)   8080&#x2F;tcp                                        </span><br><span class="line">oj-backend     &#x2F;bin&#x2F;sh -c &#x2F;app&#x2F;deploy&#x2F;ent ...   Up (healthy)   0.0.0.0:8443-&gt;1443&#x2F;tcp, 0.0.0.0:8080-&gt;8000&#x2F;tcp</span><br><span class="line">oj-postgres    docker-entrypoint.sh postgres    Up             5432&#x2F;tcp                                        </span><br><span class="line">oj-redis       docker-entrypoint.sh redis ...   Up             6379&#x2F;tcp                                        </span><br><span class="line">ubuntu@VM-8-10-ubuntu:~&#x2F;onlinejudge&#x2F;OnlineJudgeDeploy$</span><br></pre></td></tr></table></figure>
+<p><code>docker ps -a</code>命令也是可以查看到这些所有容器的（judge-server、oj-backend、oj-postgres和oj-redis）</p>
+<p>前端登录地址：<a class="link"   target="_blank" rel="noopener" href="http://ip:8080/" >http://ip:8080<i class="fas fa-external-link-alt"></i></a> （8080是对应8000端口映射到本机的地址）<br>后台管理地址：<a class="link"   target="_blank" rel="noopener" href="http://ip:8080/admin" >http://ip:8080/admin<i class="fas fa-external-link-alt"></i></a><br>默认超级管理员用户名为root，密码为rootroot</p>
+<p>关于数据备份与恢复看这篇：<a href="/2022/12/16/QingdaoU-OnlineJudge%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/" title="QingdaoU OnlineJudge 数据备份与恢复">QingdaoU OnlineJudge 数据备份与恢复</a></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker搭建QingdaoU OnlineJudge平台</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-12-16 20:15:09</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/12/16/Docker搭建QingdaoU-OnlineJudge平台/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/12/16/QingdaoU-OnlineJudge%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">QingdaoU OnlineJudge 数据备份与恢复</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/12/06/Python-%E6%B1%89%E5%AD%97%E8%BD%AC%E6%8B%BC%E9%9F%B3/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python 汉字转拼音</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Online-Judge%E5%B9%B3%E5%8F%B0%E6%90%AD%E5%BB%BA"><span class="nav-text">Online Judge平台搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD"><span class="nav-text">1.下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-text">2.启动服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-docker-compose%E5%AE%89%E8%A3%85"><span class="nav-text">1).docker-compose安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-docker-compse-yml-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2).docker-compse.yml 配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-docker-compose%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-text">3).docker-compose启动服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9C%8D%E5%8A%A1%E6%88%90%E5%8A%9F%E5%90%AF%E5%8A%A8"><span class="nav-text">4).服务成功启动</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

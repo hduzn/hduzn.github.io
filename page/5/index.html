@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class="active"
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class="active"
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="home-content-container fade-in-down-animation">
+    <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/10/Docker-Dockerfile%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F/">
+                        Docker Dockerfile制作Gitbook镜像
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>上一篇文章用Docker搭建了Gitbook的环境：<a href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/" title="Docker搭建Gitbook">Docker搭建Gitbook</a>，然后发现个小问题，问题不大，不过感觉Gitbook的版本实在太低了。</p>
+<p>毕竟是7年前的镜像了，用<code>gitbook -V</code>查看了下gitbook的版本，竟然是：0.3.4</p>
+<p>于是，决定还是自己用Dockerfile制作个Gitbook的镜像好了。</p>
+<p>自己用Dockerfile制作镜像也挺方便的，参考：<a href="/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/" title="Docker Dockerfile文件详解（制作自己的镜像）">Docker Dockerfile文件详解（制作自己的镜像）</a></p>
+<p>也就是第一次生成镜像的时候花点时间。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Jan 10 2023 19:23:12 GMT+0800">2023-01-10</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/01/10/Docker-Dockerfile%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/">
+                        Docker搭建Gitbook
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>在网上看到用Gitbook写的教程/文档，感觉还挺方便看的，想用它来试一下写教程/电子书之类的。</p>
+<p>看到安装Gitbook还挺方便的，跟Hexo一样（用的就是Hexo的博客），是一个基于Node.js 的命令行工具，可使用Github/Git 和Markdown 来制作精美的电子书。</p>
+<p>于是，原来都装好了Node.js和git这些，感觉倒也方便，安装下Gitbook就行了。</p>
+<p>谁料，是我年轻了，想的太简单了。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Jan 10 2023 15:02:58 GMT+0800">2023-01-10</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/09/Docker-Desktp%E6%9B%B4%E6%94%B9%E9%95%9C%E5%83%8F-%E5%AE%B9%E5%99%A8%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE/">
+                        Docker Desktp更改镜像、容器存储位置
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>Docker用的多一点，特别是装了一个几十G的Linux后 ，就好几十G空间了，太占用系统盘了。所以想换一下存储位置。</p>
+<p>Docker Desktop查看settings设置，发现无法在设置里更改，用的是WSL2。通过WSL2启动，会自动创建2个子系统，分别对应2个 vhdx 硬盘映像文件。</p>
+<p>默认安装在C盘，默认的镜像容器这些存储在：C:\Users[用户名]\AppData\Local\Docker\wsl\，分别在data和distro目录下都有个ext4.vhdx文件。（特别是data目录下文件，就巨大）</p>
+<blockquote>
+<p>WSL全称：Windows Subsystem for Linux，即「适用于 Linux 的 Windows 子系统」，可让开发人员按原样运行 GNU/Linux 环境 – 包括大多数命令行工具、实用工具和应用程序 – 且不会产生传统虚拟机（a traditional virtual machine）或双启动设置开销。</p>
+</blockquote>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Jan 09 2023 19:05:36 GMT+0800">2023-01-09</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/01/09/Docker-Desktp%E6%9B%B4%E6%94%B9%E9%95%9C%E5%83%8F-%E5%AE%B9%E5%99%A8%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/07/Python-md5%E5%8A%A0%E5%AF%86%EF%BC%88%E5%93%88%E5%B8%8C%E5%8A%A0%E5%AF%86%EF%BC%89/">
+                        Python md5加密（哈希加密）
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>MD5是一种旧的哈希算法，Python 内置的 hashlib 库就可以实现 MD5 哈希加密。</p>
+<p>一般自己用的话，就用来保存密码到数据库，密码用md5加密下再存进数据库。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jan 07 2023 22:11:44 GMT+0800">2023-01-07</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/01/07/Python-md5%E5%8A%A0%E5%AF%86%EF%BC%88%E5%93%88%E5%B8%8C%E5%8A%A0%E5%AF%86%EF%BC%89/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/07/Python-pandas%E7%BB%9F%E8%AE%A1Excel%E8%A1%A8%E4%B8%AD%E4%BA%BA%E5%90%8D%E6%AC%A1%E6%95%B0/">
+                        Python pandas统计Excel表中人名次数
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>比如用钉钉的智能填表做投票优秀员工，得到了以下这样一份表格数据：</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_pandas_ex_count_1.png"
+                      style="zoom: 50%;"
+                >
+
+<p>每个人投了3个优秀员工，当然，这里是举例，3个可能还好拆，如果是10、个20个呢？然后有几百人投票的话，这个统计次数就有点麻烦。</p>
+<p>对于这样在Excel表格中，一个单元格中有多项内容的统计，在Excel中当然也可以处理，这里会Python的话，介绍用pandas这个库，就超级简单了。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jan 07 2023 14:34:43 GMT+0800">2023-01-07</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Excel/">Excel</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/01/07/Python-pandas%E7%BB%9F%E8%AE%A1Excel%E8%A1%A8%E4%B8%AD%E4%BA%BA%E5%90%8D%E6%AC%A1%E6%95%B0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/">
+                        Docker可视化查询工具：Lazydocker（Ubuntu安装使用）
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>Windows这些有界面的系统，装个Docker Desktop就可以对Docker进行可视化操作、管理。</p>
+<p>像Linux的服务器系统，只有命令行，没有带界面的，每次查看Docker的使用情况，基本上就先用<code>docker images</code>查看有哪些镜像，再用<code>docker ps -a</code>查看有哪些容器和容器的运行状态。</p>
+<p>看到 Lazydocker 这个开源的UI终端，支持Linux、OSX、Windows操作系统。用命令就可以运行，界面很简洁的，就日常查看下状态够用了。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Dec 29 2022 12:52:05 GMT+0800">2022-12-29</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Docker/">Docker</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/29/Docker%E5%8F%AF%E8%A7%86%E5%8C%96%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%85%B7%EF%BC%9ALazydocker/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/26/%E6%8D%A2%E7%A1%AC%E7%9B%98%E5%90%8EPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv%E8%BF%81%E7%A7%BB%E6%96%B9%E6%B3%95/">
+                        换硬盘后Python虚拟环境virtualenv迁移方法
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>关于Python使用虚拟环境virtualenv的方法，可以看之前这篇笔记：<a href="/2022/09/20/VSCode%E8%BF%90%E8%A1%8CPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv/" title="VSCode运行Python虚拟环境virtualenv">VSCode运行Python虚拟环境virtualenv</a></p>
+<p>换了硬盘后，要迁移virtualenv也很方便。先把虚拟环境的整个目录（比如我是Envs）放在硬盘任意一处。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Dec 26 2022 13:10:41 GMT+0800">2022-12-26</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/26/%E6%8D%A2%E7%A1%AC%E7%9B%98%E5%90%8EPython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83virtualenv%E8%BF%81%E7%A7%BB%E6%96%B9%E6%B3%95/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/18/windows-PowerShell%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86/">
+                        Windows PowerShell 使用代理
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>比如我用v2rayN设置好了代理，在Windows Powershell里也想用的话。</p>
+<p>v2rayN软件左下角可以看到：</p>
+<blockquote>
+<p>socks 127.0.0.1:10808<br>http 127.0.0.1:10809<br>默认socks是1080（比较容易与其它端口，自己换一个就行），然后http的是默认加1的。</p>
+</blockquote>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 18 2022 21:03:18 GMT+0800">2022-12-18</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Windows/">Windows</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Windows/">Windows</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/18/windows-PowerShell%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/18/%E7%94%A8pip-install%E6%97%B6%E5%87%BA%E7%8E%B0%E2%80%9C%E7%94%B1%E4%BA%8E%E7%9B%AE%E6%A0%87%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%AF%E6%9E%81%E6%8B%92%E7%BB%9D%EF%BC%8C%E6%97%A0%E6%B3%95%E8%BF%9E%E6%8E%A5%E2%80%9D%E9%94%99%E8%AF%AF/">
+                        用pip install 时出现“由于目标计算机积极拒绝，无法连接”错误
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>在envs虚拟环境中使用pip install安装包时，全部报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WARNING: Retrying (Retry(total&#x3D;0, connect&#x3D;None, read&#x3D;None, </span><br><span class="line">redirect&#x3D;None, status&#x3D;None)) after connection broken </span><br><span class="line">by &#39;ProxyError(&#39;Cannot connect to proxy.&#39;, NewConnectionError</span><br><span class="line">(&#39;&lt;pip._vendor.urllib3.connection.VerifiedHTTPSConnection</span><br><span class="line"> object at 0x000001A5C1BEF630&gt;: Failed to establish a new connection: </span><br><span class="line">[WinError 10061] 由于目标计算机积极拒绝，无法连接。&#39;)</span><br></pre></td></tr></table></figure>
+<p>都提示“由于目标计算机积极拒绝，无法连接。”一看就感觉跟代理有关系。</p>
+<p>于是，把代理关了，直接退出了。但是发现还是报这个错。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 18 2022 19:55:42 GMT+0800">2022-12-18</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Python/">Python</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/18/%E7%94%A8pip-install%E6%97%B6%E5%87%BA%E7%8E%B0%E2%80%9C%E7%94%B1%E4%BA%8E%E7%9B%AE%E6%A0%87%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%AF%E6%9E%81%E6%8B%92%E7%BB%9D%EF%BC%8C%E6%97%A0%E6%B3%95%E8%BF%9E%E6%8E%A5%E2%80%9D%E9%94%99%E8%AF%AF/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/18/yt-dlp-%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+                        yt-dlp 使用教程
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        <p>很久没用youtube-dl这个工具了，然后在油管上看到想下载的视频，发现下载速度超慢，只有几十KB最多。</p>
+<p>于是，搜一下，发现可能是被限速了吧。</p>
+<p>找到了这个 yt-dlp 的代替工具。<br>项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/yt-dlp/yt-dlp" >https://github.com/yt-dlp/yt-dlp<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个下载，就看个人网速了，因为我晚上下载有时候1M/s、几百K/s都有，白天下载有时候10几M/s、20~30M/s来回跳，几M/s都有。</p>
+<p>发现它就是从youtube-dl fork过来的，就理解为是从youtube-dl复制过来的，做了一些修复和添加了一些东西。</p>
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 18 2022 13:34:44 GMT+0800">2022-12-18</span></span>
+        
+            <span class="home-article-category"><i class="fas fa-folder"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/categories/Software/">Software</a>&nbsp;
+                        </li>
+                    
+                    
+                </ul>
+            </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Software/">Software</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/ffmpeg/">ffmpeg</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/18/yt-dlp-%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+    </ul>
+
+    <div class="home-paginator">
+        <div class="paginator">
+    
+        <a class="prev btn"
+           href="/page/4/"
+        >上一页</a>
+    
+
+    
+        <a class="next btn"
+           href="/page/6/"
+        >下一页</a>
+    
+</div>
+
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>

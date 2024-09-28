@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker搭建MQTT服务器 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker搭建MQTT服务器</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-11-12 12:58:54</span>
+        <span class="mobile">2022-11-12 12:58</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91/">物联网</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="MQTT简介"><a href="#MQTT简介" class="headerlink" title="MQTT简介"></a>MQTT简介</h2><p>MQTT（Message Queuing Telemetry Transport，消息队列遥测传输协议），是一种基于发布/订阅（publish/subscribe）模式的”轻量级”通讯协议，该协议构建于TCP/IP协议上，由IBM在1999年发布。MQTT最大优点在于，可以以极少的代码和有限的带宽，为连接远程设备提供实时可靠的消息服务。作为一种低开销、低带宽占用的即时通讯协议，使其在物联网、小型设备、移动应用等方面有较广泛的应用。</p>
+<p>MQTT是一个基于客户端-服务器的消息发布/订阅传输协议。MQTT协议是轻量、简单、开放和易于实现的，这些特点使它适用范围非常广泛。在很多情况下，包括受限的环境中，如：机器与机器（M2M）通信和物联网（IoT）。其在，通过卫星链路通信传感器、偶尔拨号的医疗设备、智能家居、及一些小型化设备中已广泛使用。</p>
+<a id="more"></a>
+
+<h2 id="MQTT实现方式"><a href="#MQTT实现方式" class="headerlink" title="MQTT实现方式"></a>MQTT实现方式</h2><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_mqtt_1.png"
+                      style="zoom: 50%;"
+                >
+
+<p>看以上图，MQTT协议中有两种主要身份：</p>
+<ul>
+<li>MQTT Broker(消息代理)：服务器</li>
+<li>Publish(发布者)、Subscribe(订阅者)：客户端</li>
+</ul>
+<p>一个设备可以既是发布消息端，也可以同时订阅消息。</p>
+<p><strong>MQTT传输的消息</strong>有2个部分：</p>
+<ul>
+<li>主题（Topic）：就是消息的主题/类型/分类。订阅者订阅一个Topic后，就能收到该Topic的消息内容。</li>
+<li>负载（payload）：就是消息的内容（可是是文字、数值这些）。</li>
+</ul>
+<p><strong>MQTT使用举例</strong>：<br>像物联网这块就用的比较多，假设有一个物联网设备（掌控板、行空板），接个对应的传感器，就可以获取温度、湿度、光强度这些数据，那怎么把获取到的数据实时传到服务器上记录下来呢，就用这个MQTT就行。</p>
+<p>把传感器获取到的数据，用Publish(发布)到MQTT服务器上，同时也可以用Subscribe订阅MQTT服务器端传过来的消息。</p>
+<p>把数据收集起来后，就可以做具体的分析、展示（数据可视化）了。</p>
+<p>像行空板就自带了SloT这个针对学校场景的开源免费的MQTT服务器软件, 可一键创建本地物联网服务器。相当于一个行空板设备，自己作为一台MQTT服务器，同时也作为一个客户端。</p>
+<h2 id="Docker搭建MQTT服务器"><a href="#Docker搭建MQTT服务器" class="headerlink" title="Docker搭建MQTT服务器"></a>Docker搭建MQTT服务器</h2><p>用的是EMQX的开源版。EMQX 是一款大规模可弹性伸缩的云原生分布式物联网 MQTT 消息服务器。它还有企业版和Cloud版，这些需要花钱的是企业级，自己测试、学习使用，用用开源版就行。<br>Docker也可以搭建EMQX企业版，就是连接的客户端有限制，只有10个。</p>
+<p>EMQX官方文档：<a class="link"   target="_blank" rel="noopener" href="https://www.emqx.io/docs/zh/v4.3/" >https://www.emqx.io/docs/zh/v4.3/<i class="fas fa-external-link-alt"></i></a> （左下角可以选择版本号）</p>
+<h3 id="1-拉取EMQX开源版镜像"><a href="#1-拉取EMQX开源版镜像" class="headerlink" title="1.拉取EMQX开源版镜像"></a>1.拉取EMQX开源版镜像</h3><p>官网：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/r/emqx/emqx/tags" >https://hub.docker.com/r/emqx/emqx/tags<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull emqx/emqx</span><br></pre></td></tr></table></figure>
+<p>不写版本写，就是最新版(latest)。</p>
+<h3 id="2-运行容器"><a href="#2-运行容器" class="headerlink" title="2.运行容器"></a>2.运行容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name emqx -p 18084:1883 -p 18085:8081 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–name emqx：容器名为emqx，可自定义<br>-p 18083:18083：端口映射，web端后台管理页端口，前面一个18083是本机端口，可自定义<br>-p 18084:1883：端口映射，MQTT TCP端口，前面一个18084是自定义的本机的端口，可自定义<br>-p 8883:8883：端口映射，MQTT TCP TLS/SSL 端口，前面一个8883可自定义<br>-p 8083:8083：端口映射，HTTP and WebSocket 端口，前面一个8083可自定义<br>-p 8084:8084：端口映射，HTTPS and WSS 端口，前面一个8084可自定义</p>
+</blockquote>
+<p>如果有端口被限制不能使用啥的，直接换就行。如果是在服务器上使用，记得把防火墙设置一下，给允许下使用的端口就行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 容器运行后，查看容器</span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器，用/bin/sh</span></span><br><span class="line">docker <span class="built_in">exec</span> -it emqx /bin/sh</span><br></pre></td></tr></table></figure>
+<h3 id="3-进入web后台管理页面"><a href="#3-进入web后台管理页面" class="headerlink" title="3.进入web后台管理页面"></a>3.进入web后台管理页面</h3><p>浏览器打开机器的ip:18083访问。比如本机ip为：192.168.1.101<br>那就打开：192.168.1.101:18083 访问，或者用127.0.0.1、localhost都行。服务器的话就用服务器的ip。</p>
+<p>默认的账号：admin 密码：public</p>
+<p>语言在【Settings】设置里，设一下中文就行。</p>
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_mqtt_2.png"
+                      style="zoom: 50%;"
+                >
+
+<h3 id="4-Websocket测试"><a href="#4-Websocket测试" class="headerlink" title="4.Websocket测试"></a>4.Websocket测试</h3><p>在【Tools】（工具）选项里有【Websocket】测试。<br>填写下ip和端口，这里的端口就是8083端口映射出来的端口，然后就直接【连接】就行。</p>
+<p>可以订阅消息（填写Topic主题），和发送消息（填写Topic主题和消息内容）进行测试。</p>
+<p>PS.如果是企业版，基本上操作差不多的。<br>官网：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/r/emqx/emqx-ee" >https://hub.docker.com/r/emqx/emqx-ee<i class="fas fa-external-link-alt"></i></a><br>拉取镜像：<code>docker pull emqx/emqx-ee</code></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker搭建MQTT服务器</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-11-12 12:58:54</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/11/12/Docker搭建MQTT服务器/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91/">#物联网</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/11/13/pip%E5%AE%89%E8%A3%85%E5%8C%85%E6%97%B6%E5%87%BA%E7%8E%B0python-setup-py-egg-info-did-not-run-successfully/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">pip安装包时出现&#39;python setup.py egg_info did not run successfully.&#39;</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/11/11/Python%E8%AF%86%E5%88%AB%E9%AA%8C%E8%AF%81%E7%A0%81%E5%9B%BE%E7%89%87/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python 识别验证码图片</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT%E7%AE%80%E4%BB%8B"><span class="nav-text">MQTT简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">MQTT实现方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker%E6%90%AD%E5%BB%BAMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">Docker搭建MQTT服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%8B%89%E5%8F%96EMQX%E5%BC%80%E6%BA%90%E7%89%88%E9%95%9C%E5%83%8F"><span class="nav-text">1.拉取EMQX开源版镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="nav-text">2.运行容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BF%9B%E5%85%A5web%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2"><span class="nav-text">3.进入web后台管理页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Websocket%E6%B5%8B%E8%AF%95"><span class="nav-text">4.Websocket测试</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

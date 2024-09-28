@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python JSON使用举例 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python JSON使用举例</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-07-12 14:29:00</span>
+        <span class="mobile">2022-07-12 14:29</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>JSON是一种轻量级的数据交换格式。易于人类的阅读和编写，同时也易于机器解析和生成，是目前应用最广泛的数据交换格式。</p>
+<p>像一些开放API接口，很多返回数据也都有json格式。这样跨语言、跨平台使用就很方便了。</p>
+<p>比如这样的json数据（注意json中都是双引号）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[    </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;水浒传&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;施耐庵&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2016-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233444&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;三国演义&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;罗贯中&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;time&quot;</span>: <span class="string">&quot;2017-09-01&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;isbn&quot;</span>: <span class="string">&quot;1111222233555&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="JSON函数"><a href="#JSON函数" class="headerlink" title="JSON函数"></a>JSON函数</h2><p>Python里用json也很方便，主要就四个函数。</p>
+<p>最主要是前两个处理字符串的，后两个是处理文件的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">json.dumps(obj)：将Python对象序列化成json字符串</span><br><span class="line">json.loads(s)：将已编码的json字符串反序列化为Python对象</span><br><span class="line"></span><br><span class="line">json.dump(obj,fp)：将python数据类型转换并保存到json格式的文件</span><br><span class="line">json.load(fp)：从json格式的文件中读取数据并转换为python的类型</span><br></pre></td></tr></table></figure>
+<p>使用 JSON 函数需要导入 json 库：<code>import json</code>。</p>
+<h3 id="1-json-dumps-obj-序列化成json字符串"><a href="#1-json-dumps-obj-序列化成json字符串" class="headerlink" title="1. json.dumps(obj) 序列化成json字符串"></a>1. json.dumps(obj) 序列化成json字符串</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">json.dumps(obj, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, encoding=<span class="string">&quot;utf-8&quot;</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>2个重要参数：</strong><br>1).ensure_ascii 参数</p>
+<p>默认的话是 <code>ensure_ascii=True</code>，这个当有中文字符的时候就会有问题，默认True表示使用ascii编码。如果想输出正常中文，就要设置成 <code>ensure_ascii=False</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">s = <span class="string">&#x27;水浒传&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s)) <span class="comment"># &quot;\u6c34\u6d52\u4f20&quot;</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(s, ensure_ascii=<span class="literal">False</span>)) <span class="comment"># &quot;水浒传&quot;</span></span><br></pre></td></tr></table></figure>
+<p>2).indent 参数</p>
+<p>默认是 <code>indent=None</code>，表示没有格式。indent后面的数值表示缩进的空格数。看下例子就懂了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, separators=(<span class="string">&#x27;,&#x27;</span>,<span class="string">&#x27;:&#x27;</span>)))</span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>)) <span class="comment"># 缩进2个</span></span><br><span class="line"><span class="built_in">print</span>(json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)) <span class="comment"># 缩进4个</span></span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;水浒传&quot;: &quot;施耐庵&quot;, &quot;三国演义&quot;: &quot;罗贯中&quot;, &quot;红楼梦&quot;: &quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;&quot;水浒传&quot;:&quot;施耐庵&quot;,&quot;三国演义&quot;:&quot;罗贯中&quot;,&quot;红楼梦&quot;:&quot;曹雪芹&quot;&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">  &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">  &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有两个参数：</p>
+<ul>
+<li><code>sort_keys=False</code>：默认是没排序的，可以按照key来排序；</li>
+<li><code>separators=None</code>：如果设置成<code>separators=(&#39;,&#39;,&#39;:&#39;)</code>表示元素之间用逗号隔开，key和value之间用冒号隔开（这里没有空格，需要空格就加上，默认是有的）</li>
+</ul>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹&#x27;</span>&#125;</span><br><span class="line"><span class="comment"># dumps 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">json_info2 = json.dumps(book_info, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book_info)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹&quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;水浒传&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;施耐庵&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2016-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233444&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;name&quot;: &quot;三国演义&quot;,</span><br><span class="line">        &quot;author&quot;: &quot;罗贯中&quot;,</span><br><span class="line">        &quot;time&quot;: &quot;2017-09-01&quot;,</span><br><span class="line">        &quot;isbn&quot;: &quot;1111222233555&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line">&lt;class &#39;list&#39;&gt;</span><br></pre></td></tr></table></figure>
+<p>一般比较常用的应该就是python的dict字典或list列表编码成json格式字符串。</p>
+<h3 id="2-json-loads-s-反序列化成Python数据对象"><a href="#2-json-loads-s-反序列化成Python数据对象" class="headerlink" title="2. json.loads(s) 反序列化成Python数据对象"></a>2. json.loads(s) 反序列化成Python数据对象</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">json.loads(s[, encoding[, cls[, object_hook[, parse_float[, parse_int[, parse_constant[, object_pairs_hook[, **kw]]]]]]]])</span><br></pre></td></tr></table></figure>
+<p><strong>1个重要参数：</strong><br>strict 参数<br>默认是<code>strict=True</code>，是不能有控制字符的，如果有，会报一个错：<br><code>ValueError Invalid control character……</code></p>
+<p>官方文档中也有这个参数的说明：</p>
+<blockquote>
+<p>如果 strict 为 false （默认为 True ），那么控制字符将被允许在字符串内。在此上下文中的控制字符编码在范围 0–31 内的字符，包括 ‘\t’ (制表符）， ‘\n’ ， ‘\r’ 和 ‘\0’ </p>
+</blockquote>
+<p>所以，一般我们就直接设为<code>strict=False</code>。</p>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book = &#123;<span class="string">&#x27;水浒传&#x27;</span>:<span class="string">&#x27;施耐庵&#x27;</span>, <span class="string">&#x27;三国演义&#x27;</span>:<span class="string">&#x27;罗贯中&#x27;</span>, <span class="string">&#x27;红楼梦&#x27;</span>:<span class="string">&#x27;曹雪芹 &#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;序列化为json格式字符串&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 1.json.dumps(obj) 方法将数据对象序列化为 json格式的字符串</span></span><br><span class="line">json_info = json.dumps(book, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(json_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(book)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_info)) <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;反序列化为Python数据对象&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 2.json.loads(s) 方法把json格式的字符串变为 Python中的数据对象</span></span><br><span class="line">trans_info = json.loads(json_info, strict=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(trans_info)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(trans_info)) <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">----------序列化为json格式字符串----------</span><br><span class="line">&#123;</span><br><span class="line">    &quot;水浒传&quot;: &quot;施耐庵&quot;,</span><br><span class="line">    &quot;三国演义&quot;: &quot;罗贯中&quot;,</span><br><span class="line">    &quot;红楼梦&quot;: &quot;曹雪芹 &quot;</span><br><span class="line">&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br><span class="line">&lt;class &#39;str&#39;&gt;</span><br><span class="line">----------反序列化为Python数据对象----------</span><br><span class="line">&#123;&#39;水浒传&#39;: &#39;施耐庵&#39;, &#39;三国演义&#39;: &#39;罗贯中&#39;, &#39;红楼梦&#39;: &#39;曹雪芹 &#39;&#125;</span><br><span class="line">&lt;class &#39;dict&#39;&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-json-dump-obj-fp-保存到json格式的文件"><a href="#3-json-dump-obj-fp-保存到json格式的文件" class="headerlink" title="3. json.dump(obj,fp) 保存到json格式的文件"></a>3. json.dump(obj,fp) 保存到json格式的文件</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">json.dump(obj, fp, *, skipkeys=<span class="literal">False</span>, ensure_ascii=<span class="literal">True</span>, check_circular=<span class="literal">True</span>, allow_nan=<span class="literal">True</span>, cls=<span class="literal">None</span>, indent=<span class="literal">None</span>, separators=<span class="literal">None</span>, default=<span class="literal">None</span>, sort_keys=<span class="literal">False</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>2个重要参数：</strong><br>跟<code>json.dumps(obj)</code>一样的，主要就是ensure_ascii 和 indent。</p>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">book_info = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;水浒传&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;施耐庵&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2016-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233444&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;三国演义&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;author&#x27;</span>: <span class="string">&#x27;罗贯中&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;time&#x27;</span>: <span class="string">&#x27;2017-09-01&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;isbn&#x27;</span>: <span class="string">&#x27;1111222233555&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;保存到json格式的文件&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 3.json.dump(obj, fp) 方法将python数据类型转换并保存到json格式的文件内</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(book_info, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="4-json-load-fp-读取json格式文件数据"><a href="#4-json-load-fp-读取json格式文件数据" class="headerlink" title="4.json.load(fp) 读取json格式文件数据"></a>4.json.load(fp) 读取json格式文件数据</h3><p><strong>语法：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">json.load(fp, *, cls=<span class="literal">None</span>, object_hook=<span class="literal">None</span>, parse_float=<span class="literal">None</span>, parse_int=<span class="literal">None</span>, parse_constant=<span class="literal">None</span>, object_pairs_hook=<span class="literal">None</span>, **kw)</span><br></pre></td></tr></table></figure>
+<p><strong>举例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">10</span> + <span class="string">&#x27;读取json文件内容&#x27;</span> + <span class="string">&#x27;-&#x27;</span>*<span class="number">10</span>)</span><br><span class="line"><span class="comment"># 4.json.load(fp) 方法读取 json文件内容并转换为python的类型</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">r&#x27;.\book.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br><span class="line">f.close()</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data)) <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.9/library/json.html" >json — JSON 编码和解码器<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python JSON使用举例</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-07-12 14:29:00</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/07/12/Python-JSON使用举例/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/07/12/Python%E5%A4%84%E7%90%86%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E4%BA%91%E6%95%B0%E6%8D%AE%E5%BA%93json%E6%96%87%E4%BB%B6/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python处理微信小程序云数据库json文件</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/07/01/Excel%E4%B8%AD%E5%A4%9A%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Excel中多条件查询</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON%E5%87%BD%E6%95%B0"><span class="nav-text">JSON函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-json-dumps-obj-%E5%BA%8F%E5%88%97%E5%8C%96%E6%88%90json%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">1. json.dumps(obj) 序列化成json字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-json-loads-s-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%88%90Python%E6%95%B0%E6%8D%AE%E5%AF%B9%E8%B1%A1"><span class="nav-text">2. json.loads(s) 反序列化成Python数据对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-json-dump-obj-fp-%E4%BF%9D%E5%AD%98%E5%88%B0json%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-text">3. json.dump(obj,fp) 保存到json格式的文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-json-load-fp-%E8%AF%BB%E5%8F%96json%E6%A0%BC%E5%BC%8F%E6%96%87%E4%BB%B6%E6%95%B0%E6%8D%AE"><span class="nav-text">4.json.load(fp) 读取json格式文件数据</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

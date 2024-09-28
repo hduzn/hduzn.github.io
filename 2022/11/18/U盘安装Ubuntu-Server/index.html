@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            U盘安装Ubuntu Server |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">U盘安装Ubuntu Server</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-11-18 21:11:07</span>
+        <span class="mobile">2022-11-18 21:11</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Ubuntu/">Ubuntu</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>想在办公室搞一台Ubuntu Server，然后装上docker后，就可以搭一些小服务了。正好有同事换下来的电脑，配置还可以，8G内存+256G固态的，一个挺小的机箱。</p>
+<p>查了一下，安装也挺方便的，下载系统包，然后用U盘制作个启动盘，再安装就行了。</p>
+<a id="more"></a>
+
+<h2 id="一、下载Ubuntu-Server的ISO镜像包"><a href="#一、下载Ubuntu-Server的ISO镜像包" class="headerlink" title="一、下载Ubuntu Server的ISO镜像包"></a>一、下载Ubuntu Server的ISO镜像包</h2><p>官网下载：<a class="link"   target="_blank" rel="noopener" href="https://ubuntu.com/download/server" >https://ubuntu.com/download/server<i class="fas fa-external-link-alt"></i></a><br>官网目前最新版本：22.04.1</p>
+<p>之前用的是18.04和20.04的，所以还是想下载用20.04版本的。于是，可以去清华大学的开源软件镜像站下载：<a class="link"   target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/20.04/" >https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/20.04/<i class="fas fa-external-link-alt"></i></a></p>
+<p>找到server版本下载：ubuntu-20.04.5-live-server-amd64.iso<br>desktop是桌面版本的，自己用也可以用桌面版的，反正我就当当服务器，用不着桌面版的，直接就server版。</p>
+<h2 id="二、制作U盘启动盘"><a href="#二、制作U盘启动盘" class="headerlink" title="二、制作U盘启动盘"></a>二、制作U盘启动盘</h2><h3 id="1-下载制作启动盘的工具软件：Rufus"><a href="#1-下载制作启动盘的工具软件：Rufus" class="headerlink" title="1.下载制作启动盘的工具软件：Rufus"></a>1.下载制作启动盘的工具软件：Rufus</h3><p>这个小软件特别小，且好用，无需安装，直接运行就可以用。Win7以上操作系统都可以用。</p>
+<p>官网下载地址：<a class="link"   target="_blank" rel="noopener" href="http://rufus.ie/zh/" >http://rufus.ie/zh/<i class="fas fa-external-link-alt"></i></a><br>目前最新的是：3.20版本（1.3MB）</p>
+<h3 id="2-制作启动盘"><a href="#2-制作启动盘" class="headerlink" title="2.制作启动盘"></a>2.制作启动盘</h3><p>插上U盘，运行Rufus后，</p>
+<blockquote>
+<p>Device（设备）：选择U盘<br>Boot selection（引导类型选择）：点击SELECT（选择）按钮，添加下载好 ubuntu-20.04.5-live-server-amd64.iso</p>
+</blockquote>
+<p>其它都默认就行，直接点击START（开始）。<br>期间出来一个提示，要下载2个文件啥的直接下载就行。</p>
+<p>然后等待完成就好了。</p>
+<h2 id="三、安装Ubuntu-Server"><a href="#三、安装Ubuntu-Server" class="headerlink" title="三、安装Ubuntu Server"></a>三、安装Ubuntu Server</h2><h3 id="1-安装ubuntu-20-04-5-LTS"><a href="#1-安装ubuntu-20-04-5-LTS" class="headerlink" title="1.安装ubuntu 20.04.5 LTS"></a>1.安装ubuntu 20.04.5 LTS</h3><p>插上U盘，跟安装Windows一样，选择从U盘启动就行。</p>
+<p>安装过程都直接默认就行。其中，</p>
+<ul>
+<li>网络是没设置的，选的是Continue without network，安装完再设置。</li>
+<li>硬盘设置，看到disk的地方，如果有2块硬盘的，选一块硬盘。</li>
+</ul>
+<p>除了选了一块硬盘，别的都默认了。其它的搞不懂可以安装完再整。</p>
+<p>最后面有个登录账号信息需要填写一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Your name: 自定义，随意</span><br><span class="line">Your server&#39;s name：自定义，随意。</span><br><span class="line">Pick a username: 用户名，这个登录的时候需要的。比如：ubuntuabc</span><br><span class="line">Choose a password: 密码。比如：ubuntuabc</span><br><span class="line">Confirm you password: 确认密码</span><br></pre></td></tr></table></figure>
+<p>等待安装完成后，选一下【Reboot Now】（重启），选完就拔掉U盘启动。</p>
+<h3 id="2-设置网络（静态IP）"><a href="#2-设置网络（静态IP）" class="headerlink" title="2.设置网络（静态IP）"></a>2.设置网络（静态IP）</h3><p>安装完成重启后，可以先查看发行版本信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/issue</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示结果：</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Ubuntu 20.04.5 LTS \n \l</span><br><span class="line">---------------------------------------</span><br></pre></td></tr></table></figure>
+<p>插上网线后，用vi打开配置文件<code>/etc/netplan/00-installer-config.yaml</code>（不同版本可能文件名有点不一样）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 需要root权限，可以在前面加上sudo</span></span><br><span class="line"><span class="comment"># 我就直接用命令：sudo su切换成root用户了</span></span><br><span class="line">vi /etc/netplan/00-installer-config.yaml</span><br></pre></td></tr></table></figure>
+<p>配置文件内容如下（vi命令不会的看这篇笔记：<a href="/2021/02/08/Linux%20vim%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Linux vim&#x2F;vi 命令简单使用">Linux vim&#x2F;vi 命令简单使用</a>）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This is the network config written by &#x27;subiquity&#x27;</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line">  <span class="attr">ethernets:</span></span><br><span class="line">    <span class="attr">enp1s0:</span></span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">no</span></span><br><span class="line">      <span class="attr">addresses:</span> [<span class="number">192.168</span><span class="number">.1</span><span class="number">.175</span><span class="string">/24</span>]</span><br><span class="line">      <span class="attr">gateway4:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br><span class="line">      <span class="attr">nameservers:</span></span><br><span class="line">        <span class="attr">addresses:</span> [<span class="number">220.189</span><span class="number">.127</span><span class="number">.106</span>, <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>]</span><br><span class="line">  <span class="attr">version:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>dhcp4: no 关闭ipv4自动获取。<br>addresses: [192.168.1.175/24] 在指定IP地址时，ip地址之后的子网掩码是必须的，在使用ipv6时也一样必须带有子网掩码，以上ipv4地址的掩码是24。<br>gateway4：字段是网关字段，即路由器的地址。<br>nameservers字段：设置域名服务器IP地址。</p>
+</blockquote>
+<p>好了之后，保存、退出。</p>
+<p>启动服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动服务，如果没有切换到root用户，就前面加sudo</span></span><br><span class="line">netplan apply</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看网络服务的状态，看到绿点，状态是routable就ok了</span></span><br><span class="line">networkctl status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网络测试</span></span><br><span class="line">ping 192.168.1.1</span><br><span class="line">ping 114.114.114.114</span><br><span class="line">ping www.baidu.com</span><br></pre></td></tr></table></figure>
+<p>网络正常了，那就可以在别的电脑（同局域网内）SSH连接啦，就不需要显示器了，开着主机就行了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># SSH连接</span><br><span class="line">主机ip: 192.168.1.175</span><br><span class="line">用户名：ubuntuabc</span><br><span class="line">密码：ubuntuabc</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：U盘安装Ubuntu Server</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-11-18 21:11:07</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/11/18/U盘安装Ubuntu-Server/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Ubuntu/">#Ubuntu</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/11/18/Ubuntu%E5%AE%89%E8%A3%85%E5%AE%8C%E6%98%BE%E7%A4%BA%E5%AE%B9%E9%87%8F%E5%B0%8F%E4%BA%8E%E7%A1%AC%E7%9B%98%E5%AE%B9%E9%87%8F/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Ubuntu安装完显示容量小于硬盘容量</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/11/13/Python%E4%BD%BF%E7%94%A8MQTT%E4%B8%BE%E4%BE%8B/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python使用MQTT举例</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BDUbuntu-Server%E7%9A%84ISO%E9%95%9C%E5%83%8F%E5%8C%85"><span class="nav-text">一、下载Ubuntu Server的ISO镜像包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%B6%E4%BD%9CU%E7%9B%98%E5%90%AF%E5%8A%A8%E7%9B%98"><span class="nav-text">二、制作U盘启动盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD%E5%88%B6%E4%BD%9C%E5%90%AF%E5%8A%A8%E7%9B%98%E7%9A%84%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6%EF%BC%9ARufus"><span class="nav-text">1.下载制作启动盘的工具软件：Rufus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%B6%E4%BD%9C%E5%90%AF%E5%8A%A8%E7%9B%98"><span class="nav-text">2.制作启动盘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85Ubuntu-Server"><span class="nav-text">三、安装Ubuntu Server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85ubuntu-20-04-5-LTS"><span class="nav-text">1.安装ubuntu 20.04.5 LTS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%BB%9C%EF%BC%88%E9%9D%99%E6%80%81IP%EF%BC%89"><span class="nav-text">2.设置网络（静态IP）</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

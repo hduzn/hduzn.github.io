@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python 数据库（SQLite）教程 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python 数据库（SQLite）教程</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2021-02-07 20:20:00</span>
+        <span class="mobile">2021-02-07 20:20</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/SQLite/">SQLite</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>SQLite是一种嵌入式数据库，它的数据库就是一个文件。由于SQLite本身是C写的，而且体积很小，所以，经常被集成到各种应用程序中，甚至在iOS和Android的App中都可以集成。</p>
+<p>Python就内置了SQLite3，所以，在Python中使用SQLite，不需要安装任何东西，直接使用。</p>
+<a id="more"></a>
+
+<h1 id="选择SQLite的原因"><a href="#选择SQLite的原因" class="headerlink" title="选择SQLite的原因"></a>选择SQLite的原因</h1><p>自己的小东西，轻量极感觉用SQLite3也可以了，省得装MySQL这些了。然后再装个 DB Browser for SQLite的软件，开源的免费可视化工具，用来操作SQLite数据库文件溜溜的、贼方便了~</p>
+<p>所以自己选择SQLite的2个主要原因是：</p>
+<ol>
+<li>Python内置了SQLite3，不需要再装任何东西；</li>
+<li>有DB Browser for SQLite这样开源免费的软件工具，操作又方便，建库、建表、修改表之类都很方便，保存成一个.db文件也方便。</li>
+</ol>
+<p>当然，这是看自己需求选择的原因。</p>
+<h1 id="数据库相关概念简介"><a href="#数据库相关概念简介" class="headerlink" title="数据库相关概念简介"></a>数据库相关概念简介</h1><p>一个数据库对应保存成一个 .db文件；<br>一个数据库里面可以有很多表（Table）；</p>
+<p>比如有一个学校的数据库，一般就会有：</p>
+<ul>
+<li>教职工表（里面有教师姓名之类的信息）</li>
+<li>班级表（里面有班级名称、人数等信息）</li>
+<li>全体学生表（里面有学生姓名、班级等信息）</li>
+</ul>
+<p>关于数据库知识，随便搜几篇文章看一下，自己去了解一下SQL，这里就不介绍了。<br>数据库的使用，自己设计几个表，就懂了点基础了，平常自己用用够用就行了（表的设计靠实践）。</p>
+<h1 id="Python-SQLite"><a href="#Python-SQLite" class="headerlink" title="Python SQLite"></a>Python SQLite</h1><h3 id="一、SQLite使用过程描述"><a href="#一、SQLite使用过程描述" class="headerlink" title="一、SQLite使用过程描述"></a>一、SQLite使用过程描述</h3><p>1.要操作关系数据库，首先要连接到数据库，一个数据库连接称为connection。</p>
+<p>2.连接到数据库之后，需要打开游标（Cursor），通过Cursor执行SQL语句，然后获得执行的结果。</p>
+<p>3.最后关闭数据库连接。</p>
+<h3 id="二、操作数据库举例"><a href="#二、操作数据库举例" class="headerlink" title="二、操作数据库举例"></a>二、操作数据库举例</h3><p>数据库的操作，概括一下主要就是【增 删 改 查】，这4个会了，基础就差不多可以上了。</p>
+<ul>
+<li>增：insert into 语句</li>
+<li>删：delete from 语句</li>
+<li>改：update 语句</li>
+<li>查：select 语句</li>
+</ul>
+<h4 id="1-创建数据库、表"><a href="#1-创建数据库、表" class="headerlink" title="1.创建数据库、表"></a>1.创建数据库、表</h4><p>创建一个test的表，表里面有 id、code、name 3个字段。</p>
+<p><strong>字段的类型</strong> 有：<br>INTEGER(int数值)、TEXT(string字符串)、REAL(float符点数)，主要这3种。</p>
+<p><strong>字段的属性</strong> 有：</p>
+<ul>
+<li>NOT NULL：非空，表示字段不能是空的；</li>
+<li>PRIMARY KEY：主键；</li>
+<li>AUTOINCREMENT：自动增加（这一项是自动增加的，一般用于id）；</li>
+<li>UNIQUE：唯一，表示在这个表里这个字段是唯一的。</li>
+<li>DEFAULT ‘ ‘：表示默认值为 ‘ ‘</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="comment"># 数据库文件是 test.db，如果文件不存在，会自动创建</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">sql = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    CREATE TABLE &quot;test&quot; (</span></span><br><span class="line"><span class="string">    &quot;id&quot;    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;code&quot;  TEXT NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">    &quot;name&quot;  TEXT DEFAULT &#x27; &#x27;</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">cursor.execute(sql)</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="2-增：表中添加一条数据"><a href="#2-增：表中添加一条数据" class="headerlink" title="2.增：表中添加一条数据"></a>2.增：表中添加一条数据</h4><p>sql语句中可以用参数的形式，execute执行sql的时候把参数传进去就可以了。</p>
+<p>对应是Tuple（元组的数据类型），Python里List列表用的比较多，可以通过tuple()函数转成Tuple，当然，也可以直接定义成Tuple类型。</p>
+<p>因为一般别的地方获取的数据List类型比较多，所以这里举例用了List。</p>
+<p>添加一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test (code, name) <span class="keyword">values</span> (<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;insert into &#x27;</span> + table_name + <span class="string">&#x27; (code, name) values (?,?)&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加一条数据</span></span><br><span class="line">list1 = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;张三&#x27;</span>]    </span><br><span class="line">cursor.execute(sql, <span class="built_in">tuple</span>(list1))</span><br><span class="line"><span class="comment"># 添加多条数据</span></span><br><span class="line">list2 = [[<span class="string">&#x27;213124&#x27;</span>, <span class="string">&#x27;李四&#x27;</span>], [<span class="string">&#x27;213125&#x27;</span>, <span class="string">&#x27;王五&#x27;</span>]]</span><br><span class="line"><span class="keyword">for</span> one <span class="keyword">in</span> list2:</span><br><span class="line">    cursor.execute(sql, <span class="built_in">tuple</span>(one))</span><br><span class="line"><span class="comment"># 添加多条数据2</span></span><br><span class="line">list3 = [[<span class="string">&#x27;213126&#x27;</span>, <span class="string">&#x27;赵六&#x27;</span>], [<span class="string">&#x27;213127&#x27;</span>, <span class="string">&#x27;钱七&#x27;</span>]]</span><br><span class="line">cursor.executemany(sql, list3)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p>sql的语句用参数的好处就是可以在for循环中直接使用，不用每一条固定一条sql语句。</p>
+<h4 id="3-删：删除一条指定数据"><a href="#3-删：删除一条指定数据" class="headerlink" title="3.删：删除一条指定数据"></a>3.删：删除一条指定数据</h4><p>删除一条的SQL语句是 ：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213123&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除多条数据</span></span><br><span class="line">code_list = [<span class="string">&#x27;213123&#x27;</span>, <span class="string">&#x27;213124&#x27;</span>]</span><br><span class="line">sql = <span class="string">&#x27;delete from &#x27;</span> +  table_name + <span class="string">&#x27; where code = ?&#x27;</span></span><br><span class="line"><span class="keyword">for</span> code <span class="keyword">in</span> code_list:</span><br><span class="line">    cursor.execute(sql, (code,))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="4-改：修改一条记录"><a href="#4-改：修改一条记录" class="headerlink" title="4.改：修改一条记录"></a>4.改：修改一条记录</h4><p>修改一条的SQL语句是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update test <span class="keyword">set</span> code <span class="operator">=</span> <span class="string">&#x27;213122&#x27;</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">new_code = <span class="string">&#x27;213122&#x27;</span></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql = <span class="string">&#x27;update &#x27;</span> +  table_name + <span class="string">&#x27; set code = ? where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql, (new_code,name))</span><br><span class="line">cursor.close()</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="5-查：查询记录"><a href="#5-查：查询记录" class="headerlink" title="5.查：查询记录"></a>5.查：查询记录</h4><p>查属于最常用的部分了，因为存储在数据库的数据，通常都用select语句去查询。</p>
+<p>查询的SQL语句有：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span> <span class="keyword">and</span> name <span class="operator">=</span> <span class="string">&#x27;李四&#x27;</span></span><br><span class="line"><span class="keyword">select</span> code,name <span class="keyword">from</span> test <span class="keyword">where</span> code <span class="operator">=</span> <span class="string">&#x27;213124&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>查询可以查询全部字段，也可以查询部分需要的字段；<br>查询后面的where条件可以是 UNIQUE 字段，那查询结果就是唯一的，如果不是 UNIQUE字段，查询结果可能会有多条。</p>
+<p>python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;test.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line">table_name = <span class="string">&#x27;test&#x27;</span></span><br><span class="line"></span><br><span class="line">name = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">sql1 = <span class="string">&#x27;select * from &#x27;</span> + table_name + <span class="string">&#x27; where name = ?&#x27;</span></span><br><span class="line">cursor.execute(sql1, (name,))</span><br><span class="line">values1 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values1) <span class="comment"># [(1, &#x27;213122&#x27;, &#x27;张三&#x27;)]</span></span><br><span class="line">sql2 = <span class="string">&#x27;select code,name from &#x27;</span> + table_name</span><br><span class="line">cursor.execute(sql2)</span><br><span class="line">values2 = cursor.fetchall()</span><br><span class="line"><span class="built_in">print</span>(values2) <span class="comment"># [(&#x27;213122&#x27;, &#x27;张三&#x27;), (&#x27;213124&#x27;, &#x27;李四&#x27;), (&#x27;213125&#x27;, &#x27;王五&#x27;)]</span></span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="6-小结"><a href="#6-小结" class="headerlink" title="6.小结"></a>6.小结</h4><p><strong>使用Cursor对象执行insert，update，delete语句时，执行结果由rowcount返回影响的行数，就可以拿到执行结果。</strong></p>
+<p><strong>使用Cursor对象执行select语句时，通过fetchall()可以拿到结果集。结果集是一个list，每个元素都是一个tuple，对应一行记录。</strong></p>
+<p>像上面查询中的第4条sql语句，查询结果只需要 code,name 两个字段，那查询的结果会是一个List，每一个元素是一个tuple元组。<br>比如查询到的结果是：</p>
+<p>[(‘213124’, ‘李四’), (‘213125’, ‘王五’)]</p>
+<p>对于这样的List，Python里可以直接转换成 Dictionary（字典）类型，那用起来就更方便了。</p>
+<p>最后，记得用完 关闭connection和Cursor对象。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python 数据库（SQLite）教程</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2021-02-07 20:20:00</li>
+        <li>
+            本文链接：http://hduzn.cn/2021/02/07/Python-数据库（SQLite）教程/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/SQLite/">#SQLite</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2021/02/07/SQLite%E6%B8%85%E7%A9%BA%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%B0%86%E8%87%AA%E5%A2%9E%E9%87%8F%E5%BD%920/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">SQLite 清空表数据并将自增量归0</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/02/05/Ubuntu%E5%8D%87%E7%BA%A7OpenSSL%E6%95%99%E7%A8%8B/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Ubuntu 升级OpenSSL教程</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E6%8B%A9SQLite%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-text">选择SQLite的原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5%E7%AE%80%E4%BB%8B"><span class="nav-text">数据库相关概念简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python-SQLite"><span class="nav-text">Python SQLite</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81SQLite%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E6%8F%8F%E8%BF%B0"><span class="nav-text">一、SQLite使用过程描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BE%E4%BE%8B"><span class="nav-text">二、操作数据库举例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%81%E8%A1%A8"><span class="nav-text">1.创建数据库、表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%A2%9E%EF%BC%9A%E8%A1%A8%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%B8%80%E6%9D%A1%E6%95%B0%E6%8D%AE"><span class="nav-text">2.增：表中添加一条数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%88%A0%EF%BC%9A%E5%88%A0%E9%99%A4%E4%B8%80%E6%9D%A1%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE"><span class="nav-text">3.删：删除一条指定数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%94%B9%EF%BC%9A%E4%BF%AE%E6%94%B9%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95"><span class="nav-text">4.改：修改一条记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%9F%A5%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AE%B0%E5%BD%95"><span class="nav-text">5.查：查询记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E5%B0%8F%E7%BB%93"><span class="nav-text">6.小结</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

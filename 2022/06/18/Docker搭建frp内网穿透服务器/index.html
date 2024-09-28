@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker搭建frp内网穿透服务器 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker搭建frp内网穿透服务器</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-06-18 11:54:07</span>
+        <span class="mobile">2022-06-18 11:54</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。可以将内网服务以安全、便捷的方式通过具有公网 IP 节点的中转暴露到公网。</p>
+<p>说直白点，我主要是想用来：</p>
+<ul>
+<li>访问内网（现在能访问，但直接访问其它的内网地址还有点问题）；</li>
+<li>安装frpc的电脑开web服务的内网没问题，可以访问；</li>
+<li>访问不了其它的内网，就先用用远程桌面连接吧。（当然，这个也有第三方的工具，但TeamView免费不好用，Todesk免费还行、就是分辨率、稳定性这些还是差一些）</li>
+</ul>
+<p>反正服务器本来就有，就顺便试一下。</p>
+<p>frp中文文档：<a class="link"   target="_blank" rel="noopener" href="https://github.com/fatedier/frp/blob/dev/README_zh.md" >https://github.com/fatedier/frp/blob/dev/README_zh.md<i class="fas fa-external-link-alt"></i></a><br>完整文档：<a class="link"   target="_blank" rel="noopener" href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>release版本下载：<a class="link"   target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases" >https://github.com/fatedier/frp/releases<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<p><strong>准备工作：</strong></p>
+<p>一共3台机子：</p>
+<ul>
+<li>Ubuntu服务器（带Docker，有公网ip）：用来安装frp server端</li>
+<li>办公室Windows10（已安装docker）：安装frp client端</li>
+<li>本机Windows10：远程连接办公室电脑</li>
+</ul>
+<p><strong>frp实现了啥：</strong></p>
+<p>比如我办公室Windows10中运行了一个web服务，局域网可以访问，通过以下地址访问：192.168.1.110:5000</p>
+<p>但外网是无法访问的。</p>
+<p>然后我的Ubuntu服务器（公网ip：43.142.94.65），分别安装了frps、frpc端。</p>
+<p>然后通过frp，外面就可以用：43.142.94.65:18188 来访问 192.168.1.110:5000 了。（这里5000端口映射到服务器的18188端口了）</p>
+<h2 id="一、搭建frp-server-服务器端"><a href="#一、搭建frp-server-服务器端" class="headerlink" title="一、搭建frp server(服务器端)"></a>一、搭建frp server(服务器端)</h2><p>云服务器：带Docker的Ubuntu20.04</p>
+<h3 id="1-创建配置文件（frps-ini）"><a href="#1-创建配置文件（frps-ini）" class="headerlink" title="1.创建配置文件（frps.ini）"></a>1.创建配置文件（frps.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在用户目录(<code>/home/ubuntu</code>)下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir frp</span><br></pre></td></tr></table></figure>
+<p>可以直接在服务器(Linux)系统中用<code>vi frps.ini</code>创建配置文件、编辑、保存。</p>
+<p>也可以在本地直接创建好了，用FTP工具上传到 <code>/home/ubuntu/frp</code>目录下。</p>
+<p>frps.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line"><span class="attr">bind_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 面板端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 登录面板账号设置</span></span><br><span class="line"><span class="attr">dashboard_user</span> = admin</span><br><span class="line"><span class="attr">dashboard_pwd</span> = Administrator1234</span><br><span class="line"><span class="comment"># 设置http及https协议下代理端口（非重要）</span></span><br><span class="line"><span class="attr">vhost_http_port</span> = <span class="number">7080</span></span><br><span class="line"><span class="attr">vhost_https_port</span> = <span class="number">7081</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 身份验证</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br></pre></td></tr></table></figure>
+<p>token尽量复杂一些，用Python的话，可以用secrets库生成一下随机密码。</p>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中先把这些服务器上要用到的端口开一下，即：<br>7000、7500、7080、7081 四个端口。</p>
+<h3 id="2-创建frps容器"><a href="#2-创建frps容器" class="headerlink" title="2.创建frps容器"></a>2.创建frps容器</h3><p><strong>1).下载frp服务器镜像 snowdreamtech/frps</strong></p>
+<p>docker官方镜像网址：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/r/snowdreamtech/frps" >https://hub.docker.com/r/snowdreamtech/frps<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<p>碰到没有权限的时候，命令前面加上<code>sudo</code>就行。</p>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>/home/ubuntu/frp/frps.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v /home/ubuntu/frp/frps.ini:/etc/frp/frps.ini --name frps snowdreamtech/frps</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">--network host：网络模式host</span><br><span class="line">-v &#x2F;home&#x2F;ubuntu&#x2F;frp&#x2F;frps.ini:&#x2F;etc&#x2F;frp&#x2F;frps.ini：配置文件映射</span><br><span class="line">--name frps：容器名称，可以随便取</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>创建好后，打开网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）</p>
+<p>如果出现无法访问的情况，可以在以下网站上查询一下，看服务器端口是否开放：<br><a class="link"   target="_blank" rel="noopener" href="https://tool.chinaz.com/port" >https://tool.chinaz.com/port<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="二、搭建frp-client-客户端"><a href="#二、搭建frp-client-客户端" class="headerlink" title="二、搭建frp client(客户端)"></a>二、搭建frp client(客户端)</h2><p>办公室Windows10（已安装docker）<br>安装docker方法：<a class="link"   target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/install/windows" >https://yeasy.gitbook.io/docker_practice/install/windows<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="1-创建配置文件（frpc-ini）"><a href="#1-创建配置文件（frpc-ini）" class="headerlink" title="1.创建配置文件（frpc.ini）"></a>1.创建配置文件（frpc.ini）</h3><p>先建个frp的目录，随便放哪里，比如我就放在(<code>E:\frp</code>)下.</p>
+<p>frpc.ini 文件内容如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># server_addr为FRPS服务器IP地址</span></span><br><span class="line"><span class="attr">server_addr</span> = <span class="number">43.142</span>.<span class="number">94.65</span></span><br><span class="line"><span class="comment"># server_port为服务端监听端口，bind_port，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">server_port</span> = <span class="number">7000</span></span><br><span class="line"><span class="comment"># 身份验证，与frps.ini中保存一致</span></span><br><span class="line"><span class="attr">token</span> = <span class="number">9</span>LgPn24TaC2NYZXY</span><br><span class="line"></span><br><span class="line"><span class="section">[ssh]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">2288</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ssh] 为服务名称，下方此处设置为，访问frp服务段的2288端口时，等同于通过中转服务器访问127.0.0.1的22端口。</span></span><br><span class="line"><span class="comment"># type 为连接的类型，此处为tcp</span></span><br><span class="line"><span class="comment"># local_ip 为中转客户端实际访问的IP </span></span><br><span class="line"><span class="comment"># local_port 为目标端口</span></span><br><span class="line"><span class="comment"># remote_port 为远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程桌面RDP，连接需要3389端口</span></span><br><span class="line"><span class="section">[RDP]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">3389</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18189</span></span><br><span class="line"></span><br><span class="line"><span class="section">[web_host]</span></span><br><span class="line"><span class="attr">type</span> = tcp</span><br><span class="line"><span class="attr">local_ip</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">local_port</span> = <span class="number">5002</span></span><br><span class="line"><span class="attr">remote_port</span> = <span class="number">18289</span></span><br></pre></td></tr></table></figure>
+<p>这里可以建多个，比如我这就开了3个：ssh、RDP、web_host。</p>
+<p>最后对应的访问地址为：FRPS服务器IP地址:remote_port</p>
+<blockquote>
+<p>远程桌面连接地址：43.142.94.65:18189<br>web访问地址：43.142.94.65:18289 对应本机的 127.0.0.1:5002</p>
+</blockquote>
+<p>用的是腾讯云轻量服务器，所以要在【防火墙】中把这些服务器上要用到的端口开一下，即：<br>2288、18189、18289 三个端口。</p>
+<h3 id="2-创建frpc容器"><a href="#2-创建frpc容器" class="headerlink" title="2.创建frpc容器"></a>2.创建frpc容器</h3><p>可以在docker软件中操作，反正跟服务器端差不多的命令，我这就直接用命令了。</p>
+<p><strong>1).下载frp客户端镜像 snowdreamtech/frpc</strong></p>
+<p>docker官方镜像网址：<a class="link"   target="_blank" rel="noopener" href="https://hub.docker.com/r/snowdreamtech/frpc" >https://hub.docker.com/r/snowdreamtech/frpc<i class="fas fa-external-link-alt"></i></a></p>
+<p>打开Windows Powershell/命令提示符 用命令下载镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p><strong>2).启动容器</strong></p>
+<p>我这里配置文件在：<code>E:/frp/frpc.ini</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always --network host -d -v E:/frp/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc</span><br></pre></td></tr></table></figure>
+<p>启动后，通过<code>docker ps -a</code>命令查看容器列表。</p>
+<p>再刷新刚才打开的网址：<strong>服务器ip:7500</strong> 就可以看到frp面板了。（我这是：43.142.94.65:7500）如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_1.png"
+                      style="zoom: 100%;"
+                ></p>
+<h2 id="三、远程桌面连接"><a href="#三、远程桌面连接" class="headerlink" title="三、远程桌面连接"></a>三、远程桌面连接</h2><p>当然，首先，要在办公室Windows10（已安装docker）这台机子上开启远程桌面：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_4.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>远程桌面连接地址：43.142.94.65:18189</p>
+<p>在Windows系统中打开【远程桌面连接】，输入连接地址和远程连接的计算机的用户名：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_2.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>注意，Windows10在【体验】选项中，可以选择【LAN（10 Mbps或更高）】，也可以选择【自动检测连接质量】。默认是【低速宽带】，连接上之后，字体变样，感觉很丑、看起来不舒服。</p>
+<p>而Windows11的话，默认是【自动检测连接质量】，就没事问题，连接上后自动检测的效果挺好的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_3.png"
+                      style="zoom: 100%;"
+                ></p>
+<p>就成功连接啦！<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Docker_frp_5.png"
+                      style="zoom: 75%;"
+                ></p>
+<p>更多关于frp的介绍、配置文件说明，都在官方的文档中有：<a class="link"   target="_blank" rel="noopener" href="https://gofrp.org/" >https://gofrp.org<i class="fas fa-external-link-alt"></i></a></p>
+<p>参考文章：<a class="link"   target="_blank" rel="noopener" href="https://gitee.com/spoto/natserver/tree/master" >自建内网穿透服务器<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="frp客户端-login-to-server-failed：EOF解决方法"><a href="#frp客户端-login-to-server-failed：EOF解决方法" class="headerlink" title="frp客户端 login to server failed：EOF解决方法"></a>frp客户端 login to server failed：EOF解决方法</h2><a href="/2024/03/30/frp%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E5%A4%B1%E8%B4%A5/" title="frp客户端容器启动失败">frp客户端容器启动失败</a>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker搭建frp内网穿透服务器</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-06-18 11:54:07</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/06/18/Docker搭建frp内网穿透服务器/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/06/19/Docker%E6%95%B0%E6%8D%AE%E5%8D%B7/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Docker 数据卷（volumes）介绍</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/06/14/Linux%E4%BD%BF%E7%94%A8v2ray/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Linux使用v2ray</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%90%AD%E5%BB%BAfrp-server-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF"><span class="nav-text">一、搭建frp server(服务器端)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88frps-ini%EF%BC%89"><span class="nav-text">1.创建配置文件（frps.ini）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BAfrps%E5%AE%B9%E5%99%A8"><span class="nav-text">2.创建frps容器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%90%AD%E5%BB%BAfrp-client-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">二、搭建frp client(客户端)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88frpc-ini%EF%BC%89"><span class="nav-text">1.创建配置文件（frpc.ini）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BAfrpc%E5%AE%B9%E5%99%A8"><span class="nav-text">2.创建frpc容器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2%E8%BF%9E%E6%8E%A5"><span class="nav-text">三、远程桌面连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#frp%E5%AE%A2%E6%88%B7%E7%AB%AF-login-to-server-failed%EF%BC%9AEOF%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">frp客户端 login to server failed：EOF解决方法</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Docker Dockerfile制作Gitbook镜像 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Docker Dockerfile制作Gitbook镜像</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2023-01-10 19:23:12</span>
+        <span class="mobile">2023-01-10 19:23</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>上一篇文章用Docker搭建了Gitbook的环境：<a href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/" title="Docker搭建Gitbook">Docker搭建Gitbook</a>，然后发现个小问题，问题不大，不过感觉Gitbook的版本实在太低了。</p>
+<p>毕竟是7年前的镜像了，用<code>gitbook -V</code>查看了下gitbook的版本，竟然是：0.3.4</p>
+<p>于是，决定还是自己用Dockerfile制作个Gitbook的镜像好了。</p>
+<p>自己用Dockerfile制作镜像也挺方便的，参考：<a href="/2022/05/29/Docker-Dockerfile%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%89/" title="Docker Dockerfile文件详解（制作自己的镜像）">Docker Dockerfile文件详解（制作自己的镜像）</a></p>
+<p>也就是第一次生成镜像的时候花点时间。</p>
+<a id="more"></a>
+
+<h2 id="一、制作Gitbook镜像"><a href="#一、制作Gitbook镜像" class="headerlink" title="一、制作Gitbook镜像"></a>一、制作Gitbook镜像</h2><h3 id="1-Dockerfile文件"><a href="#1-Dockerfile文件" class="headerlink" title="1.Dockerfile文件"></a>1.Dockerfile文件</h3><p>node的版本反正用12点几的还是有问题，索性降到8，反正是没问题的。</p>
+<p>因为我只是需要环境，并不是直接就生成电子书了，所以最后的CMD的命令也不需要执行。</p>
+<p>Dockerfile文件内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Use an official Node.js runtime as a parent image</span><br><span class="line">FROM node:8.11.1</span><br><span class="line"></span><br><span class="line"># creates a directory with this name if it doesn’t exist</span><br><span class="line"># WORKDIR：设置容器启动后的默认运行目录 &#x2F;gitbook</span><br><span class="line">WORKDIR &#x2F;gitbook</span><br><span class="line"></span><br><span class="line"># Set npm registry to China Taobao and install Gitbook</span><br><span class="line">RUN npm config set registry https:&#x2F;&#x2F;registry.npm.taobao.org</span><br><span class="line">RUN npm install gitbook-cli -g</span><br><span class="line">RUN gitbook -V</span><br><span class="line"></span><br><span class="line"># Make port 4000 available to the world outside this container</span><br><span class="line">EXPOSE 4000</span><br><span class="line"></span><br><span class="line"># CMD [&quot;sh&quot;, &quot;-c&quot;, &quot;gitbook install &#x2F;gitbook; gitbook serve &#x2F;gitbook&quot;]</span><br></pre></td></tr></table></figure>
+<h3 id="2-生成镜像"><a href="#2-生成镜像" class="headerlink" title="2.生成镜像"></a>2.生成镜像</h3><p>因为有本地安装过，所以知道现在的gitbook版本是：3.2.3，不确定的话，这里的版本号自己看着写吧。自己编一个差不多的也行。</p>
+<p>注意最后有个点表示当前目录，所以需要在Dockerfile文件所在的目录下运行此命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t gitbook:3.2.3 .</span><br></pre></td></tr></table></figure>
+<p>等待制作完成，估计需要几分钟。完成后用命令<code>docker images</code>就可以看到 gitbook:3.2.3 这个镜像了。</p>
+<h2 id="二、运行Gitbook容器"><a href="#二、运行Gitbook容器" class="headerlink" title="二、运行Gitbook容器"></a>二、运行Gitbook容器</h2><h3 id="1-运行Gitbook容器"><a href="#1-运行Gitbook容器" class="headerlink" title="1.运行Gitbook容器"></a>1.运行Gitbook容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -idt --name gitbook_cs -p 14001:4000 -v E:\SynologyDrive\Gitbook\cs_gitbook:/gitbook gitbook:3.2.3 /bin/bash</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–name gitbook_cs：容器名称，自己取<br>-p 14001:4000：把容器中的4000端口映射到本地14001端口，这个也随意</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it gitbook_cs /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化，会生成README.md 和SUMMARY.md文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑README.md 和SUMMARY.md文件后再次执行，生成目录、文件</span></span><br><span class="line">gitbook init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务，在线预览，打开 http://localhost:14001 就可以看到了</span></span><br><span class="line">gitbook serve</span><br></pre></td></tr></table></figure>
+<h3 id="2-Error：no-such-file-fontsettings-js"><a href="#2-Error：no-such-file-fontsettings-js" class="headerlink" title="2.Error：no such file fontsettings.js"></a>2.Error：no such file fontsettings.js</h3><p>这个报错不一定会有，我用Win10装的Docker里有这个问题，用Ubuntu20.04 LTS的服务器上也是Docker里装，就没碰到这个报错。</p>
+<p>执行<code>gitbook serve</code>或<code>gitbook build</code>都会报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: ENOENT: no such file or directory, <span class="built_in">stat</span> <span class="string">&#x27;***/_book/gitbook/gitbook-plugin-fontsettings/fontsettings.js&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>解决方法：</strong></p>
+<p>找到<code>/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js</code>文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> fs.copyDir(</span><br><span class="line">    assetsFolder,</span><br><span class="line">    assetOutputFolder,</span><br><span class="line">    &#123;</span><br><span class="line">        deleteFirst: <span class="literal">false</span>,</span><br><span class="line">        overwrite: <span class="literal">true</span>,</span><br><span class="line">        confirm: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>把<code>confirm: true</code>修改为<code>confirm: false</code>，注意有2处！</p>
+<p>这个文件的路径中有个gitbook的版本号，找对应的版本号。可先在容器内查看找到此文件。</p>
+<p>因为用的Docker，所以使用 Docker 容器修改方法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.把copyPluginAssets.js文件从容器中拷到当前目录下</span></span><br><span class="line">docker cp gitbook_cs:/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js ./copyPluginAssets.js</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.按上面的方法修改copyPluginAssets.js文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.再把修改后的copyPluginAssets.js文件覆盖容器内的文件</span></span><br><span class="line">docker cp copyPluginAssets.js gitbook_cs:/root/.gitbook/versions/3.2.3/lib/output/website/copyPluginAssets.js</span><br></pre></td></tr></table></figure>
+<p>再执行<code>gitbook serve</code>就没问题啦。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Docker Dockerfile制作Gitbook镜像</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2023-01-10 19:23:12</li>
+        <li>
+            本文链接：http://hduzn.cn/2023/01/10/Docker-Dockerfile制作Gitbook镜像/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Docker/">#Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2023/01/10/Python-Flask%E4%BD%BF%E7%94%A8WSGI-server/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Flask使用WSGI server</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2023/01/10/Docker%E6%90%AD%E5%BB%BAGitbook/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Docker搭建Gitbook</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%B6%E4%BD%9CGitbook%E9%95%9C%E5%83%8F"><span class="nav-text">一、制作Gitbook镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Dockerfile%E6%96%87%E4%BB%B6"><span class="nav-text">1.Dockerfile文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E9%95%9C%E5%83%8F"><span class="nav-text">2.生成镜像</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%BF%90%E8%A1%8CGitbook%E5%AE%B9%E5%99%A8"><span class="nav-text">二、运行Gitbook容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BF%90%E8%A1%8CGitbook%E5%AE%B9%E5%99%A8"><span class="nav-text">1.运行Gitbook容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Error%EF%BC%9Ano-such-file-fontsettings-js"><span class="nav-text">2.Error：no such file fontsettings.js</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

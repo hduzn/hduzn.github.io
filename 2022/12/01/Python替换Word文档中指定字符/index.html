@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python替换Word文档中指定字符 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python替换Word文档中指定字符</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-12-01 21:20:09</span>
+        <span class="mobile">2022-12-01 21:20</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>比如我有一大批文档（好几十个、上百个），每个里面的第一页中都有一个”2021年”，我想把这个替换成”2022年”。</p>
+<p>又不想一个一个打开去改，于是用Python写了下，这样每年只需要代码跑一下就全部改了~ 真是机智。</p>
+<p>Python有一个python-docx的库，可以直接用来处理.docx的Word文档的。</p>
+<a id="more"></a>
+
+<h2 id="安装python-docx库"><a href="#安装python-docx库" class="headerlink" title="安装python-docx库"></a>安装python-docx库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-docx</span><br></pre></td></tr></table></figure>
+<p>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://python-docx.readthedocs.org/en/latest/" >https://python-docx.readthedocs.org/en/latest/<i class="fas fa-external-link-alt"></i></a></p>
+<p>安装完后，先简单了解下这个库读取Word后，有几种对象：</p>
+<ul>
+<li>word文件：<strong>Document</strong></li>
+<li>段落：<strong>Paragraph</strong></li>
+<li>文字块：<strong>Run</strong>，感觉文字块有点玄学，不一定是一句话，后面会看代码演示。<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_replace_word_str.png"
+                      style="zoom: 50%;"
+                >
+
+</li>
+</ul>
+<h2 id="替换Word中的字符"><a href="#替换Word中的字符" class="headerlink" title="替换Word中的字符"></a>替换Word中的字符</h2><p>比如我就把”2021年”替换成”2022年”，当然，这个字符是唯一的。</p>
+<p>先直接放代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> docx <span class="keyword">import</span> Document</span><br><span class="line"><span class="keyword">from</span> docx.shared <span class="keyword">import</span> Pt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_filelist</span>(<span class="params">path</span>):</span></span><br><span class="line">    file_list = []</span><br><span class="line">    <span class="keyword">for</span> home, dirs, files <span class="keyword">in</span> os.walk(path):</span><br><span class="line">        <span class="keyword">for</span> filename <span class="keyword">in</span> files:</span><br><span class="line">            <span class="keyword">if</span>(filename.startswith(<span class="string">&#x27;~$&#x27;</span>)):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 文件名列表，包含完整路径</span></span><br><span class="line">                file_list.append(os.path.join(home, filename))</span><br><span class="line">                <span class="comment"># 文件名列表，只包含文件名</span></span><br><span class="line">                <span class="comment"># file_list.append(filename)</span></span><br><span class="line">    <span class="keyword">return</span> file_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换Word文档中的指定字符串</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">replace_str_in_word</span>(<span class="params">old_str, new_str, docx_file_list</span>):</span></span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> docx_file_list:</span><br><span class="line">        doc = Document(file)</span><br><span class="line">        <span class="comment"># 每一段内容</span></span><br><span class="line">        <span class="keyword">for</span> p <span class="keyword">in</span> doc.paragraphs:</span><br><span class="line">            <span class="keyword">if</span> old_str <span class="keyword">in</span> p.text:</span><br><span class="line">                <span class="comment"># inline = p.runs</span></span><br><span class="line">                <span class="comment"># for i in inline:</span></span><br><span class="line">                <span class="comment">#     if old_str in i.text:</span></span><br><span class="line">                <span class="comment">#         text = i.text.replace(old_str, new_str)</span></span><br><span class="line">                <span class="comment">#         i.text = text</span></span><br><span class="line">                p.text = p.text.replace(old_str, new_str) <span class="comment"># 替换字符</span></span><br><span class="line">                <span class="comment"># 设置替换后的段落的格式</span></span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> p.runs:</span><br><span class="line">                    i.font.size = Pt(<span class="number">18</span>) <span class="comment"># 小二</span></span><br><span class="line">                    i.font.bold = <span class="literal">True</span> <span class="comment"># 加粗</span></span><br><span class="line">                    <span class="comment"># i.font.name = &#x27;Arial&#x27;</span></span><br><span class="line">                    i.font.name = <span class="string">u&#x27;宋体&#x27;</span></span><br><span class="line"></span><br><span class="line">        doc.save(file)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-----------------开始-----------------&#x27;</span>)</span><br><span class="line"><span class="comment"># word文件位置</span></span><br><span class="line">path = <span class="string">r&#x27;F:\abc&#x27;</span></span><br><span class="line"></span><br><span class="line">file_list = get_filelist(path) <span class="comment"># 文件列表</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(file_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换Word文档中的指定字符串，把2021替换成2022</span></span><br><span class="line">replace_str_in_word(<span class="string">&#x27;2021&#x27;</span>, <span class="string">&#x27;2022&#x27;</span>, file_list)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-----------------完成！-----------------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="相关解释"><a href="#相关解释" class="headerlink" title="相关解释"></a>相关解释</h2><h3 id="1-replace-str-in-word方法"><a href="#1-replace-str-in-word方法" class="headerlink" title="1.replace_str_in_word方法"></a>1.replace_str_in_word方法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">doc = Document(file)</span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> doc.paragraphs: <span class="comment"># 读取每一段内容，p是paragraph对象</span></span><br><span class="line"><span class="keyword">if</span> old_str <span class="keyword">in</span> p.text: <span class="comment"># 当旧的字符串&#x27;2021&#x27;存在这个段落内容中</span></span><br><span class="line">p.text = p.text.replace(old_str, new_str) <span class="comment"># 把这一段的内容设置成替换后的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 1).关于我注释的这一段是什么情况</span></span><br><span class="line"><span class="comment"># 下面这一段是按块来查询的，但是主要分块感觉很玄学，比如我的&#x27;2021&#x27;就拆成了&#x27;20&#x27;、&#x27;2&#x27;、&#x27;1&#x27;这样3个run（文字块）。</span></span><br><span class="line"><span class="comment"># 所以，如果能用文字块直接替换的话也可以这样子做的。</span></span><br><span class="line"><span class="comment"># inline = p.runs</span></span><br><span class="line"><span class="comment"># for i in inline:</span></span><br><span class="line"><span class="comment">#     if old_str in i.text:</span></span><br><span class="line"><span class="comment">#         text = i.text.replace(old_str, new_str)</span></span><br><span class="line"><span class="comment">#         i.text = text</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2).关于设置替换后的段落的格式的代码，为什么不直接设置段落的格式，而要用一个循环来设置这个字体格式</span></span><br><span class="line"><span class="comment"># 当然是因为我没找到直接设置段落格式的方法，font这个属性就是run（文字块）的，段落对象没有的。</span></span><br></pre></td></tr></table></figure>
+<p>想清楚看到每一段，每个run的内容，建议用debug模式跑一下就能看清楚了。</p>
+<h3 id="2-字号和磅值对应关系"><a href="#2-字号和磅值对应关系" class="headerlink" title="2.字号和磅值对应关系"></a>2.字号和磅值对应关系</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    字号和磅值对应关系: </span></span><br><span class="line"><span class="string">    初号: 42磅</span></span><br><span class="line"><span class="string">    小初: 36磅</span></span><br><span class="line"><span class="string">    一号: 26磅</span></span><br><span class="line"><span class="string">    小一: 24磅</span></span><br><span class="line"><span class="string">    二号: 22磅</span></span><br><span class="line"><span class="string">    小二: 18磅</span></span><br><span class="line"><span class="string">    三号: 16磅</span></span><br><span class="line"><span class="string">    小三: 15磅</span></span><br><span class="line"><span class="string">    四号: 14磅</span></span><br><span class="line"><span class="string">    小四: 12磅</span></span><br><span class="line"><span class="string">    五号: 10.5磅</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-如果是-doc格式怎么办"><a href="#3-如果是-doc格式怎么办" class="headerlink" title="3.如果是.doc格式怎么办"></a>3.如果是.doc格式怎么办</h3><p>如果是.doc格式的文档，而不是.docx格式的怎么办呢？</p>
+<p>当然是先全部转换成.docx格式啦，获取到文件列表后，循环转换一下就行。</p>
+<p>用一个pywin32的库就可以啦。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pip install pywin32</span></span><br><span class="line"><span class="keyword">from</span> win32com <span class="keyword">import</span> client</span><br><span class="line"></span><br><span class="line"><span class="comment"># .doc 格式转换成 .docx</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">doc2docx</span>(<span class="params">doc_file</span>):</span></span><br><span class="line">    word = client.Dispatch(<span class="string">&quot;Word.Application&quot;</span>)</span><br><span class="line">    doc = word.Documents.Open(doc_file)</span><br><span class="line">    doc.SaveAs(<span class="string">&quot;&#123;&#125;x&quot;</span>.<span class="built_in">format</span>(doc_file), <span class="number">12</span>)</span><br><span class="line">    doc.Close()</span><br><span class="line">    word.Quit()</span><br><span class="line">    <span class="keyword">return</span> doc_file+<span class="string">&#x27;x&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-批量替换word文件名中指定字符"><a href="#4-批量替换word文件名中指定字符" class="headerlink" title="4.批量替换word文件名中指定字符"></a>4.批量替换word文件名中指定字符</h3><p>如果文件名中，也想把”2021年”替换成”2022年”呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重命名文件，修改文件名中的年份</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rename_year</span>(<span class="params">year, file_list</span>):</span></span><br><span class="line">    docx_file_list = []</span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_list:</span><br><span class="line">        <span class="comment"># file: .doc</span></span><br><span class="line">        (file_path, file_name) = os.path.split(file)</span><br><span class="line">        <span class="comment"># file_path = F:\abc</span></span><br><span class="line">        <span class="comment"># file_name: 2021年度******.docx</span></span><br><span class="line">        <span class="comment"># print(file_name)</span></span><br><span class="line">        new_file_name = year + file_name[<span class="number">4</span>:]</span><br><span class="line">        new_file = os.path.join(file_path, new_file_name)</span><br><span class="line">        <span class="comment"># print(new_file) # F:\abc\2022年度******.docx</span></span><br><span class="line">        os.rename(file, new_file)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 如果有.doc格式，顺手在这里转换成.docx</span></span><br><span class="line">        <span class="keyword">if</span>(new_file.endswith(<span class="string">&quot;.doc&quot;</span>)):</span><br><span class="line">            new_file = doc2docx(new_file) <span class="comment"># doc2docx方法上面有讲</span></span><br><span class="line">        docx_file_list.append(new_file)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> docx_file_list</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-----------------开始-----------------&#x27;</span>)</span><br><span class="line"><span class="comment"># 文件位置</span></span><br><span class="line">path = <span class="string">r&#x27;F:\abc&#x27;</span></span><br><span class="line">file_list = get_filelist(path) <span class="comment"># get_filelist方法上面也有讲</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(file_list))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 命名文件，修改文件名中的年份，这里也懒得替换了，就前面4个数字，反正就直接换上了</span></span><br><span class="line">docx_file_list = rename_year(<span class="string">&#x27;2022&#x27;</span>, file_list)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-----------------完成！-----------------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python替换Word文档中指定字符</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-12-01 21:20:09</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/12/01/Python替换Word文档中指定字符/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/12/04/PowerShell%E6%8F%90%E7%A4%BA%E5%87%BA%E4%BA%8E%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9B%AE%E7%9A%84%E5%B7%B2%E7%A6%81%E7%94%A8PSReadLine%E9%97%AE%E9%A2%98/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PowerShell 提示出于兼容性目的已禁用PSReadLine问题</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/11/29/Python%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAts%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python合并多个ts视频文件</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85python-docx%E5%BA%93"><span class="nav-text">安装python-docx库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2Word%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6"><span class="nav-text">替换Word中的字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E8%A7%A3%E9%87%8A"><span class="nav-text">相关解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-replace-str-in-word%E6%96%B9%E6%B3%95"><span class="nav-text">1.replace_str_in_word方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%97%E5%8F%B7%E5%92%8C%E7%A3%85%E5%80%BC%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB"><span class="nav-text">2.字号和磅值对应关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A6%82%E6%9E%9C%E6%98%AF-doc%E6%A0%BC%E5%BC%8F%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-text">3.如果是.doc格式怎么办</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%89%B9%E9%87%8F%E6%9B%BF%E6%8D%A2word%E6%96%87%E4%BB%B6%E5%90%8D%E4%B8%AD%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6"><span class="nav-text">4.批量替换word文件名中指定字符</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python Selenium查找元素方法汇总 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python Selenium查找元素方法汇总</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-04 16:26:27</span>
+        <span class="mobile">2022-05-04 16:26</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Selenium/">Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>关于怎么安装使用Selenium，看这篇文章： <a href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/" title="Python Selenium使用举例">Python Selenium使用举例</a></p>
+<p><strong>Selenium用法</strong> 主要就4步：</p>
+<ul>
+<li>1.创建WebDriver对象；</li>
+<li>2.用WebDriver对象的<strong>get方法</strong>打开网址；</li>
+<li>3.用WebDriver对象的<strong>find_element方法</strong>去找到网页上你需要的元素，返回WebElement对象（找到对象是重点）；</li>
+<li>4.对WebElement对象进行操作，一般就是获取对象的内容、填写入内容或者click操作。</li>
+</ul>
+<p>这篇文章主要针对第3步，列举一些查找元素的方法。（文章代码中使用selenium4版本）</p>
+<a id="more"></a>
+
+<p>在浏览器中查找网页元素，直接按F12，打开开发者模式，在【元素】（Elements）选项中就可以查看网页源码。</p>
+<p>查找网页元素时，有两个情况：</p>
+<ul>
+<li>webdriver.find_element：只查找1个元素（返回WebElement对象）；</li>
+<li>webdriver.find_elements：查找多个元素（返回一个List的WebElement对象）</li>
+</ul>
+<h2 id="一、只查找一个元素（find-element方法）"><a href="#一、只查找一个元素（find-element方法）" class="headerlink" title="一、只查找一个元素（find_element方法）"></a>一、只查找一个元素（find_element方法）</h2><h3 id="1-简单的直接查找"><a href="#1-简单的直接查找" class="headerlink" title="1.简单的直接查找"></a>1.简单的直接查找</h3><ul>
+<li>By.ID：通过HTML标签的id属性（id属性在HTML文档中具体唯一性，所以有id优先通过这个查找）</li>
+<li>By.CLASS_NAME：通过HTML标签的class属性（class属性并没有唯一性，如果有多个元素的话，只会返回第1个；当然有些class在站点中唯一的话，也是可以用来查找的）</li>
+<li>By.TAG_NAME：通过HTML标签（多个元素的话，也是返回第1个）</li>
+</ul>
+<p>对应代码为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="comment"># 初始化代码 ...</span></span><br><span class="line">wd = webdriver.Chrome(options=option)</span><br><span class="line">wd.get(<span class="string">&#x27;https://cn.bing.com/&#x27;</span>)</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">e1 = wd.find_element(By.ID, <span class="string">&#x27;sb_form_q&#x27;</span>) <span class="comment"># 搜索框</span></span><br><span class="line">e2 = wd.find_element(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line">e3 = wd.find_element(By.TAG_NAME, <span class="string">&#x27;input&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>在F12打开的开发者工具中，按 <code>Ctrl+F</code>键，打开搜索。<br>如果是id，搜索id名前面加上<code>#</code>号，直接就能搜索id。如图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_Selenium_find_element_1.png"
+                       style="zoom: 50%;"
+                ></p>
+<p>可以用 <code>WebElement.send_keys(&#39;搜索内容&#39;)</code>测试是否找到了这个元素，或者直接print一下。</p>
+<p>如果找不到元素，或者有这个元素、网站响应速度比代码执行速度慢点，find_element 方法就会抛出 selenium.common.exceptions.NoSuchElementException 异常。</p>
+<h3 id="2-处理-NoSuchElementException-的异常"><a href="#2-处理-NoSuchElementException-的异常" class="headerlink" title="2.处理 NoSuchElementException 的异常"></a>2.处理 NoSuchElementException 的异常</h3><p>因为有2种情况，都会有有这个异常：</p>
+<ul>
+<li>情况一：找不到此元素</li>
+<li>情况二：代码执行速度比网站响应快</li>
+</ul>
+<p>1).如果是第二种情况</p>
+<p>虽然用了 <code>wd.implicitly_wait(10)</code> ，但有时候还是会有这个问题。</p>
+<p>我一般这样处理这个异常，get方法之后sleep一下（时间不是固定，看网络和站点的响应情况），然后如果报这个异常，就再sleep多等待一下再查找这个元素。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wd.get(site_url)</span><br><span class="line">time.sleep(<span class="number">2</span>) <span class="comment"># 等待2秒</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> selenium.common.exceptions.NoSuchElementException:</span><br><span class="line">    time.sleep(<span class="number">5</span>) <span class="comment"># 等待5秒</span></span><br><span class="line">    element = wd.find_element(By.ID,<span class="string">&#x27;search_icon&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>2).如果是第一种情况</p>
+<p>就直接在语句后面加个 if(element)的判断好了，看看false的时候（没找到元素）需要做什么处理或者提示。</p>
+<h3 id="3-通过CSS-SELECTOR-复杂一点的查找（全能查找）"><a href="#3-通过CSS-SELECTOR-复杂一点的查找（全能查找）" class="headerlink" title="3.通过CSS_SELECTOR 复杂一点的查找（全能查找）"></a>3.通过CSS_SELECTOR 复杂一点的查找（全能查找）</h3><p><strong>By.CSS_SELECTOR</strong>就比较全能了，用这个也可以根据ID、CLASS_NAME来查找的。</p>
+<p>1).普通查找</p>
+<ul>
+<li>(By.CSS_SELECTOR,’#sb_form_q’)：# 根据id查找，= (By.ID, ‘sb_form_q’)</li>
+<li>(By.CSS_SELECTOR,’.sb_form_q’)：# 根据class name查找，=(By.CLASS_NAME, ‘sb_form_q’)</li>
+</ul>
+<p>2).子元素、后代元素查找（这个经常会用到）</p>
+<p>比如有如下一段html代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner11&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层11<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner12&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;container&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;layer1&#x27;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner33&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层33<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&#x27;inner44&#x27;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>内层12<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我要查找“内层33”这个内容，那我们可以这样找：</p>
+<ul>
+<li><code>(By.CSS_SELECTOR, &#39;.container &gt; .layer1 &gt; .inner33&#39;)</code>：# 如果用大于号，表示子元素，必须一层一层，中间不能少个</li>
+<li><code>(By.CSS_SELECTOR, &#39;.container .layer1 .inner33&#39;)</code>： # 如果没用大于号，表示后代元素</li>
+<li><code>(By.CSS_SELECTOR, &#39;.container .inner33&#39;)</code>： # 后代元素中间每一层就不是必须了</li>
+</ul>
+<p>3).根据属性查找（这个也常用）</p>
+<ul>
+<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44的</li>
+<li><code>(By.CSS_SELECTOR,&#39;button[type=submit]&#39;)</code>：# 查找tag是button且type属性是submit的</li>
+<li> <code>(By.CSS_SELECTOR,&#39;[href=&quot;www.test.com&quot;]&#39;)</code>：# 查找对应的href属性值</li>
+<li><code>(By.CSS_SELECTOR,&#39;div[class=&quot;inner44&quot;][ctype=&quot;test&quot;]&#39;)</code>：# 查找tag是div，且class属性是inner44、ctype属性是test的（可以多个属性）</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href*=&quot;http&quot;]&#39;)</code>：# 还可以用正则，查找a标签href属性包含http的</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href^=&quot;http&quot;]&#39;)</code>：# 查找a标签href属性以http开头的</li>
+<li><code>(By.CSS_SELECTOR,&#39;a[href$=&quot;.cn&quot;]&#39;)</code>：# 查找a标签href属性以.cn结尾的</li>
+</ul>
+<p>用的最多的感觉除了偶尔能用直接查找外，就是后代元素（多个class_name定位）和根据属性查找。</p>
+<h3 id="4-Xpath选择器（全能查找）"><a href="#4-Xpath选择器（全能查找）" class="headerlink" title="4.Xpath选择器（全能查找）"></a>4.Xpath选择器（全能查找）</h3><p>用css查找基本上很方便、强大了，只是有些场景用 css 查找元素会比较麻烦，而xpath比较方便。<br>另外 Xpath 还有其他领域会使用到，比如爬虫框架 Scrapy，手机App框架 Appium。</p>
+<p>用Xpath的时候，代码就用By.XPATH，类似这样： <code>wd.find_element(By.XPATH,&#39;/html/body/div&#39;)</code></p>
+<p>等回头研究用爬虫的时候，用的例子多一些，再单独写一篇。此篇略。</p>
+<h2 id="二、查找多个元素（find-elements方法）"><a href="#二、查找多个元素（find-elements方法）" class="headerlink" title="二、查找多个元素（find_elements方法）"></a>二、查找多个元素（find_elements方法）</h2><p>比如有时候一个class_name会有很多地方在用 ，就可以查多个元素。</p>
+<p>find_elements方法返回是一个List的列表，所以用for循环一下就能得到每一个。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">elements = wd.find_elements(By.CLASS_NAME, <span class="string">&#x27;sb_form_q&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elements:</span><br><span class="line">    <span class="built_in">print</span>(element.text)</span><br></pre></td></tr></table></figure>
+<p>所以CSS_SELECTOR中还有子节点的写法，我一般也不用，直接find_elements后，取列表中第几个。</p>
+<p><strong>find_element 和 find_elements 的区别</strong></p>
+<ul>
+<li>find_elements：找出符合条件的所有元素， 如果没有，返回空列表</li>
+<li>find_element：找出符合条件的第一个元素，如果没有，抛出NoSuchElementException 异常</li>
+</ul>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python Selenium查找元素方法汇总</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2022-05-04 16:26:27</li>
+        <li>
+            本文链接：http://hduzn.cn/2022/05/04/Python-Selenium查找元素方法汇总/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Selenium/">#Selenium</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/05/06/Python-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python 正则表达式</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/04/Python-Selenium%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Selenium使用举例</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8F%AA%E6%9F%A5%E6%89%BE%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0%EF%BC%88find-element%E6%96%B9%E6%B3%95%EF%BC%89"><span class="nav-text">一、只查找一个元素（find_element方法）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%AE%80%E5%8D%95%E7%9A%84%E7%9B%B4%E6%8E%A5%E6%9F%A5%E6%89%BE"><span class="nav-text">1.简单的直接查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%A4%84%E7%90%86-NoSuchElementException-%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="nav-text">2.处理 NoSuchElementException 的异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%80%9A%E8%BF%87CSS-SELECTOR-%E5%A4%8D%E6%9D%82%E4%B8%80%E7%82%B9%E7%9A%84%E6%9F%A5%E6%89%BE%EF%BC%88%E5%85%A8%E8%83%BD%E6%9F%A5%E6%89%BE%EF%BC%89"><span class="nav-text">3.通过CSS_SELECTOR 复杂一点的查找（全能查找）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Xpath%E9%80%89%E6%8B%A9%E5%99%A8%EF%BC%88%E5%85%A8%E8%83%BD%E6%9F%A5%E6%89%BE%EF%BC%89"><span class="nav-text">4.Xpath选择器（全能查找）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9F%A5%E6%89%BE%E5%A4%9A%E4%B8%AA%E5%85%83%E7%B4%A0%EF%BC%88find-elements%E6%96%B9%E6%B3%95%EF%BC%89"><span class="nav-text">二、查找多个元素（find_elements方法）</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python Flask使用pyecharts画图表 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python Flask使用pyecharts画图表</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2023-01-13 21:42:51</span>
+        <span class="mobile">2023-01-13 21:42</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Flask/">Flask</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>pyecharts 是一个用于生成 Echarts 图表的类库，Echarts 是百度开源的一个数据可视化 JS 库，主要用于数据可视化。所以，pyecharts 实际上就是 Echarts 与 Python 的对接。</p>
+<p>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://pyecharts.org/#/zh-cn/intro" >https://pyecharts.org/#/zh-cn/intro<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>安装pyecharts：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyecharts</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="1-在Flask中画柱形图"><a href="#1-在Flask中画柱形图" class="headerlink" title="1.在Flask中画柱形图"></a>1.在Flask中画柱形图</h3><p>官方文档中也有关于在Flask中使用的说明：<a class="link"   target="_blank" rel="noopener" href="https://pyecharts.org/#/zh-cn/web_flask" >https://pyecharts.org/#/zh-cn/web_flask<i class="fas fa-external-link-alt"></i></a></p>
+<p>这个跟官方的例子差不多，稍微改了下，chart1中变量bar赋值的时候用的是链式的，不习惯这种方式，参考chart2中写法就行，一样的效果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="comment"># pip install gevent</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template</span><br><span class="line"><span class="keyword">from</span> gevent.pywsgi <span class="keyword">import</span> WSGIServer</span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/chart1&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">chart1</span>():</span></span><br><span class="line">    bar = (</span><br><span class="line">        Bar()</span><br><span class="line">        .add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">        .add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">90</span>])</span><br><span class="line">        .add_yaxis(<span class="string">&quot;商家B&quot;</span>, [<span class="number">15</span>, <span class="number">25</span>, <span class="number">16</span>, <span class="number">55</span>, <span class="number">48</span>, <span class="number">8</span>])</span><br><span class="line">        .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar-基本示例&quot;</span>, subtitle=<span class="string">&quot;我是副标题&quot;</span>))</span><br><span class="line">    )</span><br><span class="line">    chart1 = bar.render_embed()</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;chart1.html&#x27;</span>, chart1=chart1)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/chart2&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">chart2</span>():</span></span><br><span class="line">    bar = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;800px&#x27;</span>, height=<span class="string">&#x27;400px&#x27;</span>))</span><br><span class="line">    bar.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">90</span>])</span><br><span class="line">    bar.add_yaxis(<span class="string">&quot;商家B&quot;</span>, [<span class="number">15</span>, <span class="number">25</span>, <span class="number">16</span>, <span class="number">55</span>, <span class="number">48</span>, <span class="number">8</span>])</span><br><span class="line">    bar.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar-基本示例&quot;</span>, subtitle=<span class="string">&quot;副标题&quot;</span>))</span><br><span class="line">    chart2 = bar.render_embed()</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;chart2.html&#x27;</span>, chart2=chart2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># app.run(&#x27;0.0.0.0&#x27;, port=5000)</span></span><br><span class="line">    http_server = WSGIServer((<span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="number">5000</span>), app)</span><br><span class="line">    http_server.serve_forever()</span><br></pre></td></tr></table></figure>
+<p><strong>chart1.html</strong>（我这里不想用在线的js文件，所以把下载好的 echarts.min.js放在项目目录下的<code>static/js</code>目录下了 ）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;Bar-基本示例&lt;&#x2F;title&gt;</span><br><span class="line">    &lt;script src&#x3D;&quot;&#123;&#123;url_for(&#39;static&#39;, filename&#x3D;&#39;js&#x2F;echarts.min.js&#39;)&#125;&#125;&quot;&gt;&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;chart&quot;&gt;</span><br><span class="line">        &#123;&#123; chart1|safe &#125;&#125;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2-在Flask中画时间线轮播多张饼图（Timeline）"><a href="#2-在Flask中画时间线轮播多张饼图（Timeline）" class="headerlink" title="2.在Flask中画时间线轮播多张饼图（Timeline）"></a>2.在Flask中画时间线轮播多张饼图（Timeline）</h3><p>需要展示多个图表的话，依次展示的话直接把2个chart传过去就行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template</span><br><span class="line"><span class="keyword">from</span> gevent.pywsgi <span class="keyword">import</span> WSGIServer</span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar, Timeline, Pie</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/chart3&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">chart3</span>():</span></span><br><span class="line">    <span class="comment"># 画柱形图</span></span><br><span class="line">    bar = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;800px&#x27;</span>, height=<span class="string">&#x27;400px&#x27;</span>))</span><br><span class="line">    bar.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">90</span>])</span><br><span class="line">    bar.add_yaxis(<span class="string">&quot;商家B&quot;</span>, [<span class="number">15</span>, <span class="number">25</span>, <span class="number">16</span>, <span class="number">55</span>, <span class="number">48</span>, <span class="number">8</span>])</span><br><span class="line">    bar.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar-基本示例&quot;</span>, subtitle=<span class="string">&quot;副标题&quot;</span>))</span><br><span class="line">    chart1 = bar.render_embed()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 画时间线轮播多张饼图（每一题统计结果）</span></span><br><span class="line">    timeline = Timeline()</span><br><span class="line">    x_list = [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>]</span><br><span class="line">    ques_id_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>] <span class="comment"># 题目序号</span></span><br><span class="line">    standard_answer_dict = &#123;<span class="number">1</span>:<span class="string">&#x27;A&#x27;</span>, <span class="number">2</span>:<span class="string">&#x27;C&#x27;</span>, <span class="number">3</span>:<span class="string">&#x27;D&#x27;</span>, <span class="number">4</span>:<span class="string">&#x27;B&#x27;</span>, <span class="number">5</span>:<span class="string">&#x27;C&#x27;</span>&#125; <span class="comment"># 标准答案</span></span><br><span class="line">    <span class="keyword">for</span> ques_id <span class="keyword">in</span> ques_id_list:</span><br><span class="line">        standard_answer = standard_answer_dict[ques_id]</span><br><span class="line">        <span class="comment"># 在正确答案后面添加文字：&#x27; 正确答案&#x27;</span></span><br><span class="line">        new_x_list = []</span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> x_list:</span><br><span class="line">            <span class="keyword">if</span>(x == standard_answer):</span><br><span class="line">                new_x_list.append(x + <span class="string">&#x27; 正确答案&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                new_x_list.append(x)</span><br><span class="line">        </span><br><span class="line">        num_list = [random.randint(<span class="number">0</span>, <span class="number">5</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)] <span class="comment"># 随机生成每个选项的选择人数</span></span><br><span class="line">        pie_data_dict = <span class="built_in">list</span>(<span class="built_in">zip</span>(new_x_list, num_list)) <span class="comment"># [(&#x27;A&#x27;, 1), (&#x27;B 正确答案&#x27;, 1), (&#x27;C&#x27;, 2), (&#x27;D&#x27;, 3)]</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 饼图</span></span><br><span class="line">        pie = Pie(init_opts=opts.InitOpts(width=<span class="string">&#x27;300px&#x27;</span>, height=<span class="string">&#x27;300px&#x27;</span>))</span><br><span class="line">        pie.add(<span class="string">&quot;&quot;</span>, pie_data_dict)</span><br><span class="line">        pie.set_global_opts(title_opts=opts.TitleOpts(title=<span class="built_in">str</span>(ques_id)+<span class="string">&#x27;题&#x27;</span>, subtitle=<span class="string">&quot;副标题&quot;</span>))</span><br><span class="line">        pie.set_series_opts(label_opts=opts.LabelOpts(formatter=<span class="string">&quot;&#123;b&#125;: &#123;c&#125;&quot;</span>)) <span class="comment"># &#123;b&#125;是数据项的名称，&#123;c&#125;是数据项的值。</span></span><br><span class="line">        timeline.add(pie, ques_id)</span><br><span class="line">    chart2 = timeline.render_embed()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;chart3.html&#x27;</span>, chart1=chart1, chart2=chart2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># app.run(&#x27;0.0.0.0&#x27;, port=5000)</span></span><br><span class="line">    http_server = WSGIServer((<span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="number">5000</span>), app)</span><br><span class="line">    http_server.serve_forever()</span><br></pre></td></tr></table></figure>
+<p><a class="link"   target="_blank" rel="noopener" href="http://localhost:5000/chart3" >http://localhost:5000/chart3<i class="fas fa-external-link-alt"></i></a> 运行结果如图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_flask_pyecharts_1.png"
+                      style="zoom: 50%;"
+                ></p>
+<h3 id="3-Grid：并行多图"><a href="#3-Grid：并行多图" class="headerlink" title="3.Grid：并行多图"></a>3.Grid：并行多图</h3><p>如果需要布局多张图表的话，可以用Grid类：</p>
+<blockquote>
+<p>pos_bottom：表示与下方间距<br>pos_top：表示与上方间距<br>pos_right：表示与右方间距<br>pos_left：表示与左方间距</p>
+</blockquote>
+<p>布局的时候，顺便也要把 LegendOpts（图例配置项）和 TitleOpts（标题配置项）位置也调整下。</p>
+<p>举个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app.py</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template</span><br><span class="line"><span class="keyword">from</span> gevent.pywsgi <span class="keyword">import</span> WSGIServer</span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar, Grid</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    bar1 = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;150px&#x27;</span>, height=<span class="string">&#x27;100px&#x27;</span>))</span><br><span class="line">    bar1.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar1.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">90</span>])</span><br><span class="line">    bar1.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar1-基本示例&quot;</span>, subtitle=<span class="string">&quot;Bar1副标题&quot;</span>, pos_bottom=<span class="string">&quot;93%&quot;</span>, pos_right=<span class="string">&quot;85%&quot;</span>),</span><br><span class="line">                        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&quot;95%&quot;</span>, pos_right=<span class="string">&quot;70%&quot;</span>))</span><br><span class="line"></span><br><span class="line">    bar2 = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;150px&#x27;</span>, height=<span class="string">&#x27;100px&#x27;</span>))</span><br><span class="line">    bar2.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar2.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">80</span>])</span><br><span class="line">    bar2.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar2-基本示例&quot;</span>, subtitle=<span class="string">&quot;Bar2副标题&quot;</span>, pos_bottom=<span class="string">&quot;93%&quot;</span>, pos_left=<span class="string">&quot;55%&quot;</span>),</span><br><span class="line">                        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&quot;95%&quot;</span>, pos_left=<span class="string">&quot;70%&quot;</span>))</span><br><span class="line"></span><br><span class="line">    bar3 = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;150px&#x27;</span>, height=<span class="string">&#x27;100px&#x27;</span>))</span><br><span class="line">    bar3.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar3.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">70</span>])</span><br><span class="line">    bar3.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar3-基本示例&quot;</span>, subtitle=<span class="string">&quot;Bar3副标题&quot;</span>, pos_top=<span class="string">&quot;52%&quot;</span>, pos_right=<span class="string">&quot;85%&quot;</span>),</span><br><span class="line">                        legend_opts=opts.LegendOpts(pos_top=<span class="string">&quot;54%&quot;</span>, pos_right=<span class="string">&quot;70%&quot;</span>))</span><br><span class="line"></span><br><span class="line">    bar4 = Bar(init_opts=opts.InitOpts(width=<span class="string">&#x27;150px&#x27;</span>, height=<span class="string">&#x27;100px&#x27;</span>))</span><br><span class="line">    bar4.add_xaxis([<span class="string">&quot;衬衫&quot;</span>, <span class="string">&quot;羊毛衫&quot;</span>, <span class="string">&quot;雪纺衫&quot;</span>, <span class="string">&quot;裤子&quot;</span>, <span class="string">&quot;高跟鞋&quot;</span>, <span class="string">&quot;袜子&quot;</span>])</span><br><span class="line">    bar4.add_yaxis(<span class="string">&quot;商家A&quot;</span>, [<span class="number">5</span>, <span class="number">20</span>, <span class="number">36</span>, <span class="number">10</span>, <span class="number">75</span>, <span class="number">60</span>])</span><br><span class="line">    bar4.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;Bar4-基本示例&quot;</span>, subtitle=<span class="string">&quot;Bar4副标题&quot;</span>, pos_top=<span class="string">&quot;52%&quot;</span>, pos_left=<span class="string">&quot;55%&quot;</span>),</span><br><span class="line">                        legend_opts=opts.LegendOpts(pos_top=<span class="string">&quot;54%&quot;</span>, pos_left=<span class="string">&quot;70%&quot;</span>))</span><br><span class="line"></span><br><span class="line">    grid = Grid(init_opts=opts.InitOpts(width=<span class="string">&#x27;960px&#x27;</span>, height=<span class="string">&#x27;800px&#x27;</span>))</span><br><span class="line">    grid.add(bar1, grid_opts=opts.GridOpts(pos_bottom=<span class="string">&quot;60%&quot;</span>, pos_right=<span class="string">&quot;60%&quot;</span>)) <span class="comment"># 左上</span></span><br><span class="line">    grid.add(bar2, grid_opts=opts.GridOpts(pos_bottom=<span class="string">&quot;60%&quot;</span>, pos_left=<span class="string">&quot;60%&quot;</span>)) <span class="comment"># 右上</span></span><br><span class="line">    grid.add(bar3, grid_opts=opts.GridOpts(pos_top=<span class="string">&quot;60%&quot;</span>, pos_right=<span class="string">&quot;60%&quot;</span>)) <span class="comment"># 左下</span></span><br><span class="line">    grid.add(bar4, grid_opts=opts.GridOpts(pos_top=<span class="string">&quot;60%&quot;</span>, pos_left=<span class="string">&quot;60%&quot;</span>)) <span class="comment"># 右下</span></span><br><span class="line"></span><br><span class="line">    chart1 = grid.render_embed()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">&#x27;index.html&#x27;</span>, chart1=chart1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># app.run(&#x27;0.0.0.0&#x27;, port=5000)</span></span><br><span class="line">    http_server = WSGIServer((<span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="number">5000</span>), app)</span><br><span class="line">    http_server.serve_forever()</span><br></pre></td></tr></table></figure>
+<p>运行效果如下图：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/Python_flask_pyecharts_2.png"
+                      style="zoom: 50%;"
+                ></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python Flask使用pyecharts画图表</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2023-01-13 21:42:51</li>
+        <li>
+            本文链接：http://hduzn.cn/2023/01/13/Python-Flask使用pyecharts画图表/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Flask/">#Flask</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2023/01/14/%E6%9C%8D%E5%8A%A1%E5%99%A8Docker%E6%90%AD%E5%BB%BAFlask%E5%BA%94%E7%94%A8%EF%BC%88%E4%BA%8C%EF%BC%89/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">服务器Docker搭建Flask应用（二）</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2023/01/10/Python-Flask%E4%BD%BF%E7%94%A8WSGI-server/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Flask使用WSGI server</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9C%A8Flask%E4%B8%AD%E7%94%BB%E6%9F%B1%E5%BD%A2%E5%9B%BE"><span class="nav-text">1.在Flask中画柱形图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%9C%A8Flask%E4%B8%AD%E7%94%BB%E6%97%B6%E9%97%B4%E7%BA%BF%E8%BD%AE%E6%92%AD%E5%A4%9A%E5%BC%A0%E9%A5%BC%E5%9B%BE%EF%BC%88Timeline%EF%BC%89"><span class="nav-text">2.在Flask中画时间线轮播多张饼图（Timeline）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Grid%EF%BC%9A%E5%B9%B6%E8%A1%8C%E5%A4%9A%E5%9B%BE"><span class="nav-text">3.Grid：并行多图</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

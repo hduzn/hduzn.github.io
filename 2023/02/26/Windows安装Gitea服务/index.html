@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Windows安装Gitea服务 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Windows安装Gitea服务</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2023-02-26 12:57:18</span>
+        <span class="mobile">2023-02-26 12:57</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Gitea 是一个开源社区驱动的轻量级代码托管解决方案，后端采用 Go 编写，采用 MIT 许可证。支持跨平台，支持 Linux, macOS 和 Windows 以及各种架构。</p>
+<p>Gitea 是一个自己托管的Git服务程序。和GitHub, Bitbucket or Gitlab等比较类似，是从 Gogs 发展而来的。</p>
+<p>官方文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.gitea.io/zh-cn/" >https://docs.gitea.io/zh-cn/<i class="fas fa-external-link-alt"></i></a></p>
+<p>Github项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/go-gitea/gitea" >https://github.com/go-gitea/gitea<i class="fas fa-external-link-alt"></i></a></p>
+<a id="more"></a>
+
+<h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><h3 id="1-安装Git"><a href="#1-安装Git" class="headerlink" title="1.安装Git"></a>1.安装Git</h3><p>Gitea 执行各项 Git 操作依赖的是背后的 git 命令行工具，因此在 Windows 平台上需要安装Git。</p>
+<p>Git for windows下载地址：<a class="link"   target="_blank" rel="noopener" href="https://git-scm.com/download/win" >https://git-scm.com/download/win<i class="fas fa-external-link-alt"></i></a></p>
+<p>一般现在都是64位的系统，下载：64-bit Git for Windows Setup 这一个就行。</p>
+<p>下载慢的话，还可以去这下载最新的Git for windows的安装包：<a class="link"   target="_blank" rel="noopener" href="https://gitforwindows.org/" >https://gitforwindows.org/<i class="fas fa-external-link-alt"></i></a></p>
+<p>下载完成后，安装就行。</p>
+<p><strong>注意：</strong><br>安装完成后，看一下环境变量中有没有，如果没有的话，要把git.exe的目录要加到系统环境变量PATH中。<br>比如我这是：<code>C:\Program Files\Git\cmd</code></p>
+<h3 id="2-下载-Gitea"><a href="#2-下载-Gitea" class="headerlink" title="2.下载 Gitea"></a>2.下载 Gitea</h3><p>官网上进入下载页面：<a class="link"   target="_blank" rel="noopener" href="https://dl.gitea.com/gitea/" >https://dl.gitea.com/gitea/<i class="fas fa-external-link-alt"></i></a></p>
+<p>这里一般下载最新的稳定发行版本就行。<br>看不出的话，去项目的release页面上看：<a class="link"   target="_blank" rel="noopener" href="https://github.com/go-gitea/gitea/releases" >https://github.com/go-gitea/gitea/releases<i class="fas fa-external-link-alt"></i></a><br>当前最新的稳定发行版本是v1.18.5。</p>
+<p>当然，在release页面上直接下载也可以的。</p>
+<p>在官网的下载页面中就进入1.18.5的目录，即：<a class="link"   target="_blank" rel="noopener" href="https://dl.gitea.com/gitea/1.18.5/" >https://dl.gitea.com/gitea/1.18.5/<i class="fas fa-external-link-alt"></i></a></p>
+<p>再找到带 windows的，64位系统用amd64，32位用 386。至于有个xz后缀的就是压缩包版本，无所谓。也可以直接下载压缩包版本，再解压。</p>
+<p>看到有2个选项：</p>
+<blockquote>
+<p>gitea-1.18.5-gogit-windows-4.0-amd64.exe<br>gitea-1.18.5-windows-4.0-amd64.exe</p>
+</blockquote>
+<p>带gogit的应该是指是否集成由go来原生实现的git，感觉也无所谓，自己选一个下载就行。</p>
+<h2 id="二、安装Gitea"><a href="#二、安装Gitea" class="headerlink" title="二、安装Gitea"></a>二、安装Gitea</h2><p>比如 ，我这下载了 gitea-1.18.5-gogit-windows-4.0-amd64.exe 安装包，放在 E:\Gitea 目录中。</p>
+<p>为了方便，直接把文件重命名为：gitea.exe</p>
+<h3 id="1-双击运行-gitea-exe"><a href="#1-双击运行-gitea-exe" class="headerlink" title="1.双击运行 gitea.exe"></a>1.双击运行 gitea.exe</h3><p>当第一次运行 Gitea 时，需要打开 <a class="link"   target="_blank" rel="noopener" href="http://localhost:3000/" >http://localhost:3000<i class="fas fa-external-link-alt"></i></a> 根据指引完成 Gitea 的初始化安装。<br>这个步骤会创建配置文件并存储到 <code>E:\Gitea\custom\conf\app.ini</code> 文件中。</p>
+<p>如果有问题，可以提前在 <code>E:\Gitea</code> 目录下创建一个 custom 目录就行。</p>
+<h3 id="2-初始化安装"><a href="#2-初始化安装" class="headerlink" title="2.初始化安装"></a>2.初始化安装</h3><p>打开 <a class="link"   target="_blank" rel="noopener" href="http://localhost:3000/" >http://localhost:3000<i class="fas fa-external-link-alt"></i></a> 后：</p>
+<blockquote>
+<p>数据库类型：SQLite3（自己用，为了方便就直接用SQLite3了，企业之类可以用MySQL这些）<br>数据库文件：默认。绝对路径在<code>E:\Gitea\data</code>目录下</p>
+<p>站点名称：随意写<br>仓库根目录：默认<br>操作系统用户名：默认<br>服务器域名：本机ip（例如：192.168.31.101）<br>HTTP服务端口：3000（默认）<br>基础URL：<a class="link"   target="_blank" rel="noopener" href="http://192.168.31.101:3000/" >http://192.168.31.101:3000/<i class="fas fa-external-link-alt"></i></a></p>
+<p>管理员账号设置：可以先添加一个</p>
+</blockquote>
+<p>最后点立即安装就行。这样就初始化好了。</p>
+<p>然后用管理员账号登录就可以操作了。</p>
+<h2 id="三、将Gitea注册为Windows服务"><a href="#三、将Gitea注册为Windows服务" class="headerlink" title="三、将Gitea注册为Windows服务"></a>三、将Gitea注册为Windows服务</h2><p>官方文档上有说：<a class="link"   target="_blank" rel="noopener" href="https://docs.gitea.io/zh-cn/windows-service/" >https://docs.gitea.io/zh-cn/windows-service/<i class="fas fa-external-link-alt"></i></a></p>
+<p>以管理员身份打开Windows PowerShell或命令提示符 （CMD），然后运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sc create gitea start= auto binPath= <span class="string">&quot;\&quot;C:\gitea\gitea.exe\&quot; web --config \&quot;C:\gitea\custom\conf\app.ini\&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>将 <code>C:\gitea</code> 替换成你的 Gitea 安装目录。</p>
+<p>但是，发现直接运行的时候有点问题（我也不知道是不是我的个例）。</p>
+<p>然后看了下sc命令后，格式是这样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sc &lt;server&gt; [<span class="built_in">command</span>] [service name] &lt;option1&gt; &lt;option2&gt;</span><br></pre></td></tr></table></figure>
+<p>具体用的时候，第一次可能需要在命令行输入Tab键，然后会自动补全sc命令的用法，是<code>.\sc.exe</code>，反正按提示输入。</p>
+<p>比如我这是<code>.\sc.exe</code>，就改成这样（注意等号后面有空格）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\sc.exe create gitea binPath= <span class="string">&quot;E:\Gitea\gitea.exe --config E:\Gitea\custom\conf\app.ini&quot;</span> start= auto</span><br></pre></td></tr></table></figure>
+<p>再打开【服务】就可以看到 gitea 这项服务，启动一下就可以了。</p>
+<p>后面再用这个sc命令的时候，直接用 <code>sc.exe</code>就行了。按Tab键，看补全的是不是。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动gitea服务（可以直接在【服务】中启动）</span></span><br><span class="line">sc start gitea</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从Windows服务中删除服务gitea</span></span><br><span class="line">sc delete gitea</span><br></pre></td></tr></table></figure>
+<h2 id="四、在VS-Code中使用自建的Gitea"><a href="#四、在VS-Code中使用自建的Gitea" class="headerlink" title="四、在VS Code中使用自建的Gitea"></a>四、在VS Code中使用自建的Gitea</h2><h3 id="1-克隆仓库代码"><a href="#1-克隆仓库代码" class="headerlink" title="1.克隆仓库代码"></a>1.克隆仓库代码</h3><p>在Gitea中创建仓库后，在【下载此仓库】的下拉选项中，直接选择“在 VS Code 中克隆”。<br>然后这个目录就可以进行版本管理了。</p>
+<h3 id="2-修改、提交新代码"><a href="#2-修改、提交新代码" class="headerlink" title="2.修改、提交新代码"></a>2.修改、提交新代码</h3><ul>
+<li>修改文件、内容后，在VS Code左侧有个【源代码管理】的选项（一般第3个）</li>
+<li>点开后，移动到更改过的文件上方，点击+号按钮（暂存更改），可以批量选中文件的</li>
+<li>然后在上面消息框输入消息内容，点击“提交”按钮提交</li>
+<li>最后，点击“同步更改”，就会提交推送到仓库去</li>
+</ul>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Windows安装Gitea服务</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2023-02-26 12:57:18</li>
+        <li>
+            本文链接：http://hduzn.cn/2023/02/26/Windows安装Gitea服务/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2023/03/29/cctv%E5%AE%98%E7%BD%91%E8%A7%86%E9%A2%91%E4%B8%8B%E8%BD%BD%E8%8A%B1%E5%B1%8F%E6%80%8E%E4%B9%88%E5%8A%9E/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">cctv官网视频下载花屏怎么办</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2023/02/12/Python-Flask-SQLAlchemy%E6%8F%92%E5%85%A5%E5%AD%97%E5%85%B8%E6%95%B0%E6%8D%AE%E6%96%B9%E6%B3%95/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Python Flask SQLAlchemy 插入字典数据方法</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-text">一、准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85Git"><span class="nav-text">1.安装Git</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%8B%E8%BD%BD-Gitea"><span class="nav-text">2.下载 Gitea</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85Gitea"><span class="nav-text">二、安装Gitea</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8F%8C%E5%87%BB%E8%BF%90%E8%A1%8C-gitea-exe"><span class="nav-text">1.双击运行 gitea.exe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%89%E8%A3%85"><span class="nav-text">2.初始化安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B0%86Gitea%E6%B3%A8%E5%86%8C%E4%B8%BAWindows%E6%9C%8D%E5%8A%A1"><span class="nav-text">三、将Gitea注册为Windows服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%9C%A8VS-Code%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%87%AA%E5%BB%BA%E7%9A%84Gitea"><span class="nav-text">四、在VS Code中使用自建的Gitea</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%85%8B%E9%9A%86%E4%BB%93%E5%BA%93%E4%BB%A3%E7%A0%81"><span class="nav-text">1.克隆仓库代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9%E3%80%81%E6%8F%90%E4%BA%A4%E6%96%B0%E4%BB%A3%E7%A0%81"><span class="nav-text">2.修改、提交新代码</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

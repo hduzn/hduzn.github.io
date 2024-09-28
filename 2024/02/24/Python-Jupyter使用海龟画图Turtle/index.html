@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            Python Jupyter使用海龟画图(Turtle) |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Python Jupyter使用海龟画图(Turtle)</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2024-02-24 22:55:13</span>
+        <span class="mobile">2024-02-24 22:55</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>正常我们使用Turtle海龟画图，只需要安装PythonTurtle库就行了。</p>
+<p>但在 Jupyter中，因为是在web网页上，所以还需要安装别的，所以用的是 ipyturtle3 库，安装的时候会把依赖库都安装上。</p>
+<p>注意：<mark>不是 ipyturtle 而是 ipyturtle3，ipyturtle是旧的了。</mark></p>
+<a id="more"></a>
+
+<h2 id="普通安装"><a href="#普通安装" class="headerlink" title="普通安装"></a>普通安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install PythonTurtle</span><br></pre></td></tr></table></figure>
+<p>使用举例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 画6个正方形</span></span><br><span class="line"><span class="comment"># 导入库</span></span><br><span class="line"><span class="keyword">import</span> turtle <span class="keyword">as</span> t</span><br><span class="line"></span><br><span class="line"><span class="comment"># 画图形</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        t.forward(<span class="number">50</span>)</span><br><span class="line">        t.left(<span class="number">90</span>)</span><br><span class="line">    t.left(<span class="number">60</span>)</span><br><span class="line"><span class="comment"># 完成</span></span><br><span class="line">t.done()</span><br></pre></td></tr></table></figure>
+<h2 id="Jupyter中普通安装"><a href="#Jupyter中普通安装" class="headerlink" title="Jupyter中普通安装"></a>Jupyter中普通安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install ipyturtle3</span><br></pre></td></tr></table></figure>
+<p>就是前面导入的库不同，需要初始化一下环境。用到canvas。</p>
+<p>下面基础画图的代码，就基本上可以用一样的。</p>
+<p>使用举例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入库</span></span><br><span class="line"><span class="keyword">import</span> ipyturtle3 <span class="keyword">as</span> turtle</span><br><span class="line"><span class="keyword">from</span> ipyturtle3 <span class="keyword">import</span> hold_canvas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化</span></span><br><span class="line">myCanvas = turtle.Canvas(width=<span class="number">500</span>,height=<span class="number">300</span>) <span class="comment"># 创建一个画布</span></span><br><span class="line">myTS = turtle.TurtleScreen(myCanvas) <span class="comment"># 创建一个海龟屏幕，它是海龟绘图的容器</span></span><br><span class="line"></span><br><span class="line">myTS.clear() <span class="comment"># 清除屏幕</span></span><br><span class="line">t = turtle.Turtle(myTS) <span class="comment"># 创建一个海龟</span></span><br><span class="line">display(myCanvas) <span class="comment"># 显示画布</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 画图形</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        t.forward(<span class="number">50</span>)</span><br><span class="line">        t.left(<span class="number">90</span>)</span><br><span class="line">    t.left(<span class="number">60</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="官方页面中的例子"><a href="#官方页面中的例子" class="headerlink" title="官方页面中的例子"></a>官方页面中的例子</h3><p>官方页面：<a class="link"   target="_blank" rel="noopener" href="https://pypi.org/project/ipyturtle3/" >https://pypi.org/project/ipyturtle3/<i class="fas fa-external-link-alt"></i></a></p>
+<p>例子（让gpt中文注释了下）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ipyturtle3 <span class="keyword">as</span> turtle</span><br><span class="line"><span class="keyword">from</span> ipyturtle3 <span class="keyword">import</span> hold_canvas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个画布</span></span><br><span class="line">myCanvas=turtle.Canvas(width=<span class="number">500</span>,height=<span class="number">250</span>)</span><br><span class="line">display(myCanvas)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个海龟屏幕，它是海龟绘图的容器</span></span><br><span class="line">myTS=turtle.TurtleScreen(myCanvas)</span><br><span class="line">myTS.clear()  <span class="comment"># 清除屏幕</span></span><br><span class="line">myTS.bgcolor(<span class="string">&quot;lightgreen&quot;</span>)  <span class="comment"># 设置背景颜色为浅绿色</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建两个海龟，bob和jess</span></span><br><span class="line">bob=turtle.Turtle(myTS)</span><br><span class="line">jess=turtle.Turtle(myTS,isHolonomic=<span class="literal">True</span>)  <span class="comment"># jess是全向的，可以在任何方向上移动</span></span><br><span class="line">jess.shape(<span class="string">&quot;square&quot;</span>)  <span class="comment"># 设置jess的形状为正方形</span></span><br><span class="line">bob.shape(<span class="string">&quot;turtle&quot;</span>)  <span class="comment"># 设置bob的形状为海龟</span></span><br><span class="line"></span><br><span class="line">myTS.delay(<span class="number">200</span>)  <span class="comment"># 设置延迟为200毫秒</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 非全向海龟bob的移动示例</span></span><br><span class="line">bob.forward(<span class="number">50</span>)  <span class="comment"># 向前移动50个单位</span></span><br><span class="line">bob.left(<span class="number">90</span>)  <span class="comment"># 向左转90度</span></span><br><span class="line">bob.forward(<span class="number">50</span>)</span><br><span class="line">bob.left(<span class="number">90</span>)</span><br><span class="line">bob.forward(<span class="number">50</span>)</span><br><span class="line">bob.left(<span class="number">90</span>)</span><br><span class="line">bob.forward(<span class="number">50</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 全向海龟jess的移动示例</span></span><br><span class="line">jess.moveleft(<span class="number">200</span>)  <span class="comment"># 向左移动200个单位</span></span><br><span class="line">jess.moveup(<span class="number">100</span>)  <span class="comment"># 向上移动100个单位</span></span><br><span class="line">jess.moveright(<span class="number">100</span>)  <span class="comment"># 向右移动100个单位</span></span><br><span class="line">jess.movedown(<span class="number">100</span>)  <span class="comment"># 向下移动100个单位</span></span><br><span class="line">jess.turnright(<span class="number">45</span>)  <span class="comment"># 向右转45度</span></span><br><span class="line">jess.turn(-<span class="number">45</span>)  <span class="comment"># 向左转45度</span></span><br><span class="line">jess.distance_at_angle(<span class="number">50</span>,<span class="number">45</span>)  <span class="comment"># 在45度角移动50个单位</span></span><br><span class="line"></span><br><span class="line">myTS.clear()  <span class="comment"># 清除屏幕</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制彩虹苯环</span></span><br><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;purple&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;orange&#x27;</span>, <span class="string">&#x27;yellow&#x27;</span>]  <span class="comment"># 颜色列表</span></span><br><span class="line">t = turtle.Turtle(myTS)  <span class="comment"># 创建一个新的海龟t</span></span><br><span class="line">myTS.bgcolor(<span class="string">&#x27;black&#x27;</span>)  <span class="comment"># 设置背景颜色为黑色</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):  <span class="comment"># 循环50次</span></span><br><span class="line">    <span class="keyword">with</span>(hold_canvas(myCanvas)):  <span class="comment"># 在画布上绘图</span></span><br><span class="line">        t.pencolor(colors[x%<span class="number">6</span>])  <span class="comment"># 设置画笔颜色</span></span><br><span class="line">        t.width(x//<span class="number">100</span> + <span class="number">1</span>)  <span class="comment"># 设置画笔宽度</span></span><br><span class="line">        t.forward(x)  <span class="comment"># 向前移动x个单位</span></span><br><span class="line">        t.left(<span class="number">59</span>)  <span class="comment"># 向左转59度</span></span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Python Jupyter使用海龟画图(Turtle)</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2024-02-24 22:55:13</li>
+        <li>
+            本文链接：http://hduzn.cn/2024/02/24/Python-Jupyter使用海龟画图Turtle/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2024/03/30/frp%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E5%A4%B1%E8%B4%A5/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">frp客户端容器启动失败</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2024/01/29/VSCode%E4%B8%AD%E5%88%B6%E4%BD%9C%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BEMarkmap/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">VSCode中制作思维导图(Markmap)</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%AE%89%E8%A3%85"><span class="nav-text">普通安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Jupyter%E4%B8%AD%E6%99%AE%E9%80%9A%E5%AE%89%E8%A3%85"><span class="nav-text">Jupyter中普通安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E9%A1%B5%E9%9D%A2%E4%B8%AD%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-text">官方页面中的例子</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

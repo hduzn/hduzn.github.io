@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            ffmpeg：多媒体处理利器及常用命令详解 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">ffmpeg：多媒体处理利器及常用命令详解</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2024-06-23 20:14:17</span>
+        <span class="mobile">2024-06-23 20:14</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Software/">Software</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Software/">Software</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/ffmpeg/">ffmpeg</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>FFmpeg 是一款功能强大的跨平台多媒体框架，可用于各种音视频处理任务。它提供一系列命令行工具，用于转换、编辑、合并、拆分、滤镜、流化等操作。FFmpeg <strong>开源免费</strong>，支持多种操作系统，包括 Windows、Linux 和 macOS。</p>
+<p>可以执行音频和视频多种格式的录影、转换、串流功能，包含了libavcodec——这是一个用于多个项目中音频和视频的解码器库，以及libavformat——一个音频与视频格式转换库。</p>
+<a id="more"></a>
+
+<h2 id="一、下载FFmpeg"><a href="#一、下载FFmpeg" class="headerlink" title="一、下载FFmpeg"></a>一、下载FFmpeg</h2><h3 id="1-下载FFmpeg"><a href="#1-下载FFmpeg" class="headerlink" title="1.下载FFmpeg"></a>1.下载FFmpeg</h3><p>官网就可以下载 FFmpeg：（<a class="link"   target="_blank" rel="noopener" href="http://ffmpeg.org/download.html" >http://ffmpeg.org/download.html<i class="fas fa-external-link-alt"></i></a> ）</p>
+<p>Windows系统的话，选择【Windows EXE Files】-&gt;【Windows builds from gyan.dev】。</p>
+<p>页面上的都可以下载，比如我这直接下载【release builds】中的 ffmpeg-release-essentials.7z，目前最新的版本。如下图所示：<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/img/ffmpeg_download_m3u8_1.png"
+                      style="zoom: 50%;"
+                ></p>
+<h3 id="2-添加到环境变量"><a href="#2-添加到环境变量" class="headerlink" title="2.添加到环境变量"></a>2.添加到环境变量</h3><p>下载后是个压缩包，直接解压出来。比如我这解压出来是个 ffmpeg-5.0.1-essentials_build 目录，然后直接把这个目录下的<strong>bin目录</strong>添加到系统环境变量就行。（怎么添加环境变量，百度一下就有）</p>
+<p>因为bin目录下有 ffmpeg.exe 可执行程序，我们在命令行里用 ffmpeg命令时，用的就是这个。</p>
+<h2 id="二、常用命令"><a href="#二、常用命令" class="headerlink" title="二、常用命令"></a>二、常用命令</h2><h3 id="1-音-视频格式转换"><a href="#1-音-视频格式转换" class="headerlink" title="1.音/视频格式转换"></a>1.音/视频格式转换</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 视频格式转换</span></span><br><span class="line">ffmpeg -i input_video.mp4 output_video.avi</span><br><span class="line"></span><br><span class="line"><span class="comment"># 音频格式转换（比特率192kbps）</span></span><br><span class="line">ffmpeg -i input.wav -codec:a libmp3lame -b:a 192k output.mp3</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-i input_video.mp4：指定输入视频文件。</span><br><span class="line">output_video.avi：输出的视频文件。</span><br><span class="line">-codec:a libmp3lame：指定使用libmp3lame编解码器进行MP3编码。</span><br><span class="line">-b:a 192k：音频比特率192kbps。</span><br></pre></td></tr></table></figure>
+<h3 id="2-从视频中提取音频"><a href="#2-从视频中提取音频" class="headerlink" title="2.从视频中提取音频"></a>2.从视频中提取音频</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input_video.mp4 -vn -acodec libmp3lame output_audio.mp3</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-i input.mp4：指定输入视频文件。</span><br><span class="line">-vn：禁用视频流，只处理音频流。</span><br><span class="line">-acodec libmp3lame：指定音频编解码器为LAME MP3。</span><br><span class="line">output_audio.mp3：指定输出音频文件。</span><br></pre></td></tr></table></figure>
+<h3 id="3-音-视频剪辑"><a href="#3-音-视频剪辑" class="headerlink" title="3.音/视频剪辑"></a>3.音/视频剪辑</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 视频剪辑（剪辑出从10秒到20秒视频）</span></span><br><span class="line">ffmpeg -i input_video.mp4 -ss 00:00:10 -to 00:00:20 -c copy output_video.mp4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 音频剪辑（剪辑出从1分30秒到1分45秒音频）</span></span><br><span class="line">ffmpeg -i input_audio.mp3 -ss 00:01:30 -to 00:01:45 -c copy output_clip.mp3</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-ss 00:01:30：指定剪辑的开始时间，这里是从1分30秒开始。</span><br><span class="line">-to 00:01:45：指定剪辑的结束时间，这里是1分45秒。</span><br><span class="line">-c copy：指定使用相同的音频编解码器和格式进行复制。</span><br></pre></td></tr></table></figure>
+<h3 id="4-合并音视频"><a href="#4-合并音视频" class="headerlink" title="4.合并音视频"></a>4.合并音视频</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i video.mp4 -i audio.mp3 -c:v copy -c:a aac output.mp4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 都不重新编码，速度快，但文件质量可能会略微下降</span></span><br><span class="line">ffmpeg -i video.mp4 -i audio.mp3 -c copy output.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-i video.mp4：输入视频文件</span><br><span class="line">-i audio.mp3：输入音频文件</span><br><span class="line">-c:v copy：&#96;-c:v&#96;指定视频编解码器，copy表示直接复制视频流不重新编码。</span><br><span class="line">-c:a aac：&#96;-c:a&#96;指定音频编解码器，aac表示将音频重新编码为AAC格式。</span><br><span class="line">output.mp4：输出的视频文件</span><br><span class="line"></span><br><span class="line">还可以添加其它参数：</span><br><span class="line">1.音频延迟0.5秒（-itsoffset 0.5）</span><br><span class="line">ffmpeg -i video.mp4 -itsoffset 0.5 -i audio.mp3 -c:v copy -c:a aac output.mp4</span><br><span class="line"></span><br><span class="line">2.音频音量减半（-filter_complex &quot;[1:a]volume&#x3D;0.5[a]&quot;）</span><br><span class="line">ffmpeg -i video.mp4 -i audio.mp3 -filter_complex &quot;[1:a]volume&#x3D;0.5[a]&quot; -map 0:v -map &quot;[a]&quot; -c:v copy -c:a aac output.mp4</span><br></pre></td></tr></table></figure>
+<h3 id="5-调整视频分辨率"><a href="#5-调整视频分辨率" class="headerlink" title="5.调整视频分辨率"></a>5.调整视频分辨率</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf scale=1280:720 output.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-vf scale&#x3D;1280:720：分辨率调整为1280x720。</span><br></pre></td></tr></table></figure>
+<h3 id="6-为视频添加字幕"><a href="#6-为视频添加字幕" class="headerlink" title="6.为视频添加字幕"></a>6.为视频添加字幕</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.mp4 -vf subtitle=subtitle.srt output.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-vf subtitle&#x3D;subtitle.srt：添加 subtitle.srt 字幕。</span><br></pre></td></tr></table></figure>
+<h3 id="7-下载m3u8格式的视频"><a href="#7-下载m3u8格式的视频" class="headerlink" title="7.下载m3u8格式的视频"></a>7.下载m3u8格式的视频</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.直接下载（一般默认最清晰的版本）</span></span><br><span class="line">ffmpeg -i m3u8地址 -c copy output.mp4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.添加参数下载（确保音频格式符合 MP4 容器的要求，以避免兼容性问题。）</span></span><br><span class="line">ffmpeg -i m3u8地址 -c copy -bsf:a aac_adtstoasc output.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-i m3u8地址：要下载的m3u8地址。</span><br><span class="line">-c copy：复制音视频流，不重新编码。</span><br><span class="line">-bsf:a aac_adtstoasc：用于对音频流进行格式转换，将AAC ADTS格式转换为AAC ASC格式。AAC ADTS格式常用于HTTP流传输，而AAC ASC格式常用于MP4文件。</span><br></pre></td></tr></table></figure>
+<h3 id="8-合并多个音-视频文件"><a href="#8-合并多个音-视频文件" class="headerlink" title="8.合并多个音/视频文件"></a>8.合并多个音/视频文件</h3><p>音频与视频是一样的，以下用视频举例。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.文件数量少，直接合并</span></span><br><span class="line">ffmpeg -i <span class="string">&quot;concat:part1.mp4|part2.mp4|part3.mp4&quot;</span> -c copy output1.mp4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.文件较多时</span></span><br><span class="line"><span class="comment"># 需要创建一个filelist.txt文件，存放需要合并的视频文件名</span></span><br><span class="line">ffmpeg -f concat -safe 0 -i filelist.txt -c copy output2.mp4</span><br></pre></td></tr></table></figure>
+<p>filelist.txt 文件内容如下：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file &#x27;F:\video\1.ts&#x27;</span><br><span class="line">file &#x27;F:\video\2.ts&#x27;</span><br><span class="line">file &#x27;F:\video\3.ts&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">命令详解：</span><br><span class="line">-f concat：指定用 concat 格式。</span><br><span class="line">-safe 0：允许文件名包含不安全字符（如空格）。</span><br><span class="line">-i filelist.txt：输入文件列表。</span><br><span class="line">-c copy：直接复制视频和音频流，不重新编码。</span><br><span class="line">output2.mp4：输出文件。</span><br></pre></td></tr></table></figure>
+<h2 id="三、博客内其它相关文章"><a href="#三、博客内其它相关文章" class="headerlink" title="三、博客内其它相关文章"></a>三、博客内其它相关文章</h2><ul>
+<li><a href="/2022/12/18/yt-dlp-%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="yt-dlp 使用教程">yt-dlp 使用教程</a></li>
+<li><a href="/2022/09/21/%E7%94%A8ffmpeg%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AAts%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6/" title="用ffmpeg合并多个ts视频文件">用ffmpeg合并多个ts视频文件</a></li>
+<li><a href="/2022/05/03/%E7%94%A8ffmpeg%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E8%A7%86%E9%A2%91/" title="用FFmpeg下载m3u8格式视频">用FFmpeg下载m3u8格式视频</a></li>
+<li><a href="/2022/04/09/you-get%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="you-get 使用教程">you-get 使用教程</a></li>
+<li><a href="/2022/04/09/youtube-dl%20%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" title="youtube-dl 使用教程">youtube-dl 使用教程</a>
+
+</li>
+</ul>
+<p>yt-dlp与you-get、youtube-dl 这两差不多，yt-dlp 能下载包括油管视频在内的不少视频了。都是一款采用Python 编写的免费、开源、命令行程序，主要是用来下载视频的。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：ffmpeg：多媒体处理利器及常用命令详解</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2024-06-23 20:14:17</li>
+        <li>
+            本文链接：http://hduzn.cn/2024/06/23/ffmpeg多媒体处理利器及常用命令详解/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Software/">#Software</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/ffmpeg/">#ffmpeg</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2024/08/28/Locust%E5%88%86%E5%B8%83%E5%BC%8F%E8%B4%9F%E8%BD%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E7%AE%80%E4%BB%8B/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Locust分布式负载测试工具简介</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2024/06/02/TailwindCSS%E5%85%A5%E9%97%A8%E4%BD%93%E9%AA%8C/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Tailwind CSS入门体验</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%8B%E8%BD%BDFFmpeg"><span class="nav-text">一、下载FFmpeg</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BDFFmpeg"><span class="nav-text">1.下载FFmpeg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">2.添加到环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">二、常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%9F%B3-%E8%A7%86%E9%A2%91%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-text">1.音&#x2F;视频格式转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BB%8E%E8%A7%86%E9%A2%91%E4%B8%AD%E6%8F%90%E5%8F%96%E9%9F%B3%E9%A2%91"><span class="nav-text">2.从视频中提取音频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%9F%B3-%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91"><span class="nav-text">3.音&#x2F;视频剪辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%90%88%E5%B9%B6%E9%9F%B3%E8%A7%86%E9%A2%91"><span class="nav-text">4.合并音视频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%B0%83%E6%95%B4%E8%A7%86%E9%A2%91%E5%88%86%E8%BE%A8%E7%8E%87"><span class="nav-text">5.调整视频分辨率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%B8%BA%E8%A7%86%E9%A2%91%E6%B7%BB%E5%8A%A0%E5%AD%97%E5%B9%95"><span class="nav-text">6.为视频添加字幕</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E4%B8%8B%E8%BD%BDm3u8%E6%A0%BC%E5%BC%8F%E7%9A%84%E8%A7%86%E9%A2%91"><span class="nav-text">7.下载m3u8格式的视频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%90%88%E5%B9%B6%E5%A4%9A%E4%B8%AA%E9%9F%B3-%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6"><span class="nav-text">8.合并多个音&#x2F;视频文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%8D%9A%E5%AE%A2%E5%86%85%E5%85%B6%E5%AE%83%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0"><span class="nav-text">三、博客内其它相关文章</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
