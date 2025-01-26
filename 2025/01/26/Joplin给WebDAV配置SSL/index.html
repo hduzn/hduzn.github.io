@@ -9,7 +9,7 @@
     
     <title>
         
-            Joplin使用群晖NAS作同步存储 |
+            Joplin给WebDAV配置SSL |
         
         烟雨平生
     </title>
@@ -191,7 +191,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Joplin使用群晖NAS作同步存储</span>
+            <span class="title-hover-animation">Joplin给WebDAV配置SSL</span>
         </div>
 
         
@@ -208,8 +208,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-11-24 20:59:29</span>
-        <span class="mobile">2022-11-24 20:59</span>
+        <span class="pc">2025-01-26 11:32:17</span>
+        <span class="mobile">2025-01-26 11:32</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -252,68 +252,26 @@
         
 
         <div class="article-content markdown-body">
-            <p>用了多年印象笔记后，已经逐渐放弃了，近n个月/一年来也就还偶尔用用剪藏，做个备份啥的。越来越臃肿的软件，还会卡死，可怕，频率还挺高，可能一天就一次。还有好几年的会员，但不升专业版、连代码块也用不了 ，简直了~</p>
-<p>之前买了群晖NAS，就云同步用用群晖那丑丑的Note Station做做备份，虽然丑，功能很简洁，到也不卡，手机app也可以用。主要还是用Typora这个本地笔记软件了，原来基本上笔记也是用Markdown语言写的，用的Hexo的博客，带搜索功能，相当于很多笔记都直接在博客上搜索了。</p>
-<p>然后有小伙伴找到了这款开源的免费笔记——Joplin，支持多平台，Windows/Linux/MacOS，IOS/Android都支持，那就方便了。</p>
-<p>然后<strong>云端同步</strong>支持很多种方式，这个真是太棒了！<br>比如支持Dropbox、OneDrive，不过考虑到这个的空间也不大，服务器访问也不稳定，就不用了；<br>比如支持自建Joplin Server，可以在服务器上自己建，也可以用腾讯云的对象存储；<br>还有官方收费版的Joplin Cloud；<br>还有就是WebDAV，群晖NAS有WebDAV Server的官方套件，直接安装、配置下就可以用了！</p>
+            <p>在线笔记本的数据，想直接存到群晖NAS里，那就在自己的硬盘上了。在群晖上开了WebDAV，关于这个操作，看站内文章：<a href="/2022/11/24/Joplin%E4%BD%BF%E7%94%A8%E7%BE%A4%E6%99%96NAS%E4%BD%9C%E5%90%8C%E6%AD%A5%E5%AD%98%E5%82%A8/" title="Joplin使用群晖NAS作同步存储">Joplin使用群晖NAS作同步存储</a></p>
+<p>然后反正自己有服务器，开个内网穿透，也就能让云笔记随时同步了。</p>
+<p>虽然 Joplin丑丑的，但好在开源免费，还有PC端和ios端。</p>
+<p>但从某个版本开始，ios端的同步，就不支持http了，只能用https。</p>
 <a id="more"></a>
 
-<h2 id="一、群晖NAS启用WebDAV-Server套件"><a href="#一、群晖NAS启用WebDAV-Server套件" class="headerlink" title="一、群晖NAS启用WebDAV Server套件"></a>一、群晖NAS启用WebDAV Server套件</h2><p>使用属于administrators群组的帐户登录 DSM。<br>比如我的DSM地址为：<a class="link"   target="_blank" rel="noopener" href="http://192.168.1.151:5000/" >http://192.168.1.151:5000<i class="fas fa-external-link-alt"></i></a>  （默认5000端口）</p>
-<p>1.进入套件中心安装WebDAV Server。</p>
-<p>2.启动WebDAV Server并勾选启用 HTTP和启用 HTTPS复选框。<br>配置一般默认就行。<br>配置端口号，HTTP端口：5005，HTTPS端口：5006，保存设置。</p>
-<h2 id="二、Joplin配置WebDAV同步"><a href="#二、Joplin配置WebDAV同步" class="headerlink" title="二、Joplin配置WebDAV同步"></a>二、Joplin配置WebDAV同步</h2><p>首先在home目录下，建一个目录用来存储，比如 Joplin-note，那路径即为：<code>/home/Drive/Joplin-note</code></p>
-<p>打开Joplin-&gt;【工具】-&gt;【选项】-&gt;【同步】菜单项。</p>
-<h3 id="（一）、局域网内同步配置"><a href="#（一）、局域网内同步配置" class="headerlink" title="（一）、局域网内同步配置"></a>（一）、局域网内同步配置</h3><h4 id="1-同步目标：WebDAV"><a href="#1-同步目标：WebDAV" class="headerlink" title="1.同步目标：WebDAV"></a>1.同步目标：WebDAV</h4><p>同步目标很简单，这里选：WebDAV</p>
-<h4 id="2-WebDAV-URL"><a href="#2-WebDAV-URL" class="headerlink" title="2.WebDAV URL"></a>2.WebDAV URL</h4><p>这里最主要就是这个URL怎么填写。</p>
-<p>如果你按（局域网）ip来填写，用http的话，那就用上面配置的5005端口，也是简单的：<br>http://[群晖的ip]:5005/home/Drive/Joplin-note</p>
-<p>即：<a class="link"   target="_blank" rel="noopener" href="http://192.168.1.151:5005/home/Drive/Joplin-note" >http://192.168.1.151:5005/home/Drive/Joplin-note<i class="fas fa-external-link-alt"></i></a></p>
-<h4 id="3-WebDAV用户名和密码"><a href="#3-WebDAV用户名和密码" class="headerlink" title="3.WebDAV用户名和密码"></a>3.WebDAV用户名和密码</h4><p>WebDAV用户名密码就是群晖NAS的登录的账号和密码。</p>
-<p>填写完后，直接点击【检查同步配置】，看到提示“成功！同步配置看起来没问题。”基本上就没啥问题了。</p>
-<p>但是，这个肯定就只能局域网内使用了，就家里连了这个路由的，是可以访问的。如果要在外网访问，肯定就不行了 。</p>
-<p>PS.点击【显示高级选项】，有一个【删除本地数据并从同步目录导入数据】的按钮，当第1个客户端登录完后，后面再有客户端用这个同步的配置，就点一下这个同步一下就行了。</p>
-<h3 id="（二）、外网同步配置"><a href="#（二）、外网同步配置" class="headerlink" title="（二）、外网同步配置"></a>（二）、外网同步配置</h3><p><strong>思路</strong>：<br>既然内网可以访问了，如果像我一样有公网ip的服务器的话，用frp内网穿透（内网穿透不限这个工具）下就可以啦。</p>
-<p>怎么在服务器上搭建frp服务器看这篇：<a href="/2022/06/18/Docker%E6%90%AD%E5%BB%BAfrp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Docker搭建frp内网穿透服务器">Docker搭建frp内网穿透服务器</a><br>没有安装Docker看这篇：<a href="/2022/11/19/Ubuntu%E5%AE%89%E8%A3%85Docker/" title="Ubuntu安装Docker">Ubuntu安装Docker</a><br>群晖NAS使用frp看这篇：<a href="/2022/10/17/%E7%BE%A4%E6%99%96NAS-frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%95%99%E7%A8%8B/" title="群晖NAS frp内网穿透教程">群晖NAS frp内网穿透教程</a></p>
-<p>使用方法，其实跟普通的电脑也没啥区别，群晖启用下Docker，直接Docker用frp就行。</p>
-<p>比如我服务器ip：43.142.94.65<br>在 frpc.ini配置文件中，把本机（群晖）的 local_port = 5005 映射到对应的 remote_port = 18588后，WebDAV URL就变成了：<a class="link"   target="_blank" rel="noopener" href="http://43.142.94.65:18588/home/Drive/Joplin-note" >http://43.142.94.65:18588/home/Drive/Joplin-note<i class="fas fa-external-link-alt"></i></a></p>
-<h3 id="（三）、外网HTTPS配置"><a href="#（三）、外网HTTPS配置" class="headerlink" title="（三）、外网HTTPS配置"></a>（三）、外网HTTPS配置</h3><p>因为我的服务器本来就配了域名的。所以就顺便用https了，毕竟域名比ip好记。回头服务器换了，ip还会跟着换。</p>
-<p>使用https的话，就不能直接用ip了，因为群晖上是需要证书的 ，需要 给域名上传个证书的。</p>
-<h4 id="1-群晖NAS-启用DNSPod-DDNS"><a href="#1-群晖NAS-启用DNSPod-DDNS" class="headerlink" title="1.群晖NAS 启用DNSPod DDNS"></a>1.群晖NAS 启用DNSPod DDNS</h4><p>我的域名是在腾讯云的DNSPod上买的，直接有官网文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.dnspod.cn/dns/dnspod-synology-nas-ddns/" >群晖（Synology） NAS 启用 DNSPod DDNS<i class="fas fa-external-link-alt"></i></a></p>
+<p>于是，我只能给服务器配的域名，又申请了SSL证书。</p>
+<p>然后，用 docker 创建了一个 nginx 容器，当然也可以直接安装nginx。</p>
+<h3 id="Nginx配置文件nginx-conf"><a href="#Nginx配置文件nginx-conf" class="headerlink" title="Nginx配置文件nginx.conf"></a>Nginx配置文件nginx.conf</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">user nginx;</span><br><span class="line">worker_processes  auto;</span><br><span class="line"></span><br><span class="line">error_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;error.log notice;</span><br><span class="line">pid        &#x2F;var&#x2F;run&#x2F;nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       &#x2F;etc&#x2F;nginx&#x2F;mime.types;</span><br><span class="line">    default_type  application&#x2F;octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;</span><br><span class="line">                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;</span><br><span class="line">                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;</span><br><span class="line"></span><br><span class="line">    access_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">    # 默认服务器块，处理 HTTP 请求并重定向到 HTTPS</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name abc.com www.abc.com; # 你自己的域名</span><br><span class="line"></span><br><span class="line">        root &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;  # 修改为容器内的路径</span><br><span class="line">        # 指定默认的 index 文件</span><br><span class="line">        index index.html;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # HTTPS 服务器块</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 443 ssl;</span><br><span class="line">        server_name abc.com www.abc.com;</span><br><span class="line"></span><br><span class="line">        # SSL 证书路径 我这里是阿里云的证书</span><br><span class="line">        ssl_certificate &#x2F;etc&#x2F;nginx&#x2F;ssl&#x2F;cert.pen;</span><br><span class="line">        ssl_certificate_key &#x2F;etc&#x2F;nginx&#x2F;ssl&#x2F;cert.key;</span><br><span class="line"></span><br><span class="line">        # SSL 配置</span><br><span class="line">        ssl_protocols TLSv1.2 TLSv1.3;</span><br><span class="line">        ssl_ciphers HIGH:!aNULL:!MD5;</span><br><span class="line">        ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">        # 日志</span><br><span class="line">        access_log &#x2F;var&#x2F;log&#x2F;nginx&#x2F;ssl-access.log main;</span><br><span class="line">        error_log &#x2F;var&#x2F;log&#x2F;nginx&#x2F;ssl-error.log;</span><br><span class="line"></span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            proxy_pass http:&#x2F;&#x2F;[服务器ip]:[port];  # 将流量转发到 WebDAV 服务端口</span><br><span class="line">            proxy_set_header Host $host;</span><br><span class="line">            proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">            proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    include &#x2F;etc&#x2F;nginx&#x2F;conf.d&#x2F;*.conf;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="创建Nginx"><a href="#创建Nginx" class="headerlink" title="创建Nginx"></a>创建Nginx</h3><p>先用 <code>docker pull nginx</code>拉取镜像，再用以下命令创建容器。</p>
+<p>当然，前提是准备好了以下：</p>
 <ul>
-<li><p>1).DNSPod注册域名</p>
-</li>
-<li><p>2).进入DNSPod管理控制台，添加解析记录，主机记录为 www，记录值为任意 IP 的 A 记录。</p>
-</li>
-<li><p>3).进入 API 密钥 页面，在DNSPod Token页签，单击【创建密钥】，输入自定义的密钥名称。ID和Token保存好。</p>
-</li>
-<li><p>4).管理员登录群晖NAS管理，单击【控制面板】&gt;【外部访问】，【DDNS】中新增。</p>
-<blockquote>
-<p>服务供应商：DNSPod.cn<br>主机名称：注册的域名<br>外部地址：服务器ip（我的域名是解析到这台服务器ip的）<br>用户名/电子邮箱：填写获取到的DNSPod ID。<br>密码/密钥：填写获取到的密钥。</p>
-</blockquote>
-</li>
-<li><p>5).单击【测试联机】，测试是否能成功联机。状态栏显示为正常，即代表成功联机。</p>
-</li>
+<li>nginx.conf：nginx配置文件放在目录 nginx-html 中</li>
+<li>html-80：目录下随便放一个index.html文件</li>
+<li>cert.pen、cert.key：证书的SSL文件放在目录 ssl 中</li>
 </ul>
-<h4 id="2-群晖NAS-安装免费-SSL-证书"><a href="#2-群晖NAS-安装免费-SSL-证书" class="headerlink" title="2.群晖NAS 安装免费 SSL 证书"></a>2.群晖NAS 安装免费 SSL 证书</h4><p>也有官网文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.dnspod.cn/dns/dnspod-synology-ssl/" >群晖（Synology）NAS 安装免费 SSL 证书<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li><p>1).DNSPod中进入域名的【记录管理】页面，免费申请SSL证书。</p>
-</li>
-<li><p>2).等待通过后会有通知的，再【查看详情】，下载证书到本地就行。</p>
-</li>
-<li><p>3).下载后打开Nginx文件夹</p>
-<blockquote>
-<p>证书：.crt后缀的文件<br>私钥：.key后缀的文件</p>
-</blockquote>
-</li>
-<li><p>4).管理员登录群晖NAS管理，单击【控制面板】&gt;【安全性】，选择【证书】页签，单击【新增】。<br>【创建证书】-&gt;【添加新证书】-&gt;【导入证书】，描述自己写，上传后确定就行。</p>
-</li>
-</ul>
-<p>然后就可以使用 https://[域名]:5001 访问群晖的管理后台页面了。就表示都配置妥当了。</p>
-<h4 id="3-WebDAV-URL"><a href="#3-WebDAV-URL" class="headerlink" title="3.WebDAV URL"></a>3.WebDAV URL</h4><p>假设我的域名为：abccba.com（当然，域名已解析到我的服务器）<br>然后在 frpc.ini配置文件中，把本机（群晖）的 local_port = 5006 映射到对应的 remote_port = 18589</p>
-<p>那WebDAV URL就是：<br><a class="link"   target="_blank" rel="noopener" href="https://www.abccba.com:18589/home/Drive/Joplin-note" >https://www.abccba.com:18589/home/Drive/Joplin-note<i class="fas fa-external-link-alt"></i></a></p>
-<p>PS.话说群晖里是可以申请免费的一个域名的，类似<code>[用户名].synology.me</code>这样，前提是要家里有公网ip或者用ipv6，反正我家里没公网ip，但是自己有域名，就不折腾了，直接用自己的域名+服务器ip。</p>
-<p>PPS.话说在【通用选项】中可以修改笔记存储路径，建议一开始就修改好再使用。博客内搜一下，有笔记。（毕竟默认在系统C盘）<br>然后存储路径中看到有个database.sqlite的文件，就是sqlite的数据库文件啦。可以直接用sqlite数据库的可视化工具查看数据库中的内容，有个notes的表就用来存笔记的。感觉定时备份下这个数据库文件，数据保存应该问题不大。</p>
-<p>最后，想说Joplin虽然也支持印象笔记导出后的文件直接导入，但数据库好像老是崩，也不知道啥情况，可能因为一开始我用的是腾讯的对象存储的关系，算了，也不导入了，就当顺便整理下笔记吧。</p>
-<p>参考：<a class="link"   target="_blank" rel="noopener" href="https://www.jianshu.com/p/6cff65fa10b2" >群晖NAS配合Joplin搭建私有笔记服务<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -p 80:80 \</span><br><span class="line">  -p 443:443 \</span><br><span class="line">  --name nginx \</span><br><span class="line">  -v /root/nginx-html/nginx.conf:/etc/nginx/nginx.conf:ro \</span><br><span class="line">  -v /root/nginx-html/html-80:/usr/share/nginx/html:ro \</span><br><span class="line">  -v /root/ssl/cert.pen:/etc/nginx/ssl/cert.pen:ro \</span><br><span class="line">  -v /root/ssl/cert.key:/etc/nginx/ssl/cert.key:ro \</span><br><span class="line">  nginx</span><br></pre></td></tr></table></figure>
+
+<p>于是，原来的WebDAV URL： <code>http://[服务器ip]:[port]</code> </p>
+<p>现在就可以直接用：<code>https://[服务器ip]</code>  了。因为https默认的443端口，现在直接转换到WebDAV URL了。</p>
 
         </div>
 
@@ -321,11 +279,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Joplin使用群晖NAS作同步存储</li>
+        <li>本文标题：Joplin给WebDAV配置SSL</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-11-24 20:59:29</li>
+        <li>创建时间：2025-01-26 11:32:17</li>
         <li>
-            本文链接：http://hduzn.cn/2022/11/24/Joplin使用群晖NAS作同步存储/
+            本文链接：http://hduzn.cn/2025/01/26/Joplin给WebDAV配置SSL/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -349,29 +307,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/11/29/Python-%E5%B8%A6%E6%95%B0%E5%AD%97%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8E%92%E5%BA%8F/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Python 带数字的字符串排序</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/11/19/Ubuntu%E8%AE%BE%E7%BD%AE%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E4%B9%9F%E8%83%BD%E6%89%A7%E8%A1%8Cdocker%E5%91%BD%E4%BB%A4/"
+                           href="/2025/01/15/Python-Excel%E8%A1%A8%E6%A0%BC%E6%A0%BC%E5%BC%8F%E8%AE%BE%E7%BD%AE/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu设置普通用户也能执行docker命令</span>
+                                <span class="post-nav-title-item">Python Excel表格格式设置</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -568,7 +511,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%BE%A4%E6%99%96NAS%E5%90%AF%E7%94%A8WebDAV-Server%E5%A5%97%E4%BB%B6"><span class="nav-text">一、群晖NAS启用WebDAV Server套件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Joplin%E9%85%8D%E7%BD%AEWebDAV%E5%90%8C%E6%AD%A5"><span class="nav-text">二、Joplin配置WebDAV同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E3%80%81%E5%B1%80%E5%9F%9F%E7%BD%91%E5%86%85%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE"><span class="nav-text">（一）、局域网内同步配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%90%8C%E6%AD%A5%E7%9B%AE%E6%A0%87%EF%BC%9AWebDAV"><span class="nav-text">1.同步目标：WebDAV</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-WebDAV-URL"><span class="nav-text">2.WebDAV URL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-WebDAV%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81"><span class="nav-text">3.WebDAV用户名和密码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E3%80%81%E5%A4%96%E7%BD%91%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE"><span class="nav-text">（二）、外网同步配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E3%80%81%E5%A4%96%E7%BD%91HTTPS%E9%85%8D%E7%BD%AE"><span class="nav-text">（三）、外网HTTPS配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%BE%A4%E6%99%96NAS-%E5%90%AF%E7%94%A8DNSPod-DDNS"><span class="nav-text">1.群晖NAS 启用DNSPod DDNS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%BE%A4%E6%99%96NAS-%E5%AE%89%E8%A3%85%E5%85%8D%E8%B4%B9-SSL-%E8%AF%81%E4%B9%A6"><span class="nav-text">2.群晖NAS 安装免费 SSL 证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-WebDAV-URL"><span class="nav-text">3.WebDAV URL</span></a></li></ol></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6nginx-conf"><span class="nav-text">Nginx配置文件nginx.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BANginx"><span class="nav-text">创建Nginx</span></a></li></ol>
     </div>
 </div>
         </aside>
