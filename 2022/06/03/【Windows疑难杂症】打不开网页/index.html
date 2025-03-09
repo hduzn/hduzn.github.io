@@ -262,14 +262,6 @@
 <p>直接用管理员身份打开命令提示符，Win10/Win11用Windows PowerShell（管理员）就行，运行以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh winsock reset</span><br></pre></td></tr></table></figure>
 <p>提示“成功重置winsock目录，你必须重启计算机才能完成重置”，重启后，网页就可以正常打开了。</p>
-<h2 id="v2rayN使用问题"><a href="#v2rayN使用问题" class="headerlink" title="v2rayN使用问题"></a>v2rayN使用问题</h2><p>其实我碰到的是v2rayN使用的问题。</p>
-<p>这个小工具，以前是经常碰到用到的1080端口被占用的问题。用以下命令查一下占用1080端口的进程的PID号，然后就知道是哪个进程占用，结束一下进程就行了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -aon|findstr <span class="string">&quot;1080&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上一次碰到，提示”<strong>failed to start app/proxyman/inbound: failed to listen tcp on 1080</strong>“，启动不了。明明没有进程占用1080端口，反正就是启动不了。</p>
-<p>于是，就试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>这次又碰到了，更奇怪，看<strong>v2rayN的后台启动正常，accept都正常，但是浏览器上相关的网页就是打不开</strong>。就很奇怪。</p>
-<p>于是，又试了下上面那个命令，<code>netsh winsock reset</code>，重启一下电脑就正常了。</p>
-<p>不过，到网上有说，这个命令的好处是可以重新初始化网络环境，以解决由于软件冲突、病毒原因造成的参数错误问题。</p>
 <p>但是，当执行完winsock的命令重启计算机后，需要重新配置IP。局域网的话需要DNS选择一下，另外因机而异可能会断网或网速变慢……（这样的问题我没碰到过，ip和dns都是自动获取的，还是跟原来一样、正常，网速也是如常）</p>
 
         </div>
@@ -525,7 +517,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#v2rayN%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98"><span class="nav-text">v2rayN使用问题</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
