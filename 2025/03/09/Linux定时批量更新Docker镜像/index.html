@@ -9,7 +9,7 @@
     
     <title>
         
-            Hexo博客同步部署到Github Pages |
+            Linux定时批量更新Docker镜像 |
         
         烟雨平生
     </title>
@@ -191,7 +191,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Hexo博客同步部署到Github Pages</span>
+            <span class="title-hover-animation">Linux定时批量更新Docker镜像</span>
         </div>
 
         
@@ -208,8 +208,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-05-12 10:09:35</span>
-        <span class="mobile">2022-05-12 10:09</span>
+        <span class="pc">2025-03-09 15:28:07</span>
+        <span class="mobile">2025-03-09 15:28</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -217,7 +217,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Hexo/">Hexo</a>&nbsp;
+                        <a href="/categories/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -229,11 +229,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Github/">Github</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Hexo/">Hexo</a>&nbsp;
+                        <a href="/tags/Python/">Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -256,71 +252,40 @@
         
 
         <div class="article-content markdown-body">
-            <p>我的Hexo博客已经部署到云服务器上了，部署过程看此文：<a href="/2022/05/01/Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Ubuntu%EF%BC%89/" title="Hexo博客部署到云服务器（Ubuntu）上">Hexo博客部署到云服务器（Ubuntu）上</a></p>
-<p>然后，因为原来是用的Github Pages，就想着顺便同步到Github Pages上吧。</p>
+            <p>因为在Docker上下载的一些镜像，创建了容器（Web服务）后经常会有更新，本来是每周自己手动更新下，后面突然想起，不是可以写个脚本自动更新就好了么。</p>
+<p>于是，就有了这篇笔记。</p>
+<p>定时任务还是用的crontab，前面有笔记写过用法了：<a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></p>
 <a id="more"></a>
 
-<h2 id="一、创建Github-Pages"><a href="#一、创建Github-Pages" class="headerlink" title="一、创建Github Pages"></a>一、创建Github Pages</h2><p>如果还没创建的，看此文 <a href="/2022/04/09/%E3%80%90%E5%B0%8F%E7%99%BD%E6%95%99%E7%A8%8B%E3%80%91%E5%85%8D%E8%B4%B9%E5%BB%BA%E7%AB%8B%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88Github+Hexo%EF%BC%89/" title="【小白教程】免费建立静态博客网站（Github+Hexo）">【小白教程】免费建立静态博客网站（Github+Hexo）</a> 中第三步“部署到Github Pages上”的部分。</p>
-<p>如果原来已经在创建的，那就先不用管了。直接下一步，创建SSH密钥。</p>
-<h2 id="二、创建专用的SSH密钥"><a href="#二、创建专用的SSH密钥" class="headerlink" title="二、创建专用的SSH密钥"></a>二、创建专用的SSH密钥</h2><p>原来部署到云服务器上也是用的git，所以这里也是用的git，就方便了。</p>
-<p><strong>步骤：</strong></p>
-<ul>
-<li>进入本机SSH目录，创建一对新的SSH密钥</li>
-<li>把SSH公钥添加到Github中</li>
-<li>本机SSH配置文件（config）修改</li>
-<li>ssh测试</li>
-</ul>
-<h3 id="1-创建一对新的SSH密钥"><a href="#1-创建一对新的SSH密钥" class="headerlink" title="1.创建一对新的SSH密钥"></a>1.创建一对新的SSH密钥</h3><p>打开【Git Bash】，运行命令进入ssh目录：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"></span><br><span class="line">ssh -keygen -t rsa -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p>上面的邮箱是自己的邮箱地址，按这个邮箱地址会创建一对密钥。</p>
-<p><strong>注意：回车后，有以下信息提示，让你输入一个key的file名称，要记得输入一个名称，不要用默认的。</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;c&#x2F;Users&#x2F;yourusername&#x2F;.ssh&#x2F;id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
-<p>比如我输入<code>github2022_rsa</code>（文件名可以加上<code>_rsa</code>好识别）后回车，然后是输入密码，直接回车、回车，就表示用的空密码。</p>
-<p>完成后，会显示如下的信息：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> github2022_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> github2022_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:B***********t/9i*************s your_email@example.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-<p>这样，新的SSH密钥就创建好了。</p>
-<h3 id="2-把SSH公钥添加到Github中"><a href="#2-把SSH公钥添加到Github中" class="headerlink" title="2.把SSH公钥添加到Github中"></a>2.把SSH公钥添加到Github中</h3><p>在【Git Bash】中，用以下命令把公钥内容复制到系统粘贴板（clipboard）中：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<ul>
-<li>登陆GitHub，进入Account 【Settings】；</li>
-<li>选择【SSH and GPG keys】；</li>
-<li>【New SSH key】，直接把复制好的公钥粘贴到Key的内容里，Title标题自己取，点击添加即可。</li>
-</ul>
-<h3 id="3-本机SSH配置文件修改"><a href="#3-本机SSH配置文件修改" class="headerlink" title="3.本机SSH配置文件修改"></a>3.本机SSH配置文件修改</h3><p>这个时候，你直接测试ssh是不通的，提示：“<a class="link"   href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#109;" >&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>: Permission denied (publickey).”<br>然后因为以前也用过github pages的，所以就有这个提示。</p>
-<p>本机~/.ssh 目录有2个文件需要改动。</p>
-<ul>
-<li>known_hosts 文件</li>
-<li>config 文件</li>
-</ul>
-<p><strong>known_hosts</strong>文件用于验证远程登陆系统的身份。ssh可以自动将密钥添加到用户文件，也可以手动添加。该文件包含用户已连接过所有主机的公共密钥列表。一般，初次登陆，ssh会自动将远程主机的公钥添加到用户的known_hosts文件。</p>
-<p>1).修改<strong>known_hosts 文件</strong></p>
-<p>要解决上面那个问题，就需要修改<strong>known_hosts 文件</strong>。<br>用记事本类软件打开，把github.com开头的一行删除，再保存文件就行了。</p>
-<p>2).修改<strong>config</strong>文件</p>
-<p>修改完上面的文件，继续ssh测试，还是有上面的问题，还有一个提醒：<br><code>Warning: Permanently added &#39;github.com,140.82.113.3&#39; (ECDSA) to the list of known hosts.</code></p>
-<p>所以，我们把相关的配置添加到config配置文件中。（关于SSH密钥配置，config文件的介绍，这篇文章里有：<a href="/2022/05/01/Hexo-SSH%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/" title="Hexo SSH密钥配置">Hexo SSH密钥配置</a>）</p>
-<p>用记事本类软件打开config文件，添加下面2段配置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line"></span><br><span class="line">Host 140.82.113.3</span><br><span class="line">  HostName 140.82.113.3</span><br><span class="line">  IdentityFile ~/.ssh/github2022_rsa</span><br><span class="line">  PreferredAuthentications publickey</span><br></pre></td></tr></table></figure>
-<p>140.82.113.3是通过<code>ping github.com</code>得到的ip地址。</p>
-<h3 id="4-ssh测试"><a href="#4-ssh测试" class="headerlink" title="4.ssh测试"></a>4.ssh测试</h3><p>配置完后在【Git Bash】中运行以下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>看到最后一句<code>Hi youname! You&#39;ve successfully authenticated</code>就OK了。</p>
-<h2 id="三、修改Hexo配置文件（-config-yml）"><a href="#三、修改Hexo配置文件（-config-yml）" class="headerlink" title="三、修改Hexo配置文件（_config.yml）"></a>三、修改Hexo配置文件（<code>_config.yml</code>）</h2><p>在最后的 deploy模块下添加github项。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">hexo:</span> <span class="string">git@111.4.22.313:/var/repo/hexo_static.git</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">git@github.com:hduzn/hduzn.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p>注：上面的111.4.22.313 为你自己服务器的ip（这里只是随便写的ip）</p>
-<p><a class="link"   href="mailto:&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;" >&#x67;&#x69;&#116;&#64;&#103;&#x69;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;<i class="fas fa-external-link-alt"></i></a>后面的地址是你的 <code>github用户名/github pages地址.git</code>。<br>这个在你的github pages仓库上，直接复制【Code】中的SSH地址是一样的。</p>
-<p>这样就可以了。每次<code>hexo deploy</code>后，也会同步部署到Github Pages上了。</p>
-
+<h3 id="1-创建脚本和配置文件"><a href="#1-创建脚本和配置文件" class="headerlink" title="1.创建脚本和配置文件"></a>1.创建脚本和配置文件</h3><p>1).创建 cron_scripts 目录</p>
+<p>创建 cron_scripts 目录放在home目录下，并且给权限，执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir cron_scripts</span><br><span class="line">chmod 755 cron_scripts</span><br></pre></td></tr></table></figure>
+<p>2).创建 update_docker_images.sh 脚本文件</p>
+<p>把需要自动执行的命令都放在这个脚本文件中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置文件，每行格式: 容器名|镜像名|运行新容器的完整命令</span></span><br><span class="line">CONFIG_FILE=&quot;$&#123;1:-$(dirname &quot;$0&quot;)/docker_containers.conf&#125;&quot;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 检查配置文件是否存在</span></span><br><span class="line">if [ ! -f &quot;$CONFIG_FILE&quot; ]; then</span><br><span class="line">    echo &quot;配置文件 $CONFIG_FILE 不存在，创建示例配置...&quot;</span><br><span class="line">    cat &gt; &quot;$CONFIG_FILE&quot; &lt;&lt; EOF</span><br><span class="line"><span class="meta">#</span><span class="bash"> 格式: 容器名|镜像名|运行新容器的完整命令</span></span><br><span class="line">deep-research-web|anotia/deep-research-web:latest|docker run --restart=always -p 3000:3000 --name &quot;deep-research-web&quot; -d &quot;anotia/deep-research-web:latest&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例: container2|image2:tag|docker run --restart=always -p 8080:80 --env VAR=value --volume /host:/container --name <span class="string">&quot;container2&quot;</span> -d <span class="string">&quot;image2:tag&quot;</span></span></span><br><span class="line">EOF</span><br><span class="line">    echo &quot;已创建示例配置文件 $CONFIG_FILE，请编辑后重新运行脚本&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 读取配置文件并处理每个容器</span></span><br><span class="line">while IFS=&#x27;|&#x27; read -r CONTAINER_NAME IMAGE_NAME RUN_COMMAND || [ -n &quot;$CONTAINER_NAME&quot; ]; do</span><br><span class="line">    # 跳过注释行和空行</span><br><span class="line">    [[ &quot;$CONTAINER_NAME&quot; =~ ^#.*$ || -z &quot;$CONTAINER_NAME&quot; ]] &amp;&amp; continue</span><br><span class="line">    </span><br><span class="line">    echo &quot;===== 处理容器: $CONTAINER_NAME =====&quot;</span><br><span class="line">    </span><br><span class="line">    # 停止并删除旧容器</span><br><span class="line">    if docker ps -aq --filter name=&quot;$CONTAINER_NAME&quot; | grep -q . ; then</span><br><span class="line">        echo &quot;停止并删除旧容器 $CONTAINER_NAME...&quot;</span><br><span class="line">        docker stop &quot;$CONTAINER_NAME&quot; 2&gt;/dev/null  # 忽略错误 (如果容器不存在)</span><br><span class="line">        docker rm &quot;$CONTAINER_NAME&quot; 2&gt;/dev/null    # 忽略错误</span><br><span class="line">    fi</span><br><span class="line"></span><br><span class="line">    # 删除旧镜像 (可选，但建议)</span><br><span class="line">    if docker images -q &quot;$IMAGE_NAME&quot; | grep -q . ; then</span><br><span class="line">        echo &quot;删除旧镜像 $IMAGE_NAME...&quot;</span><br><span class="line">        docker rmi &quot;$IMAGE_NAME&quot; 2&gt;/dev/null      # 忽略错误</span><br><span class="line">    fi</span><br><span class="line"></span><br><span class="line">    # 拉取最新镜像</span><br><span class="line">    echo &quot;拉取最新镜像 $IMAGE_NAME...&quot;</span><br><span class="line">    docker pull &quot;$IMAGE_NAME&quot;</span><br><span class="line"></span><br><span class="line">    # 运行新容器</span><br><span class="line">    echo &quot;运行新容器 $CONTAINER_NAME...&quot;</span><br><span class="line">    echo &quot;执行: $RUN_COMMAND&quot;</span><br><span class="line">    eval $RUN_COMMAND</span><br><span class="line"></span><br><span class="line">    echo &quot;容器 $CONTAINER_NAME 更新成功&quot;</span><br><span class="line">    echo &quot;&quot;</span><br><span class="line">done &lt; &quot;$CONFIG_FILE&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;所有 Docker 镜像和容器更新完成&quot;</span><br></pre></td></tr></table></figure>
+<p>3).创建 docker_containers.conf 配置文件</p>
+<p>把所有需要自动更新的Docker的容器（镜像）都放在这个配置文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 格式: 容器名|镜像名|运行新容器的完整命令</span><br><span class="line">deep-research-web|anotia&#x2F;deep-research-web:latest|docker run --restart&#x3D;always -p 3000:3000 --name &quot;deep-research-web&quot; -d &quot;anotia&#x2F;deep-research-web:latest&quot;</span><br><span class="line"># 示例: 添加更多容器，每行一个</span><br><span class="line"># nginx-proxy|nginx:latest|docker run --restart&#x3D;always -p 80:80 --volume &#x2F;path&#x2F;to&#x2F;html:&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html --name &quot;nginx-proxy&quot; -d &quot;nginx:latest&quot;</span><br><span class="line"># postgres-db|postgres:14|docker run --restart&#x3D;always -p 5432:5432 --env POSTGRES_PASSWORD&#x3D;secret --volume &#x2F;data&#x2F;postgres:&#x2F;var&#x2F;lib&#x2F;postgresql&#x2F;data --name &quot;postgres-db&quot; -d &quot;postgres:14&quot;</span><br><span class="line">lobe-chat|lobehub&#x2F;lobe-chat:latest|docker run --restart&#x3D;always -p 3210:3210 --name &quot;lobe-chat&quot;  -d &quot;lobehub&#x2F;lobe-chat:latest&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="2-给-update-docker-images-sh-添加可执行权限"><a href="#2-给-update-docker-images-sh-添加可执行权限" class="headerlink" title="2.给  update_docker_images.sh 添加可执行权限"></a>2.给  update_docker_images.sh 添加可执行权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x cron_scripts/update_docker_images.sh</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置-crontab-定时任务"><a href="#3-设置-crontab-定时任务" class="headerlink" title="3.设置 crontab 定时任务"></a>3.设置 crontab 定时任务</h3><p>crontab 具体用法看这里：<a href="/2021/02/08/Linux%E5%AE%9A%E6%97%B6%E6%89%A7%E8%A1%8Cpython%E8%84%9A%E6%9C%AC/" title="Linux 定时执行 python脚本">Linux 定时执行 python脚本</a></p>
+<p>在里面执行的脚本写绝对路径。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line">0 4 * * 6 /home/ubuntu/cron_scripts/update_docker_images.sh &gt;&gt; /home/ubuntu/cron_scripts/update_docker_images.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>0 4 * * 6：表示每周六早上 4 点执行。</p>
+</blockquote>
+<h3 id="4-重启cron服务"><a href="#4-重启cron服务" class="headerlink" title="4.重启cron服务"></a>4.重启cron服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service cron restart</span><br></pre></td></tr></table></figure>
+<h3 id="5-验证定时任务是否成功"><a href="#5-验证定时任务是否成功" class="headerlink" title="5.验证定时任务是否成功"></a>5.验证定时任务是否成功</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查是否设置成功：</span></span><br><span class="line">crontab -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动检查是否运行成功：</span></span><br><span class="line">~/cron_scripts/update_docker_images.sh</span><br></pre></td></tr></table></figure>
         </div>
 
         
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Hexo博客同步部署到Github Pages</li>
+        <li>本文标题：Linux定时批量更新Docker镜像</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2022-05-12 10:09:35</li>
+        <li>创建时间：2025-03-09 15:28:07</li>
         <li>
-            本文链接：http://hduzn.cn/2022/05/12/Hexo博客同步部署到Github-Pages/
+            本文链接：http://hduzn.cn/2025/03/09/Linux定时批量更新Docker镜像/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -335,11 +300,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Github/">#Github</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/Hexo/">#Hexo</a>&nbsp;
+                        <a href="/tags/Python/">#Python</a>&nbsp;
                     </li>
                 
             </ul>
@@ -348,29 +309,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/05/12/Hexo%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A1%B5%E9%9D%A2%E8%B7%B3%E8%BF%87%E6%B8%B2%E6%9F%93/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Hexo 自定义页面 跳过渲染</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/05/11/Ubuntu-Nginx%E6%9C%8D%E5%8A%A1%E5%99%A8SSL%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"
+                           href="/2025/01/26/Joplin%E7%BB%99WebDAV%E9%85%8D%E7%BD%AESSL/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu Nginx服务器SSL证书安装部署</span>
+                                <span class="post-nav-title-item">Joplin给WebDAV配置SSL</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -567,7 +513,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%9B%E5%BB%BAGithub-Pages"><span class="nav-text">一、创建Github Pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E4%B8%93%E7%94%A8%E7%9A%84SSH%E5%AF%86%E9%92%A5"><span class="nav-text">二、创建专用的SSH密钥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E5%AF%B9%E6%96%B0%E7%9A%84SSH%E5%AF%86%E9%92%A5"><span class="nav-text">1.创建一对新的SSH密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8A%8ASSH%E5%85%AC%E9%92%A5%E6%B7%BB%E5%8A%A0%E5%88%B0Github%E4%B8%AD"><span class="nav-text">2.把SSH公钥添加到Github中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9C%AC%E6%9C%BASSH%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">3.本机SSH配置文件修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ssh%E6%B5%8B%E8%AF%95"><span class="nav-text">4.ssh测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BF%AE%E6%94%B9Hexo%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88-config-yml%EF%BC%89"><span class="nav-text">三、修改Hexo配置文件（_config.yml）</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%84%9A%E6%9C%AC%E5%92%8C%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">1.创建脚本和配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%BB%99-update-docker-images-sh-%E6%B7%BB%E5%8A%A0%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%9D%83%E9%99%90"><span class="nav-text">2.给  update_docker_images.sh 添加可执行权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%AE%BE%E7%BD%AE-crontab-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-text">3.设置 crontab 定时任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E9%87%8D%E5%90%AFcron%E6%9C%8D%E5%8A%A1"><span class="nav-text">4.重启cron服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%AA%8C%E8%AF%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="nav-text">5.验证定时任务是否成功</span></a></li></ol>
     </div>
 </div>
         </aside>
