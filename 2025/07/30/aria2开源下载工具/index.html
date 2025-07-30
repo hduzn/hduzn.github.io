@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            aria2开源下载工具 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">aria2开源下载工具</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2025-07-30 21:36:01</span>
+        <span class="mobile">2025-07-30 21:36</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Windows/">Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Aria2是一款轻量级、多协议、多源的命令行下载工具。它支持HTTP/HTTPS、FTP、SFTP、BitTorrent和Metalink等多种协议，并能从多个来源同时下载文件，从而最大限度地利用带宽。Aria2以其高效、低资源占用和跨平台特性而闻名，是许多用户替代传统下载工具的首选。</p>
+<a id="more"></a>
+<h3 id="一、主要功能和特性"><a href="#一、主要功能和特性" class="headerlink" title="一、主要功能和特性"></a>一、主要功能和特性</h3><ul>
+<li><strong>多协议支持</strong>：支持HTTP(S)、FTP、SFTP、BitTorrent和Metalink。</li>
+<li><strong>多源下载</strong>：可以从多个URL/源同时下载文件，提高下载速度。</li>
+<li><strong>分段下载</strong>：支持文件分段下载，进一步加速下载过程。</li>
+<li><strong>命令行界面</strong>：通过命令行操作，方便集成到脚本或自动化流程中。</li>
+<li><strong>低资源占用</strong>：设计轻巧，占用系统资源少。</li>
+<li><strong>跨平台</strong>：可在Linux、Windows、macOS等多种操作系统上运行。</li>
+<li><strong>JSON-RPC/XML-RPC接口</strong>：提供远程控制接口，方便第三方应用或WebUI进行管理。</li>
+<li><strong>BitTorrent特性</strong>：支持DHT、PEX、MSE/PSE、多Tracker、UDP Tracker等BitTorrent扩展，以及Web Seeding和Local Peer Discovery。</li>
+<li><strong>选择性下载</strong>：在多文件BitTorrent或Metalink任务中，可以选择性下载部分文件。</li>
+<li><strong>断点续传</strong>：支持下载中断后从上次停止的地方继续下载。</li>
+<li><strong>代理支持</strong>：支持HTTP代理，并可通过环境变量配置。</li>
+<li><strong>Cookie支持</strong>：可以从Firefox、Chrome等浏览器导入Cookie，也可保存Cookie。</li>
+<li><strong>自定义HTTP头</strong>：允许用户自定义HTTP请求头。</li>
+<li><strong>限速</strong>：支持下载和上传速度限制。</li>
+<li><strong>IPv6支持</strong>：支持IPv6，并采用Happy Eyeballs算法优化连接。</li>
+<li><strong>磁盘缓存</strong>：减少磁盘活动，延长硬盘寿命。</li>
+</ul>
+<h3 id="二、安装与配置"><a href="#二、安装与配置" class="headerlink" title="二、安装与配置"></a>二、安装与配置</h3><p>Aria2的安装通常非常简单，在大多数Linux发行版中，可以通过包管理器直接安装。例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Debian/Ubuntu</span></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install aria2</span><br></pre></td></tr></table></figure>
+<p><strong>Windows下载</strong>:<br>  Windows用户可以从<a class="link"   target="_blank" rel="noopener" href="https://github.com/aria2/aria2/releases" >aria2官方GitHub发布页面<i class="fas fa-external-link-alt"></i></a>下载预编译的二进制文件，比如：aria2-1.37.0-win-64bit-build1.zip</p>
+<p>下载完后，解压出来，把该目录添加到【系统环境变量】，这样就可以直接在命令行中使用 aria2c.exe 了。</p>
+<h3 id="三、使用方法"><a href="#三、使用方法" class="headerlink" title="三、使用方法"></a>三、使用方法</h3><p>Aria2主要通过命令行进行操作。以下是一些常用的命令示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.下载单个文件</span></span><br><span class="line">aria2c https://example.com/file.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.下载单个文件并指定输出文件名</span></span><br><span class="line">aria2c -o new_file.zip https://example.com/file.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.下载到指定目录</span></span><br><span class="line">aria2c -d D:\Downloads https://example.com/file.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.下载 .torrent文件</span></span><br><span class="line">aria2c torrent_file.torrent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.从文件列表下载(文件中每行一个下载url链接)</span></span><br><span class="line">aria2c -i urls.txt</span><br></pre></td></tr></table></figure>
+<h3 id="四、可视化界面"><a href="#四、可视化界面" class="headerlink" title="四、可视化界面"></a>四、可视化界面</h3><p>Aria2本身是一个命令行工具，对于不习惯命令行操作的用户来说，使用起来可能不够直观。可以使用第三方可视化界面（WebUI或桌面客户端）可以与Aria2的RPC接口配合使用，提供图形化的任务管理和监控功能。以下介绍两款流行的Aria2可视化界面：Motrix和AriaNg。</p>
+<h4 id="1-Motrix"><a href="#1-Motrix" class="headerlink" title="1.Motrix"></a>1.Motrix</h4><p><a class="link"   target="_blank" rel="noopener" href="https://motrix.app/" >Motrix官方网站<i class="fas fa-external-link-alt"></i></a>下载对应操作系统的安装包并进行安装。</p>
+<p>Motrix通常会自动检测并使用本地运行的Aria2实例。如果Aria2未运行或需要自定义配置，可以在Motrix的设置中指定Aria2的RPC地址、端口和密钥。</p>
+<p>然后就直接粘贴下载链接（HTTP/FTP/Magnet等）或拖入<code>.torrent</code>文件来添加下载任务。</p>
+<h4 id="2-AriaNg"><a href="#2-AriaNg" class="headerlink" title="2.AriaNg"></a>2.AriaNg</h4><p>AriaNg 是一款现代化的网页前端，让 aria2 更易于使用。AriaNg 采用纯 HTML 和 JavaScript 编写，因此无需任何编译器或运行时环境。</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/mayswind/AriaNg/releases" >AriaNg的GitHub发布页面<i class="fas fa-external-link-alt"></i></a>下载，比如：<a class="link"   target="_blank" rel="noopener" href="https://github.com/mayswind/AriaNg/releases/download/1.3.11/AriaNg-1.3.11.zip" >AriaNg-1.3.11.zip<i class="fas fa-external-link-alt"></i></a></p>
+<p>使用的时候需要启动Aria2服务。</p>
+<p>就用一句命令<code>aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all</code> 启动Aria2的RPC接口，然后双击打开 AriaNg解压出来的 index.html，看到连接上了就可以使用了。</p>
+<p>当然，也可以写个bat脚本直接双击运行启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">title Aria2 Launcher</span><br><span class="line">color 0a</span><br><span class="line"></span><br><span class="line">:: Check <span class="keyword">if</span> aria2c is already running</span><br><span class="line">tasklist | findstr /i <span class="string">&quot;aria2c.exe&quot;</span> &gt;nul</span><br><span class="line"><span class="keyword">if</span> %errorlevel% == 0 (</span><br><span class="line">    <span class="built_in">echo</span> [ERROR] aria2c is already running!</span><br><span class="line">    pause</span><br><span class="line">    <span class="built_in">exit</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">:: Start aria2c with minimal RPC options</span><br><span class="line">aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all</span><br><span class="line"><span class="keyword">if</span> %errorlevel% neq 0 (</span><br><span class="line">    <span class="built_in">echo</span> [WARNING] aria2c not found <span class="keyword">in</span> PATH, trying absolute path...</span><br><span class="line">    <span class="string">&quot;D:\aria2-1.37.0-win-64bit-build1\aria2c.exe&quot;</span> --enable-rpc --rpc-listen-all --rpc-allow-origin-all</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> [SUCCESS] aria2c started, RPC port: 6800</span><br><span class="line">pause</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="五、批量下载并重命名"><a href="#五、批量下载并重命名" class="headerlink" title="五、批量下载并重命名"></a>五、批量下载并重命名</h3><p>要批量下载这些都很简单，把下载链接都放在一个urls.txt文件中就可以了，但好像没有重命名功能，所以特地写了个windows powershell的脚本。</p>
+<p>创建一个 download.ps1 文件，内容如下，编码保存为【<mark>UTF-8 with BOM</mark>】：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行命令：powershell -ExecutionPolicy Bypass -File .\download.ps1</span></span><br><span class="line"><span class="comment"># 设置控制台编码为 UTF-8，避免中文乱码</span></span><br><span class="line">[Console]::OutputEncoding = [System.Text.Encoding]::UTF8</span><br><span class="line"><span class="variable">$OutputEncoding</span> = New-Object -TypeName System.Text.UTF8Encoding</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 aria2c.exe 的完整路径</span></span><br><span class="line"><span class="variable">$aria2cPath</span> = <span class="string">&quot;D:\aria2-1.37.0-win-64bit-build1\aria2c.exe&quot;</span></span><br><span class="line"><span class="comment"># 从配置文件读取需要下载的文件列表</span></span><br><span class="line"><span class="variable">$configFile</span> = <span class="string">&quot;download_config.json&quot;</span></span><br><span class="line"><span class="variable">$files</span> = Get-Content <span class="variable">$configFile</span> | ConvertFrom-Json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建下载目录(如果不存在)</span></span><br><span class="line"><span class="variable">$downloadDir</span> = <span class="string">&quot;download&quot;</span></span><br><span class="line"><span class="keyword">if</span> (-not (Test-Path <span class="variable">$downloadDir</span>)) &#123;</span><br><span class="line">    New-Item -ItemType Directory -Path <span class="variable">$downloadDir</span> | Out-Null</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 遍历文件列表并下载</span></span><br><span class="line">foreach (<span class="variable">$file</span> <span class="keyword">in</span> <span class="variable">$files</span>) &#123;</span><br><span class="line">    <span class="variable">$outPath</span> = Join-Path <span class="variable">$downloadDir</span> <span class="variable">$file</span>.out</span><br><span class="line">    Write-Host <span class="string">&quot;正在下载: <span class="subst">$($file.out)</span>&quot;</span></span><br><span class="line">    Start-Process -NoNewWindow -Wait -FilePath <span class="variable">$aria2cPath</span> -ArgumentList @(<span class="string">&quot;-d&quot;</span>, <span class="variable">$downloadDir</span>, <span class="string">&quot;-o&quot;</span>, <span class="string">&quot;`&quot;</span>$(<span class="variable">$file</span>.out)`<span class="string">&quot;&quot;</span>, <span class="string">&quot;`&quot;</span>$(<span class="variable">$file</span>.url)`<span class="string">&quot;&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">Write-Host <span class="string">&quot;`n✅ 所有文件下载完成！&quot;</span></span><br></pre></td></tr></table></figure>
+<p>再把需要重命名的下载链接放在 download_config.json 文件中：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育课程方案(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582343217634.pdf&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育道德与法治课程标准(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582343475848.pdf&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育语文课程标准(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582344386456.pdf&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育历史课程标准(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582345700037.pdf&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育数学课程标准(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220510531636118932.pdf&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">&quot;out&quot;</span>: <span class="string">&quot;义务教育英语课程标准(2022年版).pdf&quot;</span>, <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://www.moe.gov.cn/srcsite/A26/s8001/202204/W020220420582349487953.pdf&quot;</span> &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>在当前目录下运行 <code>powershell -ExecutionPolicy Bypass -File .\download.ps1</code> 命令就可以下载了。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：aria2开源下载工具</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2025-07-30 21:36:01</li>
+        <li>
+            本文链接：http://hduzn.cn/2025/07/30/aria2开源下载工具/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2025/07/30/ImageMagick%E5%BC%80%E6%BA%90%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">ImageMagick开源图像处理工具</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E5%92%8C%E7%89%B9%E6%80%A7"><span class="nav-text">一、主要功能和特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="nav-text">二、安装与配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-text">三、使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%8F%AF%E8%A7%86%E5%8C%96%E7%95%8C%E9%9D%A2"><span class="nav-text">四、可视化界面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Motrix"><span class="nav-text">1.Motrix</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-AriaNg"><span class="nav-text">2.AriaNg</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%89%B9%E9%87%8F%E4%B8%8B%E8%BD%BD%E5%B9%B6%E9%87%8D%E5%91%BD%E5%90%8D"><span class="nav-text">五、批量下载并重命名</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
