@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Python Hexo Docker Linux">
+    <meta name="description" content="Python Hexo Docker Linux 学习空间">
+    <meta name="author" content="HDUZN">
+    
+    <title>
+        
+            uv使用笔记 |
+        
+        烟雨平生
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"hduzn.cn","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/favicon.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"不积跬步，无以至千里；不积小流，无以成江海。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                烟雨平生
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/travel"
+                            >
+                                旅行
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/travel">旅行</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">uv使用笔记</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">HDUZN</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2025-09-02 22:13:06</span>
+        <span class="mobile">2025-09-02 22:13</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Python/">Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="✅-常用命令"><a href="#✅-常用命令" class="headerlink" title="✅ 常用命令"></a>✅ 常用命令</h2><table>
+<thead>
+<tr>
+<th>功能说明</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.创建虚拟环境</td>
+<td><code>uv venv --python 3.9</code> 或 <code>uv venv</code></td>
+</tr>
+<tr>
+<td>2.生成一个 pyproject.toml 文件</td>
+<td><code>uv init</code></td>
+</tr>
+<tr>
+<td>3.安装 pyproject.toml 文件中的依赖</td>
+<td><code>uv sync</code></td>
+</tr>
+<tr>
+<td>生成锁文件 uv.lock</td>
+<td><code>uv lock</code></td>
+</tr>
+<tr>
+<td>根据锁文件安装精确版本</td>
+<td><code>uv sync --frozen</code></td>
+</tr>
+<tr>
+<td>4.安装包</td>
+<td><code>uv add 包名</code></td>
+</tr>
+<tr>
+<td>5.卸载包</td>
+<td><code>uv remove 包名</code></td>
+</tr>
+<tr>
+<td>6.激活虚拟环境（Windows）</td>
+<td><code>.\.venv\Scripts\activate</code></td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<p>“uv”是指 **<a class="link"   target="_blank" rel="noopener" href="https://github.com/astral-sh/uv" >uv<i class="fas fa-external-link-alt"></i></a>**，是一个用 Rust 编写的极其快速且功能强大的 Python 包和项目管理器，由 Astral 公司（创建 Ruff 的公司）开发。也支持虚拟环境创建和依赖管理。</p>
+<h2 id="🔧-一、安装-uv"><a href="#🔧-一、安装-uv" class="headerlink" title="🔧 一、安装 uv"></a>🔧 一、安装 uv</h2><p><code>uv</code> 是一个跨平台的命令行工具，目前支持 macOS、Linux 和 Windows。</p>
+<h3 id="1-安装方法"><a href="#1-安装方法" class="headerlink" title="1. 安装方法"></a>1. 安装方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.官方推荐安装脚本</span></span><br><span class="line"><span class="comment"># On Windows</span></span><br><span class="line">powershell -c <span class="string">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># On Linux/macOS</span></span><br><span class="line">curl -LsSf https://astral.sh/uv/install.sh | sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.pip安装（有局限性，会安装在Python目录中）</span></span><br><span class="line">pip install uv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装后检查版本</span></span><br><span class="line">uv --version</span><br></pre></td></tr></table></figure>
+<p>安装之后，把<code>C:\Users\[用户名]\.local\bin\</code> 目录添加到系统环境变量，再查看版本，或通过 <code>Get-Command uv</code>命令查看 uv 的完整路径。</p>
+<h2 id="二、使用-uv-创建虚拟环境"><a href="#二、使用-uv-创建虚拟环境" class="headerlink" title="二、使用 uv 创建虚拟环境"></a>二、使用 uv 创建虚拟环境</h2><p><code>uv</code> 支持像 <code>python -m venv</code> 一样创建虚拟环境，而且支持自动检测系统 Python，也可以指定 Python 版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在当前目录下创建一个默认名为 .venv 的虚拟环境。</span></span><br><span class="line">uv venv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自定义虚拟环境名称为 venv_test</span></span><br><span class="line">uv venv venv_test</span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认创建的python版本是最新的，也可以指定python的版本</span></span><br><span class="line">uv venv --python 3.9</span><br></pre></td></tr></table></figure>
+<h2 id="三、激活虚拟环境"><a href="#三、激活虚拟环境" class="headerlink" title="三、激活虚拟环境"></a>三、激活虚拟环境</h2><p>创建好虚拟环境之后，激活方式和普通 venv 一样（不同系统有差异）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows</span></span><br><span class="line">venv_test\Scripts\activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># Linux/macOS</span></span><br><span class="line"><span class="built_in">source</span> venv_test/bin/activate</span><br></pre></td></tr></table></figure>
+<p>激活之后，你的终端会显示虚拟环境名称，说明你已经进入虚拟环境了。</p>
+<p>在VS Code中直接选择解释器在 <code>.venv</code>目录中的 python.exe 就可以了。</p>
+<h2 id="四、安装包依赖"><a href="#四、安装包依赖" class="headerlink" title="四、安装包依赖"></a>四、安装包依赖</h2><p>可以用 <code>uv pip install</code> 或 <code>uv add</code> 来安装包，就像普通的 <code>pip</code> 一样，但速度更快。<br>比如安装 <code>requests</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uv pip install requests</span><br><span class="line">uv add requests</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>uv</code> 支持很多命令，比如：</p>
+<ul>
+<li><code>uv pip install</code></li>
+<li><code>uv pip uninstall</code></li>
+<li><code>uv pip list</code></li>
+<li><code>uv pip compile requirements.in -o requirements.txt</code></li>
+<li><code>uv pip sync requirements.txt</code></li>
+</ul>
+</blockquote>
+<p>它完全兼容 pip 的用法，但性能更高。</p>
+<h2 id="五、创建一个新项目结构"><a href="#五、创建一个新项目结构" class="headerlink" title="五、创建一个新项目结构"></a>五、创建一个新项目结构</h2><p>你可以手动创建一个 Python 项目的结构，比如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir myproject</span><br><span class="line"><span class="built_in">cd</span> myproject</span><br><span class="line">uv venv</span><br></pre></td></tr></table></figure>
+<p>然后激活虚拟环境，再安装依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> .venv/bin/activate</span><br><span class="line">uv add flask</span><br></pre></td></tr></table></figure>
+<h2 id="六、配合-pyproject-toml-使用（现代项目标准）"><a href="#六、配合-pyproject-toml-使用（现代项目标准）" class="headerlink" title="六、配合 pyproject.toml 使用（现代项目标准）"></a>六、配合 pyproject.toml 使用（现代项目标准）</h2><p>如果你希望使用 <code>pyproject.toml</code> 来管理项目依赖，可以使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv init</span><br></pre></td></tr></table></figure>
+<p>这会生成一个 pyproject.toml 文件，你可以手动添加依赖：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[project]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;myproject&quot;</span></span><br><span class="line"><span class="attr">version</span> = <span class="string">&quot;0.1.0&quot;</span></span><br><span class="line"><span class="attr">dependencies</span> = [</span><br><span class="line">    <span class="string">&quot;flask&quot;</span>,</span><br><span class="line">    <span class="string">&quot;requests&quot;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>然后使用以下命令安装所有依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uv install</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>类似于 <code>pip install -e .</code> 的效果。</p>
+</blockquote>
+<h2 id="七、与编辑器集成（如-VSCode）"><a href="#七、与编辑器集成（如-VSCode）" class="headerlink" title="七、与编辑器集成（如 VSCode）"></a>七、与编辑器集成（如 VSCode）</h2><p>你可以在 VSCode 中选择解释器为新创建的虚拟环境的 Python 路径。例如：</p>
+<ul>
+<li>如果你在项目目录下创建了 <code>.venv</code>，那么 VSCode 的 Python 解释器应该选择：<ul>
+<li>Linux/macOS: <code>.venv/bin/python</code></li>
+<li>Windows: <code>.venv\Scripts\python.exe</code></li>
+</ul>
+</li>
+</ul>
+<p>在 VSCode 中按 <code>Ctrl + Shift + P</code>，输入 “Python: Select Interpreter”，选择即可。</p>
+<h2 id="八、删除虚拟环境"><a href="#八、删除虚拟环境" class="headerlink" title="八、删除虚拟环境"></a>八、删除虚拟环境</h2><p>直接删除 <code>.venv</code> 目录即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows 下直接删除文件夹</span></span><br><span class="line"><span class="comment"># Linux</span></span><br><span class="line">rm -rf .venv</span><br></pre></td></tr></table></figure>
+<h2 id="✅-小结"><a href="#✅-小结" class="headerlink" title="✅ 小结"></a>✅ 小结</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>命令</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装 uv</td>
+<td>`curl -Ls <a class="link"   target="_blank" rel="noopener" href="https://install.uv.rs/" >https://install.uv.rs<i class="fas fa-external-link-alt"></i></a></td>
+<td>sh`</td>
+</tr>
+<tr>
+<td>创建虚拟环境</td>
+<td><code>uv venv</code> 或 <code>uv venv venv_test</code>或 <code>uv venv --python 3.9</code></td>
+<td></td>
+</tr>
+<tr>
+<td>激活虚拟环境（Linux/macOS）</td>
+<td><code>source venv_test/bin/activate</code></td>
+<td></td>
+</tr>
+<tr>
+<td>激活虚拟环境（Windows）</td>
+<td><code>venv_test\Scripts\activate</code></td>
+<td></td>
+</tr>
+<tr>
+<td>安装依赖</td>
+<td><code>uv add 包名</code>或<code>uv pip install 包名</code></td>
+<td></td>
+</tr>
+<tr>
+<td>初始化项目</td>
+<td><code>uv init</code> 生成一个 pyproject.toml 文件</td>
+<td></td>
+</tr>
+<tr>
+<td>安装项目依赖</td>
+<td><code>uv install</code></td>
+<td></td>
+</tr>
+<tr>
+<td>删除虚拟环境</td>
+<td>删除文件夹即可</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><code>uv</code> 官方文档：<a class="link"   target="_blank" rel="noopener" href="https://docs.astral.sh/uv/" >https://docs.astral.sh/uv/<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：uv使用笔记</li>
+        <li>本文作者：HDUZN</li>
+        <li>创建时间：2025-09-02 22:13:06</li>
+        <li>
+            本文链接：http://hduzn.cn/2025/09/02/uv使用笔记/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/Python/">#Python</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2025/07/30/aria2%E5%BC%80%E6%BA%90%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">aria2开源下载工具</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="/js/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'UVs2AheLuqJbRc85LQv7vzMz-gzGzoHsz',
+                    appKey: 'y98dsYB3ugs25U2vgNWTb3m7',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '请在此输入您的留言',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'HDUZN';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2021</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">HDUZN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn">浙ICP备2022013719号-1</a></div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">✅ 常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%A7-%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85-uv"><span class="nav-text">🔧 一、安装 uv</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95"><span class="nav-text">1. 安装方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8-uv-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">二、使用 uv 创建虚拟环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%BF%80%E6%B4%BB%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">三、激活虚拟环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%89%E8%A3%85%E5%8C%85%E4%BE%9D%E8%B5%96"><span class="nav-text">四、安装包依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-text">五、创建一个新项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%85%8D%E5%90%88-pyproject-toml-%E4%BD%BF%E7%94%A8%EF%BC%88%E7%8E%B0%E4%BB%A3%E9%A1%B9%E7%9B%AE%E6%A0%87%E5%87%86%EF%BC%89"><span class="nav-text">六、配合 pyproject.toml 使用（现代项目标准）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E4%B8%8E%E7%BC%96%E8%BE%91%E5%99%A8%E9%9B%86%E6%88%90%EF%BC%88%E5%A6%82-VSCode%EF%BC%89"><span class="nav-text">七、与编辑器集成（如 VSCode）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%88%A0%E9%99%A4%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-text">八、删除虚拟环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E5%B0%8F%E7%BB%93"><span class="nav-text">✅ 小结</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        $icon-size = 1.2rem;
+
+.search-pop-overlay {
+  position: fixed;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0);
+  visibility: hidden;
+  z-index: $z-index-8;
+  transition-t("visibility, background", "0, 0", "0.3, 0.3", "ease, ease");
+
+  &.active {
+    visibility: visible;
+    background: rgba(0, 0, 0, 0.35);
+
+    .search-popup {
+      transform: scale(1);
+    }
+
+  }
+
+
+  .search-popup {
+    background: var(--background-color);
+    border-radius: 5px;
+    height: 80%;
+    width: 70%;
+    margin: auto;
+    transform: scale(0);
+    z-index: $z-index-6;
+    transition-t("transform", "0", "0.3", "ease");
+
+    +keep-tablet() {
+      width: 80%;
+    }
+
+    +keep-mobile() {
+      width: 90%;
+    }
+
+    .search-header {
+      background: var(--fourth-text-color);
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+      display: flex;
+      padding: 10px;
+
+      .search-input-field-pre, .popup-btn-close {
+        font-size: $icon-size;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-input-field-pre {
+        cursor: pointer;
+        color: var(--third-text-color);
+      }
+
+      .popup-btn-close {
+        color: var(--default-text-color);
+      }
+
+
+      .search-input-container {
+
+        flex-grow: 1;
+        padding: 2px;
+
+        .search-input {
+          background: transparent;
+          border: 0;
+          outline: 0;
+          width: 100%;
+          font-size: 1.2rem;
+          color: var(--default-text-color);
+
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+
+
+      }
+
+
+      .popup-btn-close {
+        cursor: pointer;
+
+        &:hover .fas, far, fab {
+          color: var(--first-text-color);
+        }
+      }
+
+    }
+
+
+    #search-result {
+      display: flex;
+      height: calc(100% - 55px);
+      overflow: auto;
+      padding: 5px 25px;
+
+      .search-result-list {
+        width: 100%;
+        height: 100%;
+        font-size: 1rem;
+
+        li {
+          border-bottom: 1px dashed var(--border-color);
+          padding: 10px 0;
+          margin: 10px 0;
+          box-sizing: border-box;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+
+          .search-result-title {
+            position: relative;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-left: 16px;
+            display: flex;
+            align-items: center;
+
+            &::after {
+              content: '';
+              position: absolute;
+              width: 5px;
+              height: 5px;
+              border-radius: 50%;
+              top: 50%;
+              transform: translateY(-50%);
+              left: 0;
+              background: var(--default-text-color);
+            }
+          }
+
+
+          .search-result {
+            line-height: 2rem;
+            margin: 0;
+            padding-left: 16px;
+            word-wrap: break-word;
+          }
+
+          a {
+            &:hover {
+              color: var(--default-text-color);
+            }
+          }
+
+          .search-keyword {
+            border-bottom: 1px dashed var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+          }
+
+        }
+      }
+
+
+      #no-result {
+        color: var(--third-text-color);
+        margin: auto;
+      }
+
+    }
+  }
+}
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
