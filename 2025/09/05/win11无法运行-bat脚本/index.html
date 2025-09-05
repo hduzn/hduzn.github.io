@@ -9,7 +9,7 @@
     
     <title>
         
-            Linux vim/vi 命令简单使用 |
+            win11无法运行.bat脚本 |
         
         烟雨平生
     </title>
@@ -191,7 +191,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Linux vim/vi 命令简单使用</span>
+            <span class="title-hover-animation">win11无法运行.bat脚本</span>
         </div>
 
         
@@ -208,8 +208,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2021-02-08 21:10:00</span>
-        <span class="mobile">2021-02-08 21:10</span>
+        <span class="pc">2025-09-05 09:50:29</span>
+        <span class="mobile">2025-09-05 09:50</span>
     </span>
     
         <span class="article-categories article-meta-item">
@@ -217,7 +217,7 @@
             <ul>
                 
                     <li>
-                        <a href="/categories/Linux/">Linux</a>&nbsp;
+                        <a href="/categories/Windows/">Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -229,7 +229,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/Linux/">Linux</a>&nbsp;
+                        <a href="/tags/Windows/">Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -252,64 +252,38 @@
         
 
         <div class="article-content markdown-body">
-            <p>vim平常如果很少使用，偶尔用用的，我觉得掌握这点就够用了。</p>
-<p>vim有两种模式，一种是命令模式，另一种是编辑模式。</p>
-<p>在命令模式下，只能输入命令操作，并不能输入内容；<br>在编辑模式下，则能正常编辑内容。</p>
+            <p>win11无法双击运行 .bat文件。打开方式选择 cmd.exe 时报错：所选的程序不能与此文件类型相关联。</p>
+<p>问了下几个AI，最方便的就是直接用注册表文件来修复。</p>
 <a id="more"></a>
 
-<h2 id="1-两种模式切换"><a href="#1-两种模式切换" class="headerlink" title="1.两种模式切换"></a>1.两种模式切换</h2><p>例如 运行 vim 1.txt 后，即进入了命令模式，此刻不能输入内容。</p>
+<ol>
+<li><strong>打开记事本</strong>，将以下代码完全复制进去：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">[-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.bat]</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\.bat]</span><br><span class="line">@&#x3D;&quot;batfile&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile]</span><br><span class="line">@&#x3D;&quot;Batch File&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\shell]</span><br><span class="line">@&#x3D;&quot;open&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\shell\open]</span><br><span class="line">@&#x3D;&quot;&amp;Open&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\shell\open\command]</span><br><span class="line">@&#x3D;&quot;\&quot;%1\&quot; %*&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\shell\runas]</span><br><span class="line">@&#x3D;&quot;Run as administrator&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\shell\runas\command]</span><br><span class="line">@&#x3D;&quot;\&quot;%SystemRoot%\\System32\\cmd.exe\&quot; &#x2F;C \&quot;%1\&quot; %*&quot;</span><br><span class="line"></span><br><span class="line">[HKEY_CLASSES_ROOT\batfile\DefaultIcon]</span><br><span class="line">@&#x3D;&quot;%SystemRoot%\\System32\\imageres.dll,-68&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><strong>保存文件</strong>：点击记事本的“文件” -&gt; “另存为”。</li>
+</ol>
 <ul>
-<li>当按下 i 键后，即进入编辑模式，可输入内容。</li>
-<li>再按 Esc 键后，退出编辑模式，回到命令模式。</li>
+<li><strong>保存位置</strong>：选择“桌面”。</li>
+<li><strong>文件名</strong>：输入 <code>fix_bat_association.reg</code> （后缀必须是 <code>.reg</code>）。</li>
+<li><strong>保存类型</strong>：选择“所有文件 (<em>.</em>)”，<strong>这一点非常重要！</strong> 否则会存成 <code>.txt</code> 文件。</li>
+<li>编码选择 <code>ANSI</code> 或 <code>UTF-16 LE</code> 均可。</li>
 </ul>
-<p>当进入编辑模式后，页面最下方会有显示 – INSERT – 的提示，表示当前是编辑模式。</p>
-<h2 id="2-保存文件"><a href="#2-保存文件" class="headerlink" title="2.保存文件"></a>2.保存文件</h2><p>需要在命令模式下输入 <code>:wq</code> 后回车即保存退出。</p>
-<table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">:w</td>
-<td>保存</td>
-</tr>
-<tr>
-<td align="left">:wq</td>
-<td>保存并退出</td>
-</tr>
-<tr>
-<td align="left">:q</td>
-<td>不保存退出</td>
-</tr>
-</tbody></table>
-<h2 id="3-命令-功能"><a href="#3-命令-功能" class="headerlink" title="3.命令 功能"></a>3.命令 功能</h2><table>
-<thead>
-<tr>
-<th align="left">命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">o</td>
-<td>插入一行</td>
-</tr>
-<tr>
-<td align="left">dd</td>
-<td>删除一行</td>
-</tr>
-<tr>
-<td align="left">dw</td>
-<td>删除选中字母开始的第一个字母</td>
-</tr>
-</tbody></table>
-<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>简单的使用，会这么4条就行了。</p>
+<ol start="3">
+<li><strong>运行注册表文件</strong>：</li>
+</ol>
 <ul>
-<li>1.用vim 打开文件后，是命令模式；</li>
-<li>2.按 o 键增加新的一行，会自动进入编辑模式；</li>
-<li>3.编辑完内容后，按 Esc 键回到命令模式；</li>
-<li>4.最后输入命令 :wq 回车，保存退出或者 :q不保存退出。</li>
+<li>在桌面上找到你刚保存的 <code>fix_bat_association.reg</code> 文件。</li>
+<li><strong>双击它</strong>运行。</li>
+<li>系统会弹出提示，询问“是否确定要将 … 中的信息添加进注册表？”，点击 <strong>“是”</strong>。</li>
+<li>成功后会提示“注册表编辑器” -&gt; “已成功在注册表中添加信息”。</li>
+</ul>
+<ol start="4">
+<li><strong>立即生效</strong>：</li>
+</ol>
+<ul>
+<li>修复完成后，<strong>最好重启一次电脑</strong>，或者至少重启一下“Windows资源管理器”（在任务管理器中重启 <code>explorer.exe</code> 进程），以使更改完全生效。</li>
+<li>之后，你的 <code>.bat</code> 文件图标应该会恢复正常，双击也可以正常运行了。</li>
 </ul>
 
         </div>
@@ -318,11 +292,11 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：Linux vim/vi 命令简单使用</li>
+        <li>本文标题：win11无法运行.bat脚本</li>
         <li>本文作者：HDUZN</li>
-        <li>创建时间：2021-02-08 21:10:00</li>
+        <li>创建时间：2025-09-05 09:50:29</li>
         <li>
-            本文链接：http://hduzn.cn/2021/02/08/Linux vim命令简单使用/
+            本文链接：http://hduzn.cn/2025/09/05/win11无法运行-bat脚本/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -337,7 +311,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/Linux/">#Linux</a>&nbsp;
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
                     </li>
                 
             </ul>
@@ -346,29 +320,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/02/08/Linux%20%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">Linux 修改文件权限</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/02/08/Ubuntu%E6%9F%A5%E7%9C%8BCPU%E5%8D%A0%E7%94%A8%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5/"
+                           href="/2025/09/02/uv%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Ubuntu 查看CPU占用和使用情况</span>
+                                <span class="post-nav-title-item">uv使用笔记</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -565,7 +524,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8D%A2"><span class="nav-text">1.两种模式切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BF%9D%E5%AD%98%E6%96%87%E4%BB%B6"><span class="nav-text">2.保存文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%91%BD%E4%BB%A4-%E5%8A%9F%E8%83%BD"><span class="nav-text">3.命令 功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B0%8F%E7%BB%93"><span class="nav-text">4.小结</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
